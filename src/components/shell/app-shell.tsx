@@ -6,6 +6,8 @@ import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { SidebarNav } from "@/components/shell/sidebar-nav";
+import { UserMenu } from "@/components/auth/user-menu";
+import type { SessionUser } from "@/types/auth";
 
 function Wordmark() {
   return (
@@ -16,7 +18,13 @@ function Wordmark() {
   );
 }
 
-export function AppShell({ children }: { children: React.ReactNode }) {
+export function AppShell({
+  children,
+  user,
+}: {
+  children: React.ReactNode;
+  user: SessionUser;
+}) {
   const [drawerOpen, setDrawerOpen] = React.useState(false);
 
   return (
@@ -38,7 +46,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* Mobile top bar */}
       <div className="sticky top-0 z-30 flex items-center justify-between border-b border-border bg-background/90 px-4 py-3 backdrop-blur md:hidden">
         <Wordmark />
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1.5">
+          <UserMenu user={user} />
           <ThemeToggle />
           <Button
             variant="ghost"
@@ -90,7 +99,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </AnimatePresence>
 
       {/* Content */}
-      <main className="px-6 pb-24 pt-10 md:pl-64 md:pr-8 md:pt-12">{children}</main>
+      <main className="px-6 pb-24 pt-10 md:pl-64 md:pr-8 md:pt-12">
+        <div className="mb-6 hidden justify-end md:flex">
+          <UserMenu user={user} />
+        </div>
+        {children}
+      </main>
     </div>
   );
 }

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/auth";
 import { analyzeInboundEmail } from "@/lib/ihost/analyze";
+import { getKnowledgeBase } from "@/lib/knowledge/queries";
 import { defaultKnowledgeBase } from "@/lib/mock/seed-emails";
 import type { InboundTuroEmail } from "@/types/ihost";
 
@@ -26,7 +28,14 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const analysis = await analyzeInboundEmail(email, defaultKnowledgeBase);
+    // Ground the reply in the host's own saved knowledge base when they have
+    // one; the shipped defaults are only a starting point.
+    const session = await auth();
+    const kb = session?.user?.email
+      ? await getKnowledgeBase(session.user.email)
+      : defaultKnowledgeBase;
+
+    const analysis = await analyzeInboundEmail(email, kb);
     return NextResponse.json(analysis);
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error.";

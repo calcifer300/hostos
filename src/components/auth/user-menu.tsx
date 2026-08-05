@@ -2,8 +2,9 @@
 
 import * as React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { LogOut } from "lucide-react";
+import { LogIn, LogOut } from "lucide-react";
 import { userSignOut } from "@/lib/actions/auth";
 import type { SessionUser } from "@/types/auth";
 
@@ -30,7 +31,7 @@ function Avatar({ user, size }: { user: SessionUser; size: number }) {
   );
 }
 
-export function UserMenu({ user }: { user: SessionUser }) {
+export function UserMenu({ user }: { user: SessionUser | null }) {
   const [open, setOpen] = React.useState(false);
   const ref = React.useRef<HTMLDivElement>(null);
 
@@ -41,6 +42,19 @@ export function UserMenu({ user }: { user: SessionUser }) {
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
+
+  if (!user) {
+    return (
+      <Link
+        href="/login"
+        aria-label="Connect Google"
+        className="flex h-9 items-center gap-1.5 rounded-full border border-border px-3 text-[12.5px] font-medium text-muted-foreground transition-colors hover:border-accent/40 hover:text-foreground"
+      >
+        <LogIn className="h-3.5 w-3.5" />
+        Connect Google
+      </Link>
+    );
+  }
 
   return (
     <div ref={ref} className="relative">

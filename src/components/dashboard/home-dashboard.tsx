@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { LogOut, LogIn } from "lucide-react";
 import { GreetingHeader } from "@/components/dashboard/greeting-header";
+import { GuestMessagesCard } from "@/components/dashboard/guest-messages-card";
 import { AiBriefingCard } from "@/components/dashboard/ai-briefing-card";
 import { FleetHealthCard } from "@/components/dashboard/fleet-health-card";
 import { ScheduleCard } from "@/components/dashboard/schedule-card";
@@ -11,7 +12,8 @@ import { CalendarTimelineCard } from "@/components/dashboard/calendar-timeline-c
 import { ActivityCard } from "@/components/dashboard/activity-card";
 import { SuggestionsCard } from "@/components/dashboard/suggestions-card";
 import { FleetStatusGrid } from "@/components/dashboard/fleet-status-grid";
-import { todaysPickups, todaysReturns } from "@/lib/mock/dashboard";
+import type { DashboardData } from "@/lib/dashboard/queries";
+import type { TripMessage } from "@/lib/messages/queries";
 import type { InboundTuroEmail } from "@/types/ihost";
 
 const container = {
@@ -34,9 +36,13 @@ const item = {
 export function HomeDashboard({
   userFirstName,
   initialEmail,
+  initialGuestMessages,
+  data,
 }: {
   userFirstName?: string | null;
   initialEmail?: InboundTuroEmail | null;
+  initialGuestMessages: TripMessage[];
+  data: DashboardData;
 }) {
   return (
     <motion.div
@@ -49,12 +55,18 @@ export function HomeDashboard({
         <GreetingHeader firstName={userFirstName} />
       </motion.div>
 
+      {/* Guest messages come first, full width — the thing that actually
+          needs a human's attention, ahead of anything AI-generated. */}
+      <motion.div variants={item}>
+        <GuestMessagesCard initialMessages={initialGuestMessages} />
+      </motion.div>
+
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <motion.div variants={item} className="lg:col-span-2">
           <AiBriefingCard initialEmail={initialEmail} />
         </motion.div>
         <motion.div variants={item}>
-          <FleetHealthCard />
+          <FleetHealthCard health={data.fleetHealth} />
         </motion.div>
       </div>
 
@@ -63,38 +75,40 @@ export function HomeDashboard({
           <ScheduleCard
             icon={LogOut}
             title="Today's pickups"
-            entries={todaysPickups}
+            entries={data.pickups}
             notReadyLabel="Needs prep"
+            emptyMessage="No pickups dated today in your synced mail."
           />
         </motion.div>
         <motion.div variants={item}>
           <ScheduleCard
             icon={LogIn}
             title="Today's returns"
-            entries={todaysReturns}
+            entries={data.returns}
             notReadyLabel="Inspect first"
+            emptyMessage="No returns dated today in your synced mail."
           />
         </motion.div>
         <motion.div variants={item}>
-          <MessagesCard />
+          <MessagesCard messages={data.messages} />
         </motion.div>
       </div>
 
       <motion.div variants={item}>
-        <CalendarTimelineCard />
+        <CalendarTimelineCard timeline={data.timeline} />
       </motion.div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <motion.div variants={item} className="lg:col-span-2">
-          <ActivityCard />
+          <ActivityCard activity={data.activity} />
         </motion.div>
         <motion.div variants={item}>
-          <SuggestionsCard />
+          <SuggestionsCard suggestions={data.suggestions} />
         </motion.div>
       </div>
 
       <motion.div variants={item} className="pb-4">
-        <FleetStatusGrid />
+        <FleetStatusGrid vehicles={data.vehicles} />
       </motion.div>
     </motion.div>
   );

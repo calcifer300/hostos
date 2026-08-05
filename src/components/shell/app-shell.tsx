@@ -23,7 +23,7 @@ export function AppShell({
   user,
 }: {
   children: React.ReactNode;
-  user: SessionUser;
+  user: SessionUser | null;
 }) {
   const [drawerOpen, setDrawerOpen] = React.useState(false);
 
@@ -38,7 +38,13 @@ export function AppShell({
           <SidebarNav />
         </div>
         <div className="flex items-center justify-between px-1">
-          <span className="text-[11.5px] text-muted-foreground">iHost is active</span>
+          <span className="flex items-center gap-1.5 text-[11.5px] text-muted-foreground">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success/50" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-success" />
+            </span>
+            HostOS is active
+          </span>
           <ThemeToggle />
         </div>
       </aside>

@@ -1,5 +1,5 @@
 import "server-only";
-import { getSupabaseAdmin, isSupabaseConfigured } from "@/lib/supabase/server";
+import { getSupabaseAdmin, isSupabaseConfigured, isUndefinedTableError } from "@/lib/supabase/server";
 import type { SyncedEmail } from "@/types/gmail";
 
 interface SyncedEmailRow {
@@ -36,9 +36,6 @@ function rowToSyncedEmail(row: SyncedEmailRow): SyncedEmail {
   };
 }
 
-/** Undefined table — the Gmail migration hasn't been run yet. A setup step, not a bug. */
-const UNDEFINED_TABLE = "42P01";
-
 /**
  * These are called while rendering the dashboard and inbox, so they must
  * never throw: an unconfigured or un-migrated Supabase means "nothing
@@ -56,7 +53,7 @@ export async function getSyncedEmails(userEmail: string, limit = 30): Promise<Sy
       .limit(limit);
 
     if (error) {
-      if (error.code !== UNDEFINED_TABLE) {
+      if (!isUndefinedTableError(error)) {
         console.error("[gmail] Failed to load synced emails:", error.message);
       }
       return [];
@@ -83,7 +80,7 @@ export async function getLatestUnreadEmail(userEmail: string): Promise<SyncedEma
       .maybeSingle<SyncedEmailRow>();
 
     if (error) {
-      if (error.code !== UNDEFINED_TABLE) {
+      if (!isUndefinedTableError(error)) {
         console.error("[gmail] Failed to load the latest unread email:", error.message);
       }
       return null;

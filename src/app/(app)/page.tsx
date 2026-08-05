@@ -1,6 +1,9 @@
 import { auth } from "@/auth";
 import { HomeDashboard } from "@/components/dashboard/home-dashboard";
+import { getDashboardData } from "@/lib/dashboard/queries";
 import { getLatestUnreadEmail } from "@/lib/gmail/queries";
+import { DEFAULT_HOST_ID } from "@/lib/host/queries";
+import { getRecentGuestMessages } from "@/lib/messages/queries";
 import type { InboundTuroEmail } from "@/types/ihost";
 
 export default async function Home() {
@@ -8,7 +11,11 @@ export default async function Home() {
   const email = session?.user?.email ?? null;
   const firstName = session?.user?.name?.split(" ")[0] ?? null;
 
-  const latestUnread = email ? await getLatestUnreadEmail(email) : null;
+  const [data, latestUnread, guestMessages] = await Promise.all([
+    getDashboardData(email),
+    email ? getLatestUnreadEmail(email) : Promise.resolve(null),
+    getRecentGuestMessages(DEFAULT_HOST_ID),
+  ]);
 
   const initialEmail: InboundTuroEmail | null = latestUnread
     ? {
@@ -20,5 +27,12 @@ export default async function Home() {
       }
     : null;
 
-  return <HomeDashboard userFirstName={firstName} initialEmail={initialEmail} />;
+  return (
+    <HomeDashboard
+      userFirstName={firstName}
+      initialEmail={initialEmail}
+      initialGuestMessages={guestMessages}
+      data={data}
+    />
+  );
 }

@@ -1,18 +1,21 @@
 import type { LucideIcon } from "lucide-react";
 import { DashboardCard } from "@/components/dashboard/dashboard-card";
+import { CardEmptyState } from "@/components/dashboard/card-empty-state";
 import { Badge } from "@/components/ui/badge";
-import type { ScheduleEntry } from "@/lib/mock/dashboard";
+import type { ScheduleEntry } from "@/lib/dashboard/queries";
 
 export function ScheduleCard({
   icon,
   title,
   entries,
   notReadyLabel,
+  emptyMessage,
 }: {
   icon: LucideIcon;
   title: string;
   entries: ScheduleEntry[];
   notReadyLabel: string;
+  emptyMessage: string;
 }) {
   return (
     <DashboardCard
@@ -21,6 +24,9 @@ export function ScheduleCard({
       action={<Badge variant="neutral">{entries.length}</Badge>}
       className="h-full"
     >
+      {entries.length === 0 ? (
+        <CardEmptyState message={emptyMessage} />
+      ) : (
       <div className="space-y-1">
         {entries.map((entry) => (
           <div
@@ -45,6 +51,7 @@ export function ScheduleCard({
           </div>
         ))}
       </div>
+      )}
     </DashboardCard>
   );
 }

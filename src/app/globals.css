@@ -1,6 +1,14 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 
+/*
+ * Project Aurora design system. The dark palette below is the spec's exact
+ * values (Priority 4) — the mockup is dark-only, so that's where fidelity
+ * matters. Light mode isn't specified by Aurora; it keeps its previously
+ * tuned, accessible values and only shifts its accent toward the new
+ * brand blue family for continuity when a host switches themes.
+ */
+
 :root {
   --background: #FAFAF9;
   --foreground: #171716;
@@ -9,7 +17,7 @@
   --muted: #F1F0ED;
   --muted-foreground: #6B6A66;
   --border: #E5E4E0;
-  --accent: #0071E3;
+  --accent: #3D7FE0;
   --accent-foreground: #FFFFFF;
   --success: #3B6D11;
   --success-bg: #EAF3DE;
@@ -23,22 +31,22 @@
 }
 
 .dark {
-  --background: #0A0A0C;
-  --foreground: #F2F1EE;
-  --card: #17171A;
-  --card-foreground: #F2F1EE;
-  --muted: #1A1A1D;
-  --muted-foreground: #8F8E8A;
-  --border: #26262A;
-  --accent: #0A84FF;
+  --background: #0D1117;
+  --foreground: #E6EDF3;
+  --card: #161B22;
+  --card-foreground: #E6EDF3;
+  --muted: #1C2128;
+  --muted-foreground: #8B949E;
+  --border: #30363D;
+  --accent: #4F8CFF;
   --accent-foreground: #FFFFFF;
-  --success: #7BC48F;
-  --success-bg: #16241A;
-  --danger: #E5A5A0;
-  --danger-bg: #2A1D1D;
-  --warning: #F0C060;
-  --warning-bg: #2A2213;
-  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.2), 0 12px 32px -14px rgba(0, 0, 0, 0.55);
+  --success: #34C759;
+  --success-bg: #16261C;
+  --danger: #FF453A;
+  --danger-bg: #2B1817;
+  --warning: #FF9F0A;
+  --warning-bg: #2B1F0E;
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 32px -14px rgba(0, 0, 0, 0.65);
 }
 
 @theme inline {

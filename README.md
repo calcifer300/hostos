@@ -6,7 +6,7 @@ The AI employee is **iHost**. This is the first vertical slice: turn an inbound 
 
 ```
 npm install
-cp .env.local.example .env.local   # then add your real Anthropic API key
+cp .env.local.example .env.local   # then add your real Gemini API key
 npm run dev
 ```
 
@@ -21,7 +21,10 @@ Seven routes exist today: `/` (Home — the real iHost briefing) and six placeho
 ## What's real vs staged
 
 **Real, and calling a live model:**
-- `POST /api/ihost/analyze` calls the Anthropic API server-side with `ANTHROPIC_API_KEY` from your environment. Nothing about the classification, summary, action reasoning, or draft is mocked or hardcoded.
+- `GET /api/ihost/briefing` summarizes your newest synced Gmail messages into the dashboard's AI briefing. Headline, highlights, and priorities are all model-generated from real message content — none of that copy is hardcoded.
+- `POST /api/ihost/analyze` runs a single message through classification, summary, action reasoning, and reply drafting. Nothing about it is mocked.
+- Both call Google Gemini server-side with `GEMINI_API_KEY` from your environment, through the provider layer in `src/lib/ai/`. `GEMINI_MODEL` overrides the `gemini-2.5-flash` default; `AI_PROVIDER` selects the provider.
+- Without `GEMINI_API_KEY`, the briefing card shows a calm "AI briefings are turned off" notice reading "Gemini API key is missing.", and the rest of HostOS — login, Gmail sync, Inbox, dashboard — keeps working normally.
 - The classification vocabulary, confidence bands, and escalation logic (`src/lib/ihost/prompt.ts`) implement the iHost Charter's Articles VI-VII directly, not a paraphrase of them.
 - Copy-to-clipboard and "Open in Turo" are real browser actions.
 - The reply is genuinely editable before copying — nothing about steps 6-9 of the MVP workflow is simulated.
@@ -33,7 +36,9 @@ Seven routes exist today: `/` (Home — the real iHost briefing) and six placeho
 ## Architecture notes
 
 - `src/types/ihost.ts` — canonical domain types. No Turo-specific or Trello-shaped fields; `TuroEventType` is a classification vocabulary, not a wrapper around Turo's own notification types.
-- `src/lib/ihost/prompt.ts` + `src/lib/ihost/analyze.ts` — the entire "brain." One function builds the system prompt, one function calls the model and parses the result. Nothing about iHost's behavior is scattered across components.
+- `src/lib/ai/` — the provider layer. `types.ts` defines the `AiProvider` contract (`generateJson`, `isConfigured`) and `AiNotConfiguredError`; `gemini.ts` implements it against `@google/genai`; `index.ts` holds the registry and picks one via `AI_PROVIDER`. iHost never imports a vendor SDK directly, so adding a provider later is one new file plus a registry entry — no prompt or call-site changes.
+- `src/lib/ihost/prompt.ts` + `src/lib/ihost/analyze.ts` — the single-message "brain." One function builds the system prompt, one calls the model and parses the result. Nothing about iHost's behavior is scattered across components.
+- `src/lib/ihost/briefing.ts` — the multi-message digest behind the dashboard card. Same rules, batched across your latest synced mail.
 - `src/components/ihost/*` — one component per concern (arrival, classification badge, analysis, reply editor), each usable independently once a real Gmail Connector replaces the seed data.
 - `src/components/ui/*` — shadcn-pattern primitives (Button, Textarea, Card, Badge), hand-written rather than pulled via the shadcn CLI, because `ui.shadcn.com` isn't reachable from this build environment's network policy. Same conventions (cva variants, Radix Slot, Tailwind tokens) — a real shadcn CLI run against these files would recognize them as its own output.
 

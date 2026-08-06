@@ -6,17 +6,10 @@ import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { SidebarNav } from "@/components/shell/sidebar-nav";
+import { AutoRefresh } from "@/components/shell/auto-refresh";
+import { Logo } from "@/components/shell/logo";
 import { UserMenu } from "@/components/auth/user-menu";
 import type { SessionUser } from "@/types/auth";
-
-function Wordmark() {
-  return (
-    <div className="flex items-center gap-2">
-      <span className="h-2 w-2 rounded-full bg-accent" />
-      <span className="text-[13px] font-semibold tracking-wide">HostOS</span>
-    </div>
-  );
-}
 
 export function AppShell({
   children,
@@ -29,10 +22,11 @@ export function AppShell({
 
   return (
     <div className="min-h-screen">
+      <AutoRefresh />
       {/* Desktop rail */}
       <aside className="fixed inset-y-0 left-0 hidden w-56 flex-col border-r border-border px-4 py-5 md:flex">
         <div className="px-1">
-          <Wordmark />
+          <Logo size="sm" />
         </div>
         <div className="mt-8 flex-1">
           <SidebarNav />
@@ -51,7 +45,7 @@ export function AppShell({
 
       {/* Mobile top bar */}
       <div className="sticky top-0 z-30 flex items-center justify-between border-b border-border bg-background/90 px-4 py-3 backdrop-blur md:hidden">
-        <Wordmark />
+        <Logo size="sm" />
         <div className="flex items-center gap-1.5">
           <UserMenu user={user} />
           <ThemeToggle />
@@ -86,7 +80,7 @@ export function AppShell({
               className="fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-border bg-background px-4 py-5 md:hidden"
             >
               <div className="flex items-center justify-between px-1">
-                <Wordmark />
+                <Logo size="sm" />
                 <Button
                   variant="ghost"
                   size="icon"

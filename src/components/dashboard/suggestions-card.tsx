@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Sparkles } from "lucide-react";
+import { CheckCircle2, Sparkles } from "lucide-react";
 import { DashboardCard } from "@/components/dashboard/dashboard-card";
 import { CardEmptyState } from "@/components/dashboard/card-empty-state";
 import { Badge } from "@/components/ui/badge";
@@ -29,7 +29,7 @@ export function SuggestionsCard({ suggestions }: { suggestions: Suggestion[] }) 
       className="h-full"
     >
       {suggestions.length === 0 ? (
-        <CardEmptyState message="Nothing needs your attention right now." />
+        <CardEmptyState icon={CheckCircle2} message="Nothing needs your attention right now." />
       ) : (
         <div className="space-y-4">
           {suggestions.map((s) => (

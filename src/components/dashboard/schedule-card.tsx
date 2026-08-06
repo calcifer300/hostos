@@ -25,7 +25,7 @@ export function ScheduleCard({
       className="h-full"
     >
       {entries.length === 0 ? (
-        <CardEmptyState message={emptyMessage} />
+        <CardEmptyState icon={icon} message={emptyMessage} />
       ) : (
       <div className="space-y-1">
         {entries.map((entry) => (
@@ -44,8 +44,10 @@ export function ScheduleCard({
             </div>
             <div className="shrink-0 text-right">
               <p className="text-[13px] font-medium tabular-nums">{entry.time}</p>
-              {!entry.ready && (
-                <p className="text-[11px] font-medium text-warning">{notReadyLabel}</p>
+              {entry.needsResponse ? (
+                <p className="text-[11px] font-medium text-danger">Guest waiting</p>
+              ) : (
+                !entry.ready && <p className="text-[11px] font-medium text-warning">{notReadyLabel}</p>
               )}
             </div>
           </div>

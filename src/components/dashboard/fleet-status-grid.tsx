@@ -12,11 +12,19 @@ const statusMeta: Record<VehicleStatus, { label: string; dot: string; text: stri
   maintenance: { label: "Maintenance", dot: "bg-danger", text: "text-danger" },
 };
 
-export function FleetStatusGrid({ vehicles }: { vehicles: FleetVehicle[] }) {
+export function FleetStatusGrid({
+  vehicles,
+  title = "Fleet status",
+  emptyMessage = "No vehicles identified yet. Vehicles appear here once your synced Turo mail names them.",
+}: {
+  vehicles: FleetVehicle[];
+  title?: string;
+  emptyMessage?: string;
+}) {
   return (
-    <DashboardCard icon={Car} title="Fleet status">
+    <DashboardCard icon={Car} title={title}>
       {vehicles.length === 0 ? (
-        <CardEmptyState message="No vehicles identified yet. Vehicles appear here once your synced Turo mail names them." />
+        <CardEmptyState icon={Car} message={emptyMessage} />
       ) : (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {vehicles.map((v) => {

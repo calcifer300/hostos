@@ -16,7 +16,7 @@ export function ActivityCard({ activity }: { activity: ActivityEntry[] }) {
   return (
     <DashboardCard icon={Activity} title="Recent activity" className="h-full">
       {activity.length === 0 ? (
-        <CardEmptyState message="Nothing synced yet. Sync Gmail from the Inbox to populate your activity feed." />
+        <CardEmptyState icon={Activity} message="Nothing synced yet. Sync Gmail from the Inbox to populate your activity feed." />
       ) : (
         <div className="space-y-4">
           {activity.map((entry, i) => {

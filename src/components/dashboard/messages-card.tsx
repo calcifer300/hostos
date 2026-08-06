@@ -1,4 +1,4 @@
-import { MessageCircle } from "lucide-react";
+import { CheckCircle2, MessageCircle } from "lucide-react";
 import { DashboardCard } from "@/components/dashboard/dashboard-card";
 import { CardEmptyState } from "@/components/dashboard/card-empty-state";
 import { Badge } from "@/components/ui/badge";
@@ -25,7 +25,7 @@ export function MessagesCard({ messages }: { messages: AttentionMessage[] }) {
       className="h-full"
     >
       {messages.length === 0 ? (
-        <CardEmptyState message="No unread guest messages. You're caught up." />
+        <CardEmptyState icon={CheckCircle2} message="No unread guest messages. You're caught up." />
       ) : (
         <div className="space-y-1">
           {messages.map((m) => (

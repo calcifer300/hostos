@@ -43,7 +43,14 @@ export default async function InsightsPage() {
   const session = await auth();
   const email = session?.user?.email ?? null;
 
-  if (!email) {
+  const data = await getDashboardData(email);
+
+  // Fleet health, reservations, and vehicle counts all come from the
+  // HostOS Companion extension too, not just Gmail — gating this whole
+  // page on a Google session hid real, already-synced Companion data from
+  // a Companion-only host. Only the per-event-kind breakdown below stays
+  // Gmail-only, since Companion doesn't send that shape of data.
+  if (!data.hasSyncedData) {
     return (
       <div className="mx-auto w-full max-w-4xl">
         <div className="mb-8">
@@ -54,14 +61,12 @@ export default async function InsightsPage() {
         </div>
         <ConnectGoogleNotice
           icon={BarChart3}
-          title="Connect Google for insights"
-          description="Insights are computed from your synced Gmail activity. Connect a Google account to see real numbers here."
+          title="Connect a data source for insights"
+          description="Insights are computed from your synced Companion trips or Gmail activity. Pair the HostOS Companion extension or connect Google from Connectors to see real numbers here."
         />
       </div>
     );
   }
-
-  const data = await getDashboardData(email);
 
   const eventCounts = data.events.reduce<Partial<Record<TuroEventKind, number>>>((acc, e) => {
     acc[e.kind] = (acc[e.kind] ?? 0) + 1;
@@ -82,7 +87,7 @@ export default async function InsightsPage() {
       <div className="mb-8">
         <h1 className="text-[28px] font-semibold tracking-tight">Insights</h1>
         <p className="mt-1 text-[14px] leading-relaxed text-muted-foreground">
-          How your fleet is actually running, from your synced Gmail activity.
+          How your fleet is actually running, from synced Companion and Gmail activity.
         </p>
       </div>
 
@@ -93,7 +98,7 @@ export default async function InsightsPage() {
           value={data.fleetHealth.responseBacklog}
           sub="unread over 2h"
         />
-        <StatTile label="Vehicles tracked" value={data.vehicles.length} sub="from synced mail" />
+        <StatTile label="Vehicles tracked" value={data.vehicles.length} sub="from synced data" />
         <StatTile
           label="Total reservations"
           value={data.reservations.length}

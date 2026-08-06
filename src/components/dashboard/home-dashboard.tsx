@@ -12,8 +12,9 @@ import { CalendarTimelineCard } from "@/components/dashboard/calendar-timeline-c
 import { ActivityCard } from "@/components/dashboard/activity-card";
 import { SuggestionsCard } from "@/components/dashboard/suggestions-card";
 import { FleetStatusGrid } from "@/components/dashboard/fleet-status-grid";
+import { VehicleOperationsTimeline } from "@/components/dashboard/vehicle-operations-timeline";
 import type { DashboardData } from "@/lib/dashboard/queries";
-import type { TripMessage } from "@/lib/messages/queries";
+import type { GuestConversation } from "@/lib/messages/queries";
 import type { InboundTuroEmail } from "@/types/ihost";
 
 const container = {
@@ -41,7 +42,7 @@ export function HomeDashboard({
 }: {
   userFirstName?: string | null;
   initialEmail?: InboundTuroEmail | null;
-  initialGuestMessages: TripMessage[];
+  initialGuestMessages: GuestConversation[];
   data: DashboardData;
 }) {
   return (
@@ -107,8 +108,16 @@ export function HomeDashboard({
         </motion.div>
       </div>
 
+      <motion.div variants={item}>
+        <VehicleOperationsTimeline days={data.operationsTimeline} />
+      </motion.div>
+
       <motion.div variants={item} className="pb-4">
-        <FleetStatusGrid vehicles={data.vehicles} />
+        <FleetStatusGrid
+          vehicles={data.unscheduledVehicles}
+          title="Unscheduled vehicles"
+          emptyMessage="Every vehicle has a pickup or return on the books — nothing sitting idle."
+        />
       </motion.div>
     </motion.div>
   );

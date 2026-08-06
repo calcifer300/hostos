@@ -16,7 +16,7 @@ export function CalendarTimelineCard({ timeline }: { timeline: TimelineEvent[] }
   return (
     <DashboardCard icon={CalendarClock} title="Today's timeline">
       {timeline.length === 0 ? (
-        <CardEmptyState message="No pickups, returns, or messages dated today in your synced mail." />
+        <CardEmptyState icon={CalendarClock} message="No pickups, returns, or messages dated today in your synced mail." />
       ) : (
         <div className="flex gap-6 overflow-x-auto pb-1">
           {timeline.map((event, i) => {

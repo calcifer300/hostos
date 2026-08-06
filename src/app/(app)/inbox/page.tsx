@@ -1,14 +1,31 @@
 import { Inbox as InboxIcon } from "lucide-react";
-import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { getSyncedEmails } from "@/lib/gmail/queries";
 import { SyncGmailButton } from "@/components/inbox/sync-gmail-button";
 import { InboxList } from "@/components/inbox/inbox-list";
+import { ConnectGoogleNotice } from "@/components/shell/connect-google-notice";
 
 export default async function InboxPage() {
   const session = await auth();
-  const email = session?.user?.email;
-  if (!email) redirect("/login");
+  const email = session?.user?.email ?? null;
+
+  if (!email) {
+    return (
+      <div className="mx-auto w-full max-w-3xl">
+        <div className="mb-8">
+          <h1 className="text-[28px] font-semibold tracking-tight">Inbox</h1>
+          <p className="mt-1 text-[14px] text-muted-foreground">
+            Every message iHost has synced from your connected Gmail account.
+          </p>
+        </div>
+        <ConnectGoogleNotice
+          icon={InboxIcon}
+          title="Connect Google to see your inbox"
+          description="The Inbox is built from your synced Gmail messages. Connect a Google account to start syncing."
+        />
+      </div>
+    );
+  }
 
   const messages = await getSyncedEmails(email);
 

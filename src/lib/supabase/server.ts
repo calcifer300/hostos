@@ -38,3 +38,18 @@ export function getSupabaseAdmin(): SupabaseClient {
 export function isSupabaseConfigured(): boolean {
   return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
 }
+
+/**
+ * True when a Supabase query failed because the table doesn't exist yet
+ * (migration not run) — a setup step, not a bug, so callers should degrade
+ * quietly instead of logging.
+ *
+ * `PGRST205` ("Could not find the table … in the schema cache") is what
+ * PostgREST actually returns for this — every query in this app goes
+ * through the `.from()` REST client, never a raw Postgres connection, so
+ * the raw Postgres code `42P01` never actually appears here. Checking both
+ * is cheap insurance; `42P01` is kept in case that ever changes.
+ */
+export function isUndefinedTableError(error: { code?: string } | null | undefined): boolean {
+  return error?.code === "PGRST205" || error?.code === "42P01";
+}

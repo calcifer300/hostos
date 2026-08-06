@@ -1,44 +1,53 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 
+/*
+ * HostOS design system — Apple-premium: grayscale chrome (gray / white /
+ * black) with a single system-blue accent, matching Apple's own iOS/macOS
+ * system colors exactly (systemBlue/systemGreen/systemRed/systemOrange) so
+ * status colors read as native rather than decorative. Replaces the
+ * earlier "Project Aurora" palette's warmer off-black/off-white and
+ * multi-hue accent with a cooler, more restrained neutral scale.
+ */
+
 :root {
-  --background: #FAFAF9;
-  --foreground: #171716;
+  --background: #F5F5F7;
+  --foreground: #1D1D1F;
   --card: #FFFFFF;
-  --card-foreground: #171716;
-  --muted: #F1F0ED;
-  --muted-foreground: #6B6A66;
-  --border: #E5E4E0;
-  --accent: #0071E3;
+  --card-foreground: #1D1D1F;
+  --muted: #F0F0F2;
+  --muted-foreground: #6E6E73;
+  --border: #D8D8DC;
+  --accent: #007AFF;
   --accent-foreground: #FFFFFF;
-  --success: #3B6D11;
-  --success-bg: #EAF3DE;
-  --danger: #A32D2D;
-  --danger-bg: #FCEBEB;
-  --warning: #9A6700;
-  --warning-bg: #FBF0DC;
+  --success: #248A3D;
+  --success-bg: #E7F6EA;
+  --danger: #D70015;
+  --danger-bg: #FCE8E8;
+  --warning: #C25A00;
+  --warning-bg: #FCEEDD;
   --radius: 0.75rem;
   --radius-xl: 1.25rem;
-  --shadow-card: 0 1px 2px rgba(23, 23, 22, 0.04), 0 8px 24px -12px rgba(23, 23, 22, 0.08);
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px -12px rgba(0, 0, 0, 0.08);
 }
 
 .dark {
-  --background: #0A0A0C;
-  --foreground: #F2F1EE;
-  --card: #17171A;
-  --card-foreground: #F2F1EE;
-  --muted: #1A1A1D;
-  --muted-foreground: #8F8E8A;
-  --border: #26262A;
+  --background: #000000;
+  --foreground: #F5F5F7;
+  --card: #1C1C1E;
+  --card-foreground: #F5F5F7;
+  --muted: #2C2C2E;
+  --muted-foreground: #98989D;
+  --border: #38383A;
   --accent: #0A84FF;
   --accent-foreground: #FFFFFF;
-  --success: #7BC48F;
-  --success-bg: #16241A;
-  --danger: #E5A5A0;
-  --danger-bg: #2A1D1D;
-  --warning: #F0C060;
-  --warning-bg: #2A2213;
-  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.2), 0 12px 32px -14px rgba(0, 0, 0, 0.55);
+  --success: #30D158;
+  --success-bg: #14261A;
+  --danger: #FF453A;
+  --danger-bg: #2C1618;
+  --warning: #FF9F0A;
+  --warning-bg: #2B1F0E;
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 32px -14px rgba(0, 0, 0, 0.7);
 }
 
 @theme inline {

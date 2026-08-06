@@ -37,6 +37,22 @@ export interface IHostAnalysis {
   escalateReason: string | null;
 }
 
+/**
+ * iHost's "start my day" digest across the newest synced Gmail messages.
+ * Deliberately structured rather than one prose blob so the dashboard can
+ * lay it out properly instead of rendering a wall of model text.
+ */
+export interface IHostBriefing {
+  /** One sentence covering the whole inbox, e.g. "You received four guest messages today." */
+  headline: string;
+  /** One short line per noteworthy message. */
+  highlights: string[];
+  /** What the host should actually do, most important first. */
+  priorities: string[];
+  /** How many synced messages the briefing was generated from. */
+  messageCount: number;
+}
+
 /** The host's operating context. Deliberately small for v0.1 — see Knowledge Base article in the roadmap. */
 export interface HostKnowledgeBase {
   checkInProcess: string;

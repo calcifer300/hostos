@@ -31,9 +31,7 @@ export function GreetingHeader({ firstName }: { firstName?: string | null }) {
           {greeting}
           {firstName ? `, ${firstName}` : ""}.
         </h1>
-        <p className="mt-1.5 text-[15px] text-muted-foreground">
-          Here&rsquo;s everything that matters before you start your day.
-        </p>
+        <p className="mt-1.5 text-[15px] text-muted-foreground">Everything is under control.</p>
       </div>
       <div className="flex items-center gap-1.5 self-start rounded-full border border-border bg-card px-3 py-1.5 text-[12.5px] text-muted-foreground sm:self-auto">
         <span className="relative flex h-1.5 w-1.5">

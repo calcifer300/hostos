@@ -8,17 +8,27 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { SidebarNav } from "@/components/shell/sidebar-nav";
 import { AutoRefresh } from "@/components/shell/auto-refresh";
 import { Logo } from "@/components/shell/logo";
+import { TopBar } from "@/components/shell/top-bar";
 import { UserMenu } from "@/components/auth/user-menu";
 import type { SessionUser } from "@/types/auth";
+import type { DashboardData } from "@/lib/dashboard/queries";
 
 export function AppShell({
   children,
   user,
+  data,
 }: {
   children: React.ReactNode;
   user: SessionUser | null;
+  data: DashboardData;
 }) {
   const [drawerOpen, setDrawerOpen] = React.useState(false);
+
+  const navCounts: Record<string, number> = {
+    "/operations": data.pickups.length + data.returns.length + data.overdueReturns.length,
+    "/messages": data.messages.length,
+    "/butler": data.suggestions.length,
+  };
 
   return (
     <div className="min-h-screen">
@@ -29,7 +39,7 @@ export function AppShell({
           <Logo size="sm" />
         </div>
         <div className="mt-8 flex-1">
-          <SidebarNav />
+          <SidebarNav counts={navCounts} />
         </div>
         <div className="flex items-center justify-between px-1">
           <span className="flex items-center gap-1.5 text-[11.5px] text-muted-foreground">
@@ -91,7 +101,7 @@ export function AppShell({
                 </Button>
               </div>
               <div className="mt-8">
-                <SidebarNav onNavigate={() => setDrawerOpen(false)} />
+                <SidebarNav counts={navCounts} onNavigate={() => setDrawerOpen(false)} />
               </div>
             </motion.div>
           </>
@@ -99,12 +109,10 @@ export function AppShell({
       </AnimatePresence>
 
       {/* Content */}
-      <main className="px-6 pb-24 pt-10 md:pl-64 md:pr-8 md:pt-12">
-        <div className="mb-6 hidden justify-end md:flex">
-          <UserMenu user={user} />
-        </div>
-        {children}
-      </main>
+      <div className="md:pl-56">
+        <TopBar vehicles={data.vehicles} messages={data.messages} unreadNotifications={data.fleetHealth.unreadCount} user={user} />
+        <main className="px-6 pb-24 pt-10 md:px-8 md:pt-8">{children}</main>
+      </div>
     </div>
   );
 }

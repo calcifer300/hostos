@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle } from "lucide-react";
 import { DashboardCard } from "@/components/dashboard/dashboard-card";
 import { CardEmptyState } from "@/components/dashboard/card-empty-state";
+import { CopyButton } from "@/components/ui/copy-button";
 import { cn } from "@/lib/utils";
 import type { GuestConversation } from "@/lib/messages/queries";
 
@@ -91,7 +92,7 @@ export function GuestMessagesCard({ initialMessages }: { initialMessages: GuestC
               >
                 <Link
                   href={`/messages/${encodeURIComponent(c.tripId)}`}
-                  className="-mx-1.5 block rounded-lg px-1.5 py-2.5 transition-colors hover:bg-muted/60"
+                  className="group -mx-1.5 block rounded-lg px-1.5 py-2.5 transition-colors hover:bg-muted/60"
                 >
                   <div className="flex items-center justify-between gap-2">
                     <p className="flex min-w-0 items-center gap-1.5 truncate text-[13.5px] font-medium">
@@ -111,12 +112,19 @@ export function GuestMessagesCard({ initialMessages }: { initialMessages: GuestC
                   </div>
                   <p
                     className={cn(
-                      "mt-0.5 truncate text-[12.5px] leading-relaxed text-muted-foreground",
+                      "mt-0.5 flex items-start gap-1 text-[12.5px] leading-relaxed text-muted-foreground",
                       c.unread && "text-foreground/80"
                     )}
                   >
-                    {c.fromHost && <span className="text-muted-foreground/70">You: </span>}
-                    {c.preview}
+                    <span className="min-w-0 flex-1 truncate">
+                      {c.fromHost && <span className="text-muted-foreground/70">You: </span>}
+                      {c.preview}
+                    </span>
+                    <CopyButton
+                      value={c.preview}
+                      label="message"
+                      className="mt-0.5 opacity-0 group-hover:opacity-100"
+                    />
                   </p>
                 </Link>
               </motion.div>

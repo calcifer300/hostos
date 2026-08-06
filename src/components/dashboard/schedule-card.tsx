@@ -2,6 +2,7 @@ import type { LucideIcon } from "lucide-react";
 import { DashboardCard } from "@/components/dashboard/dashboard-card";
 import { CardEmptyState } from "@/components/dashboard/card-empty-state";
 import { Badge } from "@/components/ui/badge";
+import { CopyButton } from "@/components/ui/copy-button";
 import type { ScheduleEntry } from "@/lib/dashboard/queries";
 
 export function ScheduleCard({
@@ -31,13 +32,20 @@ export function ScheduleCard({
         {entries.map((entry) => (
           <div
             key={entry.id}
-            className="flex items-center gap-3 rounded-lg px-1.5 py-2 -mx-1.5 transition-colors hover:bg-muted/60"
+            className="group flex items-center gap-3 rounded-lg px-1.5 py-2 -mx-1.5 transition-colors hover:bg-muted/60"
           >
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent/10 text-[12.5px] font-medium text-accent">
               {entry.guestName.charAt(0)}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-[13.5px] font-medium">{entry.guestName}</p>
+              <p className="flex items-center gap-1 truncate text-[13.5px] font-medium">
+                <span className="truncate">{entry.guestName}</span>
+                <CopyButton
+                  value={`${entry.guestName} · ${entry.vehicle} · ${entry.time}`}
+                  label="pickup/return details"
+                  className="opacity-0 group-hover:opacity-100"
+                />
+              </p>
               <p className="truncate text-[12.5px] text-muted-foreground">
                 {entry.vehicle} &middot; {entry.location}
               </p>

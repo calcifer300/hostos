@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowLeft, ChevronDown, Inbox, KeyRound, Loader2, LogIn, Sparkles } from "lucide-react";
+import { AlertTriangle, ArrowLeft, ChevronDown, Inbox, KeyRound, Loader2, LogIn, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -186,37 +186,44 @@ export function AiBriefingCard({ initialEmail }: { initialEmail?: InboundTuroEma
             )}
 
             {briefingState.status === "ready" && (
-              <motion.div key="ready" {...fade} className="space-y-5">
-                <p className="text-[17px] font-medium leading-snug tracking-tight">
+              <motion.div key="ready" {...fade} className="space-y-1">
+                <p className="mb-3 text-[13.5px] font-medium leading-snug text-foreground/90">
                   {briefingState.briefing.headline}
                 </p>
 
-                {briefingState.briefing.highlights.length > 0 && (
-                  <ul className="space-y-2">
-                    {briefingState.briefing.highlights.map((line, i) => (
-                      <li key={i} className="flex gap-2.5 text-[14px] leading-relaxed">
-                        <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-muted-foreground" />
-                        {line}
-                      </li>
-                    ))}
-                  </ul>
-                )}
+                {briefingState.briefing.highlights.map((line, i) => (
+                  <motion.div
+                    key={`h-${i}`}
+                    initial={{ opacity: 0, x: -6 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.35, delay: 0.06 * i, ease: [0.16, 1, 0.3, 1] }}
+                    className="flex items-start gap-3 rounded-lg px-1.5 py-2 -mx-1.5 transition-colors hover:bg-muted/50"
+                  >
+                    <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent/10">
+                      <Sparkles className="h-3 w-3 text-accent" strokeWidth={1.75} />
+                    </div>
+                    <p className="text-[13px] leading-relaxed text-foreground/85">{line}</p>
+                  </motion.div>
+                ))}
 
-                {briefingState.briefing.priorities.length > 0 && (
-                  <div className="rounded-xl border border-border bg-background/40 p-4">
-                    <p className="mb-2.5 text-[11.5px] font-semibold uppercase tracking-wide text-muted-foreground">
-                      Priority
-                    </p>
-                    <ul className="space-y-2">
-                      {briefingState.briefing.priorities.map((line, i) => (
-                        <li key={i} className="flex gap-2.5 text-[14px] leading-relaxed">
-                          <span className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-accent" />
-                          {line}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+                {briefingState.briefing.priorities.map((line, i) => (
+                  <motion.div
+                    key={`p-${i}`}
+                    initial={{ opacity: 0, x: -6 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{
+                      duration: 0.35,
+                      delay: 0.06 * (briefingState.briefing.highlights.length + i),
+                      ease: [0.16, 1, 0.3, 1],
+                    }}
+                    className="flex items-start gap-3 rounded-lg px-1.5 py-2 -mx-1.5 transition-colors hover:bg-muted/50"
+                  >
+                    <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-warning/10">
+                      <AlertTriangle className="h-3 w-3 text-warning" strokeWidth={1.75} />
+                    </div>
+                    <p className="text-[13px] leading-relaxed text-foreground/85">{line}</p>
+                  </motion.div>
+                ))}
               </motion.div>
             )}
 

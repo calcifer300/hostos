@@ -1,4 +1,5 @@
 import "server-only";
+import { cache } from "react";
 import { getSyncedEmails } from "@/lib/gmail/queries";
 import { buildReservations, filterToHost, parseEmails } from "@/lib/turo/parse";
 import { DEFAULT_HOST_ID, getHost } from "@/lib/host/queries";
@@ -116,6 +117,11 @@ export interface OperationsDay {
   entries: OperationsVehicleEntry[];
 }
 
+export interface OccupancyPoint {
+  label: string;
+  rate: number;
+}
+
 export interface DashboardData {
   hasSyncedData: boolean;
   fleetHealth: FleetHealth;
@@ -128,6 +134,8 @@ export interface DashboardData {
   vehicles: FleetVehicle[];
   operationsTimeline: OperationsDay[];
   unscheduledVehicles: FleetVehicle[];
+  /** Last 7 days, oldest first — % of the fleet with a synced trip window covering that day. */
+  occupancyTrend: OccupancyPoint[];
   /** Checkouts whose scheduled return time has already passed — any day, not just today. */
   overdueReturns: ScheduleEntry[];
   reservations: TuroReservation[];
@@ -935,13 +943,49 @@ const EMPTY_HEALTH: FleetHealth = {
 };
 
 /**
+ * % of the fleet with a synced trip window covering each of the last 7
+ * days — genuinely computed from reservations that carry both a start and
+ * end, not estimated. Reservations Companion hasn't resolved a real
+ * start/end timestamp for (see resolveWhen's date-label fallback upstream)
+ * simply don't count toward any day here rather than being guessed at,
+ * so the trend under-reports rather than fabricates.
+ */
+function computeOccupancyTrend(reservations: TuroReservation[], fleetSize: number): OccupancyPoint[] {
+  if (fleetSize === 0) return [];
+
+  const withWindow = reservations.filter(
+    (r): r is TuroReservation & { startsAt: string; endsAt: string } =>
+      r.status !== "cancelled" && !!r.startsAt && !!r.endsAt
+  );
+
+  const points: OccupancyPoint[] = [];
+  for (let i = 6; i >= 0; i--) {
+    const dayIso = new Date(Date.now() - i * 24 * HOUR_MS).toISOString();
+    const dayKey = hostDateKey(dayIso);
+
+    const bookedCount = withWindow.filter((r) => {
+      const startKey = hostDateKey(r.startsAt);
+      const endKey = hostDateKey(r.endsAt);
+      return startKey <= dayKey && dayKey <= endKey;
+    }).length;
+
+    const rate = Math.round((Math.min(bookedCount, fleetSize) / fleetSize) * 100);
+    const label = i === 0 ? "Today" : new Date(dayIso).toLocaleDateString("en-US", { weekday: "short", timeZone: HOST_TIMEZONE });
+    points.push({ label, rate });
+  }
+  return points;
+}
+
+/**
  * Single entry point for every dashboard page. Reads synced Gmail (when a
  * Google account is connected) and the Companion extension's trips/vehicles
  * (host_id-keyed, no Google account required) and derives every widget from
  * whichever is present. Never throws — an unsynced, un-migrated, or
  * not-yet-connected install renders empty states, not an error page.
  */
-export async function getDashboardData(userEmail: string | null): Promise<DashboardData> {
+export const getDashboardData = cache(async function getDashboardData(
+  userEmail: string | null
+): Promise<DashboardData> {
   const [allEmails, companionTrips, companionVehiclesRaw, host, companionConversations] = await Promise.all([
     userEmail ? getSyncedEmails(userEmail, 200) : Promise.resolve([]),
     getCompanionTrips(DEFAULT_HOST_ID),
@@ -987,6 +1031,7 @@ export async function getDashboardData(userEmail: string | null): Promise<Dashbo
       vehicles: [],
       operationsTimeline: [],
       unscheduledVehicles: [],
+      occupancyTrend: [],
       overdueReturns: [],
       reservations: [],
       events: [],
@@ -1023,8 +1068,9 @@ export async function getDashboardData(userEmail: string | null): Promise<Dashbo
     vehicles,
     operationsTimeline: buildOperationsTimeline(vehicles),
     unscheduledVehicles: vehicles.filter((v) => !v.nextEventAt),
+    occupancyTrend: computeOccupancyTrend(reservations, vehicles.length),
     overdueReturns: companionOverdueReturns(companionTrips, unreadTripIds),
     reservations,
     events,
   };
-}
+});

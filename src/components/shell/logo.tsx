@@ -16,7 +16,7 @@ export function Logo({
   withTagline?: boolean;
   className?: string;
 }) {
-  const wordmarkSize = size === "lg" ? "text-[28px]" : size === "sm" ? "text-[13px]" : "text-[15px]";
+  const wordmarkSize = size === "lg" ? "text-[32px]" : size === "sm" ? "text-[17px]" : "text-[19px]";
 
   return (
     <div className={cn("flex flex-col", className)}>

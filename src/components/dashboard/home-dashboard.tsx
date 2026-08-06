@@ -1,18 +1,19 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { LogOut, LogIn } from "lucide-react";
+import { LogOut, LogIn, Calendar, Car, MessageCircle, AlertTriangle } from "lucide-react";
 import { GreetingHeader } from "@/components/dashboard/greeting-header";
 import { GuestMessagesCard } from "@/components/dashboard/guest-messages-card";
 import { AiBriefingCard } from "@/components/dashboard/ai-briefing-card";
-import { FleetHealthCard } from "@/components/dashboard/fleet-health-card";
 import { ScheduleCard } from "@/components/dashboard/schedule-card";
-import { MessagesCard } from "@/components/dashboard/messages-card";
-import { CalendarTimelineCard } from "@/components/dashboard/calendar-timeline-card";
 import { ActivityCard } from "@/components/dashboard/activity-card";
 import { SuggestionsCard } from "@/components/dashboard/suggestions-card";
 import { FleetStatusGrid } from "@/components/dashboard/fleet-status-grid";
 import { VehicleOperationsTimeline } from "@/components/dashboard/vehicle-operations-timeline";
+import { StatCard } from "@/components/dashboard/stat-card";
+import { FleetOverviewCard } from "@/components/dashboard/fleet-overview-card";
+import { OccupancyRateCard } from "@/components/dashboard/occupancy-rate-card";
+import { TaskPriorityCard } from "@/components/dashboard/task-priority-card";
 import type { DashboardData } from "@/lib/dashboard/queries";
 import type { GuestConversation } from "@/lib/messages/queries";
 import type { InboundTuroEmail } from "@/types/ihost";
@@ -34,6 +35,16 @@ const item = {
   },
 };
 
+/**
+ * FleetHealthCard, MessagesCard, and CalendarTimelineCard used to render
+ * here too. Once StatCard/FleetOverviewCard/TaskPriorityCard/ScheduleCard/
+ * VehicleOperationsTimeline landed, they were showing the same numbers a
+ * second time (FleetHealthCard's breakdown = the new stat row, MessagesCard
+ * = GuestMessagesCard, CalendarTimelineCard = ScheduleCard + the operations
+ * timeline) — removed rather than left as clutter. Their components are
+ * still in the tree in case another page wants them; only this page's
+ * usage changed.
+ */
 export function HomeDashboard({
   userFirstName,
   initialEmail,
@@ -56,22 +67,66 @@ export function HomeDashboard({
         <GreetingHeader firstName={userFirstName} />
       </motion.div>
 
+      {/* Every number here links to the page that explains it — see each
+          StatCard's href — rather than sitting as inert display. */}
+      <motion.div variants={item} className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <StatCard
+          icon={Calendar}
+          label="Today's trips"
+          value={data.pickups.length + data.returns.length}
+          breakdown={`${data.pickups.length} pickups · ${data.returns.length} returns`}
+          href="/operations"
+          tone="accent"
+        />
+        <StatCard
+          icon={Car}
+          label="Active vehicles"
+          value={`${data.vehicles.filter((v) => v.status === "on_trip").length}/${data.vehicles.length}`}
+          breakdown={`${data.vehicles.filter((v) => v.status === "available").length} available now`}
+          href="/fleet"
+          tone="success"
+        />
+        <StatCard
+          icon={MessageCircle}
+          label="Guest messages"
+          value={data.messages.length}
+          breakdown={data.messages.length > 0 ? "Waiting on a reply" : "You're caught up"}
+          href="/messages"
+          tone={data.messages.length > 0 ? "danger" : "success"}
+        />
+        <StatCard
+          icon={AlertTriangle}
+          label="Needs attention"
+          value={data.suggestions.length + data.overdueReturns.length}
+          breakdown={`${data.overdueReturns.length} overdue · ${data.suggestions.length} suggested`}
+          href="/butler"
+          tone={data.overdueReturns.length > 0 ? "danger" : "warning"}
+        />
+      </motion.div>
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <motion.div variants={item}>
+          <FleetOverviewCard vehicles={data.vehicles} />
+        </motion.div>
+        <motion.div variants={item}>
+          <OccupancyRateCard trend={data.occupancyTrend} />
+        </motion.div>
+        <motion.div variants={item}>
+          <TaskPriorityCard suggestions={data.suggestions} />
+        </motion.div>
+      </div>
+
       {/* Guest messages come first, full width — the thing that actually
           needs a human's attention, ahead of anything AI-generated. */}
       <motion.div variants={item}>
         <GuestMessagesCard initialMessages={initialGuestMessages} />
       </motion.div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <motion.div variants={item} className="lg:col-span-2">
-          <AiBriefingCard initialEmail={initialEmail} />
-        </motion.div>
-        <motion.div variants={item}>
-          <FleetHealthCard health={data.fleetHealth} />
-        </motion.div>
-      </div>
+      <motion.div variants={item}>
+        <AiBriefingCard initialEmail={initialEmail} />
+      </motion.div>
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <motion.div variants={item}>
           <ScheduleCard
             icon={LogOut}
@@ -90,14 +145,7 @@ export function HomeDashboard({
             emptyMessage="No returns dated today in your synced mail."
           />
         </motion.div>
-        <motion.div variants={item}>
-          <MessagesCard messages={data.messages} />
-        </motion.div>
       </div>
-
-      <motion.div variants={item}>
-        <CalendarTimelineCard timeline={data.timeline} />
-      </motion.div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <motion.div variants={item} className="lg:col-span-2">

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Car } from "lucide-react";
 import { DashboardCard } from "@/components/dashboard/dashboard-card";
 import { CardEmptyState } from "@/components/dashboard/card-empty-state";
+import { CopyButton } from "@/components/ui/copy-button";
 import { cn, formatRelativeTime } from "@/lib/utils";
 import type { FleetVehicle, VehicleStatus } from "@/lib/dashboard/queries";
 
@@ -33,10 +34,13 @@ export function FleetStatusGrid({
               <Link
                 key={v.id}
                 href={`/fleet/${encodeURIComponent(v.name)}`}
-                className="flex items-center justify-between gap-3 rounded-lg border border-border p-3.5 transition-colors hover:border-accent/40 hover:bg-muted/40"
+                className="group flex items-center justify-between gap-3 rounded-lg border border-border p-3.5 transition-colors hover:border-accent/40 hover:bg-muted/40"
               >
                 <div className="min-w-0">
-                  <p className="truncate text-[13.5px] font-medium">{v.name}</p>
+                  <p className="flex items-center gap-1 text-[13.5px] font-medium">
+                    <span className="truncate">{v.name}</span>
+                    <CopyButton value={v.name} label="vehicle name" className="opacity-0 group-hover:opacity-100" />
+                  </p>
                   {v.nextEventLabel ? (
                     <p className="mt-0.5 truncate text-[12px] font-medium text-accent">
                       {v.nextEventLabel}

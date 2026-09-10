@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { LayoutGrid, ListChecks, MessageCircle, Inbox, Car, ShieldAlert, Sparkles, BarChart3, Plug, Settings } from "lucide-react";
+import { LayoutGrid, ListChecks, MessageCircle, Inbox, Car, ShieldAlert, Sparkles, BarChart3, Plug, Settings, LayoutList, BookMarked } from "lucide-react";
 
 export interface NavItem {
   href: string;
@@ -22,6 +22,10 @@ export interface NavItem {
 export const navItems: NavItem[] = [
   { href: "/", label: "Overview", icon: LayoutGrid },
   { href: "/operations", label: "Operations", icon: ListChecks },
+  // Every fleet you are on, in one list, sorted by what needs you first.
+  // Operations is one fleet and one day; this is the co-host's worklist
+  // across all of them — the thing Karl's trackers existed to do.
+  { href: "/board", label: "Board", icon: LayoutList },
   { href: "/messages", label: "Messages", icon: MessageCircle },
   { href: "/inbox", label: "Inbox", icon: Inbox },
   { href: "/fleet", label: "Fleet", icon: Car },
@@ -31,6 +35,9 @@ export const navItems: NavItem[] = [
   { href: "/risk", label: "Risk", icon: ShieldAlert },
   { href: "/butler", label: "Butler", icon: Sparkles },
   { href: "/insights", label: "Insights", icon: BarChart3 },
+  // Turo's own published policy. Distinct from Knowledge, which is the
+  // fleet's own house rules — a reply usually needs both.
+  { href: "/library", label: "Policy", icon: BookMarked },
   { href: "/connectors", label: "Connectors", icon: Plug },
   { href: "/settings", label: "Settings", icon: Settings },
 ];

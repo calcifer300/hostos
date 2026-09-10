@@ -5,6 +5,9 @@ import { getAllUserRoles, getUserRoles } from "@/lib/roles/queries";
 import { DEV_TOOLS_ROLES } from "@/lib/roles/constants";
 import { TeamRolesSection } from "@/components/settings/team-roles-section";
 import { FleetSettings } from "@/components/settings/fleet-settings";
+import { AlertSettingsCard } from "@/components/settings/alert-settings";
+import { getAlertSettings } from "@/lib/alerts/queries";
+import { isEmailConfigured } from "@/lib/email/send";
 import { getHost } from "@/lib/host/queries";
 import {
   canEditCurrentFleet,
@@ -17,12 +20,13 @@ export default async function SettingsPage() {
   const session = await auth();
   const hostId = await getCurrentHostId();
 
-  const [myRoles, host, members, fleet, canEdit] = await Promise.all([
+  const [myRoles, host, members, fleet, canEdit, alertSettings] = await Promise.all([
     getUserRoles(session?.user?.email ?? null),
     getHost(hostId),
     getFleetMembers(hostId),
     getCurrentFleet(),
     canEditCurrentFleet(),
+    getAlertSettings(hostId),
   ]);
 
   const hasDevToolsAccess = myRoles.some((r) => DEV_TOOLS_ROLES.has(r));
@@ -52,6 +56,12 @@ export default async function SettingsPage() {
           members={members}
           canRename={isOwner && canEdit && Boolean(host)}
           isOwner={isOwner}
+        />
+
+        <AlertSettingsCard
+          initial={alertSettings}
+          canEdit={canEdit}
+          emailConfigured={isEmailConfigured()}
         />
 
         <div className="rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-card)]">

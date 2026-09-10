@@ -117,6 +117,8 @@ chrome.alarms.onAlarm.addListener((alarm) => {
         fetchWidgetSummary()
             .then((summary) => (summary && summary.ok ? alertOnSummary(summary) : 0))
             .catch((err) => console.error("[HostOS] Alert poll failed:", err));
+        // Independent of the desktop notification above — see the note there.
+        notifyAlertsByEmail();
         return;
     }
     if (alarm.name === "hostosEnrichment" || alarm.name === "hostosEnrichmentKickoff") {
@@ -186,6 +188,39 @@ async function draftReplyViaHostOS(message) {
  * already holds the host permission for the HostOS origin — a content script
  * reaching a different origin is a CORS problem waiting to happen.
  */
+/**
+ * Asks HostOS to email this fleet's outstanding alerts.
+ *
+ * Fire-and-forget alongside the desktop notification: the two are independent
+ * on purpose, so someone can want a ping on their own machine and email going
+ * to a co-host, or either without the other. HostOS decides whether email is
+ * on for this fleet, who it goes to, and — via alert_deliveries — whether each
+ * alert has already been sent.
+ */
+async function notifyAlertsByEmail() {
+    const { url, apiKey } = await getHostOSConfig();
+    if (!apiKey) return;
+
+    try {
+        const res = await fetch(url.replace(/\/+$/, "") + "/api/companion/alerts/notify", {
+            method: "POST",
+            headers: { Authorization: "Bearer " + apiKey }
+        });
+        if (!res.ok) {
+            console.warn("[HostOS] Alert email dispatch responded", res.status);
+            return;
+        }
+        const data = await res.json();
+        if (data && data.sent > 0) {
+            console.log("[HostOS] Emailed " + data.sent + " alert(s).");
+        }
+    } catch (err) {
+        // A failed dispatch is retried on the next poll; nothing is lost,
+        // because alert_deliveries only records what actually sent.
+        console.warn("[HostOS] Couldn't dispatch alert email:", err);
+    }
+}
+
 async function fetchWidgetSummary() {
     const { url, apiKey } = await getHostOSConfig();
     if (!apiKey) return { ok: true, notPaired: true };

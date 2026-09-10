@@ -324,3 +324,49 @@ export function todayInZone(zone: string, now: Date = new Date()): string {
     return now.toISOString().slice(0, 10);
   }
 }
+
+/**
+ * Resolves a Turo reservation page's schedule row into an instant.
+ *
+ * That page prints its own format — "Thu, Sep 10, 2026" and "6:00 PM" — which
+ * is neither the board's "9/10" nor the ISO shape instantFromWallTime takes.
+ * Parsed here rather than at the call site so there is one place that knows
+ * what Turo's pages look like.
+ *
+ * Returns null on anything unrecognised. A wrong instant is worse than a
+ * missing one: it overwrites a correct value with a confident lie, which is
+ * exactly how a 6:00 PM pickup came to read 7:00 PM.
+ */
+export function resolveScheduleWallTime(
+  dateStr: string,
+  timeStr: string,
+  zone: string
+): string | null {
+  const MONTHS: Record<string, number> = {
+    jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6,
+    jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12,
+  };
+
+  // "Thu, Sep 10, 2026" — the weekday is optional, the year is not.
+  const date = /(?:[A-Za-z]{3,9},?\s+)?([A-Za-z]{3,9})\s+(\d{1,2}),?\s+(\d{4})/.exec(dateStr.trim());
+  if (!date) return null;
+
+  const month = MONTHS[date[1].slice(0, 3).toLowerCase()];
+  const day = Number(date[2]);
+  const year = Number(date[3]);
+  if (!month || !day || !year) return null;
+
+  // "6:00 PM" / "6:00PM"
+  const time = /^(\d{1,2}):(\d{2})\s*([AaPp])\.?[Mm]\.?$/.exec(timeStr.trim());
+  if (!time) return null;
+
+  let hour = Number(time[1]) % 12;
+  if (time[3].toLowerCase() === "p") hour += 12;
+
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return instantFromWallTime(
+    `${year}-${pad(month)}-${pad(day)}`,
+    `${pad(hour)}:${time[2]}`,
+    zone
+  );
+}

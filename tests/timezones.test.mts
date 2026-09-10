@@ -1,4 +1,10 @@
-import { instantFromWallTime, detectTimezone, wallTime, zoneAbbr } from "../src/lib/timezones/index.ts";
+import {
+  instantFromWallTime,
+  detectTimezone,
+  wallTime,
+  zoneAbbr,
+  resolveScheduleWallTime,
+} from "../src/lib/timezones/index.ts";
 
 let fail = 0;
 const eq = (label: string, got: unknown, want: unknown) => {
@@ -46,6 +52,44 @@ eq("city not confident", detectTimezone("553 Haleakala Highway, Kahului").confid
 eq("empty is flagged", detectTimezone("").confident, false);
 eq("zoneAbbr HST",     zoneAbbr("Pacific/Honolulu"), "HST");
 
+console.log("\n=== resolveScheduleWallTime: the reservation page's own format ===");
+{
+  // "6:00 PM" on a Denver fleet is 00:00Z the next day. Resolved as Pacific —
+  // which the extension did, and then wrote over the correct value — it
+  // becomes 01:00Z and a 6:00 PM pickup reads 7:00 PM. That was a real row.
+  eq(
+    "Denver 6:00 PM",
+    resolveScheduleWallTime("Thu, Sep 10, 2026", "6:00 PM", "America/Denver"),
+    "2026-09-11T00:00:00.000Z"
+  );
+  eq(
+    "the same wall time in Pacific is an hour later in UTC",
+    resolveScheduleWallTime("Thu, Sep 10, 2026", "6:00 PM", "America/Los_Angeles"),
+    "2026-09-11T01:00:00.000Z"
+  );
+  eq(
+    "12:30 AM is after midnight, not after noon",
+    resolveScheduleWallTime("Fri, Sep 11, 2026", "12:30 AM", "America/Denver"),
+    "2026-09-11T06:30:00.000Z"
+  );
+  eq(
+    "12:00 PM is noon",
+    resolveScheduleWallTime("Thu, Sep 10, 2026", "12:00 PM", "America/Denver"),
+    "2026-09-10T18:00:00.000Z"
+  );
+  eq(
+    "the weekday is optional",
+    resolveScheduleWallTime("Sep 10, 2026", "9:30 AM", "America/Denver"),
+    "2026-09-10T15:30:00.000Z"
+  );
+  // Null, not a guess: this value OVERWRITES one the board already got right.
+  eq("an unreadable date yields null", resolveScheduleWallTime("sometime next week", "6:00 PM", "America/Denver"), null);
+  eq("an unreadable time yields null", resolveScheduleWallTime("Thu, Sep 10, 2026", "evening", "America/Denver"), null);
+}
+
+// LAST LINE OF THE FILE, deliberately. Assertions added after this guard are
+// not counted by it — the run would stay green while they failed, which is
+// the same class of bug as board.test.mts calling process.exit().
 // exitCode, never process.exit() — see the note at the end of board.test.mts.
 if (fail > 0) {
   console.error(`\n${fail} assertion(s) failed`);

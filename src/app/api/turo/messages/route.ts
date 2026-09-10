@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { resolveScheduleWallTime } from "@/lib/timezones";
 import { ingestFailureResponse, requireCompanionHost } from "@/lib/api/companion-auth";
 import { denyUnauthenticatedBrowserRequest } from "@/lib/api/browser-auth";
 import { getCurrentHostId } from "@/lib/host/context";
@@ -34,6 +35,17 @@ interface IncomingReservationMessages {
    */
   scheduleStartTs?: number | null;
   scheduleEndTs?: number | null;
+  /**
+   * The same two fields as the page PRINTED them — "Thu, Sep 10, 2026" and
+   * "6:00 PM" — which is what actually gets used.
+   *
+   * The numerics above are resolved extension-side in Pacific, so on any
+   * fleet outside that zone they land an hour or more off and overwrite a
+   * correct value. Strings carry no zone assumption, so the server can
+   * resolve them against the fleet's own.
+   */
+  scheduleStart?: { date?: string | null; time?: string | null } | null;
+  scheduleEnd?: { date?: string | null; time?: string | null } | null;
 }
 
 interface MessagesPayload {
@@ -110,12 +122,38 @@ export async function POST(req: NextRequest) {
       });
   });
 
+  /**
+   * Refines a trip's start/end from its reservation detail page.
+   *
+   * THE WALL TIME WINS OVER THE EXTENSION'S NUMBER.
+   *
+   * The extension resolves its own timestamps in Pacific — every helper in it
+   * does — and this patch writes straight over `start_ts` on a row
+   * /api/turo/sync had already stored correctly in the FLEET's zone. On a
+   * Denver fleet that moved every refreshed pickup an hour later, and it was
+   * invisible because only the handful of reservations whose detail page had
+   * been opened were affected: seven trips right, one wrong, same second.
+   *
+   * So the strings the page actually printed are resolved here, against the
+   * fleet's timezone, exactly as the board is. The numeric is still accepted
+   * so an extension that hasn't updated yet keeps working — it is just no
+   * longer preferred.
+   */
   const scheduleUpdates = reservations.flatMap((r) => {
     if (typeof r?.reservation !== "string" || !r.reservation.trim()) return [];
-    const startTs = typeof r.scheduleStartTs === "number" ? r.scheduleStartTs : null;
-    const endTs = typeof r.scheduleEndTs === "number" ? r.scheduleEndTs : null;
-    if (startTs === null && endTs === null) return [];
-    return [{ tripId: r.reservation, startTs, endTs }];
+
+    const fromWall = (wall: { date?: string | null; time?: string | null } | null | undefined) =>
+      wall?.date && wall?.time
+        ? resolveScheduleWallTime(wall.date, wall.time, host.timezone)
+        : null;
+
+    const startIso = fromWall(r.scheduleStart) ??
+      (typeof r.scheduleStartTs === "number" ? new Date(r.scheduleStartTs).toISOString() : null);
+    const endIso = fromWall(r.scheduleEnd) ??
+      (typeof r.scheduleEndTs === "number" ? new Date(r.scheduleEndTs).toISOString() : null);
+
+    if (startIso === null && endIso === null) return [];
+    return [{ tripId: r.reservation, startIso, endIso }];
   });
 
   if (incoming.length === 0 && scheduleUpdates.length === 0) {
@@ -130,10 +168,10 @@ export async function POST(req: NextRequest) {
   let scheduleUpdated = 0;
   if (scheduleUpdates.length > 0) {
     const results = await Promise.allSettled(
-      scheduleUpdates.map(async ({ tripId, startTs, endTs }) => {
+      scheduleUpdates.map(async ({ tripId, startIso, endIso }) => {
         const patch: Record<string, string> = {};
-        if (startTs !== null) patch.start_ts = new Date(startTs).toISOString();
-        if (endTs !== null) patch.end_ts = new Date(endTs).toISOString();
+        if (startIso !== null) patch.start_ts = startIso;
+        if (endIso !== null) patch.end_ts = endIso;
 
         const { error } = await supabase.from("trips").update(patch).eq("host_id", host.id).eq("id", tripId);
         if (error) throw new Error(error.message);

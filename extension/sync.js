@@ -673,6 +673,17 @@ const performSyncMessages = withGuard("performSyncMessages", async function perf
                     guestName: (scan && scan.guestName) || trip.guestName || null,
                     plate: trip.plate || null,
                     messages: hasMessages ? scan.messages : [],
+                    // The WALL time as the page printed it, alongside the numeric.
+                    //
+                    // scheduleToTimestamp resolves in Pacific — the whole
+                    // extension does — and this patch overwrites start_ts on a
+                    // row the trips sync already stored correctly in the
+                    // FLEET's zone. On a Denver fleet that quietly moved every
+                    // pickup an hour later: a 6:00 PM trip read 7:00 PM.
+                    // Sending the strings lets HostOS resolve them the same
+                    // way it resolves the board.
+                    scheduleStart: (scan && scan.schedule && scan.schedule.pickup) || null,
+                    scheduleEnd: (scan && scan.schedule && scan.schedule.return) || null,
                     scheduleStartTs: schedule.startTs,
                     scheduleEndTs: schedule.endTs
                 });
@@ -715,11 +726,41 @@ const performSyncMessages = withGuard("performSyncMessages", async function perf
 // ---------------------------------------------------------------------
 const LICENSE_CHECK_WINDOW_MS = 24 * 60 * 60 * 1000;
 
+/**
+ * Fallback only — HostOS decides this now (see performLicenseCheckSync).
+ *
+ * Kept for the case where the server can't be reached, but note what it
+ * cannot do: `startTs` is only a number when the trip card printed a clock
+ * time, which Turo does for today's trips and not for the rest. So this
+ * under-selects, badly, and that is the whole reason the sweep did nothing.
+ */
 function isLicenseCheckEligible(trip) {
     if (!trip || !trip.reservation || trip.action !== "checkin") return false;
     if (typeof trip.startTs !== "number") return false;
     const msUntilStart = trip.startTs - Date.now();
     return msUntilStart >= 0 && msUntilStart <= LICENSE_CHECK_WINDOW_MS;
+}
+
+/**
+ * The reservation ids HostOS wants a licence status for.
+ *
+ * Returns null — not an empty array — when the answer can't be obtained, so
+ * the caller can tell "nothing to check" apart from "couldn't ask" and fall
+ * back rather than silently doing nothing.
+ */
+async function fetchLicenseQueue(url, apiKey) {
+    try {
+        const res = await fetch(url.replace(/\/+$/, "") + "/api/companion/summary", {
+            headers: { Authorization: "Bearer " + apiKey }
+        });
+        if (!res.ok) return null;
+
+        const data = await res.json();
+        return Array.isArray(data.licenseQueue) ? data.licenseQueue : null;
+    } catch (err) {
+        console.warn("[HostOS] Couldn't fetch the licence queue; using the local filter.", err);
+        return null;
+    }
 }
 
 function scanReservationLicenseStatus(tabId) {
@@ -742,7 +783,32 @@ const performLicenseCheckSync = withGuard("performLicenseCheckSync", async funct
 
     const lastSync = await loadLastSyncResult();
     const trips = (lastSync && Array.isArray(lastSync.trips)) ? lastSync.trips : [];
-    const eligible = trips.filter(isLicenseCheckEligible);
+
+    /**
+     * WHICH RESERVATIONS TO CHECK IS HOSTOS'S ANSWER, NOT OURS.
+     *
+     * isLicenseCheckEligible needs a numeric startTs, which only exists for a
+     * card that printed a clock time — Turo prints one for today's trips and
+     * omits it otherwise. So the popup listed nine trips as "starting within
+     * 24h" while this filter matched none of them, on every 15-minute cycle,
+     * and license_confirmed stayed null on all but four rows out of 202.
+     *
+     * HostOS holds the real start times, resolved in the fleet's own zone, so
+     * it computes the window. The local filter stays as a fallback for a
+     * server that is unreachable or too old to answer.
+     */
+    let eligible = [];
+
+    const queue = await fetchLicenseQueue(url, apiKey);
+    if (queue) {
+        const byReservation = new Map(trips.filter((t) => t && t.reservation).map((t) => [t.reservation, t]));
+        // A queued reservation we have no scraped card for is still worth
+        // opening — the detail page is where the licence status lives, and the
+        // card only supplied the id.
+        eligible = queue.map((id) => byReservation.get(id) || { reservation: id });
+    } else {
+        eligible = trips.filter(isLicenseCheckEligible);
+    }
 
     if (eligible.length === 0) {
         return { ok: true, at: Date.now(), reservationsScanned: 0, licensesChecked: 0 };

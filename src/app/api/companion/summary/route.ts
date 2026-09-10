@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { requireCompanionHost } from "@/lib/api/companion-auth";
 import { getRiskQueues } from "@/lib/risk/queries";
+import { runQueryOr } from "@/lib/supabase/server";
 
 /**
  * The counts behind the in-page widget.
@@ -22,6 +23,39 @@ export async function GET(req: NextRequest) {
 
   try {
     const queues = await getRiskQueues(host.id, host.timezone);
+
+    /**
+     * Which reservations the extension should go and read a licence status for.
+     *
+     * DECIDED HERE, NOT IN THE EXTENSION. isLicenseCheckEligible required the
+     * extension to have computed a numeric startTs, which it only manages for
+     * cards that printed a clock time — so the sweep listed nine trips as
+     * "starting within 24h" and then checked none of them, every cycle.
+     *
+     * The server has the real start times now, resolved in the fleet's own
+     * zone, so the window is computed against something true.
+     */
+    const now = Date.now();
+    const in24h = new Date(now + 24 * 60 * 60 * 1000).toISOString();
+
+    const { data: pending } = await runQueryOr<{ id: string }[]>(
+      "trips.license_queue",
+      [],
+      (client) =>
+        client
+          .from("trips")
+          .select("id")
+          .eq("host_id", host.id)
+          .eq("action", "checkin")
+          .gte("start_ts", new Date(now).toISOString())
+          .lte("start_ts", in24h)
+          // Already-confirmed licences need no second look; null means never
+          // checked, false means checked and still outstanding.
+          .or("license_confirmed.is.null,license_confirmed.eq.false")
+          .order("start_ts", { ascending: true })
+          .limit(40)
+          .returns<{ id: string }[]>()
+    );
 
     const licenses = queues.licenses.length;
     const profitRisk = queues.profitRisk.length;
@@ -47,6 +81,8 @@ export async function GET(req: NextRequest) {
       estimatedToday: Math.round(estimatedToday),
       // Says "we can't price these" rather than showing a confident $0.
       pricingUnavailable: queues.pricingUnavailable,
+      // Reservation ids for the extension's licence sweep to open.
+      licenseQueue: pending.map((r) => r.id),
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);

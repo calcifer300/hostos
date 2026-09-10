@@ -40,7 +40,10 @@ export function FleetSettings({
   const trimmed = name.trim();
   const isDirty = trimmed !== initialName.trim();
 
-  function handleSave() {
+  function handleSave(e?: React.FormEvent) {
+    e?.preventDefault();
+    if (!isDirty || isPending || trimmed.length === 0) return;
+
     setError(null);
     startTransition(async () => {
       const res = await renameFleet(trimmed);
@@ -69,17 +72,21 @@ export function FleetSettings({
         Shown in the sidebar and on the daily digest. Everyone on this fleet sees it.
       </p>
 
-      <div className="mt-3 flex flex-wrap items-center gap-2">
+      {/* A real form rather than an onKeyDown="Enter" handler on the input.
+          The handler version silently did nothing when the key event didn't
+          reach React — pressing Enter looked like a successful save because
+          the field kept showing the typed name while the database still held
+          the old one. Native submit also gets the mobile keyboard's "Go" key
+          and password-manager autofill right for free. */}
+      <form onSubmit={handleSave} className="mt-3 flex flex-wrap items-center gap-2">
         <input
           id="fleet-name"
+          name="fleetName"
           value={name}
           onChange={(e) => {
             setName(e.target.value);
             setSaved(false);
             setError(null);
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && isDirty && !isPending) handleSave();
           }}
           disabled={!canRename || isPending}
           maxLength={60}
@@ -87,16 +94,16 @@ export function FleetSettings({
         />
         {canRename && (
           <Button
+            type="submit"
             variant="secondary"
             size="sm"
-            onClick={handleSave}
             disabled={isPending || !isDirty || trimmed.length === 0}
           >
             {isPending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
             {isPending ? "Saving…" : "Save"}
           </Button>
         )}
-      </div>
+      </form>
 
       {error && <p className="mt-2 text-[12.5px] text-danger">{error}</p>}
       {saved && !error && (

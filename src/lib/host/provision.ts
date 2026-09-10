@@ -26,6 +26,23 @@ export interface ProvisionedFleet {
 
 const DEFAULT_TIMEZONE = "America/Denver";
 
+const MIGRATION_HINT =
+  "Apply supabase/migrations/0012_self_serve_fleets.sql — provisioning needs the hosts.created_by_email column.";
+
+/**
+ * True when the failure is "that column doesn't exist" rather than anything
+ * retryable.
+ *
+ * Matched against the failure's message because runQuery hands back a
+ * summarized SupabaseFailure, not the raw PostgREST error. Worth detecting
+ * precisely: without it an un-migrated deployment retries the insert on every
+ * single request from every signed-in user, forever, and logs nothing that
+ * names the missing migration.
+ */
+function isMissingColumn(reason: string): boolean {
+  return /could not find the .* column|column .* does not exist/i.test(reason);
+}
+
 /**
  * A fleet name from whatever Google gave us.
  *
@@ -140,6 +157,13 @@ export async function provisionFleetForUser(
       return null;
     }
 
+    // Not retryable, and the single most likely reason this ever fails on a
+    // real deployment: the code shipped before the migration did.
+    if (!outcome.ok && isMissingColumn(outcome.failure.reason)) {
+      console.error(`[provision] ${MIGRATION_HINT}`);
+      return null;
+    }
+
     // Not a uniqueness problem, so retrying the same insert won't help.
     if (!outcome.ok && outcome.failure.kind !== "query_error") {
       console.error(`[provision] Could not create a fleet for a new user: ${outcome.failure.reason}`);
@@ -153,11 +177,7 @@ export async function provisionFleetForUser(
     if (winner) return attachMembership(winner, email);
   }
 
-  console.error(
-    "[provision] Gave up creating a fleet after 2 attempts. If this persists, check that " +
-      "supabase/migrations/0012_self_serve_fleets.sql has been applied — provisioning needs " +
-      "the hosts.created_by_email column."
-  );
+  console.error(`[provision] Gave up creating a fleet after 2 attempts. ${MIGRATION_HINT}`);
   return null;
 }
 

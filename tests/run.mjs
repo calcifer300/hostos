@@ -24,5 +24,16 @@ for (const file of files) {
   }
 }
 
-console.log(`\n${files.length} file(s) run.`);
+// A test file can fail two ways: an assertion fails (it sets exitCode) or the
+// file throws on import (caught above). Both have to reach the summary, or a
+// green line prints over a red run — which is exactly what happened when
+// board.test.mts called process.exit() and killed the suite mid-way.
+if (process.exitCode && process.exitCode !== 0) failed++;
+
+console.log(`\n${"─".repeat(64)}`);
+if (failed === 0) {
+  console.log(`ALL PASSED — ${files.length} file(s)`);
+} else {
+  console.error(`FAILED — ${failed} of ${files.length} file(s)`);
+}
 process.exit(failed === 0 ? 0 : 1);

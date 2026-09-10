@@ -46,5 +46,8 @@ eq("city not confident", detectTimezone("553 Haleakala Highway, Kahului").confid
 eq("empty is flagged", detectTimezone("").confident, false);
 eq("zoneAbbr HST",     zoneAbbr("Pacific/Honolulu"), "HST");
 
-console.log(fail === 0 ? "\nALL PASSED" : `\n${fail} FAILED`);
-process.exit(fail === 0 ? 0 : 1);
+// exitCode, never process.exit() — see the note at the end of board.test.mts.
+if (fail > 0) {
+  console.error(`\n${fail} assertion(s) failed`);
+  process.exitCode = 1;
+}

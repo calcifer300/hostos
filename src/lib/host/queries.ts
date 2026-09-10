@@ -10,6 +10,8 @@ export interface Host {
   name: string | null;
   email: string | null;
   companionApiKey: string | null;
+  /** IANA zone the fleet operates in. Turo prints times in the CAR's zone. */
+  timezone: string;
 }
 
 interface HostRow {
@@ -17,12 +19,21 @@ interface HostRow {
   name: string | null;
   email: string | null;
   companion_api_key: string | null;
+  timezone: string | null;
 }
 
-const HOST_COLUMNS = "id, name, email, companion_api_key";
+const HOST_COLUMNS = "id, name, email, companion_api_key, timezone";
 
 function rowToHost(row: HostRow): Host {
-  return { id: row.id, name: row.name, email: row.email, companionApiKey: row.companion_api_key };
+  return {
+    id: row.id,
+    name: row.name,
+    email: row.email,
+    companionApiKey: row.companion_api_key,
+    // Denver is the seeded default (migration 0009), not a guess about where
+    // any given fleet is — a fleet that never set one keeps the old behaviour.
+    timezone: row.timezone ?? "America/Denver",
+  };
 }
 
 /**

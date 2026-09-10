@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ingestFailureResponse, requireCompanionHost } from "@/lib/api/companion-auth";
 import { isUndefinedTableError } from "@/lib/supabase/server";
-import { diffTrip, resolvePacificTimestamp, type ExistingTripRow, type IncomingTrip } from "@/lib/trips/sync";
+import {
+  diffTrip,
+  mergeIncomingTrips,
+  resolveTripTimestamp,
+  type ExistingTripRow,
+  type IncomingTrip,
+} from "@/lib/trips/sync";
 
 /**
  * Ingests a HostOS Companion sync payload. Authenticated by a bearer
@@ -54,17 +60,12 @@ export async function POST(req: NextRequest) {
     (t): t is IncomingTrip => typeof t?.reservation === "string" && t.reservation.trim().length > 0
   );
 
-  // The same reservation can legitimately appear twice in one scan — e.g.
-  // once as a check-in card, once as a check-out card (see popup.js's own
-  // dedup comments on the extension side). A single upsert() batch can't
-  // apply itself to the same conflict key twice ("ON CONFLICT DO UPDATE
-  // command cannot affect row a second time"), so collapse to one entry per
-  // reservation before anything downstream reads it. Last occurrence wins,
-  // since a check-out card is a more current state than an earlier
-  // check-in card for the same trip.
-  const trackable = Array.from(
-    new Map(reservationBearing.map((t) => [t.reservation, t])).values()
-  );
+  // One reservation produces TWO cards on Turo's Booked list — one under its
+  // start date, one under its end date — and a single upsert() batch cannot
+  // touch the same conflict key twice, so they must be collapsed before the
+  // write. They are MERGED rather than deduped: see mergeReservationCards for
+  // what last-wins cost, which was every pickup on the board.
+  const trackable = mergeIncomingTrips(reservationBearing, new Date(), host.timezone);
 
   let eventsCreated = 0;
 
@@ -115,15 +116,22 @@ export async function POST(req: NextRequest) {
 
     if (trackable.length > 0) {
       const tripRows = trackable.map((t) => {
-        // The extension's own numeric startTs/endTs has proven unreliable
-        // for check-outs — see resolvePacificTimestamp's comment. Prefer
-        // it when present (it's already a real instant), otherwise derive
-        // one from the raw dateLabel + time strings, which are just as
-        // reliable and now resolved server-side where it's actually
-        // testable.
-        const derivedTs = resolvePacificTimestamp(t.dateLabel, t.time);
-        const startTs = t.startTs ? new Date(t.startTs).toISOString() : t.action === "checkin" ? derivedTs : null;
-        const endTs = t.endTs ? new Date(t.endTs).toISOString() : t.action === "checkout" ? derivedTs : null;
+        // Both halves come from the merge, each resolved against its own
+        // date label. The fallback covers a card that carried no label at all.
+        const derivedTs = resolveTripTimestamp(t.dateLabel, t.time, host.timezone);
+        const merged = existingById.get(t.reservation) ?? null;
+
+        const startTs = t.resolvedStartTs ?? (t.action === "checkin" ? derivedTs : null);
+        const endTs = t.resolvedEndTs ?? (t.action === "checkout" ? derivedTs : null);
+
+        // NEVER null a timestamp this scan simply did not see.
+        //
+        // The board only reaches a few weeks out, so a trip whose pickup has
+        // scrolled off it arrives as a check-out card alone. Writing null for
+        // the missing half would erase a start time that was correct, and the
+        // row would silently stop being a pickup that ever happened.
+        const finalStart = startTs ?? merged?.start_ts ?? null;
+        const finalEnd = endTs ?? merged?.end_ts ?? null;
 
         return {
           id: t.reservation,
@@ -135,9 +143,12 @@ export async function POST(req: NextRequest) {
           vehicle_year: t.vehicleYear ?? null,
           action: t.action ?? null,
           skip_reason: t.skipReason ?? null,
-          start_ts: startTs,
-          end_ts: endTs,
+          start_ts: finalStart,
+          end_ts: finalEnd,
           date_label: t.dateLabel ?? null,
+          // Stored so the board can render each trip in its own wall time
+          // without re-deriving it (migration 0014).
+          timezone: host.timezone,
           extras: t.extras ?? [],
           raw: t,
           synced_at: new Date().toISOString(),

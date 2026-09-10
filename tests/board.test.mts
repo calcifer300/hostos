@@ -145,5 +145,13 @@ eq("hours", formatDuration(2 * 3600_000 + 14 * 60_000), "2h 14m");
 eq("minutes", formatDuration(45 * 60_000), "45m");
 eq("seconds", formatDuration(30_000), "30s");
 
-console.log(fail === 0 ? "\nALL PASSED" : `\n${fail} FAILED`);
-process.exit(fail === 0 ? 0 : 1);
+// exitCode, never process.exit(). The runner imports every test file into ONE
+// process, so a file that calls exit takes the whole suite down with it — this
+// line ended the run before two other files had even loaded, and printed
+// "ALL PASSED" on its way out. A crashing test file therefore reported green,
+// which is how a broken merge test stayed invisible. The runner owns the
+// verdict now; a file reports only itself.
+if (fail > 0) {
+  console.error(`\n${fail} assertion(s) failed`);
+  process.exitCode = 1;
+}

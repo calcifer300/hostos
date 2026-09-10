@@ -336,6 +336,15 @@ function scrapeReservationMessages() {
     const seenContainers = new Set();
     let currentDateHeader = null;
 
+    // Asked ONCE for the whole thread, not per bubble. If Turo marks the
+    // host's own messages anywhere here, then a bubble without the marker is
+    // genuinely the guest's. If the marker appears nowhere, the page is not
+    // telling us who wrote anything and no per-message check can change that.
+    const threadHasSentMarkers = Boolean(document.querySelector("[data-testid='message-is-sent']"));
+
+    // Messages the page gave no author for. Reported rather than guessed.
+    let unattributed = 0;
+
     avatars.forEach((avatar) => {
         // Walk up from the avatar to a container sized like "one message"
         // rather than the whole thread — the exact depth varies by
@@ -371,17 +380,45 @@ function scrapeReservationMessages() {
         // rows whose entire body was the nav label "Menu".
         if (!isLikelyMessageBody(body)) return;
 
-        // Heuristic only, still UNVERIFIED against live markup. This was
-        // originally `rect.left > window.innerWidth / 2` (right side =
-        // host) but every message synced in production came back tagged
-        // from_host:false — including obvious host-authored canned
-        // templates (lockbox codes, pickup directions, ID-verification
-        // requests) that a guest would never send. Flipped to left-side =
-        // host based on that evidence. Confirm next time you're on a
-        // reservation page with a genuine back-and-forth: if a guest's own
-        // reply comes back tagged from_host:true, flip this back.
-        const rect = avatar.getBoundingClientRect();
-        const fromHost = rect.left < window.innerWidth / 2;
+        // WHO WROTE THIS, ASKED IN ORDER OF HOW MUCH THE PAGE ACTUALLY SAYS.
+        //
+        // This was geometry alone — the avatar's x against half the window
+        // width — under a comment admitting it was unverified. It was flipped
+        // once when everything came back tagged as the guest, then failed the
+        // other way: 570 of 578 synced messages were marked host-authored,
+        // guest replies included.
+        //
+        // Geometry cannot work here. The side panel narrows the page so "half
+        // the window" moves, and a thread rendered as one column has every
+        // avatar on the left regardless of who wrote the message.
+        //
+        // Turo states the author twice, and both are consulted before any
+        // guessing happens:
+        //   1. data-testid="message-is-sent" wraps the host's own bubbles —
+        //      the same signal the inbox scraper below already relies on.
+        //   2. The caption reads "2:30 PM - MATTHEW (Host)". Turo writes the
+        //      word; there is nothing left to infer.
+        const captionLine = lines.find((l) => INBOX_CAPTION_RE.test(l));
+
+        let fromHost;
+        if (avatar.closest("[data-testid='message-is-sent']")) {
+            fromHost = true;
+        } else if (captionLine) {
+            fromHost = INBOX_CAPTION_RE.exec(captionLine)[3].toLowerCase() === "host";
+        } else if (threadHasSentMarkers) {
+            // The thread does use the marker, and this bubble is not inside
+            // one. That is a real negative, not a missing signal.
+            fromHost = false;
+        } else {
+            // Neither signal is present anywhere in this thread, so the page
+            // simply does not say who wrote this. The message is dropped
+            // rather than guessed at: `from_host` is NOT NULL on the server,
+            // so a guess is indistinguishable from a fact once stored, and
+            // guessing is what produced 570 mislabelled rows. The count is
+            // reported so this shows up as a number to fix instead of silence.
+            unattributed++;
+            return;
+        }
 
         messages.push({
             body,
@@ -394,6 +431,10 @@ function scrapeReservationMessages() {
     return {
         guestName,
         messages,
+        // Non-zero means Turo changed its markup: neither the "message-is-sent"
+        // marker nor a "(Host)" caption was found. Sync reports it so the
+        // failure is a visible number instead of quietly missing messages.
+        unattributed,
         schedule: scrapeReservationScheduleTimes(),
         debugSample: messages.length === 0 ? (document.body.innerText || "").slice(0, 1000) : null
     };

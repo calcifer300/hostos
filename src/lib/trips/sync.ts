@@ -69,9 +69,10 @@ export interface TripEventCandidate {
  * (guess UTC, measure the real Los Angeles offset via Intl, correct) so
  * both sides agree on what a bare wall-clock reading means.
  */
-export function resolvePacificTimestamp(
+export function resolveTripTimestamp(
   dateLabel: string | null | undefined,
   time: string | null | undefined,
+  timezone: string = "America/Los_Angeles",
   referenceDate: Date = new Date()
 ): string | null {
   if (!dateLabel || !time) return null;
@@ -108,7 +109,7 @@ export function resolvePacificTimestamp(
   const guessUtc = Date.UTC(bestYear, month - 1, day, hour, minute);
 
   const dtf = new Intl.DateTimeFormat("en-US", {
-    timeZone: "America/Los_Angeles",
+    timeZone: timezone,
     hourCycle: "h23",
     year: "numeric",
     month: "2-digit",
@@ -197,6 +198,17 @@ function sameInstant(storedIso: string | null, incomingMs: number | null): boole
  * had changed, because the row on disk held the derived value instead.
  */
 function effectiveIncomingMs(incoming: IncomingTrip): number | null {
+  // A MergedTrip already carries both halves, resolved against the fleet's own
+  // timezone. Preferring them keeps event detection on the same instants the
+  // write path stores — otherwise a Denver trip would diff its Mountain start
+  // against a Pacific re-derivation and report a reschedule on every sync.
+  const merged = incoming as Partial<MergedTrip>;
+  const resolved = incoming.action === "checkout" ? merged.resolvedEndTs : merged.resolvedStartTs;
+  if (resolved) {
+    const resolvedMs = new Date(resolved).getTime();
+    if (Number.isFinite(resolvedMs)) return resolvedMs;
+  }
+
   const raw = incoming.action === "checkout" ? incoming.endTs : incoming.startTs;
   if (raw !== null && raw !== undefined) return raw;
 
@@ -204,7 +216,7 @@ function effectiveIncomingMs(incoming: IncomingTrip): number | null {
   // exactly as the write path does it.
   if (incoming.action !== "checkin" && incoming.action !== "checkout") return null;
 
-  const derived = resolvePacificTimestamp(incoming.dateLabel, incoming.time);
+  const derived = resolveTripTimestamp(incoming.dateLabel, incoming.time);
   if (!derived) return null;
 
   const ms = new Date(derived).getTime();
@@ -281,4 +293,135 @@ export function diffTrip(existing: ExistingTripRow | null, incoming: IncomingTri
     }`,
     payload: { before: existing, after: incoming },
   };
+}
+
+/** One reservation, after its check-in and check-out cards have been combined. */
+export interface MergedTrip extends IncomingTrip {
+  /** ISO instant of the pickup, from whichever card carried the check-in half. */
+  resolvedStartTs: string | null;
+  /** ISO instant of the return, from whichever card carried the check-out half. */
+  resolvedEndTs: string | null;
+}
+
+/**
+ * Combines every card a single reservation produced in one scan.
+ *
+ * THIS REPLACED A LAST-WINS DEDUPE, AND THE DIFFERENCE IS THE WHOLE BUG.
+ *
+ * Turo's Booked list is grouped by day and runs weeks ahead, so one
+ * reservation appears TWICE: under its start date as "Starting at 9:30 AM",
+ * and again under its end date as "Ending at 2:00 PM". Two cards, one trip.
+ *
+ * The previous code collapsed them with `new Map(...)`, keeping the last —
+ * reasoning that a check-out card is the more current state. That is true
+ * only when both cards are for today. Across a multi-day board the check-out
+ * is the FUTURE half, so it overwrote today's pickup: `action` became
+ * "checkout", `date_label` jumped to the return date, and because
+ * entryToTripPayload only fills startTs for a check-in card, `start_ts` was
+ * nulled outright.
+ *
+ * Measured against the live fleet: 201 trips, 44 with a start_ts, and a
+ * dashboard reporting "0 pickups" on a day with eight of them.
+ *
+ * A reservation has one start and one end. Both are kept, and `action` is
+ * derived from which of them is still ahead rather than from card order.
+ */
+export function mergeReservationCards(
+  cards: IncomingTrip[],
+  now: Date = new Date(),
+  timezone: string = "America/Los_Angeles"
+): MergedTrip {
+  // Later cards win for identity fields — same trip either way, and a later
+  // scrape is marginally fresher.
+  const base = cards[cards.length - 1];
+
+  let startTs: string | null = null;
+  let endTs: string | null = null;
+  let startLabel: string | null = null;
+  let endLabel: string | null = null;
+
+  for (const card of cards) {
+    // The card's own numeric instant when the extension computed one,
+    // otherwise derived from the strings it scraped. Each card must be
+    // resolved with ITS OWN dateLabel — that is precisely what is lost once
+    // the two are collapsed into one row.
+    const own =
+      card.action === "checkin"
+        ? card.startTs
+        : card.action === "checkout"
+          ? card.endTs
+          : null;
+
+    // Turo prints a trip's time in the CAR's local zone, not the viewer's, so
+    // "9:30 AM" on a Denver listing is 9:30 Mountain. Resolving it as Pacific
+    // — which this did unconditionally — stored every Denver trip an hour
+    // late, and pushed a 6pm pickup past midnight UTC onto the wrong day.
+    const instant = own
+      ? new Date(own).toISOString()
+      : resolveTripTimestamp(card.dateLabel, card.time, timezone, now);
+    if (!instant) continue;
+
+    if (card.action === "checkin" && !startTs) {
+      startTs = instant;
+      startLabel = card.dateLabel ?? null;
+    } else if (card.action === "checkout" && !endTs) {
+      endTs = instant;
+      endLabel = card.dateLabel ?? null;
+    }
+  }
+
+  // Nothing datable — an "In progress" or "Started at" card and nothing else.
+  // Keep it exactly as it arrived rather than inventing a state for it.
+  if (!startTs && !endTs) {
+    return { ...base, resolvedStartTs: null, resolvedEndTs: null };
+  }
+
+  const nowMs = now.getTime();
+  const startAhead = startTs !== null && new Date(startTs).getTime() >= nowMs;
+  const endAhead = endTs !== null && new Date(endTs).getTime() >= nowMs;
+
+  // Whichever event is next is what this trip needs from an operator today.
+  // A pickup still ahead outranks a return, because the pickup happens first.
+  let action: IncomingTrip["action"];
+  let dateLabel: string | null;
+
+  if (startAhead) {
+    action = "checkin";
+    dateLabel = startLabel;
+  } else if (endAhead) {
+    action = "checkout";
+    dateLabel = endLabel;
+  } else {
+    // Both in the past: the trip is done. The return is the more recent fact.
+    action = endTs ? "checkout" : "checkin";
+    dateLabel = endTs ? endLabel : startLabel;
+  }
+
+  return {
+    ...base,
+    action,
+    dateLabel: dateLabel ?? base.dateLabel ?? null,
+    resolvedStartTs: startTs,
+    resolvedEndTs: endTs,
+  };
+}
+
+/**
+ * Groups a scan's cards by reservation and merges each group.
+ * Order is preserved so the caller's downstream behaviour is unchanged.
+ */
+export function mergeIncomingTrips(
+  trips: IncomingTrip[],
+  now: Date = new Date(),
+  timezone: string = "America/Los_Angeles"
+): MergedTrip[] {
+  const groups = new Map<string, IncomingTrip[]>();
+
+  for (const trip of trips) {
+    const existing = groups.get(trip.reservation);
+    if (existing) existing.push(trip);
+    else groups.set(trip.reservation, [trip]);
+  }
+
+  return Array.from(groups.values()).map((cards) => mergeReservationCards(cards, now, timezone));
 }

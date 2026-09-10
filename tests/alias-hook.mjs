@@ -25,6 +25,15 @@ function isFile(path) {
 }
 
 export function resolve(specifier, context, nextResolve) {
+  // `server-only` throws on import by design — it is a build-time guard that
+  // Next's bundler recognises and strips. Node does not, so any test touching a
+  // module that imports it dies before its first assertion. Stubbing it here
+  // keeps the guard real in the app and out of the way in tests; the
+  // alternative is library code shaped around what happens to be covered.
+  if (specifier === "server-only") {
+    return nextResolve(pathToFileURL(resolvePath(projectRoot, "tests", "server-only-stub.mjs")).href, context);
+  }
+
   if (specifier.startsWith("@/")) {
     const base = resolvePath(projectRoot, "src", specifier.slice(2));
 

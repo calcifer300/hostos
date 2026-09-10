@@ -1,5 +1,6 @@
 import { getAiProvider } from "@/lib/ai";
 import { buildSystemPrompt } from "@/lib/ihost/prompt";
+import type { TuroArticle } from "@/lib/library/queries";
 import type { HostKnowledgeBase, IHostAnalysis, InboundTuroEmail } from "@/types/ihost";
 
 /**
@@ -12,10 +13,11 @@ import type { HostKnowledgeBase, IHostAnalysis, InboundTuroEmail } from "@/types
  */
 export async function analyzeInboundEmail(
   email: InboundTuroEmail,
-  kb: HostKnowledgeBase
+  kb: HostKnowledgeBase,
+  policy: TuroArticle[] = []
 ): Promise<IHostAnalysis> {
   const text = await getAiProvider().generateJson({
-    system: buildSystemPrompt(kb),
+    system: buildSystemPrompt(kb, policy),
     user: `Guest name: ${email.guestName}\nVehicle: ${email.vehicle}\nSubject: ${email.subject}\n\nBody:\n${email.body}`,
     maxOutputTokens: 1000,
   });

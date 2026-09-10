@@ -439,6 +439,21 @@ const performSync = withGuard("performSync", async function performSync() {
             trips: payload.trips
         };
         await saveLastSyncResult(result);
+
+        // Raise OS notifications from the events HostOS just recorded. This
+        // is why the merged extension does not need Karl scanner polling
+        // every tab: the diff already names exactly what changed, so there is
+        // nothing to infer from keywords. alerts.js is loaded only in the
+        // service worker, so this is a no-op when sync runs from the popup.
+        if (typeof alertOnSyncEvents === "function") {
+            try {
+                await alertOnSyncEvents(result);
+            } catch (alertErr) {
+                // A failed notification must never fail the sync that earned it.
+                console.error("[HostOS] Alerting failed:", alertErr);
+            }
+        }
+
         return result;
     } catch (err) {
         const result = { ok: false, error: err.message || "Sync failed.", at: Date.now() };

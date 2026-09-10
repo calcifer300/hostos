@@ -42,7 +42,7 @@
 //    than matching the 1-minute loops since license status doesn't change
 //    that often and this bounds how many background tabs open per hour.
 
-importScripts("fleet.js", "fleetStore.js", "matcher.js", "parser.js", "formatter.js", "availability.js", "generator.js", "sync.js");
+importScripts("fleet.js", "fleetStore.js", "matcher.js", "parser.js", "formatter.js", "availability.js", "generator.js", "sync.js", "replyMatcher.js", "alerts.js");
 
 function ensureAlarms() {
     chrome.alarms.create("hostosSync", { periodInMinutes: 1 });
@@ -54,6 +54,11 @@ function ensureAlarms() {
     chrome.alarms.create("hostosFleetCalendar", { periodInMinutes: 360 });
     chrome.alarms.create("hostosFleetCalendarKickoff", { delayInMinutes: 1 });
     chrome.alarms.create("hostosEnrichment", { periodInMinutes: 10 });
+    // Keyword scan of the Turo tab the host is looking at RIGHT NOW. Sync
+    // covers everything else and covers it better, but a booking request can
+    // appear on screen minutes before the next cycle picks it up. See
+    // alerts.js for why this is the active tab only.
+    chrome.alarms.create("hostosAlertScan", { periodInMinutes: 2 });
     chrome.alarms.create("hostosEnrichmentKickoff", { delayInMinutes: 1.5 });
 }
 
@@ -105,5 +110,82 @@ chrome.alarms.onAlarm.addListener((alarm) => {
     }
     if (alarm.name === "hostosEnrichment" || alarm.name === "hostosEnrichmentKickoff") {
         performEnrichmentSync().catch((err) => console.error("[HostOS] Background enrichment sync failed:", err));
+        return;
+    }
+    if (alarm.name === "hostosAlertScan") {
+        scanActiveTuroTab().catch((err) => console.error("[HostOS] Alert scan failed:", err));
+    }
+});
+
+// ---------------------------------------------------------------- drafting
+//
+// The bridge between assist.js (running on a Turo/mail/chat page) and HostOS.
+// The content script never sees the pairing key — it posts a message here,
+// this reads the key from extension storage and makes the call. A key exposed
+// to a content script is a key exposed to every script on that page.
+
+async function draftReplyViaHostOS(message) {
+    const { url, apiKey } = await getHostOSConfig();
+
+    if (!apiKey) {
+        return {
+            ok: false,
+            error: "Not paired with HostOS yet. Open the side panel's Sync tab and paste your pairing key.",
+        };
+    }
+
+    let response;
+    try {
+        response = await fetch(url.replace(/\/+$/, "") + "/api/companion/draft", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + apiKey,
+            },
+            body: JSON.stringify({ message }),
+        });
+    } catch (err) {
+        return { ok: false, error: "Couldn't reach HostOS. Check your connection and try again." };
+    }
+
+    let payload = null;
+    try {
+        payload = await response.json();
+    } catch {
+        payload = null;
+    }
+
+    if (!response.ok) {
+        return {
+            ok: false,
+            // The route's own message is written for a person to read, so it
+            // is passed through rather than replaced with a status code.
+            error: (payload && payload.error) || `HostOS returned ${response.status}.`,
+        };
+    }
+
+    return { ok: true, ...payload };
+}
+
+chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
+    if (!msg || msg.type !== "hostos:draft") return false;
+
+    draftReplyViaHostOS(msg.message)
+        .then(sendResponse)
+        .catch((err) => sendResponse({ ok: false, error: String(err && err.message ? err.message : err) }));
+
+    // Keeps the message channel open for the async reply above.
+    return true;
+});
+
+// Alt+R from the manifest. The content script registers the same shortcut for
+// iframes, which chrome.commands does not reach into.
+chrome.commands.onCommand.addListener(async (command) => {
+    if (command !== "generate_reply") return;
+    try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (tab && tab.id) chrome.tabs.sendMessage(tab.id, { type: "hostos:draft-here" });
+    } catch (err) {
+        console.error("[HostOS] Could not trigger draft:", err);
     }
 });

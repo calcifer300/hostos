@@ -76,9 +76,20 @@ export const config = {
    *  - /api/turo/* — the Companion extension authenticates with a bearer
    *    pairing key, not a session cookie, and gating it here would break
    *    ingest for every fleet
+   *  - /api/companion/* — same extension, same bearer key. Drafting a reply
+   *    happens from a content script on turo.com or a mail tab, which carries
+   *    no HostOS session cookie; every route under it calls
+   *    requireCompanionHost for itself
    *  - /api/cron/*  — Vercel Cron sends a bearer CRON_SECRET, also not a
    *    session; that route refuses to run at all when the secret is unset
    *  - Next's static assets and the favicon
+   *
+   * EVERY EXEMPTION HERE IS A ROUTE THAT MUST DO ITS OWN AUTH. The two under
+   * /api/turo that a browser can GET were reachable by anyone for exactly this
+   * reason until lib/api/browser-auth.ts was added — an exemption is a promise
+   * the route keeps, not one this file keeps for it.
    */
-  matcher: ["/((?!login|api/auth|api/turo|api/cron|_next/static|_next/image|favicon.ico).*)"],
+  matcher: [
+    "/((?!login|api/auth|api/turo|api/companion|api/cron|_next/static|_next/image|favicon.ico).*)",
+  ],
 };

@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "HostOS Companion",
-  "description": "Syncs your Turo fleet into HostOS — trips, guest messages, licence status and protection plans.",
-  "version": "2.1.0",
+  "description": "Syncs your Turo fleet into HostOS, alerts you when something needs you, and drafts grounded replies.",
+  "version": "3.0.0",
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsXn7h35/aH9o3k68aNi9cF83YAHAITiVy8aWJR2VBoICtGeVKWNUpLRUETzrqbD4PyVmfb815mfBcEsoj+trJaPdEio2CzDPgkB8wYYIZGXsLgaE5ZVMuDLPrb6wfMEzl4saIdFtK0yhECw1S1YoUCcjT6NbNpJ3y8FpCNtNBlSs6FCl3J/2s/8nENTWB1WpdugXiseZ9rqWq5gNiX61BFvoAHUWcEUDg0aZFgkefaEHkSeLc3S6dkiLZMiQoIYUnpbChCzmsUhlH9v7JDbkM487aTOLB9R7OKbHHkexpryzwthaDjGd8BNu1YOey/ScXXz3scEyMC7fSj8gY4SQawIDAQAB",
   "permissions": [
     "activeTab",
@@ -11,12 +11,20 @@
     "storage",
     "sidePanel",
     "tabs",
-    "alarms"
+    "alarms",
+    "notifications",
+    "contextMenus"
   ],
   "host_permissions": [
     "*://turo.com/*",
     "*://*.turo.com/*",
-    "https://hostos-ten.vercel.app/*"
+    "https://hostos-ten.vercel.app/*",
+    "https://mail.google.com/*",
+    "https://web.whatsapp.com/*",
+    "https://app.slack.com/*",
+    "https://*.slack.com/*",
+    "https://teams.microsoft.com/*",
+    "https://www.linkedin.com/*"
   ],
   "optional_host_permissions": [
     "http://*/*",
@@ -53,6 +61,45 @@
         "content.js"
       ],
       "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "*://turo.com/*",
+        "*://*.turo.com/*",
+        "https://mail.google.com/*",
+        "https://web.whatsapp.com/*",
+        "https://app.slack.com/*",
+        "https://*.slack.com/*",
+        "https://teams.microsoft.com/*",
+        "https://www.linkedin.com/*"
+      ],
+      "js": [
+        "assist.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "commands": {
+    "generate_reply": {
+      "suggested_key": {
+        "default": "Alt+R"
+      },
+      "description": "Draft a reply to the message on screen"
+    }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "icon128.png"
+      ],
+      "matches": [
+        "*://*.turo.com/*",
+        "https://mail.google.com/*",
+        "https://web.whatsapp.com/*",
+        "https://*.slack.com/*",
+        "https://teams.microsoft.com/*",
+        "https://www.linkedin.com/*"
+      ]
     }
   ]
 }

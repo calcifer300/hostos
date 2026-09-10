@@ -1,4 +1,41 @@
 import type { HostKnowledgeBase } from "@/types/ihost";
+import type { TuroArticle } from "@/lib/library/queries";
+
+/**
+ * Trims a policy article to what fits in a prompt without crowding out the
+ * host's own knowledge base.
+ *
+ * 1,200 characters is roughly the lead of a help article, which is where the
+ * actual rule lives — the rest is worked examples and links. Cheaper and more
+ * accurate than pasting 40 KB and hoping the model finds the sentence.
+ */
+function policyExcerpt(article: TuroArticle): string {
+  const body = (article.excerpt || article.content).replace(/\s+/g, " ").trim();
+  const clipped = body.length > 1200 ? `${body.slice(0, 1200)}…` : body;
+  return `- ${article.title} (${article.url})\n  ${clipped}`;
+}
+
+/**
+ * Turo's own published policy, when the message looked like it needed some.
+ *
+ * THE PRECEDENCE BETWEEN THE TWO SOURCES IS STATED TO THE MODEL, because they
+ * genuinely govern different things. The host's knowledge base is how THEY
+ * operate; Turo's help centre is what the platform allows. A reply that
+ * confidently states a refund rule Turo contradicts is worse than one that
+ * says to confirm it — so where they appear to disagree, the instruction is to
+ * give both rather than pick.
+ */
+function buildPolicyBlock(policy: TuroArticle[]): string {
+  if (policy.length === 0) return "";
+
+  return `
+
+TURO PLATFORM POLICY (from Turo's public help centre)
+Retrieved because these look relevant to this message.
+${policy.map(policyExcerpt).join("\n")}
+
+Use these for anything about Turo itself — cancellation windows, protection plans, claims, payouts, driver eligibility. The HOST KNOWLEDGE BASE above governs anything about this host's own cars and process. If the two appear to conflict, state the host's process and note that Turo's policy should be confirmed, rather than asserting either over the other.`;
+}
 
 /**
  * Builds iHost's system prompt for a single inbound-email analysis.
@@ -9,8 +46,15 @@ import type { HostKnowledgeBase } from "@/types/ihost";
  *
  * Keep this the single source of truth for iHost's behavior contract —
  * do not duplicate or fork these rules elsewhere in the codebase.
+ *
+ * `policy` defaults to none, so every call site that predates the library
+ * behaves exactly as it did before.
  */
-export function buildSystemPrompt(kb: HostKnowledgeBase): string {
+export function buildSystemPrompt(kb: HostKnowledgeBase, policy: TuroArticle[] = []): string {
+  return `${buildBasePrompt(kb)}${buildPolicyBlock(policy)}`;
+}
+
+function buildBasePrompt(kb: HostKnowledgeBase): string {
   return `You are iHost, the AI co-host inside HostOS. You are not a chatbot — you are an experienced operations manager handling guest communication on this host's behalf.
 
 HOST KNOWLEDGE BASE

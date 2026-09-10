@@ -54,6 +54,8 @@ function ensureAlarms() {
     chrome.alarms.create("hostosFleetCalendar", { periodInMinutes: 360 });
     chrome.alarms.create("hostosFleetCalendarKickoff", { delayInMinutes: 1 });
     chrome.alarms.create("hostosEnrichment", { periodInMinutes: 10 });
+    chrome.alarms.create("hostosAlertPoll", { periodInMinutes: 5 });
+    chrome.alarms.create("hostosAlertPollKickoff", { delayInMinutes: 0.75 });
     // Keyword scan of the Turo tab the host is looking at RIGHT NOW. Sync
     // covers everything else and covers it better, but a booking request can
     // appear on screen minutes before the next cycle picks it up. See
@@ -106,6 +108,15 @@ chrome.alarms.onAlarm.addListener((alarm) => {
     }
     if (alarm.name === "hostosFleetCalendar" || alarm.name === "hostosFleetCalendarKickoff") {
         performFleetCalendarSync().catch((err) => console.error("[HostOS] Background fleet calendar sync failed:", err));
+        return;
+    }
+    if (alarm.name === "hostosAlertPoll" || alarm.name === "hostosAlertPollKickoff") {
+        // Licences, zero-deductible bookings and thin margins, as the risk
+        // engine sees them. raiseAlert de-dupes per trip and kind, so a
+        // problem that stays outstanding is announced once, not every cycle.
+        fetchWidgetSummary()
+            .then((summary) => (summary && summary.ok ? alertOnSummary(summary) : 0))
+            .catch((err) => console.error("[HostOS] Alert poll failed:", err));
         return;
     }
     if (alarm.name === "hostosEnrichment" || alarm.name === "hostosEnrichmentKickoff") {

@@ -16,6 +16,65 @@ import { runQueryOr } from "@/lib/supabase/server";
  * are scoped to that fleet and nobody else's.
  */
 
+interface CompanionAlert {
+  /** Stable per trip AND per kind, so re-notifying is suppressed but a trip that develops a second problem still says so. */
+  key: string;
+  kind: "licence" | "profit" | "premier";
+  title: string;
+  body: string;
+  severity: "critical" | "high" | "medium";
+  tripId: string;
+}
+
+/** Turns the risk queues into the alerts a person should actually see. */
+function buildAlerts(queues: Awaited<ReturnType<typeof getRiskQueues>>): CompanionAlert[] {
+  const alerts: CompanionAlert[] = [];
+  const who = (t: { guestName: string; vehicle: string }) => `${t.guestName} · ${t.vehicle}`;
+
+  for (const trip of queues.licenses) {
+    alerts.push({
+      key: `licence:${trip.id}`,
+      kind: "licence",
+      title: "Licence still unverified",
+      // The window matters: a guest cannot upload until 24h before pickup, so
+      // this is the point where it stops being early and starts being late.
+      body: `${who(trip)} — pickup is within 24 hours and the licence isn't confirmed.`,
+      severity: "critical",
+      tripId: trip.id,
+    });
+  }
+
+  for (const trip of queues.profitRisk) {
+    // Premier is its own alert, not a flavour of profit risk: the action is
+    // different. A thin margin is a pricing decision; a $0 deductible means
+    // damage cannot be billed to the guest at all.
+    if (trip.risk.premierProtection) {
+      alerts.push({
+        key: `premier:${trip.id}`,
+        kind: "premier",
+        title: "Zero-deductible booking",
+        body: `${who(trip)} — the guest's plan leaves you unable to bill them for damage.`,
+        severity: "critical",
+        tripId: trip.id,
+      });
+    }
+
+    if (trip.risk.earningsBelowFloor) {
+      const perMile = trip.earnings?.perMile;
+      alerts.push({
+        key: `profit:${trip.id}`,
+        kind: "profit",
+        title: "Below $0.20 per mile",
+        body: `${who(trip)}${perMile != null ? ` — earns ${perMile.toFixed(2)}/mile` : ""}.`,
+        severity: "high",
+        tripId: trip.id,
+      });
+    }
+  }
+
+  return alerts;
+}
+
 export async function GET(req: NextRequest) {
   const auth = await requireCompanionHost(req);
   if (!auth.ok) return auth.response;
@@ -83,6 +142,19 @@ export async function GET(req: NextRequest) {
       pricingUnavailable: queues.pricingUnavailable,
       // Reservation ids for the extension's licence sweep to open.
       licenseQueue: pending.map((r) => r.id),
+      /**
+       * The actual things worth interrupting someone about.
+       *
+       * The extension used to derive its alerts from trip_events, whose kinds
+       * are only created / rescheduled / cancelled / plate_changed — so its
+       * "licence" and "Premier" tests matched nothing and those two alerts
+       * could never fire, however the toggles were set. Profit risk had no
+       * test at all.
+       *
+       * The risk engine already knows all three. It says so here, and the
+       * extension only decides whether to show them.
+       */
+      alerts: buildAlerts(queues),
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);

@@ -56,10 +56,12 @@ const DEFAULT_ALERT_RULES = [
 const DEFAULT_ALERT_SETTINGS = {
     enabled: true,
     sound: true,
-    // Sync-driven alerts: which HostOS event kinds are worth interrupting for.
+    // What HostOS's risk engine reports (see alertOnSummary).
     onNewMessage: true,
     onLicenceOverdue: true,
     onPremierBooking: true,
+    // Below $0.20 per included mile — the host's own rule, via Karl's build.
+    onProfitRisk: true,
 };
 
 function loadAlertConfig() {
@@ -177,6 +179,49 @@ async function clearBadge() {
  * are in hand — no second pass over the DOM, and no guessing from keywords
  * what a diff already states exactly.
  */
+/**
+ * Raises the alerts HostOS says are outstanding.
+ *
+ * THIS EXISTS BECAUSE alertOnSyncEvents COULD NOT DO IT.
+ *
+ * That function reads syncResult.events, whose kinds are only created /
+ * rescheduled / cancelled / plate_changed. Its tests for "licen" and
+ * "premier" therefore matched nothing and those alerts never fired, however
+ * the toggles were set; profit risk had no test at all. The three things a
+ * host actually wants to be told about were the three that could not happen.
+ *
+ * The risk engine already knows all of them, so the server decides WHAT is
+ * wrong and this decides WHETHER to show it. raiseAlert de-dupes on the key,
+ * so an alert that stays outstanding is announced once, not every cycle.
+ */
+async function alertOnSummary(summary) {
+    if (!summary || !Array.isArray(summary.alerts)) return 0;
+
+    const { settings } = await loadAlertConfig();
+    if (!settings.enabled) return 0;
+
+    const allowed = {
+        licence: settings.onLicenceOverdue !== false,
+        premier: settings.onPremierBooking !== false,
+        profit: settings.onProfitRisk !== false,
+    };
+
+    let raised = 0;
+    for (const alert of summary.alerts) {
+        if (!alert || !allowed[alert.kind]) continue;
+
+        const raisedOne = await raiseAlert({
+            key: alert.key,
+            title: alert.title,
+            body: alert.body,
+            severity: alert.severity,
+        });
+        if (raisedOne) raised++;
+    }
+
+    return raised;
+}
+
 async function alertOnSyncEvents(syncResult) {
     if (!syncResult || !syncResult.ok || !Array.isArray(syncResult.events)) return 0;
 

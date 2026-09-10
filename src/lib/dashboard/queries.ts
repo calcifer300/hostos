@@ -2,9 +2,11 @@ import "server-only";
 import { cache } from "react";
 import { getSyncedEmails } from "@/lib/gmail/queries";
 import { buildReservations, filterToHost, parseEmails } from "@/lib/turo/parse";
-import { DEFAULT_HOST_ID, getHost } from "@/lib/host/queries";
+import { getHost } from "@/lib/host/queries";
+import { getCurrentHostId } from "@/lib/host/context";
 import { getCompanionTrips, getCompanionVehicles, type CompanionTrip, type CompanionVehicle } from "@/lib/trips/queries";
-import { getGuestConversations, type GuestConversation } from "@/lib/messages/queries";
+import { getGuestConversations, getRecentGuestMessages, type GuestConversation, type RecentGuestMessage } from "@/lib/messages/queries";
+import { buildMessageButlerTasks } from "@/lib/butler/priority";
 import { formatRelativeTime } from "@/lib/utils";
 import type { TuroEvent, TuroReservation } from "@/types/turo";
 
@@ -36,6 +38,8 @@ export interface FleetVehicle {
   nextEventKind: "pickup" | "return" | null;
   /** False when nextEventAt is a noon placeholder derived from a bare date label, not a real scraped time. */
   nextEventExact: boolean;
+  /** The guest on the trip behind nextEventLabel — null if nothing's scheduled or the trip carried no name. */
+  nextEventGuestName: string | null;
   /** True when the guest on this vehicle's active/next trip sent the last message and hasn't been replied to. */
   needsResponse: boolean;
   /** Lower sorts first: on-trip and soon-due vehicles ahead of idle ones. */
@@ -52,6 +56,8 @@ export interface FleetHealth {
 
 export interface ScheduleEntry {
   id: string;
+  /** The underlying reservation/trip id — what /messages/[tripId] and turo.com/us/en/reservation/[tripId] key on. */
+  tripId: string;
   kind: "pickup" | "return";
   guestName: string;
   vehicle: string;
@@ -59,6 +65,9 @@ export interface ScheduleEntry {
   location: string;
   ready: boolean;
   needsResponse: boolean;
+  /** Pickups only — from the Companion's background license-check loop. null = not checked yet, not "unconfirmed." */
+  licenseConfirmed: boolean | null;
+  licenseStatusText: string | null;
 }
 
 export type MessageUrgency = "high" | "medium" | "low";
@@ -89,6 +98,8 @@ export interface Suggestion {
   description: string;
   priority: SuggestionPriority;
   actionLabel: string;
+  /** Where actionLabel actually goes — a HostOS route or a real turo.com reservation URL. Null only if there's truly nowhere to send someone. */
+  href: string | null;
 }
 
 export interface TimelineEvent {
@@ -266,6 +277,7 @@ function toScheduleEntries(
     .filter((x): x is { r: TuroReservation; when: string } => isToday(x.when))
     .map(({ r, when }) => ({
       id: `${kind}-${r.id}`,
+      tripId: r.id,
       kind,
       guestName: r.guestName ?? "Guest",
       vehicle: r.vehicle ?? "Vehicle",
@@ -276,6 +288,9 @@ function toScheduleEntries(
       // Any unread mail on the trip means it hasn't been acknowledged.
       ready: !r.events.some((e) => e.isUnread),
       needsResponse: r.events.some((e) => e.isUnread),
+      // Gmail has no license-status signal — only Companion's background check does.
+      licenseConfirmed: null,
+      licenseStatusText: null,
     }))
     .sort((a, b) => new Date(`1970-01-01 ${a.time}`).getTime() - new Date(`1970-01-01 ${b.time}`).getTime());
 }
@@ -441,7 +456,8 @@ function toActivity(events: TuroEvent[]): ActivityEntry[] {
 function computeFleetHealth(
   events: TuroEvent[],
   reservations: TuroReservation[],
-  companionConversations: GuestConversation[]
+  companionConversations: GuestConversation[],
+  overdueCount: number
 ): FleetHealth {
   const hasCompanionMessages = companionConversations.length > 0;
   const unreadConversations = companionConversations.filter((c) => c.unread);
@@ -466,9 +482,11 @@ function computeFleetHealth(
 
   // Start at 100 and deduct for things needing attention, so an empty inbox
   // reads as healthy rather than as a suspiciously perfect hardcoded number.
+  // Overdue returns weigh in too — a fleet can have zero unread messages and
+  // still be in bad shape if a dozen cars never got checked back in.
   const score = Math.max(
     0,
-    Math.min(100, 100 - responseBacklog * 8 - Math.max(0, unreadCount - 3) * 2)
+    Math.min(100, 100 - responseBacklog * 8 - Math.max(0, unreadCount - 3) * 2 - overdueCount * 3)
   );
 
   return { score, unreadCount, activeReservations, pendingTrips, responseBacklog };
@@ -499,6 +517,7 @@ function buildVehicles(events: TuroEvent[], reservations: TuroReservation[]): Fl
       let nextEventLabel: string | null = null;
       let nextEventAt: string | null = null;
       let nextEventKind: "pickup" | "return" | null = null;
+      let nextEventGuestName: string | null = null;
       let priority: number;
 
       if (active) {
@@ -507,6 +526,7 @@ function buildVehicles(events: TuroEvent[], reservations: TuroReservation[]): Fl
           nextEventLabel = describeUpcoming("return", active.endsAt);
           nextEventAt = active.endsAt;
           nextEventKind = "return";
+          nextEventGuestName = active.guestName;
         }
         priority = 0;
       } else if (upcoming) {
@@ -514,6 +534,7 @@ function buildVehicles(events: TuroEvent[], reservations: TuroReservation[]): Fl
         nextEventLabel = describeUpcoming("pickup", upcoming.startsAt);
         nextEventAt = upcoming.startsAt;
         nextEventKind = "pickup";
+        nextEventGuestName = upcoming.guestName;
         priority = isToday(upcoming.startsAt) ? 1 : 2;
       } else {
         status = "available";
@@ -531,6 +552,7 @@ function buildVehicles(events: TuroEvent[], reservations: TuroReservation[]): Fl
         nextEventKind,
         // Gmail always carries a real parsed timestamp, never a bare date label.
         nextEventExact: true,
+        nextEventGuestName,
         // Gmail-derived vehicles have no trip_messages join to key off —
         // only Companion vehicles (see buildCompanionVehicles) can know this.
         needsResponse: false,
@@ -592,6 +614,10 @@ function buildCompanionReservations(trips: CompanionTrip[]): TuroReservation[] {
     id: t.id,
     guestName: t.guestName,
     vehicle: companionVehicleName(t),
+    // Matches FleetVehicle.id from buildCompanionVehicles (plate-keyed) —
+    // `vehicle` above is not unique enough once two vehicles share a
+    // make+model (see TuroReservation.vehicleId's own comment).
+    vehicleId: t.plate,
     status: companionStatus(t),
     // Companion records when a trip was first synced, not when it was
     // originally booked — leaving this null is more honest than guessing.
@@ -622,6 +648,7 @@ function companionScheduleEntries(
     .sort((a, b) => new Date(a.resolved.iso).getTime() - new Date(b.resolved.iso).getTime())
     .map(({ t, resolved }) => ({
       id: `${kind}-${t.id}`,
+      tripId: t.id,
       kind,
       guestName: t.guestName ?? "Guest",
       vehicle: companionVehicleName(t),
@@ -633,6 +660,10 @@ function companionScheduleEntries(
       // prep" is the safer bias for an ops checklist than false confidence.
       ready: false,
       needsResponse: unreadTripIds.has(t.id),
+      // Only meaningful for pickups (see ScheduleEntry) — a return has
+      // nothing to confirm a license against.
+      licenseConfirmed: kind === "pickup" ? t.licenseConfirmed : null,
+      licenseStatusText: kind === "pickup" ? t.licenseStatusText : null,
     }));
 }
 
@@ -660,6 +691,7 @@ function companionOverdueReturns(trips: CompanionTrip[], unreadTripIds: Set<stri
     .sort((a, b) => new Date(a.resolved.iso).getTime() - new Date(b.resolved.iso).getTime())
     .map(({ t, resolved }) => ({
       id: `overdue-${t.id}`,
+      tripId: t.id,
       kind: "return" as const,
       guestName: t.guestName ?? "Guest",
       vehicle: companionVehicleName(t),
@@ -670,6 +702,8 @@ function companionOverdueReturns(trips: CompanionTrip[], unreadTripIds: Set<stri
       location: "HostOS Companion",
       ready: false,
       needsResponse: unreadTripIds.has(t.id),
+      licenseConfirmed: null,
+      licenseStatusText: null,
     }));
 }
 
@@ -712,6 +746,7 @@ function buildCompanionVehicles(
     let nextEventAt: string | null = null;
     let nextEventKind: "pickup" | "return" | null = null;
     let nextEventExact = true;
+    let nextEventGuestName: string | null = null;
     let priority: number;
     let relevantTripId: string | null = null;
 
@@ -722,6 +757,7 @@ function buildCompanionVehicles(
         nextEventAt = onTripResolved.iso;
         nextEventKind = "return";
         nextEventExact = onTripResolved.exact;
+        nextEventGuestName = onTripTrip.guestName;
       }
       priority = 0;
       relevantTripId = onTripTrip.id;
@@ -733,6 +769,7 @@ function buildCompanionVehicles(
       nextEventAt = nextPickup.resolved.iso;
       nextEventKind = "pickup";
       nextEventExact = nextPickup.resolved.exact;
+      nextEventGuestName = nextPickup.t.guestName;
       priority = isToday(nextPickup.resolved.iso) ? 1 : 2;
       relevantTripId = nextPickup.t.id;
     } else if (futureReturn) {
@@ -741,6 +778,7 @@ function buildCompanionVehicles(
       nextEventAt = futureReturn.resolved.iso;
       nextEventKind = "return";
       nextEventExact = futureReturn.resolved.exact;
+      nextEventGuestName = futureReturn.t.guestName;
       priority = 2;
       relevantTripId = futureReturn.t.id;
     } else {
@@ -758,6 +796,7 @@ function buildCompanionVehicles(
       nextEventAt,
       nextEventKind,
       nextEventExact,
+      nextEventGuestName,
       needsResponse: relevantTripId !== null && unreadTripIds.has(relevantTripId),
       priority,
     };
@@ -780,6 +819,7 @@ function buildCompanionVehicles(
       nextEventAt: d.nextEventAt,
       nextEventKind: d.nextEventKind,
       nextEventExact: d.nextEventExact,
+      nextEventGuestName: d.nextEventGuestName,
       needsResponse: d.needsResponse,
       priority: d.priority,
     }))
@@ -824,7 +864,7 @@ function buildOperationsTimeline(vehicles: FleetVehicle[]): OperationsDay[] {
       // Real scraped time when we have one; an honest "Time TBD" rather
       // than a fabricated clock reading when only a date label synced.
       time: v.nextEventExact ? formatClock(v.nextEventAt) : "Time TBD",
-      guestName: null,
+      guestName: v.nextEventGuestName,
       needsResponse: v.needsResponse,
       sortAt: v.nextEventAt,
     });
@@ -868,17 +908,37 @@ function buildTimeline(events: TuroEvent[]): TimelineEvent[] {
     .sort((a, b) => a.sortKey - b.sortKey);
 }
 
-/** Deterministic, rule-based prompts. Intentionally not AI-generated. */
+/**
+ * Butler's full to-do feed: message-driven tasks (what a guest actually
+ * asked for, scanned from the last 72h of scraped conversations — see
+ * src/lib/butler/priority.ts) ranked alongside the older trip-level
+ * heuristics (oldest unread, next pickup to prep, review nudges).
+ * Deterministic and rule-based throughout — intentionally not AI-generated.
+ */
 function buildSuggestions(
   events: TuroEvent[],
   reservations: TuroReservation[],
   health: FleetHealth,
-  companionConversations: GuestConversation[]
+  companionConversations: GuestConversation[],
+  recentMessages: RecentGuestMessage[],
+  overdueReturns: ScheduleEntry[]
 ): Suggestion[] {
-  const out: Suggestion[] = [];
+  // Message-driven tasks come first — a guest asking to get into a Tesla or
+  // reporting a lost item is a more specific, more actionable version of
+  // "you have an unread message," so a trip that already produced one of
+  // these doesn't also need the generic "reply to oldest unread" card below.
+  const messageTasks = buildMessageButlerTasks(recentMessages);
+  // Every message task links to /messages/<tripId> (see buildMessageButlerTasks) —
+  // decoding that back out is more reliable than parsing category text out
+  // of the id, since categories like "lost-item" contain the same dash the
+  // id uses as a separator.
+  const messageTaskTripIds = new Set(
+    messageTasks.map((t) => decodeURIComponent(t.href?.replace("/messages/", "") ?? ""))
+  );
+  const out: Suggestion[] = [...messageTasks];
 
   const oldestUnreadConversation = companionConversations
-    .filter((c) => c.unread)
+    .filter((c) => c.unread && !messageTaskTripIds.has(c.tripId))
     .sort((a, b) => new Date(a.syncedAt).getTime() - new Date(b.syncedAt).getTime())[0];
 
   const oldestUnreadEmail = events
@@ -892,6 +952,7 @@ function buildSuggestions(
       description: `Waiting since ${formatRelativeTime(oldestUnreadConversation.syncedAt)}. It's the longest-outstanding conversation in Guest Messages.`,
       priority: health.responseBacklog > 0 ? "high" : "medium",
       actionLabel: "Open messages",
+      href: `/messages/${encodeURIComponent(oldestUnreadConversation.tripId)}`,
     });
   } else if (oldestUnreadEmail) {
     out.push({
@@ -900,9 +961,29 @@ function buildSuggestions(
       description: `Waiting since ${formatRelativeTime(oldestUnreadEmail.occurredAt)}. It's the longest-outstanding message in your inbox.`,
       priority: health.responseBacklog > 0 ? "high" : "medium",
       actionLabel: "Open inbox",
+      href: "/inbox",
     });
   }
 
+  // A return that's both overdue and still has an unanswered guest message
+  // is a materially different problem than an overdue return sitting quiet
+  // — the guest is actively trying to reach the host about it.
+  const overdueWithMessage = overdueReturns.find((r) => r.needsResponse);
+  if (overdueWithMessage) {
+    out.push({
+      id: `overdue-msg-${overdueWithMessage.tripId}`,
+      title: `${overdueWithMessage.guestName} is overdue and waiting on you`,
+      description: `${overdueWithMessage.vehicle} was due ${overdueWithMessage.time} and has an unanswered message.`,
+      priority: "high",
+      actionLabel: "Open conversation",
+      href: `/messages/${encodeURIComponent(overdueWithMessage.tripId)}`,
+    });
+  }
+
+  // .startsAt is guaranteed non-null by the filter above, and
+  // buildCompanionReservations/buildReservations never fabricate a
+  // placeholder into it — so whenever a reservation has one, it's a real
+  // scraped/parsed timestamp safe to show as an exact time, not a guess.
   const nextTrip = reservations
     .filter((r) => r.status === "upcoming" && r.startsAt)
     .sort((a, b) => new Date(a.startsAt!).getTime() - new Date(b.startsAt!).getTime())[0];
@@ -911,9 +992,10 @@ function buildSuggestions(
     out.push({
       id: `prep-${nextTrip.id}`,
       title: `Prepare ${nextTrip.vehicle ?? "the next vehicle"}`,
-      description: `Next trip${nextTrip.guestName ? ` with ${nextTrip.guestName}` : ""} is coming up. Confirm the car is cleaned and ready.`,
+      description: `Next trip${nextTrip.guestName ? ` with ${nextTrip.guestName}` : ""} starts at ${formatClock(nextTrip.startsAt!)}. Confirm the car is cleaned and ready.`,
       priority: "medium",
       actionLabel: "View reservation",
+      href: `https://turo.com/us/en/reservation/${encodeURIComponent(nextTrip.id)}`,
     });
   }
 
@@ -928,10 +1010,12 @@ function buildSuggestions(
       description: `${completedNoReview.guestName ?? "A recent guest"} finished a trip with no review yet.`,
       priority: "low",
       actionLabel: "Send nudge",
+      href: `https://turo.com/us/en/reservation/${encodeURIComponent(completedNoReview.id)}`,
     });
   }
 
-  return out.slice(0, 3);
+  const priorityRank: Record<SuggestionPriority, number> = { high: 0, medium: 1, low: 2 };
+  return out.sort((a, b) => priorityRank[a.priority] - priorityRank[b.priority]).slice(0, 8);
 }
 
 const EMPTY_HEALTH: FleetHealth = {
@@ -986,13 +1070,43 @@ function computeOccupancyTrend(reservations: TuroReservation[], fleetSize: numbe
 export const getDashboardData = cache(async function getDashboardData(
   userEmail: string | null
 ): Promise<DashboardData> {
-  const [allEmails, companionTrips, companionVehiclesRaw, host, companionConversations] = await Promise.all([
-    userEmail ? getSyncedEmails(userEmail, 200) : Promise.resolve([]),
-    getCompanionTrips(DEFAULT_HOST_ID),
-    getCompanionVehicles(DEFAULT_HOST_ID),
-    getHost(),
-    getGuestConversations(DEFAULT_HOST_ID, 200),
-  ]);
+  // Resolved once, before the fan-out, so every widget on a render reads the
+  // same fleet. getCurrentHostId is itself React-cache()'d per request, so this
+  // costs one membership lookup regardless of how many callers ask.
+  const hostId = await getCurrentHostId();
+
+  const [allEmails, companionTripsRaw, companionVehiclesRaw, host, companionConversations, recentMessages] =
+    await Promise.all([
+      userEmail ? getSyncedEmails(userEmail, 200) : Promise.resolve([]),
+      getCompanionTrips(hostId),
+      getCompanionVehicles(hostId),
+      getHost(hostId),
+      getGuestConversations(hostId, 200),
+      getRecentGuestMessages(hostId, 72),
+    ]);
+
+  // scrapeTrips() re-sends Turo's *entire* current trips list every sync —
+  // every reservation still on the board gets a fresh synced_at together in
+  // the same pass, whether or not anything about it changed. A row whose
+  // synced_at trails the newest one by more than a few sync cycles wasn't
+  // in that pass at all, which only happens because Turo stopped showing it
+  // (the trip resolved — completed, cancelled, or otherwise closed out) —
+  // Companion has no separate "this trip is done" signal, so staying in
+  // this table forever was making resolved trips read as permanently
+  // overdue (one sat at 4+ months "overdue" before this filter existed).
+  // The threshold is sync-batch-relative, not wall-clock, so a browser that
+  // was closed for a week doesn't wrongly zero out every trip the moment it
+  // reconnects — everything still active gets re-stamped together as soon
+  // as the next sync runs.
+  const newestTripSync = companionTripsRaw.reduce<number>(
+    (max, t) => Math.max(max, new Date(t.syncedAt).getTime()),
+    0
+  );
+  const STALE_TRIP_TOLERANCE_MS = 10 * 60 * 1000;
+  const companionTrips =
+    newestTripSync === 0
+      ? companionTripsRaw
+      : companionTripsRaw.filter((t) => newestTripSync - new Date(t.syncedAt).getTime() <= STALE_TRIP_TOLERANCE_MS);
 
   // The inbox this syncs is a general Gmail account, not a Turo-only one —
   // anything from another sender (a forum notification, a newsletter) can
@@ -1054,7 +1168,8 @@ export const getDashboardData = cache(async function getDashboardData(
   const messages =
     companionConversations.length > 0 ? companionAttentionMessages(companionConversations) : toAttentionMessages(events);
 
-  const fleetHealth = computeFleetHealth(events, reservations, companionConversations);
+  const overdueReturns = companionOverdueReturns(companionTrips, unreadTripIds);
+  const fleetHealth = computeFleetHealth(events, reservations, companionConversations, overdueReturns.length);
 
   return {
     hasSyncedData: true,
@@ -1063,13 +1178,13 @@ export const getDashboardData = cache(async function getDashboardData(
     returns,
     messages,
     activity: toActivity(events),
-    suggestions: buildSuggestions(events, reservations, fleetHealth, companionConversations),
+    suggestions: buildSuggestions(events, reservations, fleetHealth, companionConversations, recentMessages, overdueReturns),
     timeline: buildTimeline(events),
     vehicles,
     operationsTimeline: buildOperationsTimeline(vehicles),
     unscheduledVehicles: vehicles.filter((v) => !v.nextEventAt),
     occupancyTrend: computeOccupancyTrend(reservations, vehicles.length),
-    overdueReturns: companionOverdueReturns(companionTrips, unreadTripIds),
+    overdueReturns,
     reservations,
     events,
   };

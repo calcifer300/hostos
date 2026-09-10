@@ -1,4 +1,5 @@
-import { AlertTriangle, Info, ListChecks, LogIn, LogOut } from "lucide-react";
+import Link from "next/link";
+import { AlertTriangle, Info, ListChecks, LogIn, LogOut, MessageCircle } from "lucide-react";
 import { auth } from "@/auth";
 import { getDashboardData } from "@/lib/dashboard/queries";
 import { ScheduleCard } from "@/components/dashboard/schedule-card";
@@ -40,19 +41,29 @@ export default async function OperationsPage() {
                 {data.overdueReturns.map((entry) => (
                   <div
                     key={entry.id}
-                    className="flex items-center justify-between gap-3 rounded-lg px-1.5 py-2"
+                    className="flex items-center justify-between gap-3 rounded-lg px-1.5 py-2 transition-colors hover:bg-danger/5"
                   >
                     <div className="min-w-0">
                       <p className="truncate text-[13.5px] font-medium">{entry.guestName}</p>
                       <p className="truncate text-[12.5px] text-muted-foreground">{entry.vehicle}</p>
                     </div>
-                    <div className="shrink-0 text-right">
-                      <p className="text-[13px] font-medium tabular-nums text-danger">
-                        Was due {entry.time}
-                      </p>
-                      {entry.needsResponse && (
-                        <p className="text-[11px] font-medium text-danger">Guest waiting</p>
-                      )}
+                    <div className="flex shrink-0 items-center gap-3">
+                      <div className="text-right">
+                        <p className="text-[13px] font-medium tabular-nums text-danger">
+                          Was due {entry.time}
+                        </p>
+                        {entry.needsResponse && (
+                          <p className="text-[11px] font-medium text-danger">Guest waiting</p>
+                        )}
+                      </div>
+                      <Link
+                        href={`/messages/${encodeURIComponent(entry.tripId)}`}
+                        aria-label={`Message ${entry.guestName}`}
+                        title={`Message ${entry.guestName}`}
+                        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-danger/40 hover:text-danger"
+                      >
+                        <MessageCircle className="h-3.5 w-3.5" strokeWidth={1.75} />
+                      </Link>
                     </div>
                   </div>
                 ))}
@@ -82,12 +93,12 @@ export default async function OperationsPage() {
             <Info className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" strokeWidth={1.75} />
             <div>
               <p className="text-[12.5px] font-medium text-muted-foreground">
-                Cleaning, fuel, and driver-license checks
+                Cleaning and fuel checks
               </p>
               <p className="mt-1 text-[12.5px] leading-relaxed text-muted-foreground/80">
-                Companion syncs trip times, guests, and vehicles — it doesn&rsquo;t send fuel levels,
-                license status, or cleaning checklists yet. That needs a future extension update, not
-                just a connection.
+                Companion syncs trip times, guests, vehicles, and driver&rsquo;s-license status for
+                upcoming pickups — it doesn&rsquo;t send fuel levels or cleaning checklists yet. That
+                needs a future extension update, not just a connection.
               </p>
             </div>
           </div>

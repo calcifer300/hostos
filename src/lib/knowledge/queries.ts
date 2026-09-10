@@ -1,5 +1,5 @@
 import "server-only";
-import { getSupabaseAdmin, isSupabaseConfigured, isUndefinedTableError } from "@/lib/supabase/server";
+import { runQueryOr } from "@/lib/supabase/server";
 import { defaultKnowledgeBase } from "@/lib/mock/seed-emails";
 import type { HostKnowledgeBase } from "@/types/ihost";
 
@@ -18,50 +18,34 @@ interface KnowledgeRow {
  * even if Supabase is unreachable.
  */
 export async function getKnowledgeBase(userEmail: string): Promise<HostKnowledgeBase> {
-  if (!isSupabaseConfigured()) return defaultKnowledgeBase;
+  const { data } = await runQueryOr<KnowledgeRow | null>("knowledge_base.get", null, (client) =>
+    client.from("knowledge_base").select("*").eq("user_email", userEmail).maybeSingle<KnowledgeRow>()
+  );
 
-  try {
-    const { data, error } = await getSupabaseAdmin()
-      .from("knowledge_base")
-      .select("*")
-      .eq("user_email", userEmail)
-      .maybeSingle<KnowledgeRow>();
+  if (!data) return defaultKnowledgeBase;
 
-    if (error) {
-      if (!isUndefinedTableError(error)) {
-        console.error("[knowledge] Failed to load knowledge base:", error.message);
-      }
-      return defaultKnowledgeBase;
-    }
-
-    if (!data) return defaultKnowledgeBase;
-
-    return {
-      checkInProcess: data.check_in_process,
-      houseRules: data.house_rules,
-      policy: data.policy,
-      tone: data.tone,
-    };
-  } catch (err) {
-    console.error("[knowledge] Failed to load knowledge base:", err);
-    return defaultKnowledgeBase;
-  }
+  return {
+    checkInProcess: data.check_in_process,
+    houseRules: data.house_rules,
+    policy: data.policy,
+    tone: data.tone,
+  };
 }
 
-/** True when the host has saved their own knowledge base rather than using defaults. */
+/**
+ * True when the host has saved their own knowledge base rather than using
+ * defaults. A failed read answers "false", which only softens the copy on the
+ * Knowledge page ("showing the starting defaults") — never a wrong claim that
+ * unreachable data was saved.
+ */
 export async function hasSavedKnowledgeBase(userEmail: string): Promise<boolean> {
-  if (!isSupabaseConfigured()) return false;
-
-  try {
-    const { data, error } = await getSupabaseAdmin()
+  const { data } = await runQueryOr<{ user_email: string } | null>("knowledge_base.exists", null, (client) =>
+    client
       .from("knowledge_base")
       .select("user_email")
       .eq("user_email", userEmail)
-      .maybeSingle();
+      .maybeSingle<{ user_email: string }>()
+  );
 
-    if (error) return false;
-    return Boolean(data);
-  } catch {
-    return false;
-  }
+  return Boolean(data);
 }

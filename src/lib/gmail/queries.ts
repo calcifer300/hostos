@@ -1,5 +1,5 @@
 import "server-only";
-import { getSupabaseAdmin, isSupabaseConfigured, isUndefinedTableError } from "@/lib/supabase/server";
+import { runQueryOr } from "@/lib/supabase/server";
 import type { SyncedEmail } from "@/types/gmail";
 
 interface SyncedEmailRow {
@@ -42,53 +42,30 @@ function rowToSyncedEmail(row: SyncedEmailRow): SyncedEmail {
  * synced yet", not a broken page.
  */
 export async function getSyncedEmails(userEmail: string, limit = 30): Promise<SyncedEmail[]> {
-  if (!isSupabaseConfigured()) return [];
-
-  try {
-    const { data, error } = await getSupabaseAdmin()
+  const { data } = await runQueryOr<SyncedEmailRow[]>("synced_emails.list", [], (client) =>
+    client
       .from("synced_emails")
       .select("*")
       .eq("user_email", userEmail)
       .order("received_at", { ascending: false })
-      .limit(limit);
+      .limit(limit)
+      .returns<SyncedEmailRow[]>()
+  );
 
-    if (error) {
-      if (!isUndefinedTableError(error)) {
-        console.error("[gmail] Failed to load synced emails:", error.message);
-      }
-      return [];
-    }
-
-    return (data ?? []).map(rowToSyncedEmail);
-  } catch (err) {
-    console.error("[gmail] Failed to load synced emails:", err);
-    return [];
-  }
+  return data.map(rowToSyncedEmail);
 }
 
 export async function getLatestUnreadEmail(userEmail: string): Promise<SyncedEmail | null> {
-  if (!isSupabaseConfigured()) return null;
-
-  try {
-    const { data, error } = await getSupabaseAdmin()
+  const { data } = await runQueryOr<SyncedEmailRow | null>("synced_emails.latest_unread", null, (client) =>
+    client
       .from("synced_emails")
       .select("*")
       .eq("user_email", userEmail)
       .eq("is_unread", true)
       .order("received_at", { ascending: false })
       .limit(1)
-      .maybeSingle<SyncedEmailRow>();
+      .maybeSingle<SyncedEmailRow>()
+  );
 
-    if (error) {
-      if (!isUndefinedTableError(error)) {
-        console.error("[gmail] Failed to load the latest unread email:", error.message);
-      }
-      return null;
-    }
-
-    return data ? rowToSyncedEmail(data) : null;
-  } catch (err) {
-    console.error("[gmail] Failed to load the latest unread email:", err);
-    return null;
-  }
+  return data ? rowToSyncedEmail(data) : null;
 }

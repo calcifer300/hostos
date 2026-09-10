@@ -260,6 +260,9 @@ export function buildReservations(events: TuroEvent[]): TuroReservation[] {
       id: sorted[0].id,
       guestName: sorted[0].guestName,
       vehicle: sorted[0].vehicle,
+      // Gmail-derived FleetVehicle.id is always the bare name (buildVehicles
+      // never disambiguates) — same value, so this is safe to set directly.
+      vehicleId: sorted[0].vehicle,
       status,
       bookedAt: booking?.occurredAt ?? null,
       startsAt,

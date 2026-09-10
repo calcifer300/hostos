@@ -4,7 +4,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "HostOS",
-  description: "iHost, your AI co-host.",
+  description: "The AI Operating System for Professional Turo Hosts.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

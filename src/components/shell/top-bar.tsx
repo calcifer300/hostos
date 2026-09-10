@@ -27,11 +27,13 @@ export function TopBar({
   messages,
   unreadNotifications,
   user,
+  roles,
 }: {
   vehicles: FleetVehicle[];
   messages: AttentionMessage[];
   unreadNotifications: number;
   user: SessionUser | null;
+  roles: string[];
 }) {
   const router = useRouter();
   const [query, setQuery] = React.useState("");
@@ -98,7 +100,7 @@ export function TopBar({
   }
 
   return (
-    <div className="sticky top-0 z-20 hidden items-center justify-between gap-4 border-b border-border bg-background/80 px-8 py-3.5 backdrop-blur md:flex">
+    <div className="glass-surface sticky top-0 z-20 hidden items-center justify-between gap-4 border-b border-border px-8 py-3.5 md:flex">
       <div ref={containerRef} className="relative w-full max-w-sm">
         <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
         <input
@@ -166,7 +168,7 @@ export function TopBar({
             </span>
           )}
         </Link>
-        <UserMenu user={user} />
+        <UserMenu user={user} roles={roles} showDetails />
       </div>
     </div>
   );

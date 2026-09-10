@@ -71,12 +71,12 @@ export function AiBriefingCard({ initialEmail }: { initialEmail?: InboundTuroEma
         } else {
           setBriefingState({
             status: "failed",
-            message: data.error || "iHost could not generate a briefing.",
+            message: data.error || "HostOS could not generate a briefing.",
           });
         }
       } catch {
         if (!cancelled) {
-          setBriefingState({ status: "failed", message: "iHost could not reach the briefing service." });
+          setBriefingState({ status: "failed", message: "HostOS could not reach the briefing service." });
         }
       }
     })();
@@ -103,7 +103,7 @@ export function AiBriefingCard({ initialEmail }: { initialEmail?: InboundTuroEma
         body: JSON.stringify(inbound),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "iHost could not process this message.");
+      if (!res.ok) throw new Error(data.error || "HostOS could not process this message.");
       setAnalysis(data as IHostAnalysis);
       setStage("result");
     } catch (err) {
@@ -277,7 +277,7 @@ export function AiBriefingCard({ initialEmail }: { initialEmail?: InboundTuroEma
                 <div>
                   <p className="text-[13.5px] font-medium">Nothing synced yet</p>
                   <p className="mt-0.5 text-[13px] leading-relaxed text-muted-foreground">
-                    Sync your Gmail from the Inbox and iHost will brief you on what arrived.
+                    Sync your Gmail from the Inbox and HostOS will brief you on what arrived.
                   </p>
                 </div>
               </motion.div>
@@ -395,7 +395,7 @@ export function AiBriefingCard({ initialEmail }: { initialEmail?: InboundTuroEma
                 />
                 <div className="mt-2.5 flex justify-end">
                   <Button size="sm" onClick={handleCustomSubmit}>
-                    Send to iHost
+                    Send to HostOS
                   </Button>
                 </div>
               </div>

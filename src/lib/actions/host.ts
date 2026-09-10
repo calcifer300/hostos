@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getSupabaseAdmin, isSupabaseConfigured, isUndefinedTableError } from "@/lib/supabase/server";
+import { isSupabaseConfigured, runMutation } from "@/lib/supabase/server";
 import { getHost } from "@/lib/host/queries";
 
 export interface RegenerateKeyResult {
@@ -34,25 +34,14 @@ export async function regenerateCompanionApiKey(): Promise<RegenerateKeyResult> 
 
   const apiKey = `hostos_live_${crypto.randomUUID().replace(/-/g, "")}`;
 
-  try {
-    const { error } = await getSupabaseAdmin()
-      .from("hosts")
-      .update({ companion_api_key: apiKey })
-      .eq("id", host.id);
+  // The key is only ever shown once, so a failed write must not report
+  // success — the host would copy a key the database never stored.
+  const result = await runMutation("hosts.rotate_api_key", (client) =>
+    client.from("hosts").update({ companion_api_key: apiKey }).eq("id", host.id)
+  );
 
-    if (error) {
-      if (isUndefinedTableError(error)) {
-        return {
-          ok: false,
-          error: "The hosts table doesn't exist yet. Run supabase/migrations/0003_trips.sql.",
-        };
-      }
-      return { ok: false, error: `Could not save: ${error.message}` };
-    }
+  if (!result.ok) return { ok: false, error: result.error };
 
-    revalidatePath("/settings");
-    return { ok: true, apiKey };
-  } catch (err) {
-    return { ok: false, error: err instanceof Error ? err.message : "Could not generate a pairing code." };
-  }
+  revalidatePath("/settings");
+  return { ok: true, apiKey };
 }

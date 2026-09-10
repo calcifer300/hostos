@@ -4,14 +4,7 @@ import { getDashboardData } from "@/lib/dashboard/queries";
 import { AUTOMATIONS, CATEGORY_LABELS, type AutomationCategory } from "@/lib/automations/definitions";
 import { getAutomationSettings } from "@/lib/automations/queries";
 import { AutomationRow } from "@/components/automations/automation-row";
-import { Badge } from "@/components/ui/badge";
-import type { SuggestionPriority } from "@/lib/dashboard/queries";
-
-const priorityVariant: Record<SuggestionPriority, "danger" | "warning" | "neutral"> = {
-  high: "danger",
-  medium: "warning",
-  low: "neutral",
-};
+import { ButlerTaskList } from "@/components/dashboard/butler-task-list";
 
 const CATEGORY_ORDER: AutomationCategory[] = ["messaging", "operations", "monitoring"];
 
@@ -37,7 +30,7 @@ export default async function ButlerPage() {
           <Sparkles className="h-[18px] w-[18px] text-accent" strokeWidth={1.75} />
         </div>
         <div>
-          <p className="text-[12px] font-medium text-muted-foreground">Atlas</p>
+          <p className="text-[12px] font-medium text-muted-foreground">HostOS</p>
           <h1 className="text-[24px] font-semibold tracking-tight">Butler</h1>
         </div>
       </div>
@@ -58,31 +51,7 @@ export default async function ButlerPage() {
         <h2 className="mb-2 px-1 text-[11.5px] font-semibold uppercase tracking-wide text-muted-foreground">
           Recommended
         </h2>
-        {suggestions.length === 0 ? (
-          <div className="rounded-2xl border border-border bg-card p-5 text-[13.5px] text-muted-foreground shadow-[var(--shadow-card)]">
-            Nothing needs your attention right now.
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {suggestions.map((s) => (
-              <div
-                key={s.id}
-                className="rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-card)]"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <p className="text-[14px] font-medium tracking-tight">{s.title}</p>
-                  <Badge variant={priorityVariant[s.priority]} className="shrink-0">
-                    {s.priority}
-                  </Badge>
-                </div>
-                <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground">
-                  {s.description}
-                </p>
-                <p className="mt-3 text-[13px] font-medium text-accent">{s.actionLabel} &rarr;</p>
-              </div>
-            ))}
-          </div>
-        )}
+        <ButlerTaskList suggestions={suggestions} />
       </div>
 
       <div>

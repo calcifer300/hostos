@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getHostByApiKey } from "@/lib/host/queries";
-import { getSupabaseAdmin, isUndefinedTableError } from "@/lib/supabase/server";
-import { diffTrip, type ExistingTripRow, type IncomingTrip } from "@/lib/trips/sync";
+import { ingestFailureResponse, requireCompanionHost } from "@/lib/api/companion-auth";
+import { isUndefinedTableError } from "@/lib/supabase/server";
+import { diffTrip, resolvePacificTimestamp, type ExistingTripRow, type IncomingTrip } from "@/lib/trips/sync";
 
 /**
  * Ingests a HostOS Companion sync payload. Authenticated by a bearer
@@ -13,6 +13,10 @@ import { diffTrip, type ExistingTripRow, type IncomingTrip } from "@/lib/trips/s
 
 interface FleetPayloadEntry {
   plate?: string;
+  /** Fleet-calendar nightly prices, index 0 = calendarScannedAt. See migration 0010. */
+  dailyPrices?: number[] | null;
+  bookedDayFlags?: boolean[] | null;
+  calendarScannedAt?: string | null;
   year?: string | null;
   color?: string | null;
   make?: string | null;
@@ -28,25 +32,10 @@ interface SyncPayload {
 
 const MIGRATION_HINT = "Run supabase/migrations/0003_trips.sql against your Supabase project.";
 
-function getBearerToken(req: NextRequest): string | null {
-  const header = req.headers.get("authorization") ?? "";
-  const match = header.match(/^Bearer\s+(.+)$/i);
-  return match ? match[1].trim() : null;
-}
-
 export async function POST(req: NextRequest) {
-  const token = getBearerToken(req);
-  if (!token) {
-    return NextResponse.json(
-      { error: "Missing Authorization: Bearer <pairing key> header." },
-      { status: 401 }
-    );
-  }
-
-  const host = await getHostByApiKey(token);
-  if (!host) {
-    return NextResponse.json({ error: "Invalid or unknown pairing key." }, { status: 401 });
-  }
+  const auth = await requireCompanionHost(req);
+  if (!auth.ok) return auth.response;
+  const { host, supabase } = auth.ctx;
 
   let payload: SyncPayload;
   try {
@@ -77,7 +66,6 @@ export async function POST(req: NextRequest) {
     new Map(reservationBearing.map((t) => [t.reservation, t])).values()
   );
 
-  const supabase = getSupabaseAdmin();
   let eventsCreated = 0;
 
   try {
@@ -126,23 +114,35 @@ export async function POST(req: NextRequest) {
     }
 
     if (trackable.length > 0) {
-      const tripRows = trackable.map((t) => ({
-        id: t.reservation,
-        host_id: host.id,
-        guest_name: t.guestName ?? null,
-        plate: t.plate ?? null,
-        vehicle_make: t.vehicleMake ?? null,
-        vehicle_model: t.vehicleModel ?? null,
-        vehicle_year: t.vehicleYear ?? null,
-        action: t.action ?? null,
-        skip_reason: t.skipReason ?? null,
-        start_ts: t.startTs ? new Date(t.startTs).toISOString() : null,
-        end_ts: t.endTs ? new Date(t.endTs).toISOString() : null,
-        date_label: t.dateLabel ?? null,
-        extras: t.extras ?? [],
-        raw: t,
-        synced_at: new Date().toISOString(),
-      }));
+      const tripRows = trackable.map((t) => {
+        // The extension's own numeric startTs/endTs has proven unreliable
+        // for check-outs — see resolvePacificTimestamp's comment. Prefer
+        // it when present (it's already a real instant), otherwise derive
+        // one from the raw dateLabel + time strings, which are just as
+        // reliable and now resolved server-side where it's actually
+        // testable.
+        const derivedTs = resolvePacificTimestamp(t.dateLabel, t.time);
+        const startTs = t.startTs ? new Date(t.startTs).toISOString() : t.action === "checkin" ? derivedTs : null;
+        const endTs = t.endTs ? new Date(t.endTs).toISOString() : t.action === "checkout" ? derivedTs : null;
+
+        return {
+          id: t.reservation,
+          host_id: host.id,
+          guest_name: t.guestName ?? null,
+          plate: t.plate ?? null,
+          vehicle_make: t.vehicleMake ?? null,
+          vehicle_model: t.vehicleModel ?? null,
+          vehicle_year: t.vehicleYear ?? null,
+          action: t.action ?? null,
+          skip_reason: t.skipReason ?? null,
+          start_ts: startTs,
+          end_ts: endTs,
+          date_label: t.dateLabel ?? null,
+          extras: t.extras ?? [],
+          raw: t,
+          synced_at: new Date().toISOString(),
+        };
+      });
 
       const { error: tripError } = await supabase.from("trips").upsert(tripRows, { onConflict: "id" });
       if (tripError) {
@@ -165,10 +165,30 @@ export async function POST(req: NextRequest) {
         model: v.model ?? null,
         lockbox: v.lockbox ?? null,
         permit: v.permit ?? null,
+        // Only written when the calendar actually produced them — a vehicle
+        // synced from a hand-entered roster has no prices, and overwriting a
+        // previous scan with null would silently un-price its trips.
+        ...(Array.isArray(v.dailyPrices) ? { daily_prices: v.dailyPrices } : {}),
+        ...(Array.isArray(v.bookedDayFlags) ? { booked_day_flags: v.bookedDayFlags } : {}),
+        ...(v.calendarScannedAt ? { calendar_scanned_at: v.calendarScannedAt } : {}),
         updated_at: new Date().toISOString(),
       }));
 
     if (vehicleRows.length > 0) {
+      // Read the roster BEFORE writing this payload.
+      //
+      // This used to run after the upsert, which quietly defeated the
+      // safety check below: the freshly-inserted rows inflated `storedCount`,
+      // so the stale fraction was measured against "old roster + everything
+      // just added" instead of against the roster actually at risk. A sync
+      // carrying 13 vehicles against 5 stored produced 5 stale out of 18 —
+      // 28%, under the 50% limit — so the guard stood down and deleted all
+      // five, every one of them still referenced by live trips.
+      const { data: rosterBefore } = await supabase
+        .from("vehicles")
+        .select("plate")
+        .eq("host_id", host.id);
+
       const { error: vehicleError } = await supabase
         .from("vehicles")
         .upsert(vehicleRows, { onConflict: "host_id,plate" });
@@ -182,26 +202,62 @@ export async function POST(req: NextRequest) {
         // fleet that shouldn't linger after the relationship ends). Prune
         // it rather than leaving upsert-only writes to accumulate stale
         // vehicles forever.
-        const { data: existingVehicles } = await supabase
-          .from("vehicles")
-          .select("plate")
-          .eq("host_id", host.id);
-
+        const storedCount = (rosterBefore ?? []).length;
         const currentPlates = new Set(vehicleRows.map((v) => v.plate));
-        const stalePlates = (existingVehicles ?? [])
+        const stalePlates = (rosterBefore ?? [])
           .map((v) => v.plate as string)
           .filter((plate) => !currentPlates.has(plate));
 
-        if (stalePlates.length > 0) {
+        // Retiring a car is a trickle; losing most of the roster in one sync is
+        // a scrape that went wrong. The Companion now builds `fleet` largely
+        // from the Fleet Calendar, whose grid is virtualized and can legitimately
+        // come back partial (page still loading, host paged the calendar, a
+        // selector drifted after a Turo deploy) — and "partial roster" is
+        // indistinguishable from "these cars were retired" at this layer.
+        //
+        // Deleting is the only irreversible thing this endpoint does, so it
+        // refuses to do it wholesale: a sync that would remove more than half
+        // of a non-trivial roster is treated as bad input and skipped, loudly.
+        // Genuine retirements still prune on the next sync once the payload is
+        // complete again.
+        const PRUNE_RATIO_LIMIT = 0.5;
+        const wouldPruneMost = storedCount >= 4 && stalePlates.length > storedCount * PRUNE_RATIO_LIMIT;
+
+        // A ratio is only a heuristic. This is a fact: a vehicle with trips on
+        // the board has not been retired, whatever the fleet payload says.
+        // Every one of the five vehicles wrongly deleted before this existed
+        // was carrying 3-5 live trips at the time.
+        const { data: platesInUse } = await supabase
+          .from("trips")
+          .select("plate")
+          .eq("host_id", host.id)
+          .not("plate", "is", null);
+
+        const inUse = new Set((platesInUse ?? []).map((t) => String(t.plate).toUpperCase()));
+        const retirable = stalePlates.filter((plate) => !inUse.has(plate));
+        const protectedByTrips = stalePlates.length - retirable.length;
+
+        if (wouldPruneMost) {
+          console.warn(
+            `[turo/sync] Skipped pruning ${stalePlates.length}/${storedCount} vehicles — the payload carried only ${vehicleRows.length}. ` +
+              "That looks like an incomplete fleet scrape rather than a retirement, so the roster was left intact."
+          );
+        } else if (retirable.length > 0) {
           const { error: pruneError } = await supabase
             .from("vehicles")
             .delete()
             .eq("host_id", host.id)
-            .in("plate", stalePlates);
+            .in("plate", retirable);
 
           if (pruneError) {
             console.error("[turo/sync] Failed to prune stale vehicles:", pruneError.message);
           }
+        }
+
+        if (protectedByTrips > 0) {
+          console.warn(
+            `[turo/sync] Kept ${protectedByTrips} vehicle(s) absent from the fleet payload because trips still reference them.`
+          );
         }
       }
     }
@@ -215,7 +271,6 @@ export async function POST(req: NextRequest) {
       events: eventRows.map((row) => ({ kind: row.kind, description: row.description })),
     });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown error.";
-    return NextResponse.json({ error: message }, { status: 502 });
+    return ingestFailureResponse("turo/sync", err);
   }
 }

@@ -1,22 +1,21 @@
 import Link from "next/link";
-import { CheckCircle2, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { DashboardCard } from "@/components/dashboard/dashboard-card";
-import { CardEmptyState } from "@/components/dashboard/card-empty-state";
-import { Badge } from "@/components/ui/badge";
-import type { Suggestion, SuggestionPriority } from "@/lib/dashboard/queries";
+import { ButlerTaskList } from "@/components/dashboard/butler-task-list";
+import type { Suggestion } from "@/lib/dashboard/queries";
 
-const priorityVariant: Record<SuggestionPriority, "danger" | "warning" | "neutral"> = {
-  high: "danger",
-  medium: "warning",
-  low: "neutral",
-};
+const OVERVIEW_PREVIEW_COUNT = 4;
 
 /**
  * This is Butler's Overview preview — same rule-based Suggestion logic as
- * the full /butler page, not model-generated, so it still renders with no
- * AI provider configured.
+ * the full /butler page (now dominated by src/lib/butler/priority.ts's
+ * message-driven tasks), not model-generated, so it still renders with no
+ * AI provider configured. Capped and ungrouped here since it's a preview,
+ * not the full triage view — see /butler for the grouped version.
  */
 export function SuggestionsCard({ suggestions }: { suggestions: Suggestion[] }) {
+  const remaining = suggestions.length - OVERVIEW_PREVIEW_COUNT;
+
   return (
     <DashboardCard
       icon={Sparkles}
@@ -28,25 +27,14 @@ export function SuggestionsCard({ suggestions }: { suggestions: Suggestion[] }) 
       }
       className="h-full"
     >
-      {suggestions.length === 0 ? (
-        <CardEmptyState icon={CheckCircle2} message="Nothing needs your attention right now." />
-      ) : (
-        <div className="space-y-4">
-          {suggestions.map((s) => (
-            <div key={s.id} className="rounded-lg border border-border p-3.5">
-              <div className="flex items-start justify-between gap-2">
-                <p className="text-[13.5px] font-medium leading-snug">{s.title}</p>
-                <Badge variant={priorityVariant[s.priority]} className="shrink-0">
-                  {s.priority}
-                </Badge>
-              </div>
-              <p className="mt-1 text-[12.5px] leading-relaxed text-muted-foreground">
-                {s.description}
-              </p>
-              <p className="mt-2.5 text-[12.5px] font-medium text-accent">{s.actionLabel} &rarr;</p>
-            </div>
-          ))}
-        </div>
+      <ButlerTaskList suggestions={suggestions.slice(0, OVERVIEW_PREVIEW_COUNT)} compact groupByPriority={false} />
+      {remaining > 0 && (
+        <Link
+          href="/butler"
+          className="mt-3 block rounded-lg border border-dashed border-border py-2 text-center text-[12px] font-medium text-muted-foreground transition-colors hover:border-accent/40 hover:text-accent"
+        >
+          +{remaining} more in Butler
+        </Link>
       )}
     </DashboardCard>
   );

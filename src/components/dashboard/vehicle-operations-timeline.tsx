@@ -66,8 +66,9 @@ export function VehicleOperationsTimeline({ days }: { days: OperationsDay[] }) {
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-[13px] font-medium">{entry.vehicle}</p>
-                        <p className="text-[11.5px] text-muted-foreground">
+                        <p className="truncate text-[11.5px] text-muted-foreground">
                           {entry.kind === "pickup" ? "Pickup" : "Return"} &middot; {entry.time}
+                          {entry.guestName && <> &middot; {entry.guestName}</>}
                         </p>
                       </div>
                       {entry.needsResponse && (

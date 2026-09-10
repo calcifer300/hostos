@@ -130,7 +130,12 @@ export default async function InsightsPage() {
             <h2 className="text-[13.5px] font-semibold tracking-tight">Activity by type</h2>
           </div>
           {Object.keys(eventCounts).length === 0 ? (
-            <p className="text-[13px] text-muted-foreground">Nothing synced yet.</p>
+            <p className="text-[13px] leading-relaxed text-muted-foreground">
+              This breakdown (bookings, cancellations, reviews...) is parsed from Gmail subject
+              lines, which the Companion extension doesn&rsquo;t send. Connect Google from
+              Connectors to see it — your Companion-synced activity is already reflected in
+              Reservations by status.
+            </p>
           ) : (
             <div className="space-y-3">
               {(Object.entries(eventCounts) as [TuroEventKind, number][])

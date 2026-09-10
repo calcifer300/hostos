@@ -2,7 +2,7 @@ import { auth } from "@/auth";
 import { HomeDashboard } from "@/components/dashboard/home-dashboard";
 import { getDashboardData } from "@/lib/dashboard/queries";
 import { getLatestUnreadEmail } from "@/lib/gmail/queries";
-import { DEFAULT_HOST_ID } from "@/lib/host/queries";
+import { getCurrentHostId } from "@/lib/host/context";
 import { getGuestConversations } from "@/lib/messages/queries";
 import type { InboundTuroEmail } from "@/types/ihost";
 
@@ -14,7 +14,7 @@ export default async function Home() {
   const [data, latestUnread, guestMessages] = await Promise.all([
     getDashboardData(email),
     email ? getLatestUnreadEmail(email) : Promise.resolve(null),
-    getGuestConversations(DEFAULT_HOST_ID),
+    getGuestConversations(await getCurrentHostId()),
   ]);
 
   const initialEmail: InboundTuroEmail | null = latestUnread

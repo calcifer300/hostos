@@ -18,7 +18,7 @@ export default async function KnowledgePage() {
         <div className="mb-8">
           <h1 className="text-[28px] font-semibold tracking-tight">Knowledge</h1>
           <p className="mt-1 text-[14px] leading-relaxed text-muted-foreground">
-            Your check-in process, house rules, and policies — the facts iHost grounds every reply in.
+            Your check-in process, house rules, and policies — the facts HostOS grounds every reply in.
           </p>
         </div>
         <ConnectGoogleNotice
@@ -40,7 +40,7 @@ export default async function KnowledgePage() {
       <div className="mb-8">
         <h1 className="text-[28px] font-semibold tracking-tight">Knowledge</h1>
         <p className="mt-1 text-[14px] leading-relaxed text-muted-foreground">
-          Your check-in process, house rules, and policies — the facts iHost grounds every reply
+          Your check-in process, house rules, and policies — the facts HostOS grounds every reply
           in. {isSaved ? "Saved to your account." : "Showing the starting defaults until you save your own."}
         </p>
       </div>

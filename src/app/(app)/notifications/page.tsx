@@ -28,7 +28,7 @@ export default async function NotificationsPage() {
         <div className="mb-8">
           <h1 className="text-[28px] font-semibold tracking-tight">Notifications</h1>
           <p className="mt-1 text-[14px] leading-relaxed text-muted-foreground">
-            Everything iHost has seen in your synced Gmail, newest first.
+            Everything HostOS has seen in your synced Gmail, newest first.
           </p>
         </div>
         <ConnectGoogleNotice
@@ -50,7 +50,7 @@ export default async function NotificationsPage() {
       <div className="mb-8">
         <h1 className="text-[28px] font-semibold tracking-tight">Notifications</h1>
         <p className="mt-1 text-[14px] leading-relaxed text-muted-foreground">
-          Everything iHost has seen in your synced Gmail, newest first.
+          Everything HostOS has seen in your synced Gmail, newest first.
         </p>
       </div>
 

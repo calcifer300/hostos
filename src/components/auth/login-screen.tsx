@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { googleSignIn } from "@/lib/actions/auth";
+import { Logo } from "@/components/shell/logo";
 
 const container = {
   hidden: { opacity: 0 },
@@ -45,14 +46,14 @@ function GoogleIcon() {
 
 export function LoginScreen() {
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#FAFAF9] px-6">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-6">
       <div
         aria-hidden
-        className="pointer-events-none absolute -left-40 -top-40 h-96 w-96 rounded-full bg-[#0071E3]/10 blur-3xl"
+        className="pointer-events-none absolute -left-40 -top-40 h-96 w-96 rounded-full bg-accent/10 blur-3xl"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute -bottom-40 -right-40 h-96 w-96 rounded-full bg-[#0071E3]/10 blur-3xl"
+        className="pointer-events-none absolute -bottom-40 -right-40 h-96 w-96 rounded-full bg-accent/10 blur-3xl"
       />
 
       <motion.div
@@ -61,20 +62,15 @@ export function LoginScreen() {
         animate="show"
         className="relative flex w-full max-w-sm flex-col items-center text-center"
       >
-        <motion.div variants={item} className="mb-8 flex items-center gap-3">
-          <span className="h-3.5 w-3.5 shrink-0 rounded-full bg-[#0071E3]" />
-          <h1 className="text-[42px] font-semibold tracking-tight text-[#171716]">HostOS</h1>
+        <motion.div variants={item} className="mb-8">
+          <Logo size="lg" withTagline />
         </motion.div>
 
-        <motion.p variants={item} className="text-[16px] font-medium text-[#6B6A66]">
-          AI Operating System for Turo Hosts
-        </motion.p>
-
-        <motion.div variants={item} className="mt-12 w-full">
+        <motion.div variants={item} className="mt-4 w-full">
           <form action={googleSignIn}>
             <button
               type="submit"
-              className="flex w-full items-center justify-center gap-3 rounded-full border border-[#E5E4E0] bg-white px-6 py-3.5 text-[15px] font-medium text-[#171716] shadow-[0_1px_2px_rgba(23,23,22,0.04),0_8px_24px_-12px_rgba(23,23,22,0.12)] transition-transform hover:scale-[1.01] active:scale-[0.99]"
+              className="flex w-full items-center justify-center gap-3 rounded-full border border-border bg-card px-6 py-3.5 text-[15px] font-medium text-foreground shadow-[var(--shadow-card)] transition-transform hover:scale-[1.01] active:scale-[0.99]"
             >
               <GoogleIcon />
               Continue with Google
@@ -82,8 +78,8 @@ export function LoginScreen() {
           </form>
         </motion.div>
 
-        <motion.p variants={item} className="mt-8 text-[12.5px] leading-relaxed text-[#9b9a96]">
-          By continuing, you agree to let iHost act on your behalf per the permissions you grant.
+        <motion.p variants={item} className="mt-8 text-[12.5px] leading-relaxed text-muted-foreground/70">
+          By continuing, you agree to let HostOS act on your behalf per the permissions you grant.
         </motion.p>
       </motion.div>
     </div>

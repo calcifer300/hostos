@@ -41,6 +41,15 @@ export interface TuroReservation {
   id: string;
   guestName: string | null;
   vehicle: string | null;
+  /**
+   * Matches FleetVehicle.id exactly (plate for Companion-sourced vehicles,
+   * the display name for Gmail-only ones) — unlike `vehicle`, which is
+   * never disambiguated and collides whenever two vehicles share a
+   * make+model (e.g. two Mazda CX-50s both read "Mazda CX-50"). Anything
+   * that needs to join a reservation back to one specific fleet vehicle
+   * should match on this, not on `vehicle`.
+   */
+  vehicleId: string | null;
   status: "upcoming" | "active" | "completed" | "cancelled";
   bookedAt: string | null;
   startsAt: string | null;

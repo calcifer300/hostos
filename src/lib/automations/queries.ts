@@ -1,5 +1,5 @@
 import "server-only";
-import { getSupabaseAdmin, isSupabaseConfigured, isUndefinedTableError } from "@/lib/supabase/server";
+import { runQueryOr } from "@/lib/supabase/server";
 
 interface AutomationSettingRow {
   automation_id: string;
@@ -7,32 +7,23 @@ interface AutomationSettingRow {
 }
 
 /**
- * Map of automation id → enabled. Missing ids mean "off". Never throws: an
- * un-migrated install simply shows every rule disabled.
+ * Map of automation id -> enabled. Missing ids mean "off". Never throws: an
+ * un-migrated or unreachable install simply shows every rule disabled, which
+ * is the safe direction to fail — an automation is never reported as running
+ * when we can't confirm it.
  */
 export async function getAutomationSettings(userEmail: string): Promise<Record<string, boolean>> {
-  if (!isSupabaseConfigured()) return {};
-
-  try {
-    const { data, error } = await getSupabaseAdmin()
+  const { data } = await runQueryOr<AutomationSettingRow[]>("automation_settings.list", [], (client) =>
+    client
       .from("automation_settings")
       .select("automation_id, enabled")
-      .eq("user_email", userEmail);
+      .eq("user_email", userEmail)
+      .returns<AutomationSettingRow[]>()
+  );
 
-    if (error) {
-      if (!isUndefinedTableError(error)) {
-        console.error("[automations] Failed to load settings:", error.message);
-      }
-      return {};
-    }
-
-    const out: Record<string, boolean> = {};
-    for (const row of (data ?? []) as AutomationSettingRow[]) {
-      out[row.automation_id] = row.enabled;
-    }
-    return out;
-  } catch (err) {
-    console.error("[automations] Failed to load settings:", err);
-    return {};
+  const out: Record<string, boolean> = {};
+  for (const row of data) {
+    out[row.automation_id] = row.enabled;
   }
+  return out;
 }

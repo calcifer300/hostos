@@ -29,7 +29,7 @@ const FIELDS: {
   {
     key: "policy",
     label: "Cancellation, refund, and extension policy",
-    hint: "The rules iHost must never contradict when drafting a reply.",
+    hint: "The rules HostOS must never contradict when drafting a reply.",
     rows: 4,
   },
   {
@@ -113,7 +113,7 @@ export function KnowledgeEditor({ initial }: { initial: HostKnowledgeBase }) {
               className="flex items-center gap-1.5 text-[12.5px] text-success"
             >
               <Check className="h-3.5 w-3.5" />
-              Saved. iHost will ground new replies in this.
+              Saved. HostOS will ground new replies in this.
             </motion.p>
           )}
         </AnimatePresence>

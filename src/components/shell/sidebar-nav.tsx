@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { navItems } from "@/components/shell/nav-items";
 
@@ -28,12 +29,19 @@ export function SidebarNav({
             onClick={onNavigate}
             aria-current={active ? "page" : undefined}
             className={cn(
-              "flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] transition-colors",
+              "relative flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] transition-colors",
               active
-                ? "bg-muted text-foreground font-medium"
+                ? "text-foreground font-medium"
                 : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"
             )}
           >
+            {active && (
+              <motion.span
+                layoutId="sidebar-active"
+                transition={{ type: "spring", stiffness: 500, damping: 40 }}
+                className="absolute inset-0 -z-10 rounded-md bg-muted"
+              />
+            )}
             <Icon className="h-[15px] w-[15px] shrink-0" strokeWidth={1.75} />
             <span className="flex-1">{item.label}</span>
             {count > 0 && (

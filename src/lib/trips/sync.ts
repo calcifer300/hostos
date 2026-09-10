@@ -35,6 +35,8 @@ export interface IncomingTrip {
   dateLabel: string | null;
   startTs: number | null;
   endTs: number | null;
+  /** Raw "10:00 AM"-style clock reading straight off the trip card — see resolvePacificTimestamp. */
+  time?: string | null;
 }
 
 export interface ExistingTripRow {
@@ -53,6 +55,85 @@ export interface TripEventCandidate {
   kind: TripEventKind;
   description: string;
   payload: { before: ExistingTripRow | null; after: IncomingTrip };
+}
+
+/**
+ * The extension computes its own numeric startTs/endTs (pacificDateTimeToTimestamp
+ * in its formatter.js) for the sync payload, but that path has proven
+ * unreliable for check-outs specifically — its own popup UI shows correct
+ * times because that display is built from the raw "10:00 AM" string
+ * directly, never from the numeric field. Rather than keep chasing that bug
+ * client-side, the raw dateLabel ("8/6") + time ("10:00 AM") strings are
+ * sent alongside it and resolved into a timestamp here, server-side, where
+ * it's actually testable. Mirrors the extension's own Pacific-offset trick
+ * (guess UTC, measure the real Los Angeles offset via Intl, correct) so
+ * both sides agree on what a bare wall-clock reading means.
+ */
+export function resolvePacificTimestamp(
+  dateLabel: string | null | undefined,
+  time: string | null | undefined,
+  referenceDate: Date = new Date()
+): string | null {
+  if (!dateLabel || !time) return null;
+
+  const timeMatch = time.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if (!timeMatch) return null;
+
+  let hour = parseInt(timeMatch[1], 10);
+  const minute = parseInt(timeMatch[2], 10);
+  const isPM = /PM/i.test(timeMatch[3]);
+  if (hour === 12) hour = 0;
+  if (isPM) hour += 12;
+
+  const dateParts = dateLabel.split("/");
+  const month = parseInt(dateParts[0], 10);
+  const day = parseInt(dateParts[1], 10);
+  if (!month || !day) return null;
+
+  // dateLabel carries no year — pick whichever of last/this/next year lands
+  // closest to now, so a trip from a few months back and one a few weeks
+  // out both resolve sensibly without hardcoding a cutover point.
+  const refYear = referenceDate.getFullYear();
+  let bestYear = refYear;
+  let bestDiff = Infinity;
+  for (const year of [refYear - 1, refYear, refYear + 1]) {
+    const guess = Date.UTC(year, month - 1, day, hour, minute);
+    const diff = Math.abs(guess - referenceDate.getTime());
+    if (diff < bestDiff) {
+      bestDiff = diff;
+      bestYear = year;
+    }
+  }
+
+  const guessUtc = Date.UTC(bestYear, month - 1, day, hour, minute);
+
+  const dtf = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Los_Angeles",
+    hourCycle: "h23",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+
+  const parts = dtf.formatToParts(new Date(guessUtc)).reduce<Record<string, string>>((acc, p) => {
+    acc[p.type] = p.value;
+    return acc;
+  }, {});
+
+  const asUtc = Date.UTC(
+    parseInt(parts.year, 10),
+    parseInt(parts.month, 10) - 1,
+    parseInt(parts.day, 10),
+    parseInt(parts.hour, 10),
+    parseInt(parts.minute, 10),
+    parseInt(parts.second, 10)
+  );
+
+  const offset = asUtc - guessUtc;
+  return new Date(guessUtc - offset).toISOString();
 }
 
 function isCancelledTrip(action: string | null, skipReason: string | null): boolean {
@@ -77,6 +158,59 @@ function describeAction(action: string | null): string {
  * reservation has never been synced before) and returns a trip_events
  * candidate, or null if nothing worth recording changed.
  */
+/**
+ * Compares a stored timestamp against an incoming one AS INSTANTS, not as
+ * strings.
+ *
+ * This was a string comparison, and the two sides are never formatted the same
+ * way: PostgREST returns "2026-12-29T23:00:00+00:00" while the incoming value
+ * is built with `new Date(ms).toISOString()`, which yields
+ * "2026-12-29T23:00:00.000Z". Same instant, different text, so `timeChanged`
+ * was true on every sync for every trip that had a timestamp at all.
+ *
+ * The sync runs once a minute, so that wrote a bogus "rescheduled" event per
+ * trip per cycle — 10,180 of them across 49 trips before this was found, at
+ * ~600/hour and growing, every one of them reading "Check-out moved 9/8 -> 9/8".
+ * The activity feed was pure noise and the table grew ~14k rows a day.
+ *
+ * An unparseable stored value is treated as "changed" rather than silently
+ * equal, so genuinely corrupt data still surfaces instead of being swallowed.
+ */
+function sameInstant(storedIso: string | null, incomingMs: number | null): boolean {
+  if (storedIso === null && incomingMs === null) return true;
+  if (storedIso === null || incomingMs === null) return false;
+
+  const stored = new Date(storedIso).getTime();
+  if (!Number.isFinite(stored)) return false;
+
+  return stored === incomingMs;
+}
+
+/**
+ * The timestamp this trip will actually be STORED with, in ms.
+ *
+ * Must mirror the write path in api/turo/sync/route.ts exactly: it takes the
+ * extension's numeric startTs/endTs when present and otherwise derives one
+ * from the raw dateLabel + time strings. Comparing against the raw numeric
+ * alone made every trip whose numeric came back null (which is the documented
+ * norm for check-outs — see resolvePacificTimestamp's comment) look like it
+ * had changed, because the row on disk held the derived value instead.
+ */
+function effectiveIncomingMs(incoming: IncomingTrip): number | null {
+  const raw = incoming.action === "checkout" ? incoming.endTs : incoming.startTs;
+  if (raw !== null && raw !== undefined) return raw;
+
+  // Only the field matching this trip's own action gets the derived fallback,
+  // exactly as the write path does it.
+  if (incoming.action !== "checkin" && incoming.action !== "checkout") return null;
+
+  const derived = resolvePacificTimestamp(incoming.dateLabel, incoming.time);
+  if (!derived) return null;
+
+  const ms = new Date(derived).getTime();
+  return Number.isFinite(ms) ? ms : null;
+}
+
 export function diffTrip(existing: ExistingTripRow | null, incoming: IncomingTrip): TripEventCandidate | null {
   if (!existing) return null;
 
@@ -97,7 +231,15 @@ export function diffTrip(existing: ExistingTripRow | null, incoming: IncomingTri
     return null;
   }
 
-  const plateChanged = (existing.plate ?? null) !== (incoming.plate ?? null);
+  // Both sides must actually name a vehicle. A stored plate arriving as null is
+  // a scrape that failed to read it, not a swap — reported live as "Vehicle
+  // changed from DNIBOO to unknown", which would have a host chasing a vehicle
+  // reassignment that never happened. Same rule as the timestamp check below:
+  // losing information is not a change.
+  const plateChanged =
+    existing.plate !== null &&
+    incoming.plate !== null &&
+    existing.plate !== incoming.plate;
 
   if (plateChanged) {
     return {
@@ -107,12 +249,28 @@ export function diffTrip(existing: ExistingTripRow | null, incoming: IncomingTri
     };
   }
 
+  // A trip that flips between its check-in and check-out card is describing two
+  // DIFFERENT moments of the same unchanged booking — pickup vs return — so its
+  // date_label and timestamp are not comparable across that flip.
+  //
+  // Turo's board shows a reservation as "picking up" as pickup nears and as
+  // "returning" later on, and the row keeps whichever card was seen last.
+  // Without this guard every one of those normal transitions reported a
+  // reschedule: an 8-day rental surfaced as "Check-out moved 12/21 → 12/29",
+  // which is just its pickup date sitting next to its return date. Observed
+  // live — 4 trips flipped in a single sync and produced exactly 4 such events.
+  //
+  // The trade is deliberate: a genuine reschedule landing in the same sync as an
+  // action flip goes unreported, which is far better than firing one every time
+  // a trip advances through its ordinary lifecycle.
+  if ((existing.action ?? null) !== (incoming.action ?? null)) return null;
+
   const dateChanged = (existing.date_label ?? null) !== (incoming.dateLabel ?? null);
 
   const existingTs = incoming.action === "checkout" ? existing.end_ts : existing.start_ts;
-  const incomingTsMs = incoming.action === "checkout" ? incoming.endTs : incoming.startTs;
-  const incomingTs = incomingTsMs ? new Date(incomingTsMs).toISOString() : null;
-  const timeChanged = (existingTs ?? null) !== (incomingTs ?? null);
+  // Learning a timestamp we never held is enrichment, not a move. Only a known
+  // value becoming a different known value counts as rescheduled.
+  const timeChanged = existingTs !== null && !sameInstant(existingTs, effectiveIncomingMs(incoming));
 
   if (!dateChanged && !timeChanged) return null;
 

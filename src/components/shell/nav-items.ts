@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { LayoutGrid, ListChecks, MessageCircle, Inbox, Car, Sparkles, BarChart3, Plug, Settings } from "lucide-react";
+import { LayoutGrid, ListChecks, MessageCircle, Inbox, Car, ShieldAlert, Sparkles, BarChart3, Plug, Settings } from "lucide-react";
 
 export interface NavItem {
   href: string;
@@ -25,6 +25,10 @@ export const navItems: NavItem[] = [
   { href: "/messages", label: "Messages", icon: MessageCircle },
   { href: "/inbox", label: "Inbox", icon: Inbox },
   { href: "/fleet", label: "Fleet", icon: Car },
+  // The two rules the fleet actually runs on — verify a licence before pickup,
+  // and catch a trip worth cancelling. Ported from the CC extension s popup so
+  // the queues sit beside the data they are computed from.
+  { href: "/risk", label: "Risk", icon: ShieldAlert },
   { href: "/butler", label: "Butler", icon: Sparkles },
   { href: "/insights", label: "Insights", icon: BarChart3 },
   { href: "/connectors", label: "Connectors", icon: Plug },

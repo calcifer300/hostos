@@ -1,9 +1,17 @@
 import Link from "next/link";
 import { ArrowRight, BookOpen, Plug } from "lucide-react";
 import { auth } from "@/auth";
+import { getAllUserRoles, getUserRoles } from "@/lib/roles/queries";
+import { DEV_TOOLS_ROLES } from "@/lib/roles/constants";
+import { TeamRolesSection } from "@/components/settings/team-roles-section";
 
 export default async function SettingsPage() {
   const session = await auth();
+  const [roleAssignments, myRoles] = await Promise.all([
+    getAllUserRoles(),
+    getUserRoles(session?.user?.email ?? null),
+  ]);
+  const hasDevToolsAccess = myRoles.some((r) => DEV_TOOLS_ROLES.has(r));
 
   return (
     <div className="mx-auto w-full max-w-3xl">
@@ -34,6 +42,8 @@ export default async function SettingsPage() {
             </p>
           )}
         </div>
+
+        {hasDevToolsAccess && <TeamRolesSection initialAssignments={roleAssignments} />}
 
         <Link
           href="/knowledge"

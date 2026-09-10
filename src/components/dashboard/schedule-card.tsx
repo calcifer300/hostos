@@ -1,9 +1,36 @@
 import type { LucideIcon } from "lucide-react";
+import { ShieldCheck, ShieldAlert } from "lucide-react";
 import { DashboardCard } from "@/components/dashboard/dashboard-card";
 import { CardEmptyState } from "@/components/dashboard/card-empty-state";
 import { Badge } from "@/components/ui/badge";
 import { CopyButton } from "@/components/ui/copy-button";
 import type { ScheduleEntry } from "@/lib/dashboard/queries";
+
+/**
+ * null means the Companion's background license-check loop (every 15 min,
+ * for check-ins within 24h — see sync.js's performLicenseCheckSync) hasn't
+ * reached this reservation yet, not that the license is unconfirmed —
+ * nothing renders in that case rather than guessing.
+ */
+function LicenseStatusLine({ entry }: { entry: ScheduleEntry }) {
+  if (entry.kind !== "pickup" || entry.licenseConfirmed === null) return null;
+
+  if (entry.licenseConfirmed) {
+    return (
+      <p className="mt-0.5 flex items-center gap-1 text-[11px] font-medium text-success">
+        <ShieldCheck className="h-3 w-3" />
+        {entry.licenseStatusText || "License confirmed"}
+      </p>
+    );
+  }
+
+  return (
+    <p className="mt-0.5 flex items-center gap-1 text-[11px] font-medium text-warning">
+      <ShieldAlert className="h-3 w-3" />
+      {entry.licenseStatusText || "Awaiting license"}
+    </p>
+  );
+}
 
 export function ScheduleCard({
   icon,
@@ -49,6 +76,7 @@ export function ScheduleCard({
               <p className="truncate text-[12.5px] text-muted-foreground">
                 {entry.vehicle} &middot; {entry.location}
               </p>
+              <LicenseStatusLine entry={entry} />
             </div>
             <div className="shrink-0 text-right">
               <p className="text-[13px] font-medium tabular-nums">{entry.time}</p>

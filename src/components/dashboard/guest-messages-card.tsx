@@ -8,6 +8,7 @@ import { DashboardCard } from "@/components/dashboard/dashboard-card";
 import { CardEmptyState } from "@/components/dashboard/card-empty-state";
 import { CopyButton } from "@/components/ui/copy-button";
 import { cn } from "@/lib/utils";
+import { fetchJson, useLivePoll } from "@/lib/hooks/use-live-poll";
 import type { GuestConversation } from "@/lib/messages/queries";
 
 const POLL_INTERVAL_MS = 20_000;
@@ -21,31 +22,29 @@ const POLL_INTERVAL_MS = 20_000;
  */
 export function GuestMessagesCard({ initialMessages }: { initialMessages: GuestConversation[] }) {
   const [conversations, setConversations] = React.useState(initialMessages);
-  const [lastPolledAt, setLastPolledAt] = React.useState<Date | null>(null);
 
-  React.useEffect(() => {
-    let cancelled = false;
+  // A failed poll never clears what's already on screen — stale messages beat
+  // an empty card. The status indicator below is what tells the host that
+  // what they're looking at may no longer be current.
+  const { status, lastSuccessAt } = useLivePoll<{ conversations?: GuestConversation[] }>({
+    intervalMs: POLL_INTERVAL_MS,
+    fetcher: async (signal) => {
+      const data = await fetchJson<{ conversations?: GuestConversation[]; degraded?: boolean }>(
+        "/api/turo/messages",
+        signal
+      );
+      // The endpoint answers 200 with an empty list when the read failed, so
+      // treat a degraded response as a failed poll: back off, show the real
+      // status, and don't overwrite good data with an empty array.
+      if (data.degraded) throw new Error("Backend degraded");
+      return data;
+    },
+    onData: (data) => {
+      if (Array.isArray(data.conversations)) setConversations(data.conversations);
+    },
+  });
 
-    async function poll() {
-      try {
-        const res = await fetch("/api/turo/messages", { cache: "no-store" });
-        const data = await res.json();
-        if (cancelled) return;
-        if (Array.isArray(data.conversations)) setConversations(data.conversations);
-        setLastPolledAt(new Date());
-      } catch {
-        // Silent — the next tick tries again. A failed poll shouldn't
-        // replace real messages on screen with an error state.
-      }
-    }
-
-    const interval = setInterval(poll, POLL_INTERVAL_MS);
-    return () => {
-      cancelled = true;
-      clearInterval(interval);
-    };
-  }, []);
-
+  const lastPolledAt = lastSuccessAt;
   const unreadCount = conversations.filter((c) => c.unread).length;
 
   return (
@@ -59,12 +58,21 @@ export function GuestMessagesCard({ initialMessages }: { initialMessages: GuestC
               {unreadCount} unread
             </span>
           )}
+          {/* Reflects the poll loop's real state. A fixed green "Live" pulse
+              kept claiming freshness while every request was failing. */}
           <span className="hidden items-center gap-1.5 text-[12px] text-muted-foreground sm:flex">
             <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success/50" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-success" />
+              {status === "live" && (
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success/50" />
+              )}
+              <span
+                className={cn(
+                  "relative inline-flex h-1.5 w-1.5 rounded-full",
+                  status === "live" ? "bg-success" : status === "reconnecting" ? "bg-warning" : "bg-muted-foreground"
+                )}
+              />
             </span>
-            Live
+            {status === "live" ? "Live" : status === "reconnecting" ? "Reconnecting" : "Offline"}
           </span>
           <Link href="/messages" className="text-[12px] font-medium text-accent hover:opacity-80">
             View all &rarr;

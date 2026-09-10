@@ -15,7 +15,7 @@ export default async function InboxPage() {
         <div className="mb-8">
           <h1 className="text-[28px] font-semibold tracking-tight">Inbox</h1>
           <p className="mt-1 text-[14px] text-muted-foreground">
-            Every message iHost has synced from your connected Gmail account.
+            Every message HostOS has synced from your connected Gmail account.
           </p>
         </div>
         <ConnectGoogleNotice
@@ -35,7 +35,7 @@ export default async function InboxPage() {
         <div>
           <h1 className="text-[28px] font-semibold tracking-tight">Inbox</h1>
           <p className="mt-1 text-[14px] text-muted-foreground">
-            Every message iHost has synced from your connected Gmail account.
+            Every message HostOS has synced from your connected Gmail account.
           </p>
         </div>
         <SyncGmailButton />

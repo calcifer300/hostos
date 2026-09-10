@@ -167,15 +167,66 @@ async function draftReplyViaHostOS(message) {
     return { ok: true, ...payload };
 }
 
+/**
+ * The in-page widget's counts.
+ *
+ * Fetched HERE rather than in the content script for two reasons: the pairing
+ * key never has to enter a page the extension does not control, and the worker
+ * already holds the host permission for the HostOS origin — a content script
+ * reaching a different origin is a CORS problem waiting to happen.
+ */
+async function fetchWidgetSummary() {
+    const { url, apiKey } = await getHostOSConfig();
+    if (!apiKey) return { ok: true, notPaired: true };
+
+    const res = await fetch(url.replace(/\/+$/, "") + "/api/companion/summary", {
+        headers: { Authorization: "Bearer " + apiKey },
+    });
+
+    if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        return { ok: false, error: body.error || `HostOS responded ${res.status}` };
+    }
+
+    return { ok: true, ...(await res.json()) };
+}
+
 chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
-    if (!msg || msg.type !== "hostos:draft") return false;
+    if (!msg || typeof msg.type !== "string") return false;
 
-    draftReplyViaHostOS(msg.message)
-        .then(sendResponse)
-        .catch((err) => sendResponse({ ok: false, error: String(err && err.message ? err.message : err) }));
+    // Every branch returns true to keep the message channel open for the
+    // async reply — returning false here closes it and the caller sees
+    // undefined, which is the classic silent-failure in MV3 messaging.
+    const reply = (promise) => {
+        promise
+            .then(sendResponse)
+            .catch((err) => sendResponse({ ok: false, error: String(err && err.message ? err.message : err) }));
+        return true;
+    };
 
-    // Keeps the message channel open for the async reply above.
-    return true;
+    switch (msg.type) {
+        case "hostos:draft":
+            return reply(draftReplyViaHostOS(msg.message));
+
+        case "hostos:summary":
+            return reply(fetchWidgetSummary());
+
+        // The widget's own "Sync now". Runs in the worker so it survives the
+        // page navigating away mid-sync, which a content script would not.
+        case "hostos:sync":
+            return reply(performSync().then((r) => ({ ok: true, ...r })));
+
+        case "hostos:open":
+            return reply(
+                getHostOSConfig().then(({ url }) => {
+                    chrome.tabs.create({ url: url.replace(/\/+$/, "") + (msg.path || "") });
+                    return { ok: true };
+                })
+            );
+
+        default:
+            return false;
+    }
 });
 
 // Alt+R from the manifest. The content script registers the same shortcut for

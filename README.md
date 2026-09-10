@@ -4,6 +4,59 @@ An operations dashboard for Turo hosts. Next.js 16 · React 19 · Supabase · a 
 
 Every signed-in user gets their own fleet, named from their Google profile and renameable in Settings. Fleets never see each other's data.
 
+This is the merged build: HostOS plus Karl's five automation tools, converged
+into one web app and one extension. See [What came from where](#what-came-from-where).
+
+## What came from where
+
+Each tool was ported into the app's own architecture rather than wrapped, and
+the parts that were wrong were fixed rather than carried across.
+
+| Karl's tool | Where it lives now | What changed |
+|---|---|---|
+| **turo-tracker v2.55** | `lib/timezones`, `lib/board/bulk-paste`, `lib/board/countdown`, `/board` | His parser and countdown engine, typed and tested. Timezone detection gained a city pass — the original fell back to Central for anything unreadable, which puts a Kahului pickup five hours out and presents it as fact. |
+| **turo-cohost-manager v0.7.3** | `components/board/timezone-clocks` | Superseded by the tracker, which is the later and better of his two. The live clock bar survives, driven by the fleets you're actually on rather than a fixed row of five US zones. |
+| **Turo-Context-Library** | `turo_articles`, `/library`, `lib/ihost/prompt` | 725 help articles, full-text searchable — and wired into reply grounding, which is the point of having them here rather than in a separate tool. |
+| **ai-reply-extension v1.2** | `extension/assist.js`, `/api/companion/draft` | Drafts now come from HostOS, grounded in the fleet's knowledge base and the relevant Turo policy, using the pairing key. His version called Gemini directly with no context. |
+| **browser-content-scanner v1.2** | `extension/alerts.js` | Rule model kept, polling dropped. Sync already returns the events HostOS recorded, so alerts come from a diff that names what changed rather than keyword-matching every open tab. |
+
+Originals are kept unmodified in `../vendor/` for reference.
+
+### The board
+
+`/board` is the one genuinely new surface. Every other page shows ONE fleet —
+whichever the switcher is set to. A co-host watching nine hosts across five
+timezones needs them in one list sorted by what blows up next, or the switcher
+becomes nine tabs checked in rotation.
+
+It needs no new tenancy concept: `host_members` already allows one person on
+many fleets. Countdowns recompute client-side every second from the same engine
+the server rendered with — a server-rendered "2h 14m" is wrong the moment it
+paints.
+
+Two overdue states are tracked separately, because they need opposite actions:
+the guest never collected the car, versus the guest never brought it back. A
+single flag keyed off the end time never fires for a trip that never began.
+
+The board falls back to the pre-0014 columns when that migration hasn't run,
+so deploying ahead of it degrades to a working board without the co-host
+fields rather than an empty one.
+
+## Tests
+
+```bash
+npm test
+```
+
+No framework: the ported engines are pure functions, so a runner would be more
+setup than the tests. `tests/alias-hook.mjs` teaches Node's type-stripping the
+`@/` alias so library code doesn't switch to relative imports just because it
+happens to be covered.
+
+65 assertions over timezone maths (including both DST changeovers), the bulk
+parser (against a real Turo list — curly apostrophes, doubled guest names, the
+"Swap pending" prefix line), and the countdown engine.
+
 ## How the pieces fit
 
 ```

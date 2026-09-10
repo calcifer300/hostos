@@ -62,10 +62,24 @@ interface TripRow {
   notes: string | null;
 }
 
+/** Everything the board can use, once migration 0014 has run. */
 const COLUMNS =
   "id, host_id, guest_name, plate, vehicle_make, vehicle_model, vehicle_year, " +
   "start_ts, end_ts, op_status, action, source, timezone, timezone_uncertain, " +
   "location, host_label, notes";
+
+/**
+ * The subset that has existed since migration 0003.
+ *
+ * The board falls back to this when the 0014 columns aren't there yet, so
+ * shipping the code before the migration degrades to a working board without
+ * the co-host fields, rather than an empty one with a warning. Which matters:
+ * a migration and a deploy cannot be made simultaneous, and the gap between
+ * them should not be a broken page.
+ */
+const BASE_COLUMNS =
+  "id, host_id, guest_name, plate, vehicle_make, vehicle_model, vehicle_year, " +
+  "start_ts, end_ts, action";
 
 const VALID_STATUSES = new Set<string>([
   "Not Checked-In", "Pending DL", "Checked-In", "Extended", "Late",
@@ -176,19 +190,39 @@ export const getBoardData = cache(async function getBoardData(
   }
 
   const cutoff = new Date(now - 36 * 3600 * 1000).toISOString();
+  const hostIds = fleets.map((f) => f.hostId);
 
-  const { data, degraded } = await runQueryOr<TripRow[]>("trips.board", [], (client) =>
-    client
-      .from("trips")
-      .select(COLUMNS)
-      .in("host_id", fleets.map((f) => f.hostId))
-      // A trip with no times at all still belongs on the board — it is exactly
-      // the row someone needs to finish filling in — so the cutoff only
-      // excludes rows that HAVE an end and it is old.
-      .or(`end_ts.is.null,end_ts.gte.${cutoff}`)
-      .limit(500)
-      .returns<TripRow[]>()
-  );
+  const read = (columns: string) =>
+    runQueryOr<TripRow[]>("trips.board", [], (client) =>
+      client
+        .from("trips")
+        .select(columns)
+        .in("host_id", hostIds)
+        // A trip with no times at all still belongs on the board — it is
+        // exactly the row someone needs to finish filling in — so the cutoff
+        // only excludes rows that HAVE an end and it is old.
+        .or(`end_ts.is.null,end_ts.gte.${cutoff}`)
+        .limit(500)
+        .returns<TripRow[]>()
+    );
+
+  let { data, degraded } = await read(COLUMNS);
+
+  // An un-migrated deployment answers the full column list with a query error,
+  // not an empty set. Retry on the columns that have always existed rather
+  // than showing an empty board — the countdown, which is the point, only
+  // needs start_ts and end_ts.
+  if (degraded && data.length === 0) {
+    const fallback = await read(BASE_COLUMNS);
+    if (!fallback.degraded) {
+      console.warn(
+        "[board] Reading trips without the 0014 columns — apply " +
+          "supabase/migrations/0014_board_and_library.sql for statuses, timezones and locations."
+      );
+      data = fallback.data;
+      degraded = false;
+    }
+  }
 
   const byId = new Map(fleets.map((f) => [f.hostId, f]));
 

@@ -49,6 +49,11 @@ export function BoardClient({
   const [search, setSearch] = React.useState("");
   const [pasteOpen, setPasteOpen] = React.useState(false);
 
+  // The dialog needs somewhere to import INTO, which is a different question
+  // from whether the viewer may edit the fleet the switcher happens to be on.
+  const canPaste =
+    canEdit && fleets.some((f) => f.role === "owner" || f.role === "member");
+
   // Drives the per-second recompute below. Storing the tick rather than the
   // readings keeps this to one state write a second regardless of trip count.
   const [now, setNow] = React.useState<number>(() => Date.now());
@@ -134,15 +139,17 @@ export function BoardClient({
         <div>
           <h1 className="text-[28px] font-semibold tracking-tight">Board</h1>
           <p className="mt-1 text-[14px] leading-relaxed text-muted-foreground">
-            {fleets.length === 1
-              ? "Every trip on your fleet, sorted by what needs you first."
-              : `Every trip across ${fleets.length} fleets, sorted by what needs you first.`}
+            {fleets.length === 0
+              ? "Sign in to see the fleets you're on."
+              : fleets.length === 1
+                ? "Every trip on your fleet, sorted by what needs you first."
+                : `Every trip across ${fleets.length} fleets, sorted by what needs you first.`}
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-4">
           <TimezoneClocks zones={zones} />
-          {canEdit && (
+          {canPaste && (
             <button
               type="button"
               onClick={() => setPasteOpen(true)}
@@ -194,7 +201,7 @@ export function BoardClient({
 
       <div className="mt-4">
         {visible.length === 0 ? (
-          <EmptyState hasAnyTrips={live.length > 0} canEdit={canEdit} onPaste={() => setPasteOpen(true)} />
+          <EmptyState hasAnyTrips={live.length > 0} canEdit={canPaste} onPaste={() => setPasteOpen(true)} />
         ) : (
           <ul className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)]">
             {visible.map((trip) => (

@@ -67,6 +67,20 @@ export interface ArticleSearchResult {
   degraded: boolean;
 }
 
+/**
+ * Search, ranked by relevance.
+ *
+ * Goes through the search_turo_articles function (migration 0015) rather than
+ * a plain filter, because PostgREST's text-search operators MATCH but cannot
+ * ORDER BY relevance — the rank depends on the query, so it can't be a stored
+ * column. Filtering alone returns rows in physical table order, which made
+ * "damage claim" answer with an airport directory page and "mileage limit"
+ * answer with the extenuating-circumstances policy. Both genuine matches,
+ * neither the answer.
+ *
+ * Falls back to the unranked filter when the function isn't there yet, so a
+ * deployment ahead of 0015 still searches — worse, but not broken.
+ */
 export const searchArticles = cache(async function searchArticles(
   query: string,
   category?: string | null,
@@ -74,12 +88,22 @@ export const searchArticles = cache(async function searchArticles(
 ): Promise<ArticleSearchResult> {
   const q = sanitizeQuery(query);
 
+  const ranked = await runQueryOr<ArticleRow[]>("turo_articles.search_ranked", [], async (client) => {
+    // Shaped by hand rather than with .returns<T>(): the client has no
+    // generated types for this project, so it cannot know the function returns
+    // a set and rejects the cast. The row shape is fixed by migration 0015.
+    const res = await client.rpc("search_turo_articles", { q, cat: category ?? null, lim: limit });
+    return { data: (res.data ?? []) as ArticleRow[], error: res.error, status: res.status };
+  });
+
+  if (!ranked.degraded) {
+    return { articles: ranked.data.map(rowToArticle), degraded: false };
+  }
+
   const { data, degraded } = await runQueryOr<ArticleRow[]>("turo_articles.search", [], (client) => {
     let builder = client.from("turo_articles").select(LIST_COLUMNS);
 
     if (q) {
-      // Ranked by the generated tsvector, which weights title above excerpt
-      // above body — see migration 0014.
       builder = builder.textSearch("search_vector", q, { type: "websearch", config: "english" });
     } else {
       builder = builder.order("title", { ascending: true });
@@ -89,6 +113,13 @@ export const searchArticles = cache(async function searchArticles(
 
     return builder.limit(limit).returns<ArticleRow[]>();
   });
+
+  if (!degraded && q) {
+    console.warn(
+      "[library] Searching unranked — apply supabase/migrations/0015_article_ranking.sql " +
+        "for relevance ordering."
+    );
+  }
 
   return { articles: data.map(rowToArticle), degraded };
 });
@@ -177,17 +208,35 @@ export async function findRelevantPolicy(
 
   if (keywords.length === 0) return [];
 
-  const { data } = await runQueryOr<ArticleRow[]>("turo_articles.relevant", [], (client) =>
-    client
-      .from("turo_articles")
-      .select("id, title, url, category, excerpt, content")
-      .textSearch("search_vector", keywords.join(" or "), { type: "websearch", config: "english" })
-      .limit(limit)
-      .returns<ArticleRow[]>()
-  );
+  /**
+   * Ranked, through the same function the library page uses.
+   *
+   * Relevance matters more here than in the search box, not less: a person
+   * scanning results discards a bad hit in a second, whereas a bad hit pasted
+   * into a prompt is something the model will earnestly try to apply. Taking
+   * "the first three rows that matched" would have grounded a cancellation
+   * reply in an airport directory page.
+   *
+   * No unranked fallback, for the same reason. Without 0015 this returns
+   * nothing and the draft is grounded in the host's knowledge base alone —
+   * which is exactly how it behaved before the library existed.
+   */
+  const ranked = await runQueryOr<ArticleRow[]>("turo_articles.relevant", [], async (client) => {
+    const res = await client.rpc("search_turo_articles", {
+      q: keywords.join(" or "),
+      cat: null,
+      lim: limit,
+    });
+    return { data: (res.data ?? []) as ArticleRow[], error: res.error, status: res.status };
+  });
 
-  return data.map(rowToArticle);
+  if (ranked.degraded) return [];
+
+  // The RPC returns list columns only; the prompt builder prefers `excerpt`
+  // and falls back to `content`, so a missing body costs nothing here.
+  return ranked.data.map(rowToArticle);
 }
+
 
 /**
  * Words that appear in every guest message and match every article.

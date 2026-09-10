@@ -170,7 +170,8 @@ function buildEnv(): ServerEnv {
     googleClientSecret,
     authSecret,
     geminiApiKey,
-    geminiModel: read("GEMINI_MODEL") ?? "gemini-2.5-flash",
+    // Kept in step with DEFAULT_GEMINI_MODEL in lib/ai/gemini.ts.
+    geminiModel: read("GEMINI_MODEL") ?? "gemini-3.6-flash",
     gmailSyncEnabled: read("GMAIL_SYNC_ENABLED") === "true",
     supabaseTimeoutMs: readInt("SUPABASE_TIMEOUT_MS", 6000, 1000, 30000),
     problems,

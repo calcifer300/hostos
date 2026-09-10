@@ -1,6 +1,6 @@
 -- HostOS — migration 0014: cross-fleet board + Turo policy library
 -- Paste into the Supabase SQL Editor and Run.
--- Additive and idempotent: new columns, two new tables, no drops.
+-- Additive and idempotent: new columns, three new tables, no drops.
 -- Safe to run twice.
 
 begin;

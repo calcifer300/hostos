@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { ingestFailureResponse, requireCompanionHost } from "@/lib/api/companion-auth";
+import { requireCompanionHost } from "@/lib/api/companion-auth";
 import { getKnowledgeBase } from "@/lib/knowledge/queries";
 import { findRelevantPolicy } from "@/lib/library/queries";
 import { analyzeInboundEmail } from "@/lib/ihost/analyze";
@@ -95,6 +95,38 @@ export async function POST(req: NextRequest) {
       sources: policy.map((p) => ({ title: p.title, url: p.url })),
     });
   } catch (err) {
-    return ingestFailureResponse("companion/draft", err);
+    /**
+     * Not ingestFailureResponse. That helper is for the routes that STORE a
+     * payload, and it says so — "Failed to store the payload" is what this
+     * route returned when the model 404'd, which told the person at the
+     * keyboard nothing true about what went wrong.
+     *
+     * The distinction that matters to a client here is whether trying again
+     * could work. A model that has been retired, or a key that was rejected,
+     * will fail identically forever; a timeout or a dropped connection will
+     * not.
+     */
+    const message = err instanceof Error ? err.message : String(err);
+    const transient = /fetch failed|network|socket|timeout|ECONN|ENOTFOUND|EAI_AGAIN|50[234]/i.test(message);
+
+    console.error(`[companion/draft] ${transient ? "upstream unavailable" : "failed"}: ${message}`);
+
+    if (transient) {
+      return NextResponse.json(
+        { error: "Couldn't reach the AI service just now. Try again in a moment.", retryable: true },
+        { status: 503, headers: { "Retry-After": "20" } }
+      );
+    }
+
+    // Surfaced rather than swallowed: when the cause is a retired model or a
+    // rejected key, the operator can only fix it if they are told which.
+    return NextResponse.json(
+      {
+        error: "The AI service refused this request, so no draft was written.",
+        detail: message.slice(0, 300),
+        retryable: false,
+      },
+      { status: 502 }
+    );
   }
 }

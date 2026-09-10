@@ -2,7 +2,10 @@ import "server-only";
 import { GoogleGenAI } from "@google/genai";
 import { AiNotConfiguredError, type AiJsonRequest, type AiProvider } from "@/lib/ai/types";
 
-export const DEFAULT_GEMINI_MODEL = "gemini-2.5-flash";
+// gemini-2.5-flash was retired by Google — the API answers 404 with
+// "no longer available to new users", which is why the AI briefing had gone
+// quiet. Override with GEMINI_MODEL if you are on a different tier.
+export const DEFAULT_GEMINI_MODEL = "gemini-3.6-flash";
 
 /**
  * Values that mean "nobody has filled this in yet". Treated as unset so a

@@ -1,137 +1,181 @@
 HostOS — Project State
-An AI operating system for Turo hosts. Next.js 16 · React 19 · Supabase · Chrome extension.
+An operations dashboard for Turo hosts. Next.js 16 · React 19 · Supabase · Chrome extension.
 
-Compiled: August 5, 2026 · Latest commit: 5f97097 — Project Aurora: public shell, Companion extension pipeline, Gemini AI
+Compiled: September 9, 2026 · Branch `demo-polish` · Latest commit: 32866ff
 
 At a glance
-Auth model	Public shell — no route requires login
-AI surface	One card only (AI Briefing) — everything else is deterministic
-Data sources	HostOS Companion extension (authoritative) + Gmail (optional, supplementary)
-Open bugs	9, one unauthenticated data-exposure route
-Uncommitted work	None as of this commit
-1. Architecture
-Three systems cooperate, with the Chrome extension as the primary data source:
+| | |
+|---|---|
+| Tenancy | Multi-fleet. Every signed-in user gets their own, auto-provisioned on first sign-in |
+| Auth model | Gated in production (middleware), open shell in development |
+| AI surface | One card only (AI Briefing) — everything else is deterministic |
+| Data sources | HostOS Companion extension (authoritative) + Gmail (optional, supplementary) |
+| Deployed | hostos-ten.vercel.app, from the working tree via the Vercel CLI |
+| Blocking | Migrations 0012 + 0013 must be applied before the next deploy |
 
-HostOS Companion (Chrome extension)          Google Gmail (optional)
-        │  scrapes Turo tabs                          │  OAuth, opt-in
-        │  auto-syncs every 1–5 min                    │
-        ▼                                              ▼
-  POST /api/turo/sync, /api/turo/messages    NextAuth session + Gmail API
-        │  (bearer pairing-key auth)                   │
-        └──────────────┬───────────────────────────────┘
-                        ▼
-                   Supabase (Postgres)
-                        │
-                        ▼
-              Next.js 16 / React 19 / App Router
-              (public shell — no login required to view)
+## 1. What changed since Project Aurora
+
+Aurora shipped a single-tenant public shell. Three things have replaced that:
+
+1. **The shell is no longer public.** `src/middleware.ts` gates every route on a
+   session in production. The dashboard carries guest names, message threads,
+   licence status and plates — personal data belonging to people who never
+   agreed to publish it.
+2. **One deployment now serves many fleets.** Migration 0009 built the
+   membership table; 0012 and `lib/host/provision.ts` finally write to it.
+   Before this, a new Google account resolved to `NO_FLEET_HOST_ID` and got an
+   empty app with no explanation and no next step.
+3. **The Companion is obtainable.** It lives in `extension/`, is packaged into
+   `public/hostos-companion.zip` by `npm run build`, and Connectors walks a new
+   fleet through installing and pairing it.
+
+## 2. Architecture
+
+```
+  HostOS Companion (Chrome extension)          Google Gmail (optional)
+          │  6 background loops, 1min – 6h              │  OAuth, opt-in
+          ▼                                              ▼
+   POST /api/turo/{sync,messages,                NextAuth session
+        license-status,enrichment}                + Gmail API
+          │  Authorization: Bearer <pairing key>          │
+          └──────────────────┬───────────────────────────┘
+                             ▼
+                    Supabase (Postgres)
+                             │
+                             ▼
+                  Next.js 16 App Router
+```
+
 Governing decisions:
 
-Public shell. No route hard-gates on a session — src/proxy.ts was deleted, (app)/layout.tsx carries no redirect. Google sign-in is opt-in and required only by the specific pages that consume Gmail.
-Companion is independent of Google. It authenticates via a bearer pairing key tied to a single seeded hosts row, not a Google session — it works with zero Gmail connection.
-Companion wins on overlap. Wherever both pipelines can produce the same data (pickups, returns, vehicles, reservations), Companion's real scraped timestamps and plates are preferred over Gmail's heuristic subject-line parsing.
-AI is quarantined. Exactly one surface — the AI Briefing card — calls a model. Butler recommendations, Fleet Health scoring, and all sorting are plain rule-based TypeScript, so the app is fully functional with no AI key configured.
-2. File Structure
-hostos/
-├── src/
-│   ├── app/
-│   │   ├── (app)/                    # public-shell pages
-│   │   │   ├── page.tsx              # Overview
-│   │   │   ├── operations/           # today's pickups / returns / messages
-│   │   │   ├── inbox/                # Gmail-only
-│   │   │   ├── fleet/ , fleet/[vehicle]/
-│   │   │   ├── butler/               # rule-based recommendations + automation toggles
-│   │   │   ├── insights/
-│   │   │   ├── connectors/           # Google + Companion pairing
-│   │   │   ├── settings/ , knowledge/
-│   │   │   └── reservations/ , notifications/ , automations/   # legacy, some now redirect
-│   │   ├── api/
-│   │   │   ├── auth/[...nextauth]/
-│   │   │   ├── ihost/analyze/ , ihost/briefing/
-│   │   │   └── turo/sync/ , turo/messages/
-│   │   ├── login/
-│   │   └── globals.css               # Aurora design tokens
-│   ├── components/
-│   │   ├── dashboard/                # 11 cards — briefing, messages, health, schedule, etc.
-│   │   └── auth/ , automations/ , knowledge/ , inbox/ , settings/ , shell/ , ihost/ , ui/
-│   ├── lib/
-│   │   ├── ai/                       # provider abstraction — gemini.ts is the only impl.
-│   │   ├── dashboard/queries.ts      # 708 lines — merges Gmail + Companion into UI shapes
-│   │   ├── gmail/ , turo/ , trips/ , messages/ , host/ , knowledge/ , automations/
-│   │   ├── actions/                  # server actions
-│   │   └── supabase/server.ts        # lazy client + isUndefinedTableError()
-│   └── types/
-├── supabase/migrations/              # 0001 – 0004
-└── (extension, separate folder)
-    Random Files/HostOS_Extension_v2_Preview/Host Haven Pro/
-    ├── manifest.json                 # "HostOS Companion" v2.0.0
-    ├── background.js                 # chrome.alarms: 1 min trips, 5 min messages
-    ├── sync.js                       # buildSyncPayload, performSync, performSyncMessages
-    ├── content.js                    # scrapeTrips, scrapeReservationMessages, …
-    ├── generator.js / parser.js / formatter.js / matcher.js / fleet.js / fleetStore.js / availability.js
-    └── popup.js / .html / .css       # Operations / Vehicles / Activity / Sync tabs
-3. Components
-Component	Data source	Notes
-GuestMessagesCard	/api/turo/messages (Companion)	No AI. Polls every 20s. Full-width, sits first — above the AI card by design.
-AiBriefingCard	/api/ihost/briefing (Gemini)	The only AI-dependent surface. States: not-signed-in / not-configured / no-messages / failed.
-FleetHealthCard	getDashboardData()	Deterministic score (100 − penalties), never AI-generated.
-ScheduleCard ×2	Companion preferred, Gmail fallback	Today's pickups / today's returns.
-MessagesCard	Gmail	
-ActivityCard	mixed	
-SuggestionsCard	mixed	Butler's Overview preview — links through to /butler.
-CalendarTimelineCard	mixed	
-FleetStatusGrid	Companion preferred	Date-aware "on trip" detection (see §6).
-4. Database Schema
-Supabase / Postgres, 4 migrations. Every table: RLS enabled, zero policies — reachable only through the service-role key from server-only code.
+- **Companion wins on overlap.** Where both pipelines can produce the same data
+  (pickups, returns, vehicles, reservations), the extension's real scraped
+  timestamps and plates beat Gmail's subject-line heuristics.
+- **Companion is independent of Google.** It authenticates with a per-fleet
+  bearer pairing key, so a host with no Google account still gets a full app.
+- **AI is quarantined.** Exactly one surface calls a model. Butler, fleet
+  health, risk queues and all sorting are rule-based TypeScript, so the app is
+  fully functional with no AI key configured.
+- **Fleet resolution has one home.** `lib/host/context.ts`. Every query takes a
+  host id from it; nothing hardcodes `DEFAULT_HOST_ID` any more.
 
-Migration	Tables	Keyed by
-0001_gmail_sync.sql	gmail_accounts, synced_emails	user_email
-0002_knowledge_automations.sql	knowledge_base, automation_settings	user_email — inconsistent, see §6
-0003_trips.sql	hosts (single seeded row), vehicles, trips, trip_events	host_id
-0004_trip_messages.sql	trip_messages	host_id
-5. APIs
-Route	Method	Auth	Purpose
-/api/auth/[...nextauth]	GET / POST	NextAuth	Google OAuth
-/api/ihost/analyze	POST	session-optional	Single-message AI classification
-/api/ihost/briefing	GET	session-required	AI summary of synced Gmail
-/api/turo/sync	POST	Bearer pairing key	Companion trips + vehicle roster — dedupes, prunes retired vehicles
-/api/turo/messages	POST	Bearer pairing key	Companion guest-message ingestion
-/api/turo/messages	GET	none	See §6, item 1
-6. Outstanding Bugs
-GET /api/turo/messages has no authentication. Anyone who reaches the URL — signed in or not — receives every guest's message content as raw JSON.
-fleet.js still hardcodes 21 vehicles, none matching a real trip seen this session — suspected stale data from a prior client relationship. Awaiting confirmation on which to remove.
-TEST123 test row likely still present in trips.
-Gemini quota was returning 429 as of the last check — unrelated to code.
-knowledge_base / automation_settings are Google-session-keyed, not host_id-keyed like everything built since — a Companion-only host can't save Knowledge or toggle Automations.
-Nothing committed since Sprint 3 — resolved, 5f97097.
-src.zip (125 KB, untracked, origin unclear) still sitting at the repo root.
-Operations and Overview don't live-refresh after a Companion sync completes — only Guest Messages polls.
-Both extension sync loops require an open Turo tab to fire at all.
-7. Current TODO
- Decide on fleet.js's 21 hardcoded vehicles
- Confirm all 4 migrations have run in production
- Delete the TEST123 test row
- Resolve the Gemini quota
- Add auth to GET /api/turo/messages
- Move knowledge_base / automation_settings to host_id-keying
- Decide the fate of src.zip
- Real-time refresh for Operations / Overview, instead of manual reload
-8. Recent Decisions
-App is a public shell; authentication is per-feature, never global.
-Companion is host_id-keyed and treated as authoritative over Gmail.
-AI usage confined to exactly one card; the rest of the app is deterministic.
-Trello integration fully removed from the extension; rebranded to HostOS Companion.
-Dual auto-sync timers: 1 minute for trips, 5 minutes for messages.
-Guest messages scraped directly from Turo (not just Gmail previews) and prioritized above the AI card, per explicit product direction.
-Vehicle "on trip" status made date-aware, after discovering action: "checkout" means "next event is a checkout" — which can be months out, not imminent.
-AI provider migrated Anthropic → OpenAI → Gemini, landing behind a provider-agnostic abstraction in src/lib/ai/.
-9. Coding Standards
-Query modules never throw — every src/lib/*/queries.ts function wraps its Supabase call and degrades to [] / null, so a missing table or bad env var takes down one feature, never a page.
-Shared helpers over ad hoc checks: isUndefinedTableError(), isSupabaseConfigured().
-rowToX() converters map snake_case rows to camelCase domain types, one per module.
-Server actions return { ok, error? } and never throw to the client.
-Comments explain why, not what — several cite the specific past bug that shaped the current code.
-Lint clean at every checkpoint — zero errors or warnings before anything is called done.
-Design tokens live in globals.css; dark-mode-first Aurora palette (#0D1117 / #161B22 / #4F8CFF).
-Framer Motion throughout, one consistent easing curve.
-Every feature verified with lint + build + a live browser check before being reported complete.
+## 3. Multi-tenancy
+
+`getCurrentHostId()` resolves the fleet for a request. `getFleetsForUser()`
+provisions one when a signed-in user has none.
+
+**Provisioning lives inside the cached read, not in a layout.** A layout and the
+pages beneath it render in parallel, so a layout that provisions on render loses
+the race against a page resolving its host id. Doing it inside the
+`React.cache()`'d function means every caller in a request awaits the same
+single provisioning promise.
+
+**The unique index is the concurrency control.** Opening the app fires the
+document plus several RSC prefetches at once, each a separate invocation with
+its own cache. Without `hosts_created_by_email_idx`, "select, see nothing,
+insert" races itself and one person owns three fleets with their data split
+across them. The losing insert re-reads the winner.
+
+**No fleet resolves to `NO_FLEET_HOST_ID`** — a valid uuid matching no row, so
+every host-scoped query returns empty by construction rather than each call site
+remembering to check.
+
+Roles: `owner` (may rename, may issue pairing keys), `member` (full read/write),
+`viewer` (read only). `canEditCurrentFleet()` gates every write.
+
+## 4. Database
+
+Supabase / Postgres, 13 migrations. Every table: RLS enabled, zero policies —
+reachable only through the service-role key from server-only code.
+
+| Migration | What |
+|---|---|
+| 0001 | `gmail_accounts`, `synced_emails` — user_email-keyed |
+| 0002 | `knowledge_base`, `automation_settings` |
+| 0003 | `hosts`, `vehicles`, `trips`, `trip_events` — host_id-keyed |
+| 0004 | `trip_messages` |
+| 0005 | Licence-verification status on trips |
+| 0006 | `user_roles` (global: "is this person a developer?") |
+| 0007 | Vehicle specs — VIN, odometer, fuel |
+| 0008 | Trip enrichment — protection plan, guest track record |
+| 0009 | `host_members`, `hosts.slug`, `hosts.timezone` |
+| 0010 | Earnings and risk — included miles, take rate, calendar prices |
+| 0011 | Premier workflow — driver id, damage responsibility |
+| **0012** | **`hosts.created_by_email` + partial unique index. Self-serve fleets.** |
+| **0013** | **`knowledge_base` / `automation_settings` re-keyed to `host_id`.** |
+
+0012 and 0013 are written but **not yet applied to production**. They are
+additive and idempotent. Apply before deploying: 0013's code reads `host_id`,
+and without the column the Knowledge page silently falls back to the shipped
+default house rules instead of the fleet's real ones.
+
+## 5. APIs
+
+| Route | Auth | Purpose |
+|---|---|---|
+| `/api/auth/[...nextauth]` | NextAuth | Google OAuth |
+| `/api/turo/sync` | Bearer pairing key | Trips + vehicle roster |
+| `/api/turo/messages` (POST) | Bearer pairing key | Guest-message ingestion |
+| `/api/turo/messages` (GET) | Session | Conversation list |
+| `/api/turo/messages/[tripId]` | Session | One thread |
+| `/api/turo/license-status` | Bearer pairing key | Licence sweep results |
+| `/api/turo/enrichment` | Bearer pairing key | Protection plan, guest history |
+| `/api/ihost/analyze` | Optional | Single-message AI classification |
+| `/api/ihost/briefing` | Session | AI summary of synced Gmail |
+| `/api/cron/digest` | Bearer `CRON_SECRET` | Daily digest, per fleet |
+
+## 6. Resolved
+
+Every open bug from the Aurora-era state file:
+
+- ~~`GET /api/turo/messages` has no authentication~~ — `lib/api/browser-auth.ts`.
+- ~~`knowledge_base`/`automation_settings` are Google-session-keyed~~ — 0013.
+- ~~Operations and Overview don't live-refresh~~ — `AutoRefresh`, 30s.
+- ~~Nothing committed since Sprint 3~~ — committed.
+- Two cross-tenant leaks found and closed this session: `connectors/page.tsx`
+  and `regenerateCompanionApiKey()` both resolved `DEFAULT_HOST_ID`, so any
+  signed-in stranger could rotate the seeded fleet's pairing key — killing the
+  real operator's sync and pointing their own extension at his data.
+- `canEditCurrentFleet()` existed but was never called; `viewer` could write
+  everything.
+- Turbopack resolved `node_modules` from a stray lockfile in the user profile
+  directory, 500ing every dev page. Pinned via `turbopack.root`.
+
+## 7. Open
+
+- **Migrations 0012 and 0013 are not applied.** Blocks the next deploy.
+- **`src/middleware.ts` uses a deprecated convention.** Next 16 wants
+  `proxy.ts`. It still works and still builds, but this is the auth gate — a
+  botched rename is a data leak, so it wants its own change with its own
+  verification, not a drive-by.
+- **`fleet.js` in the extension still hardcodes 21 vehicles**, none matching a
+  real trip. Suspected stale data from a prior client relationship.
+- **Provisioning is untested against a second real Google account.** The logic
+  is verified against the database; the end-to-end sign-in flow is not.
+- **No fleet invitations.** `host_members` supports multiple people per fleet
+  and the roster renders in Settings, but there is no UI to add anyone — a
+  co-host has to be inserted by hand.
+- **Chrome Web Store.** The Companion ships as a self-hosted zip. A store
+  listing needs a developer account and review.
+- **The digest sends nothing** until `RESEND_API_KEY` and `DIGEST_FROM_EMAIL`
+  are set. It computes correctly and reports that it skipped.
+
+## 8. Coding standards
+
+- Query modules never throw — every `src/lib/*/queries.ts` function wraps its
+  Supabase call and degrades to `[]` / `null`.
+- Shared helpers over ad hoc checks: `isUndefinedTableError()`,
+  `isSupabaseConfigured()`, `runQueryOr()`.
+- `rowToX()` converters map snake_case rows to camelCase domain types.
+- Server actions return `{ ok, error? }`, never throw to the client, and check
+  `canEditCurrentFleet()` before writing.
+- Comments explain why, not what — several cite the specific past bug that
+  shaped the current code.
+- Lint clean at every checkpoint. The extension is excluded from ESLint: its
+  files share one global scope via `importScripts`, so every cross-file
+  function reads as unused.
+- Design tokens in `globals.css`; dark-mode-first Aurora palette
+  (`#0D1117` / `#161B22` / `#4F8CFF`). Framer Motion throughout, one easing
+  curve.
+- Every feature verified with lint + build + a live browser check before being
+  reported complete.

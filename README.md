@@ -1,47 +1,133 @@
-# HostOS v0.1
+# HostOS
 
-The AI employee is **iHost**. This is the first vertical slice: turn an inbound Turo email into classified, explained, drafted guest communication.
+An operations dashboard for Turo hosts. Next.js 16 · React 19 · Supabase · a Chrome extension that does the scraping.
 
-## Run it
+Every signed-in user gets their own fleet, named from their Google profile and renameable in Settings. Fleets never see each other's data.
+
+## How the pieces fit
 
 ```
+  HostOS Companion (Chrome extension)          Google Gmail (optional)
+          │  reads turo.com in your browser              │  OAuth, opt-in
+          │  6 background loops, 1min – 6h               │
+          ▼                                              ▼
+   POST /api/turo/{sync,messages,                NextAuth session
+        license-status,enrichment}                + Gmail API
+          │  Authorization: Bearer <pairing key>          │
+          └──────────────────┬───────────────────────────┘
+                             ▼
+                    Supabase (Postgres)
+                    every table host_id-keyed
+                             │
+                             ▼
+                  Next.js 16 App Router
+```
+
+**The Companion is the only real data source.** Gmail is supplementary and
+entirely optional; a fleet that never connects Google works fully. A fleet that
+never installs the Companion sees an empty dashboard and a setup checklist
+explaining why.
+
+The extension authenticates with a per-fleet pairing key, not a Google session,
+so it works for operators who have no Google account at all.
+
+## Run it locally
+
+```bash
 npm install
-cp .env.local.example .env.local   # then add your real Gemini API key
+cp .env.local.example .env.local   # then fill in the values it documents
 npm run dev
 ```
 
-Open http://localhost:3000. iHost starts "watching your inbox," then a seeded example email arrives and plays through the full pipeline automatically. Use "Next example" to cycle through three different event types, or paste a real guest message to run it live against your own text.
+`npm run build` packages the extension into `public/hostos-companion.zip`
+before building the app, so the download a deployment serves always matches
+the extension source in that commit.
 
-## The application shell
+### Environment
 
-`src/components/shell/` is the permanent navigation frame every page lives inside — a desktop rail on `md+`, a slide-in drawer below it, both reading from one `navItems` array so adding a section later means one array edit, not a rewrite of two nav implementations.
+Only two variables are genuinely required — `NEXT_PUBLIC_SUPABASE_URL` and
+`SUPABASE_SERVICE_ROLE_KEY`. Everything else turns a feature on. Startup prints
+exactly what is missing and what each absence disables; see `src/lib/env.ts`.
 
-Seven routes exist today: `/` (Home — the real iHost briefing) and six placeholders (`/inbox`, `/reservations`, `/knowledge`, `/automations`, `/notifications`, `/settings`) rendered by a single shared `SectionPlaceholder` component. Those six are real Next.js routes that really render and really navigate — they're just honest about not having features behind them yet, per "build the shell, not features yet." Each placeholder's copy says specifically what's missing and why, rather than showing empty tables or fake widgets pretending to be functional.
+| Variable | Without it |
+|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` | Every data-backed page renders empty. Must be the **service-role** key — RLS is on with no policies, so an anon key reads back as empty tables. |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | No sign-in, so no fleets. |
+| `AUTH_SECRET` | Sessions break in production. `npx auth secret` generates one. |
+| `GEMINI_API_KEY` | The AI Briefing card only. Every other surface is deterministic. |
+| `HOSTOS_REQUIRE_AUTH` | Defaults on in production, off in development. |
+| `CRON_SECRET` | `/api/cron/digest` refuses to run rather than exposing a URL that emails people on demand. |
+| `RESEND_API_KEY` + `DIGEST_FROM_EMAIL` | Digests are computed but not sent. |
+| `GMAIL_SYNC_ENABLED` | Gmail sync stays off. Off by default. |
 
-## What's real vs staged
+### Database
 
-**Real, and calling a live model:**
-- `GET /api/ihost/briefing` summarizes your newest synced Gmail messages into the dashboard's AI briefing. Headline, highlights, and priorities are all model-generated from real message content — none of that copy is hardcoded.
-- `POST /api/ihost/analyze` runs a single message through classification, summary, action reasoning, and reply drafting. Nothing about it is mocked.
-- Both call Google Gemini server-side with `GEMINI_API_KEY` from your environment, through the provider layer in `src/lib/ai/`. `GEMINI_MODEL` overrides the `gemini-2.5-flash` default; `AI_PROVIDER` selects the provider.
-- Without `GEMINI_API_KEY`, the briefing card shows a calm "AI briefings are turned off" notice reading "Gemini API key is missing.", and the rest of HostOS — login, Gmail sync, Inbox, dashboard — keeps working normally.
-- The classification vocabulary, confidence bands, and escalation logic (`src/lib/ihost/prompt.ts`) implement the iHost Charter's Articles VI-VII directly, not a paraphrase of them.
-- Copy-to-clipboard and "Open in Turo" are real browser actions.
-- The reply is genuinely editable before copying — nothing about steps 6-9 of the MVP workflow is simulated.
+Run `supabase/migrations/*.sql` in order against your Supabase project. They are
+additive and idempotent — re-running is safe.
 
-**Staged, and clearly marked as such in code comments:**
-- Steps 1-2 of the MVP workflow ("Gmail receives an email" / "HostOS detects it") are not implemented. `src/lib/mock/seed-emails.ts` stands in for what a real Gmail Connector would deliver via push notifications. That connector — OAuth, token storage, a webhook endpoint — is genuinely new infrastructure and is scoped as the next slice, not silently faked here.
-- The Knowledge Base (`defaultKnowledgeBase` in the same file) is a hardcoded stand-in for a real per-host settings screen. The shape matches what a real Knowledge Base record would be; there's no UI to edit it yet in v0.1.
+**Migration order matters for 0012 and 0013.** Apply them *before* deploying the
+code that reads them: 0013 moves the knowledge base from `user_email` to
+`host_id`, and code deployed ahead of it reads a column that doesn't exist and
+falls back to the shipped default house rules.
 
-## Architecture notes
+## Multi-tenancy
 
-- `src/types/ihost.ts` — canonical domain types. No Turo-specific or Trello-shaped fields; `TuroEventType` is a classification vocabulary, not a wrapper around Turo's own notification types.
-- `src/lib/ai/` — the provider layer. `types.ts` defines the `AiProvider` contract (`generateJson`, `isConfigured`) and `AiNotConfiguredError`; `gemini.ts` implements it against `@google/genai`; `index.ts` holds the registry and picks one via `AI_PROVIDER`. iHost never imports a vendor SDK directly, so adding a provider later is one new file plus a registry entry — no prompt or call-site changes.
-- `src/lib/ihost/prompt.ts` + `src/lib/ihost/analyze.ts` — the single-message "brain." One function builds the system prompt, one calls the model and parses the result. Nothing about iHost's behavior is scattered across components.
-- `src/lib/ihost/briefing.ts` — the multi-message digest behind the dashboard card. Same rules, batched across your latest synced mail.
-- `src/components/ihost/*` — one component per concern (arrival, classification badge, analysis, reply editor), each usable independently once a real Gmail Connector replaces the seed data.
-- `src/components/ui/*` — shadcn-pattern primitives (Button, Textarea, Card, Badge), hand-written rather than pulled via the shadcn CLI, because `ui.shadcn.com` isn't reachable from this build environment's network policy. Same conventions (cva variants, Radix Slot, Tailwind tokens) — a real shadcn CLI run against these files would recognize them as its own output.
+`src/lib/host/context.ts` resolves which fleet a request operates on, and it is
+the only place that decision lives. Every query takes that host id.
 
-## Next slice
+- **First sign-in provisions a fleet.** `src/lib/host/provision.ts` creates it,
+  names it from the Google profile, and makes the user its owner.
+- **The race is real.** Opening the app fires the document plus several RSC
+  prefetches at once, each a separate invocation with its own React cache. The
+  partial unique index on `hosts.created_by_email` is what stops one person
+  ending up with three fleets; the losing insert re-reads the winner.
+- **Provisioning lives inside the cached `getFleetsForUser`,** not in a layout.
+  A layout and the pages beneath it render in *parallel*, so a layout that
+  provisions on render loses to a page resolving its host id first.
+- **No fleet resolves to `NO_FLEET_HOST_ID`,** a valid uuid that matches no row.
+  Every query then returns empty by construction, so no code path has to
+  remember to check.
 
-The literal next piece of infrastructure, per the roadmap discussion: a real Gmail Connector (OAuth + push notifications) replacing `seed-emails.ts`, and a minimal Knowledge Base settings screen replacing the hardcoded default. Both are additive — nothing in `src/lib/ihost/` or `src/components/ihost/` needs to change to support them.
+## Auth
+
+`src/middleware.ts` is the gate, and it must stay middleware. Two earlier
+attempts put it in a layout and both leaked: in the App Router a layout and its
+child page render in parallel, so a layout refusing to render `{children}`
+does not stop the page beneath it from running its queries — and the result is
+serialised into the RSC payload of the same response. Measured against a
+production build, both `<SignInRequired />` (200) and `redirect("/login")` (307)
+carried guest names, plates and vehicle models in the body.
+
+`/api/turo/*` is exempt because the extension authenticates with a bearer key
+and has no session cookie; those routes do their own auth
+(`src/lib/api/companion-auth.ts` for ingest, `browser-auth.ts` for the GETs).
+
+## Conventions
+
+- **Query modules never throw.** Every `src/lib/*/queries.ts` function wraps its
+  Supabase call and degrades to `[]` / `null`, so a missing table or a bad env
+  var takes down one feature, never a page.
+- **Server actions return `{ ok, error? }`** and never throw to the client.
+- **Writes check `canEditCurrentFleet()`.** A hidden button is a UI convenience;
+  a server action is a public endpoint.
+- **AI is quarantined.** Exactly one surface calls a model. Butler
+  recommendations, fleet health scoring, risk queues and all sorting are plain
+  rule-based TypeScript.
+- **Comments explain why, not what** — several cite the specific bug that
+  shaped the code they sit above.
+- Lint and build clean before anything is called done.
+
+## The Companion extension
+
+Source lives in `extension/`. It is MV3, excluded from the app's ESLint config
+(its files share one global scope via `importScripts`, so cross-file functions
+read as unused), and packaged by `scripts/build-extension.mjs`.
+
+That script writes the ZIP itself with `node:zlib` rather than shelling out —
+`Compress-Archive` is Windows-only and `zip` is missing from some Linux build
+images, and the archive has to come out identical on a laptop and on a build
+container.
+
+Users install it from **Connectors**: download, unzip, load unpacked, paste the
+pairing key. The extension defaults its HostOS URL to the deployment, so pairing
+is one paste.

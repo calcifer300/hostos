@@ -40,7 +40,14 @@ const FIELDS: {
   },
 ];
 
-export function KnowledgeEditor({ initial }: { initial: HostKnowledgeBase }) {
+export function KnowledgeEditor({
+  initial,
+  readOnly = false,
+}: {
+  initial: HostKnowledgeBase;
+  /** Viewer-role members can read the fleet's knowledge base but not change it. */
+  readOnly?: boolean;
+}) {
   const [values, setValues] = React.useState<HostKnowledgeBase>(initial);
   const [isPending, startTransition] = React.useTransition();
   const [saved, setSaved] = React.useState(false);
@@ -87,11 +94,18 @@ export function KnowledgeEditor({ initial }: { initial: HostKnowledgeBase }) {
             value={values[field.key]}
             onChange={(e) => update(field.key, e.target.value)}
             rows={field.rows}
+            readOnly={readOnly}
           />
         </div>
       ))}
 
       <div className="flex items-center justify-between gap-4">
+        {readOnly && (
+          <p className="text-[12.5px] leading-relaxed text-muted-foreground">
+            You have read-only access to this fleet.
+          </p>
+        )}
+
         <AnimatePresence mode="wait">
           {error && (
             <motion.p
@@ -121,7 +135,7 @@ export function KnowledgeEditor({ initial }: { initial: HostKnowledgeBase }) {
         <Button
           variant="primary"
           onClick={handleSave}
-          disabled={isPending || !isDirty}
+          disabled={isPending || !isDirty || readOnly}
           className="ml-auto shrink-0"
         >
           {isPending && <Loader2 className="h-3.5 w-3.5 animate-spin" />}

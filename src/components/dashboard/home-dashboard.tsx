@@ -14,6 +14,8 @@ import { StatCard } from "@/components/dashboard/stat-card";
 import { FleetOverviewCard } from "@/components/dashboard/fleet-overview-card";
 import { OccupancyRateCard } from "@/components/dashboard/occupancy-rate-card";
 import { TaskPriorityCard } from "@/components/dashboard/task-priority-card";
+import { SetupChecklist } from "@/components/dashboard/setup-checklist";
+import type { SetupStatus } from "@/lib/onboarding/status";
 import type { DashboardData } from "@/lib/dashboard/queries";
 import type { GuestConversation } from "@/lib/messages/queries";
 import type { InboundTuroEmail } from "@/types/ihost";
@@ -50,11 +52,14 @@ export function HomeDashboard({
   initialEmail,
   initialGuestMessages,
   data,
+  setup,
 }: {
   userFirstName?: string | null;
   initialEmail?: InboundTuroEmail | null;
   initialGuestMessages: GuestConversation[];
   data: DashboardData;
+  /** Renders nothing once setup is complete — see SetupChecklist. */
+  setup: SetupStatus;
 }) {
   return (
     <motion.div
@@ -66,6 +71,11 @@ export function HomeDashboard({
       <motion.div variants={item}>
         <GreetingHeader firstName={userFirstName} />
       </motion.div>
+
+      {/* Above the stat row on purpose. While setup is unfinished every
+          number below it is zero, and a wall of zeroes reads as a broken
+          app unless something says why first. */}
+      <SetupChecklist status={setup} />
 
       {/* Every number here links to the page that explains it — see each
           StatCard's href — rather than sitting as inert display. */}

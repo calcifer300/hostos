@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/auth";
 import { analyzeInboundEmail } from "@/lib/ihost/analyze";
 import { getKnowledgeBase } from "@/lib/knowledge/queries";
-import { defaultKnowledgeBase } from "@/lib/mock/seed-emails";
+import { getCurrentHostId } from "@/lib/host/context";
 import type { InboundTuroEmail } from "@/types/ihost";
 
 export async function POST(req: NextRequest) {
@@ -28,12 +27,12 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    // Ground the reply in the host's own saved knowledge base when they have
-    // one; the shipped defaults are only a starting point.
-    const session = await auth();
-    const kb = session?.user?.email
-      ? await getKnowledgeBase(session.user.email)
-      : defaultKnowledgeBase;
+    // Ground the reply in this fleet's own saved knowledge base when it has
+    // one; the shipped defaults are only a starting point. Fleet-scoped since
+    // migration 0013 — a Companion-only operator has no Google session, and
+    // used to silently get the generic defaults on every draft.
+    const hostId = await getCurrentHostId();
+    const kb = await getKnowledgeBase(hostId);
 
     const analysis = await analyzeInboundEmail(email, kb);
     return NextResponse.json(analysis);

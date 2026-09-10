@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>hostOS</title>
+<link rel="stylesheet" href="popup.css">
+</head>
+<body>
+
+<div class="app">
+
+    <header>
+        <img class="logomark" src="logo_white.png" alt="Turo" aria-hidden="true">
+        <div class="brand">
+            <div class="brand-title">host<span class="brand-os">OS</span></div>
+            <div class="brand-sub">hostOS Companion</div>
+        </div>
+    </header>
+
+    <div class="controls">
+        <div class="view-toggle">
+            <button id="tripsViewBtn" class="view-btn active">Operations</button>
+            <button id="fleetViewBtn" class="view-btn">Vehicles</button>
+            <button id="boardViewBtn" class="view-btn">Activity</button>
+            <button id="syncViewBtn" class="view-btn">Sync</button>
+        </div>
+        <button id="scanButton">Sync HostOS</button>
+        <div id="status"></div>
+    </div>
+
+    <div id="output"></div>
+
+    <footer class="credit">Personal use only. Coded by John B.</footer>
+
+</div>
+
+<!-- Load order matters: data + pure functions first, then orchestration, then UI -->
+<script src="fleet.js"></script>
+<script src="fleetStore.js"></script>
+<script src="messageLog.js"></script>
+<script src="tripWatch.js"></script>
+<script src="parser.js"></script>
+<script src="matcher.js"></script>
+<script src="formatter.js"></script>
+<script src="availability.js"></script>
+<script src="generator.js"></script>
+<script src="sync.js"></script>
+<script src="popup.js"></script>
+
+</body>
+</html>

@@ -5,6 +5,7 @@ import { AUTOMATIONS, CATEGORY_LABELS, type AutomationCategory } from "@/lib/aut
 import { getAutomationSettings } from "@/lib/automations/queries";
 import { AutomationRow } from "@/components/automations/automation-row";
 import { ButlerTaskList } from "@/components/dashboard/butler-task-list";
+import { canEditCurrentFleet, getCurrentHostId } from "@/lib/host/context";
 
 const CATEGORY_ORDER: AutomationCategory[] = ["messaging", "operations", "monitoring"];
 
@@ -19,7 +20,13 @@ export default async function ButlerPage() {
   const session = await auth();
   const email = session?.user?.email ?? null;
 
-  const settings = email ? await getAutomationSettings(email) : {};
+  // Automations belong to the fleet, not to whoever is signed in (migration
+  // 0013), so this no longer renders an empty catalog for a signed-out or
+  // Companion-only operator.
+  const [settings, canEdit] = await Promise.all([
+    getAutomationSettings(await getCurrentHostId()),
+    canEditCurrentFleet(),
+  ]);
   const enabledCount = AUTOMATIONS.filter((a) => settings[a.id]).length;
   const suggestions = (await getDashboardData(email)).suggestions;
 
@@ -80,6 +87,7 @@ export default async function ButlerPage() {
                       key={automation.id}
                       automation={automation}
                       initialEnabled={Boolean(settings[automation.id])}
+                      readOnly={!canEdit}
                     />
                   ))}
                 </div>

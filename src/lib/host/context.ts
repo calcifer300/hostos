@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { auth } from "@/auth";
 import { runQueryOr } from "@/lib/supabase/server";
 import { DEFAULT_HOST_ID } from "@/lib/host/queries";
+import { provisionFleetForUser } from "@/lib/host/provision";
 import { requiresAuth } from "@/lib/access";
 
 /**
@@ -13,17 +14,20 @@ import { requiresAuth } from "@/lib/access";
  * hardcoded DEFAULT_HOST_ID at all 19 call sites, so one deployment could only
  * ever serve one fleet. This is the single place that decision now lives.
  *
- * TWO MODES, BY DEPLOYMENT
- * ------------------------
- * Locally HostOS is an open shell (Project Aurora Phase 1) — Companion data
- * needs no Google account, so a visitor with no membership gets the default
- * fleet, exactly as before multi-tenancy existed.
+ * WHO GETS WHICH FLEET
+ * --------------------
+ * A signed-in user gets their own. Their first request provisions a fleet
+ * named from their Google profile and makes them its owner, so the Google
+ * provider accepting any account is no longer a problem: a stranger signing
+ * in lands on their own empty fleet, never anyone else's data.
  *
- * On a hosted deployment that is unsafe: the Google provider accepts any
- * Google account, so a session proves identity, not authorisation. There, a
- * user with no membership resolves to NO_FLEET_HOST_ID and every host-scoped
- * query returns empty. This never throws and never demands a session, so it
- * stays safe to call from any render path.
+ * A signed-OUT visitor still gets the default fleet, but only where the app
+ * runs as an open shell (Project Aurora Phase 1) — locally. On a hosted
+ * deployment middleware has already redirected them to /login, and if they
+ * somehow reach here they resolve to NO_FLEET_HOST_ID instead.
+ *
+ * This never throws and never demands a session, so it stays safe to call
+ * from any render path.
  */
 
 const SELECTED_HOST_COOKIE = "hostos_fleet";
@@ -43,9 +47,19 @@ interface MembershipRow {
 }
 
 /**
- * Every fleet this email may see. Empty for a signed-out visitor, and empty for
- * a signed-in user nobody has invited yet — both fall back to the default
- * fleet, so an install that never creates a membership behaves as it always did.
+ * Every fleet this email may see, provisioning one on first sign-in.
+ *
+ * Empty for a signed-out visitor. For a signed-in user with no membership it
+ * creates their own fleet rather than returning nothing — see
+ * lib/host/provision.ts for why that happens here, in one React-cache()'d
+ * function, rather than in a layout or in middleware.
+ *
+ * The short version: a layout provisioning on render races the pages beneath
+ * it, which render in parallel and would resolve their host id before the
+ * fleet existed. Middleware can't do it either — it runs on the edge and the
+ * Supabase client is `server-only`. Doing it inside the cached read means
+ * every caller in a request, whatever order they run in, awaits the same
+ * single provisioning promise and sees the same answer.
  */
 export const getFleetsForUser = cache(async function getFleetsForUser(
   email: string | null
@@ -60,13 +74,35 @@ export const getFleetsForUser = cache(async function getFleetsForUser(
       .returns<MembershipRow[]>()
   );
 
-  return data.map((row) => ({
-    hostId: row.host_id,
-    name: row.hosts?.name ?? null,
-    slug: row.hosts?.slug ?? null,
-    timezone: row.hosts?.timezone ?? "America/Denver",
-    role: row.role,
-  }));
+  if (data.length > 0) {
+    return data.map((row) => ({
+      hostId: row.host_id,
+      name: row.hosts?.name ?? null,
+      slug: row.hosts?.slug ?? null,
+      timezone: row.hosts?.timezone ?? "America/Denver",
+      role: row.role,
+    }));
+  }
+
+  // Nobody has invited this person and they own nothing yet. Provision only
+  // for the account actually signed in on this request: this function is also
+  // called with other people's addresses (the team list on Settings), and
+  // reading someone's memberships must never create a fleet for them.
+  const session = await auth();
+  if (session?.user?.email !== email) return [];
+
+  const created = await provisionFleetForUser(email, session.user?.name ?? null);
+  if (!created) return [];
+
+  return [
+    {
+      hostId: created.hostId,
+      name: created.name,
+      slug: created.slug,
+      timezone: created.timezone,
+      role: created.role,
+    },
+  ];
 });
 
 /**
@@ -85,13 +121,19 @@ export const getCurrentHostId = cache(async function getCurrentHostId(): Promise
   const fleets = await getFleetsForUser(email);
 
   if (fleets.length === 0) {
-    // Locally the app is an open shell, so no membership means the default
-    // fleet — exactly how this behaved before multi-tenancy.
+    // A signed-in user reaching here means provisioning failed — the database
+    // was unreachable, or migration 0012 hasn't been applied. Fall through to
+    // the sentinel rather than the default fleet: "we couldn't set you up" is
+    // an empty app, never someone else's data.
+    if (email) return NO_FLEET_HOST_ID;
+
+    // Signed out. Locally the app is an open shell, so this is the default
+    // fleet — exactly how it behaved before multi-tenancy.
     if (!requiresAuth()) return DEFAULT_HOST_ID;
 
-    // On a hosted deployment it must not. The Google provider accepts ANY
-    // Google account, so "signed in" is not "authorised" — without this,
-    // anyone on the internet could sign in and read the default fleet.
+    // On a hosted deployment it must not be. Middleware already redirects
+    // anonymous traffic to /login, so this is defence in depth for any path
+    // that skips it (the /api/turo GETs are exempted there by necessity).
     //
     // Returning a sentinel rather than throwing or gating in a layout is
     // deliberate: every query in the app is host_id-scoped, so a host id that
@@ -108,13 +150,22 @@ export const getCurrentHostId = cache(async function getCurrentHostId(): Promise
 });
 
 /**
- * A syntactically valid uuid that is never a real fleet. Used for a signed-in
- * user with no membership on a hosted deployment: queries run and return
- * nothing instead of being skipped, so no code path has to remember to check.
+ * A syntactically valid uuid that is never a real fleet. Queries run against
+ * it and return nothing, instead of being skipped, so no code path has to
+ * remember to check first.
+ *
+ * Reached in two cases now: an anonymous request on a gated deployment, and a
+ * signed-in user whose fleet could not be provisioned (database down, or
+ * migration 0012 not applied). Both are "show an empty app", never "show
+ * whatever the default fleet has".
  */
 export const NO_FLEET_HOST_ID = "00000000-0000-0000-0000-000000000000";
 
-/** True when the viewer is signed in but belongs to no fleet on this deployment. */
+/**
+ * True when this request resolved to no fleet at all — see NO_FLEET_HOST_ID.
+ * For a signed-in user this means provisioning failed, which is a backend
+ * problem worth telling them about rather than rendering as "no data yet".
+ */
 export async function hasNoFleetAccess(): Promise<boolean> {
   return (await getCurrentHostId()) === NO_FLEET_HOST_ID;
 }
@@ -141,6 +192,34 @@ export async function canEditCurrentFleet(): Promise<boolean> {
   // stranger on the internet.
   if (!fleet) return true;
   return fleet.role === "owner" || fleet.role === "member";
+}
+
+export interface FleetMember {
+  email: string;
+  role: string;
+}
+
+/**
+ * Everyone on one fleet, for the Settings roster.
+ *
+ * Takes the host id from the caller rather than resolving it, so a caller
+ * cannot accidentally list a fleet it did not first prove access to. Reading
+ * it with NO_FLEET_HOST_ID returns nothing, by construction.
+ */
+export async function getFleetMembers(hostId: string): Promise<FleetMember[]> {
+  const { data } = await runQueryOr<{ user_email: string; role: string }[]>(
+    "host_members.for_fleet",
+    [],
+    (client) =>
+      client
+        .from("host_members")
+        .select("user_email, role")
+        .eq("host_id", hostId)
+        .order("created_at", { ascending: true })
+        .returns<{ user_email: string; role: string }[]>()
+  );
+
+  return data.map((row) => ({ email: row.user_email, role: row.role }));
 }
 
 export { SELECTED_HOST_COOKIE };

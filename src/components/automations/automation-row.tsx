@@ -10,15 +10,19 @@ import type { AutomationDefinition } from "@/lib/automations/definitions";
 export function AutomationRow({
   automation,
   initialEnabled,
+  readOnly = false,
 }: {
   automation: AutomationDefinition;
   initialEnabled: boolean;
+  /** Viewer-role members see the fleet’s automations but cannot change them. */
+  readOnly?: boolean;
 }) {
   const [enabled, setEnabled] = React.useState(initialEnabled);
   const [isPending, startTransition] = React.useTransition();
   const [error, setError] = React.useState<string | null>(null);
 
   function toggle() {
+    if (readOnly) return;
     const next = !enabled;
     setEnabled(next); // optimistic
     setError(null);
@@ -64,7 +68,8 @@ export function AutomationRow({
           aria-checked={enabled}
           aria-label={`${enabled ? "Disable" : "Enable"} ${automation.name}`}
           onClick={toggle}
-          disabled={isPending}
+          disabled={isPending || readOnly}
+          title={readOnly ? "You have read-only access to this fleet." : undefined}
           className={cn(
             "relative mt-1 inline-flex h-6 w-10 shrink-0 items-center rounded-full transition-colors disabled:opacity-60",
             enabled ? "bg-accent" : "bg-muted"

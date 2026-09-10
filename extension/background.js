@@ -1,0 +1,109 @@
+// background.js
+// Makes clicking the toolbar icon open the side panel (which stays open
+// across tab switches and outside clicks) instead of a transient popup.
+// Also runs three Companion sync loops. See sync.js for the shared
+// implementation also used by popup.js's manual buttons — one set of
+// routines, multiple triggers.
+//
+//  - hostosSync (every 1 min): scrape the open Turo tab's trips list,
+//    push to HostOS. Refreshes the tab first if it's safe to (see
+//    refreshTuroTabIfSafe in sync.js).
+//  - hostosMessageSync (every 1 min): open each near-term reservation's
+//    detail page in the background and pull its guest message thread.
+//    Matches the trip sync's cadence so a new guest message shows up in
+//    HostOS within about a minute rather than up to five.
+//  - hostosInboxSync (every 1 min, plus once ~20s after every browser
+//    startup/extension reload): walks turo.com/us/en/inbox/messages — the
+//    real guest/host conversation history, distinct from the reservation
+//    page's canned instructions panel above. Matches the other loops' 60s
+//    cadence now that performSyncInbox() only opens a tab for a thread
+//    that's unread, new, or changed since last cycle (see
+//    loadInboxThreadState in sync.js) — a steady-state minute with nothing
+//    new opens zero tabs instead of up to 20.
+//  - hostosFleetCalendar (every 6 h, plus once a minute after startup):
+//    opens turo.com/us/en/trips/calendar in a background tab and scrolls
+//    through its virtualized grid to recover the full vehicle roster with
+//    plates. The `fleet` payload previously came only from hand-entered
+//    vehicles, so a fleet nobody had typed in synced 5 vehicles while its own
+//    trips referenced 45 plates. Slow cadence because a roster changes when a
+//    car is bought or retired, not hourly.
+//  - hostosEnrichment (every 10 min): the guest's protection plan and track
+//    record, from Turo's JSON APIs (see enrichment.js). A Premier booking has
+//    a $0 out-of-pocket cap, so damage can't be billed to the guest — the one
+//    thing worth knowing before a trip starts. Opens NO background tab: these
+//    are same-origin fetches issued from whatever Turo tab is already open,
+//    which is why it can cover every trip rather than a short window.
+//  - hostosLicenseCheck (every 15 min): for check-ins starting within the
+//    next 24h, opens each reservation's detail page and reads whether the
+//    guest has confirmed their driver's license yet. Used to be a
+//    popup-only manual button — moved here because a popup closing (losing
+//    focus, Chrome reclaiming it) kills any JS running inside it, which is
+//    almost certainly why it "didn't work" reliably. 15 minutes rather
+//    than matching the 1-minute loops since license status doesn't change
+//    that often and this bounds how many background tabs open per hour.
+
+importScripts("fleet.js", "fleetStore.js", "matcher.js", "parser.js", "formatter.js", "availability.js", "generator.js", "sync.js");
+
+function ensureAlarms() {
+    chrome.alarms.create("hostosSync", { periodInMinutes: 1 });
+    chrome.alarms.create("hostosMessageSync", { periodInMinutes: 1 });
+    chrome.alarms.create("hostosInboxSync", { periodInMinutes: 1 });
+    chrome.alarms.create("hostosInboxSyncKickoff", { delayInMinutes: 0.33 });
+    chrome.alarms.create("hostosLicenseCheck", { periodInMinutes: 15 });
+    chrome.alarms.create("hostosLicenseCheckKickoff", { delayInMinutes: 0.5 });
+    chrome.alarms.create("hostosFleetCalendar", { periodInMinutes: 360 });
+    chrome.alarms.create("hostosFleetCalendarKickoff", { delayInMinutes: 1 });
+    chrome.alarms.create("hostosEnrichment", { periodInMinutes: 10 });
+    chrome.alarms.create("hostosEnrichmentKickoff", { delayInMinutes: 1.5 });
+}
+
+chrome.runtime.onInstalled.addListener(() => {
+    chrome.sidePanel
+        .setPanelBehavior({ openPanelOnActionClick: true })
+        .catch((err) => console.error("Failed to set side panel behavior:", err));
+
+    ensureAlarms();
+});
+
+// Alarms persist across browser restarts, but re-creating on startup is
+// idempotent (same name replaces the existing schedule) and cheap
+// insurance against ever losing any loop silently.
+chrome.runtime.onStartup.addListener(ensureAlarms);
+
+// Belt and suspenders: onInstalled doesn't reliably fire for every manual
+// "reload" of an unpacked extension (behavior has varied across Chrome
+// versions/build channels depending on whether anything in the manifest
+// changed) — if it doesn't fire, ensureAlarms() above never runs and every
+// sync loop silently stops existing, with no error anywhere to point at.
+// Calling it unconditionally here means every service-worker activation
+// (reload, browser restart, or Chrome waking the worker back up after it
+// was suspended for being idle — MV3 workers re-run this top-level code
+// each time) re-asserts all three alarms. chrome.alarms.create() is
+// idempotent per name, so this is cheap and safe to call repeatedly.
+ensureAlarms();
+
+chrome.alarms.onAlarm.addListener((alarm) => {
+    if (alarm.name === "hostosSync") {
+        performSync().catch((err) => console.error("[HostOS] Background sync failed:", err));
+        return;
+    }
+    if (alarm.name === "hostosMessageSync") {
+        performSyncMessages().catch((err) => console.error("[HostOS] Background message sync failed:", err));
+        return;
+    }
+    if (alarm.name === "hostosInboxSync" || alarm.name === "hostosInboxSyncKickoff") {
+        performSyncInbox().catch((err) => console.error("[HostOS] Background inbox sync failed:", err));
+        return;
+    }
+    if (alarm.name === "hostosLicenseCheck" || alarm.name === "hostosLicenseCheckKickoff") {
+        performLicenseCheckSync().catch((err) => console.error("[HostOS] Background license check failed:", err));
+        return;
+    }
+    if (alarm.name === "hostosFleetCalendar" || alarm.name === "hostosFleetCalendarKickoff") {
+        performFleetCalendarSync().catch((err) => console.error("[HostOS] Background fleet calendar sync failed:", err));
+        return;
+    }
+    if (alarm.name === "hostosEnrichment" || alarm.name === "hostosEnrichmentKickoff") {
+        performEnrichmentSync().catch((err) => console.error("[HostOS] Background enrichment sync failed:", err));
+    }
+});

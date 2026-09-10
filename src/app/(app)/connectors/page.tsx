@@ -2,7 +2,8 @@ import Link from "next/link";
 import { Calendar, Mail, MessageSquare, Phone, type LucideIcon } from "lucide-react";
 import { auth } from "@/auth";
 import { getHost } from "@/lib/host/queries";
-import { CompanionPairing } from "@/components/settings/companion-pairing";
+import { canEditCurrentFleet, getCurrentHostId } from "@/lib/host/context";
+import { CompanionSetup } from "@/components/settings/companion-setup";
 import { Badge } from "@/components/ui/badge";
 
 function ConnectorRow({
@@ -34,7 +35,11 @@ function ConnectorRow({
 
 export default async function ConnectorsPage() {
   const session = await auth();
-  const host = await getHost();
+  // Explicitly this request's fleet. getHost() with no argument resolves
+  // DEFAULT_HOST_ID, which showed every visitor the seeded fleet's pairing
+  // state — see the note on regenerateCompanionApiKey for what that allowed.
+  const host = await getHost(await getCurrentHostId());
+  const canManage = await canEditCurrentFleet();
 
   return (
     <div className="mx-auto w-full max-w-3xl">
@@ -45,6 +50,18 @@ export default async function ConnectorsPage() {
         </p>
       </div>
 
+      {/* The Companion comes first because it is not one connector among
+          several — it is the only source that fills the dashboard. Gmail is
+          supplementary and everything under it is unbuilt, so leading with
+          that list buried the one thing a new fleet has to do. */}
+      <h2 className="mb-2 px-1 text-[11.5px] font-semibold uppercase tracking-wide text-muted-foreground">
+        Your data source
+      </h2>
+      <CompanionSetup hasKey={Boolean(host?.companionApiKey)} canManage={canManage} />
+
+      <h2 className="mb-2 mt-8 px-1 text-[11.5px] font-semibold uppercase tracking-wide text-muted-foreground">
+        Optional integrations
+      </h2>
       <div className="space-y-3">
         <ConnectorRow
           icon={Mail}
@@ -92,12 +109,6 @@ export default async function ConnectorsPage() {
         />
       </div>
 
-      <div className="mt-8">
-        <h2 className="mb-2 px-1 text-[11.5px] font-semibold uppercase tracking-wide text-muted-foreground">
-          HostOS Companion
-        </h2>
-        <CompanionPairing hasKey={Boolean(host?.companionApiKey)} />
-      </div>
     </div>
   );
 }

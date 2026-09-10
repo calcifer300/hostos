@@ -54,5 +54,44 @@
     return best;
   }
 
+  /**
+   * Match against SEVERAL phrasings of the same question.
+   *
+   * The header of this file describes recognising "where's the key?", "key
+   * location?" and "lockbox code?" as one recurring question — but
+   * matchSavedReply takes a single trigger and scores hits against ITS words,
+   * so a trigger long enough to cover all three ("lockbox code key location")
+   * needs 60% of those four words in the message and therefore matches none
+   * of them. Short triggers work; the moment you try to cover variants, it
+   * silently stops matching.
+   *
+   * Splitting on commas and pipes and taking the best variant is what the
+   * header always described. The scoring itself is untouched.
+   */
+  function matchSavedReplyVariants(message, savedReplies) {
+    if (!Array.isArray(savedReplies) || !savedReplies.length) return null;
+
+    let best = null;
+
+    for (const item of savedReplies) {
+      const variants = String(item.trigger || "")
+        .split(/[,|]/)
+        .map((v) => v.trim())
+        .filter(Boolean);
+
+      for (const variant of variants) {
+        const hit = matchSavedReply(message, [{ ...item, trigger: variant }]);
+        if (hit && (!best || hit.score > best.score)) {
+          // Report the phrasing that actually matched, so the panel can say
+          // which one fired rather than echoing the whole comma list.
+          best = { ...item, trigger: variant, score: hit.score };
+        }
+      }
+    }
+
+    return best;
+  }
+
   root.matchSavedReply = matchSavedReply;
+  root.matchSavedReplyVariants = matchSavedReplyVariants;
 })(typeof window !== 'undefined' ? window : this);

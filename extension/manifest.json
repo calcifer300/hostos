@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "HostOS Companion",
   "description": "Syncs your Turo fleet into HostOS, alerts you when something needs you, and drafts grounded replies.",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsXn7h35/aH9o3k68aNi9cF83YAHAITiVy8aWJR2VBoICtGeVKWNUpLRUETzrqbD4PyVmfb815mfBcEsoj+trJaPdEio2CzDPgkB8wYYIZGXsLgaE5ZVMuDLPrb6wfMEzl4saIdFtK0yhECw1S1YoUCcjT6NbNpJ3y8FpCNtNBlSs6FCl3J/2s/8nENTWB1WpdugXiseZ9rqWq5gNiX61BFvoAHUWcEUDg0aZFgkefaEHkSeLc3S6dkiLZMiQoIYUnpbChCzmsUhlH9v7JDbkM487aTOLB9R7OKbHHkexpryzwthaDjGd8BNu1YOey/ScXXz3scEyMC7fSj8gY4SQawIDAQAB",
   "permissions": [
     "activeTab",
@@ -74,6 +74,7 @@
         "https://www.linkedin.com/*"
       ],
       "js": [
+        "replyMatcher.js",
         "assist.js"
       ],
       "run_at": "document_idle"

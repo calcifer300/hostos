@@ -284,7 +284,19 @@ async function scanActiveTuroTab() {
 }
 
 // Clicking a notification opens the tab it came from.
-if (typeof chrome !== "undefined" && chrome.notifications && chrome.notifications.onClicked) {
+//
+// Registered in the SERVICE WORKER only. This file is also loaded by the side
+// panel so its config helpers are available there, and a listener registered
+// from a panel would be a second handler that dies the moment the panel closes
+// — handling every click twice while it is open, and clearing the badge from a
+// context that no longer exists. Service workers have no global document;
+// panels do.
+if (
+  typeof document === "undefined" &&
+  typeof chrome !== "undefined" &&
+  chrome.notifications &&
+  chrome.notifications.onClicked
+) {
     chrome.notifications.onClicked.addListener(async (notificationId) => {
         try {
             const { notifTargets = {} } = await chrome.storage.session.get("notifTargets");

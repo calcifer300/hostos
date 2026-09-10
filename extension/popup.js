@@ -7,6 +7,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const fleetViewBtn = document.getElementById("fleetViewBtn");
     const boardViewBtn = document.getElementById("boardViewBtn");
     const syncViewBtn = document.getElementById("syncViewBtn");
+    const alertsViewBtn = document.getElementById("alertsViewBtn");
+    const repliesViewBtn = document.getElementById("repliesViewBtn");
 
     let lastRawTrips = null; // cached so "Add to Fleet" can re-render without rescanning
     let lastGenerated = null; // cached generateCards() output
@@ -22,9 +24,11 @@ document.addEventListener("DOMContentLoaded", () => {
     fleetViewBtn.addEventListener("click", () => showFleetView());
     boardViewBtn.addEventListener("click", () => showActivityView());
     syncViewBtn.addEventListener("click", () => showSyncView());
+    alertsViewBtn.addEventListener("click", () => showAlertsView());
+    repliesViewBtn.addEventListener("click", () => showRepliesView());
 
     function setActiveViewBtn(activeBtn) {
-        [tripsViewBtn, fleetViewBtn, boardViewBtn, syncViewBtn].forEach(btn => {
+        [tripsViewBtn, fleetViewBtn, boardViewBtn, syncViewBtn, alertsViewBtn, repliesViewBtn].forEach(btn => {
             btn.classList.toggle("active", btn === activeBtn);
         });
     }
@@ -53,6 +57,20 @@ document.addEventListener("DOMContentLoaded", () => {
         scanButton.style.display = "none";
         status.style.display = "none";
         await renderActivityView();
+    }
+
+    async function showAlertsView() {
+        setActiveViewBtn(alertsViewBtn);
+        scanButton.style.display = "none";
+        status.style.display = "none";
+        await renderAlertsView();
+    }
+
+    async function showRepliesView() {
+        setActiveViewBtn(repliesViewBtn);
+        scanButton.style.display = "none";
+        status.style.display = "none";
+        await renderRepliesView();
     }
 
     async function showSyncView() {
@@ -1180,6 +1198,347 @@ document.addEventListener("DOMContentLoaded", () => {
 
         output.appendChild(section);
     }
+
+    // ---------- Alerts ----------
+    //
+    // Karl's scanner had a whole options page for this; the merged extension
+    // shipped its engine (alerts.js) with no way to see or change any of it.
+    // Notifications were firing that nobody could turn off, and a rule nobody
+    // could inspect.
+
+    async function renderAlertsView() {
+        output.innerHTML = "";
+
+        const { rules, settings } = await loadAlertConfig();
+        const { alertBadge = 0 } = await chrome.storage.session.get("alertBadge");
+
+        // --- master switch -------------------------------------------------
+        const master = document.createElement("div");
+        master.className = "panel";
+        master.innerHTML = `
+            <div class="panel-head">
+                <h2>Desktop alerts</h2>
+            </div>
+            <div class="panel-note">
+                Raised from what HostOS records on each sync, so an alert names the
+                change rather than guessing it from page text.
+            </div>`;
+
+        const masterRow = document.createElement("div");
+        masterRow.className = "row";
+        masterRow.appendChild(makeSwitch(settings.enabled, async (on) => {
+            settings.enabled = on;
+            await saveAlertConfig(rules, settings);
+            await renderAlertsView();
+        }, "Desktop alerts"));
+        const masterMain = document.createElement("div");
+        masterMain.className = "row-main";
+        masterMain.innerHTML = `<div class="row-title">${settings.enabled ? "On" : "Off"}</div>
+            <div class="row-sub">${settings.enabled
+                ? "You'll get a notification when something needs you."
+                : "Nothing will interrupt you. The sync itself keeps running."}</div>`;
+        masterRow.appendChild(masterMain);
+        master.appendChild(masterRow);
+        output.appendChild(master);
+
+        if (!settings.enabled) return;
+
+        // --- what to be told about ------------------------------------------
+        const kinds = document.createElement("div");
+        kinds.className = "panel";
+        kinds.innerHTML = `<div class="panel-head"><h2>Tell me about</h2></div>`;
+
+        [
+            ["onNewMessage", "New guest messages", "A guest replied on a reservation."],
+            ["onLicenceOverdue", "Unverified licences", "Pickup is close and the licence still isn't confirmed."],
+            ["onPremierBooking", "Zero-deductible bookings", "Damage can't be billed to the guest on these."],
+        ].forEach(([key, title, sub]) => {
+            const row = document.createElement("div");
+            row.className = "row";
+            row.appendChild(makeSwitch(settings[key] !== false, async (on) => {
+                settings[key] = on;
+                await saveAlertConfig(rules, settings);
+            }, title));
+            const main = document.createElement("div");
+            main.className = "row-main";
+            main.innerHTML = `<div class="row-title">${escapeHtml(title)}</div><div class="row-sub">${escapeHtml(sub)}</div>`;
+            row.appendChild(main);
+            kinds.appendChild(row);
+        });
+        output.appendChild(kinds);
+
+        // --- keyword rules --------------------------------------------------
+        const rulesPanel = document.createElement("div");
+        rulesPanel.className = "panel";
+        rulesPanel.innerHTML = `
+            <div class="panel-head"><h2>Watch the open Turo tab</h2></div>
+            <div class="panel-note">
+                A booking request can appear on screen minutes before the next sync
+                picks it up. These scan only the Turo tab you're looking at.
+            </div>`;
+
+        rules.forEach((rule) => {
+            const row = document.createElement("div");
+            row.className = "row";
+
+            const dot = document.createElement("span");
+            dot.className = `sev ${rule.severity || "medium"}`;
+            row.appendChild(dot);
+
+            const main = document.createElement("div");
+            main.className = "row-main";
+            main.innerHTML = `<div class="row-title">${escapeHtml(rule.name)}</div>
+                <div class="row-sub">${escapeHtml((rule.keywords || []).join(", "))}</div>`;
+            row.appendChild(main);
+
+            row.appendChild(makeSwitch(rule.enabled !== false, async (on) => {
+                rule.enabled = on;
+                await saveAlertConfig(rules, settings);
+            }, rule.name));
+
+            rulesPanel.appendChild(row);
+        });
+        output.appendChild(rulesPanel);
+
+        // --- housekeeping ---------------------------------------------------
+        const foot = document.createElement("div");
+        foot.className = "panel";
+        const footRow = document.createElement("div");
+        footRow.className = "row";
+        const footMain = document.createElement("div");
+        footMain.className = "row-main";
+        footMain.innerHTML = `<div class="row-title">${alertBadge} unread</div>
+            <div class="row-sub">Clears the count on the toolbar icon.</div>`;
+        footRow.appendChild(footMain);
+
+        const clear = document.createElement("button");
+        clear.className = "mini-btn";
+        clear.textContent = "Clear";
+        clear.addEventListener("click", async () => {
+            await clearBadge();
+            await renderAlertsView();
+        });
+        footRow.appendChild(clear);
+
+        const test = document.createElement("button");
+        test.className = "mini-btn";
+        test.textContent = "Test";
+        test.addEventListener("click", async () => {
+            // Deliberately unique per press: raiseAlert de-dupes on the key, so a
+            // fixed one would fire once and then look broken.
+            await raiseAlert({
+                key: "test:" + Date.now(),
+                title: "hostOS Companion",
+                body: "Desktop alerts are working.",
+                severity: "medium",
+            });
+            test.textContent = "Sent";
+            setTimeout(() => { test.textContent = "Test"; }, 1500);
+        });
+        footRow.appendChild(test);
+
+        foot.appendChild(footRow);
+        output.appendChild(foot);
+    }
+
+    // ---------- Saved replies ----------
+    //
+    // Karl's ai-reply extension let a host store an answer against a trigger
+    // phrase, so a question asked forty times a week is answered without a
+    // model call. replyMatcher.js came across with the merge and had nothing
+    // calling it — this is the surface that fills it, and assist.js checks it
+    // before asking HostOS to draft.
+
+    const SAVED_REPLIES_KEY = "hostosSavedReplies";
+
+    function loadSavedReplies() {
+        return new Promise((resolve) => {
+            chrome.storage.local.get([SAVED_REPLIES_KEY], (result) => {
+                resolve(Array.isArray(result[SAVED_REPLIES_KEY]) ? result[SAVED_REPLIES_KEY] : []);
+            });
+        });
+    }
+
+    function persistSavedReplies(list) {
+        return new Promise((resolve) => {
+            chrome.storage.local.set({ [SAVED_REPLIES_KEY]: list }, resolve);
+        });
+    }
+
+    async function renderRepliesView() {
+        output.innerHTML = "";
+        const replies = await loadSavedReplies();
+
+        const intro = document.createElement("div");
+        intro.className = "panel";
+        intro.innerHTML = `
+            <div class="panel-head"><h2>Saved replies</h2></div>
+            <div class="panel-note">
+                When a guest message matches a trigger, Alt+R answers with your saved
+                text instead of drafting one &mdash; instant, and the same words every
+                time. <strong>Separate phrasings with commas.</strong> Matching needs
+                most of one phrase&rsquo;s words present, so a few short phrasings beat
+                one long one.
+            </div>`;
+        output.appendChild(intro);
+
+        if (replies.length === 0) {
+            const empty = document.createElement("div");
+            empty.className = "empty";
+            empty.textContent = "No saved replies yet.";
+            output.appendChild(empty);
+        } else {
+            const list = document.createElement("div");
+            list.className = "panel";
+            replies.forEach((reply, index) => {
+                const row = document.createElement("div");
+                row.className = "row";
+
+                const main = document.createElement("div");
+                main.className = "row-main";
+                main.innerHTML = `<div class="row-title">${escapeHtml(reply.trigger)}</div>
+                    <div class="row-sub">${escapeHtml(reply.text)}</div>`;
+                row.appendChild(main);
+
+                const del = document.createElement("button");
+                del.className = "mini-btn danger";
+                del.textContent = "Delete";
+                del.addEventListener("click", async () => {
+                    const next = replies.slice();
+                    next.splice(index, 1);
+                    await persistSavedReplies(next);
+                    await renderRepliesView();
+                });
+                row.appendChild(del);
+
+                list.appendChild(row);
+            });
+            output.appendChild(list);
+        }
+
+        // --- add one ---------------------------------------------------------
+        const form = document.createElement("div");
+        form.className = "panel";
+        form.innerHTML = `<div class="panel-head"><h2>Add a reply</h2></div>`;
+
+        const triggerField = document.createElement("label");
+        triggerField.className = "field";
+        triggerField.innerHTML = `<label for="replyTrigger">When a guest asks about</label>
+            <input type="text" id="replyTrigger" placeholder="lockbox code, key location, where is the key">`;
+        form.appendChild(triggerField);
+
+        const textField = document.createElement("label");
+        textField.className = "field";
+        textField.innerHTML = `<label for="replyText">Send this</label>
+            <textarea id="replyText" rows="4" placeholder="The lockbox is on the driver's door handle. Code is in your check-in message."></textarea>`;
+        form.appendChild(textField);
+
+        const actions = document.createElement("div");
+        actions.className = "form-actions";
+        const save = document.createElement("button");
+        save.className = "mini-btn primary";
+        save.textContent = "Save reply";
+        actions.appendChild(save);
+        const hint = document.createElement("span");
+        hint.className = "row-sub";
+        actions.appendChild(hint);
+        form.appendChild(actions);
+        output.appendChild(form);
+
+        save.addEventListener("click", async () => {
+            const trigger = form.querySelector("#replyTrigger").value.trim();
+            const text = form.querySelector("#replyText").value.trim();
+
+            if (!trigger || !text) {
+                hint.textContent = "Both fields are needed.";
+                return;
+            }
+            // The matcher scores on keywords longer than two characters, so a
+            // one-word trigger matches almost nothing and would look broken.
+            if (trigger.split(/\s+/).filter((w) => w.length > 2).length === 0) {
+                hint.textContent = "Use a few real words, not one short one.";
+                return;
+            }
+
+            await persistSavedReplies([...replies, { trigger, text, created: Date.now() }]);
+            await renderRepliesView();
+        });
+    }
+
+    // ---------- small shared helpers for the two views above ----------
+
+    function makeSwitch(checked, onChange, label) {
+        const wrap = document.createElement("label");
+        wrap.className = "switch";
+
+        const input = document.createElement("input");
+        input.type = "checkbox";
+        input.checked = Boolean(checked);
+        if (label) input.setAttribute("aria-label", label);
+        input.addEventListener("change", () => onChange(input.checked));
+
+        const track = document.createElement("span");
+        wrap.append(input, track);
+        return wrap;
+    }
+
+    /**
+     * Paired / not paired, in the header, on every view.
+     *
+     * "Why is nothing syncing" is the question this panel gets asked most, and
+     * the answer was three clicks away under Sync.
+     */
+    async function refreshPairPill() {
+        const pill = document.getElementById("pairPill");
+        if (!pill) return;
+
+        const { url, apiKey } = await getHostOSConfig();
+        if (apiKey) {
+            pill.textContent = "Paired";
+            pill.className = "pair-pill ok";
+            pill.title = `Syncing to ${url}`;
+        } else {
+            pill.textContent = "Not paired";
+            pill.className = "pair-pill warn";
+            pill.title = "Open the Sync tab and paste your pairing key.";
+        }
+    }
+
+    /** Unread alert count on the Alerts tab, so it's visible without opening it. */
+    async function refreshAlertsTabCount() {
+        const badge = document.getElementById("alertsTabCount");
+        if (!badge) return;
+
+        const { alertBadge = 0 } = await chrome.storage.session.get("alertBadge");
+        if (alertBadge > 0) {
+            badge.textContent = alertBadge > 99 ? "99+" : String(alertBadge);
+            badge.hidden = false;
+        } else {
+            badge.hidden = true;
+        }
+    }
+
+    document.getElementById("openDashboard")?.addEventListener("click", async (e) => {
+        e.preventDefault();
+        const { url } = await getHostOSConfig();
+        chrome.tabs.create({ url });
+    });
+
+    /** Shows the trailing fade only while the tab strip actually overflows. */
+    function syncTabOverflow() {
+        const strip = document.querySelector(".tabs");
+        const wrap = document.querySelector(".tabs-wrap");
+        if (!strip || !wrap) return;
+        const more = strip.scrollWidth - strip.clientWidth - strip.scrollLeft > 4;
+        wrap.classList.toggle("scrollable", more);
+    }
+
+    document.querySelector(".tabs")?.addEventListener("scroll", syncTabOverflow);
+    window.addEventListener("resize", syncTabOverflow);
+
+    refreshPairPill();
+    refreshAlertsTabCount();
+    syncTabOverflow();
 
     // ---------- Synchronization (pairing) ----------
 

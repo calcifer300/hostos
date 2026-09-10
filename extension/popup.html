@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>hostOS</title>
+<title>hostOS Companion</title>
 <link rel="stylesheet" href="popup.css">
 </head>
 <body>
@@ -10,27 +10,36 @@
 <div class="app">
 
     <header>
-        <img class="logomark" src="logo_white.png" alt="Turo" aria-hidden="true">
+        <img class="logomark" src="icon48.png" alt="" aria-hidden="true">
         <div class="brand">
             <div class="brand-title">host<span class="brand-os">OS</span></div>
-            <div class="brand-sub">hostOS Companion</div>
+            <div class="brand-sub">Companion</div>
         </div>
+        <span id="pairPill" class="pair-pill" title="Pairing status">&nbsp;</span>
     </header>
 
+    <div class="tabs-wrap">
+    <nav class="tabs" role="tablist" aria-label="Companion sections">
+        <button id="tripsViewBtn" class="view-btn active" role="tab">Operations</button>
+        <button id="fleetViewBtn" class="view-btn" role="tab">Vehicles</button>
+        <button id="alertsViewBtn" class="view-btn" role="tab">Alerts<span id="alertsTabCount" class="tab-count" hidden></span></button>
+        <button id="repliesViewBtn" class="view-btn" role="tab">Replies</button>
+        <button id="boardViewBtn" class="view-btn" role="tab">Activity</button>
+        <button id="syncViewBtn" class="view-btn" role="tab">Sync</button>
+    </nav>
+    </div>
+
     <div class="controls">
-        <div class="view-toggle">
-            <button id="tripsViewBtn" class="view-btn active">Operations</button>
-            <button id="fleetViewBtn" class="view-btn">Vehicles</button>
-            <button id="boardViewBtn" class="view-btn">Activity</button>
-            <button id="syncViewBtn" class="view-btn">Sync</button>
-        </div>
-        <button id="scanButton">Sync HostOS</button>
+        <button id="scanButton">Sync now</button>
         <div id="status"></div>
     </div>
 
     <div id="output"></div>
 
-    <footer class="credit">Personal use only. Coded by John B.</footer>
+    <footer class="credit">
+        <span>Companion v3.1</span>
+        <a id="openDashboard" href="#">Open dashboard</a>
+    </footer>
 
 </div>
 
@@ -44,6 +53,8 @@
 <script src="formatter.js"></script>
 <script src="availability.js"></script>
 <script src="generator.js"></script>
+<script src="replyMatcher.js"></script>
+<script src="alerts.js"></script>
 <script src="sync.js"></script>
 <script src="popup.js"></script>
 

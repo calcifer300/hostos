@@ -179,6 +179,14 @@
             body.textContent = state.message;
             body.style.color = "#FF453A";
         } else {
+            if (state.savedTrigger) {
+                const badge = document.createElement("div");
+                badge.style.cssText =
+                    "background:rgba(48,209,88,.12);border-left:2px solid #30D158;border-radius:0 6px 6px 0;padding:7px 10px;margin-bottom:8px;font-size:12px;color:#30D158";
+                badge.textContent = "Your saved reply for “" + state.savedTrigger + "”";
+                body.appendChild(badge);
+            }
+
             if (state.escalate) {
                 const warn = document.createElement("div");
                 warn.style.cssText =
@@ -246,6 +254,32 @@
         document.body.appendChild(panel);
     }
 
+    /**
+     * The stored answer for this message, if there is one.
+     *
+     * Storage is read fresh each time rather than cached at load: the panel
+     * runs for as long as the tab is open, and a reply saved in the side panel
+     * five minutes ago should apply now without a reload.
+     */
+    async function findSavedReply(message) {
+        const match =
+            typeof matchSavedReplyVariants === "function" ? matchSavedReplyVariants : null;
+        if (!match) return null;
+
+        const stored = await new Promise((resolve) => {
+            try {
+                chrome.storage.local.get(["hostosSavedReplies"], (result) => {
+                    resolve(Array.isArray(result.hostosSavedReplies) ? result.hostosSavedReplies : []);
+                });
+            } catch {
+                resolve([]);
+            }
+        });
+
+        if (stored.length === 0) return null;
+        return match(message, stored);
+    }
+
     // --------------------------------------------------------------- drafting
 
     async function draftReply() {
@@ -254,6 +288,25 @@
             showPanel({
                 status: "error",
                 message: "Couldn't find a message to reply to. Highlight the text you want a reply to, then try again.",
+            });
+            return;
+        }
+
+        // A saved reply wins before anything reaches a model. This is Karl's
+        // matcher (replyMatcher.js), which scores the message against each
+        // saved trigger by keyword overlap — so "where's the key?" and
+        // "lockbox code?" both hit the same stored answer. Instant, free, and
+        // exactly the same words every time, which is the point for the
+        // question a host answers forty times a week.
+        const saved = await findSavedReply(inbound.text);
+        if (saved) {
+            showPanel({
+                status: "ready",
+                draft: saved.text,
+                savedTrigger: saved.trigger,
+                escalate: false,
+                escalateReason: null,
+                sources: [],
             });
             return;
         }

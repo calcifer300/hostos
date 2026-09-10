@@ -1,18 +1,21 @@
 :root {
-    --bg: #14161a;
-    --surface: #1b1e23;
-    --surface-2: #23272e;
-    --border: #2b3038;
-    --text: #edeef0;
-    --text-dim: #8b929c;
-    --text-faint: #5b6169;
+    /* Taken from the app dark theme (src/app/globals.css). The panel had
+       drifted to its own near-black and its own greys, which is the kind of
+       small mismatch that makes an extension feel bolted on. */
+    --bg: #000000;
+    --surface: #1C1C1E;
+    --surface-2: #2C2C2E;
+    --border: #38383A;
+    --text: #F5F5F7;
+    --text-dim: #98989D;
+    --text-faint: #6A6A6E;
 
-    --blue: #0a84ff;
-    --amber: #f2a93b;
-    --amber-dim: #c98a2c;
-    --green: #4fb286;
-    --coral: #e8735f;
-    --red: #e2574c;
+    --blue: #0A84FF;
+    --amber: #FF9F0A;
+    --amber-dim: #C97F08;
+    --green: #30D158;
+    --coral: #FF7A5C;
+    --red: #FF453A;
 
     --plate-bg: #f3efe5;
     --plate-text: #1a1a1a;
@@ -126,22 +129,26 @@ header {
     color: var(--amber);
 }
 
+/* Accent blue, not amber.
+   The old palette amber was muted enough to read as a button; the app accent
+   set replaces it with a vivid warning orange, which turned this into a
+   caution bar spanning the panel — the loudest thing on screen, for a routine
+   action. Amber now means "look at this", which is what alerts use it for. */
 #scanButton {
     width: 100%;
-    padding: 10px;
+    padding: 9px;
     border: none;
-    border-radius: 7px;
-    background: var(--amber);
-    color: #201705;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
+    border-radius: 8px;
+    background: var(--blue);
+    color: #FFFFFF;
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
     cursor: pointer;
-    transition: background 0.15s ease;
+    transition: opacity 0.15s ease;
 }
-#scanButton:hover { background: #ffbe54; }
-#scanButton:disabled { background: #5c4d2c; color: #a5987a; cursor: default; }
+#scanButton:hover { opacity: .9; }
+#scanButton:disabled { background: var(--surface-2); color: var(--text-faint); cursor: default; opacity: 1; }
 
 #status {
     margin-top: 8px;
@@ -745,3 +752,213 @@ footer.credit {
     white-space: pre-wrap;
     word-break: break-word;
 }
+
+/* =====================================================================
+   v3 — header status, tab strip, and the two surfaces that had none:
+   Alerts (from Karl's scanner) and Replies (from Karl's AI-reply tool).
+   ===================================================================== */
+
+header { position: relative; }
+
+.logomark {
+    height: 22px;
+    width: 22px;
+    border-radius: 6px;
+}
+
+/* Paired / not paired, always visible. "Why is nothing syncing" is the most
+   common question this panel gets asked, and the answer was three clicks away
+   in the Sync tab. */
+.pair-pill {
+    margin-left: auto;
+    flex: 0 0 auto;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    color: var(--text-faint);
+    white-space: nowrap;
+}
+.pair-pill.ok    { color: var(--green); border-color: rgba(48,209,88,.35); background: rgba(48,209,88,.10); }
+.pair-pill.warn  { color: var(--amber); border-color: rgba(255,159,10,.35); background: rgba(255,159,10,.10); }
+
+/* Six tabs don't fit a side panel at its narrowest, so the strip scrolls
+   horizontally rather than wrapping to two ragged rows. */
+.tabs {
+    flex: 0 0 auto;
+    display: flex;
+    gap: 2px;
+    padding: 8px 10px 0 10px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    border-bottom: 1px solid var(--border);
+}
+.tabs::-webkit-scrollbar { display: none; }
+
+.tabs .view-btn {
+    flex: 0 0 auto;
+    position: relative;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    padding: 7px 10px 9px 10px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-dim);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color .15s ease;
+}
+.tabs .view-btn:hover { color: var(--text); }
+.tabs .view-btn.active { color: var(--text); }
+.tabs .view-btn.active::after {
+    content: "";
+    position: absolute;
+    left: 8px; right: 8px; bottom: -1px;
+    height: 2px;
+    border-radius: 2px 2px 0 0;
+    background: var(--blue);
+}
+
+.tab-count {
+    display: inline-block;
+    margin-left: 5px;
+    min-width: 15px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: var(--red);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 15px;
+    text-align: center;
+}
+
+.controls { padding: 10px 12px; }
+
+footer.credit {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+footer.credit a { color: var(--blue); text-decoration: none; }
+footer.credit a:hover { text-decoration: underline; }
+
+/* ---------- shared bits for the new views ---------- */
+
+.panel {
+    margin: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+    overflow: hidden;
+}
+.panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+}
+.panel-head h2 { margin: 0; font-size: 12.5px; font-weight: 600; letter-spacing: -.01em; }
+.panel-note { padding: 10px 12px; font-size: 11.5px; line-height: 1.5; color: var(--text-dim); }
+
+.row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    border-top: 1px solid var(--border);
+}
+.row:first-of-type { border-top: 0; }
+.row-main { min-width: 0; flex: 1; }
+.row-title { font-size: 12.5px; font-weight: 500; }
+.row-sub { margin-top: 2px; font-size: 11.5px; line-height: 1.45; color: var(--text-dim); word-break: break-word; }
+
+.sev {
+    flex: 0 0 auto;
+    margin-top: 5px;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--text-faint);
+}
+.sev.critical { background: var(--red); }
+.sev.high     { background: var(--amber); }
+.sev.medium   { background: var(--blue); }
+
+/* An accessible switch that is still just a checkbox underneath. */
+.switch { position: relative; flex: 0 0 auto; width: 34px; height: 20px; }
+.switch input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.switch span {
+    position: absolute; inset: 0;
+    border-radius: 999px;
+    background: var(--surface-2);
+    transition: background .15s ease;
+    pointer-events: none;
+}
+.switch span::after {
+    content: "";
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: #fff;
+    transition: transform .15s ease;
+}
+.switch input:checked + span { background: var(--blue); }
+.switch input:checked + span::after { transform: translateX(14px); }
+.switch input:focus-visible + span { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+.mini-btn {
+    flex: 0 0 auto;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 11.5px;
+    color: var(--text);
+    cursor: pointer;
+}
+.mini-btn:hover { background: var(--surface-2); }
+.mini-btn.danger { color: var(--red); border-color: rgba(255,69,58,.35); }
+.mini-btn.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+.mini-btn.primary:hover { opacity: .9; background: var(--blue); }
+
+.field { display: block; padding: 8px 12px; }
+.field label { display: block; margin-bottom: 4px; font-size: 11px; color: var(--text-dim); }
+.field input[type="text"], .field textarea {
+    width: 100%;
+    box-sizing: border-box;
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 9px;
+    font: inherit;
+    font-size: 12px;
+    resize: vertical;
+}
+.field input:focus, .field textarea:focus { outline: none; border-color: var(--blue); }
+
+.form-actions { display: flex; gap: 6px; padding: 4px 12px 12px 12px; }
+
+/* Six tabs overflow a narrow side panel, and a hidden scrollbar hides that
+   there are more. A fade on the trailing edge is the affordance — it appears
+   only while there is something to scroll to, via the sentinel below. */
+.tabs-wrap { position: relative; flex: 0 0 auto; }
+.tabs-wrap::after {
+    content: "";
+    position: absolute;
+    top: 0; right: 0; bottom: 1px;
+    width: 28px;
+    pointer-events: none;
+    background: linear-gradient(90deg, rgba(0,0,0,0) 0%, var(--bg) 85%);
+    opacity: 0;
+    transition: opacity .15s ease;
+}
+.tabs-wrap.scrollable::after { opacity: 1; }

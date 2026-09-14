@@ -11,7 +11,7 @@ import { QueueCard } from "@/components/risk/queue-card";
  * Earnings Estimator.
  */
 
-export const metadata = { title: "Risk & earnings · HostOS" };
+export const metadata = { title: "Risk & earnings" };
 
 function Section({
   icon: Icon,

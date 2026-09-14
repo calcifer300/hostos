@@ -37,6 +37,9 @@
     // allowImportingTsExtensions. Enabling that flag app-wide to satisfy four
     // test files would change how every import in src/ is written, so the
     // tests are type-checked by running them instead.
-    "tests"
+    "tests",
+    // Reference copies of the tools that were merged into this app. They
+    // compile against their own (older) module graphs, not this one.
+    "vendor"
   ]
 }

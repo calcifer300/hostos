@@ -1,173 +1,73 @@
 "use client";
 
 import * as React from "react";
+import { usePathname } from "next/navigation";
+import { Search, Sparkles } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { AnimatePresence, motion } from "framer-motion";
-import { Bell, Car, MessageCircle, Search } from "lucide-react";
 import { UserMenu } from "@/components/auth/user-menu";
+import { NotificationBell } from "@/components/shell/notification-bell";
+import { openCommandPalette } from "@/components/shell/command-palette";
+import { ALL_NAV_ITEMS } from "@/components/shell/nav-items";
+import { Kbd } from "@/components/ui/kbd";
+import { Button } from "@/components/ui/button";
 import type { SessionUser } from "@/types/auth";
-import type { AttentionMessage, FleetVehicle } from "@/lib/dashboard/queries";
+import type { Notification } from "@/lib/notifications/queries";
+import { routes } from "@/lib/routes";
 
-interface SearchResult {
-  id: string;
-  kind: "vehicle" | "message";
-  title: string;
-  subtitle: string;
-  href: string;
+function useBreadcrumb(pathname: string): string {
+  const exact = ALL_NAV_ITEMS.find((i) => i.href === pathname);
+  if (exact) return exact.label;
+  const prefix = ALL_NAV_ITEMS.filter((i) => pathname.startsWith(`${i.href}/`)).sort((a, b) => b.href.length - a.href.length)[0];
+  return prefix ? prefix.label : "HostOS";
 }
 
-/**
- * Real search over what's already loaded for this request (vehicles,
- * unread guest messages) — no separate index or API round-trip. Press
- * Cmd/Ctrl+K anywhere to focus it, matching the reference layout's hint.
- */
 export function TopBar({
-  vehicles,
-  messages,
-  unreadNotifications,
   user,
   roles,
+  notifications,
+  unread,
+  workspaceName,
 }: {
-  vehicles: FleetVehicle[];
-  messages: AttentionMessage[];
-  unreadNotifications: number;
   user: SessionUser | null;
   roles: string[];
+  notifications: Notification[];
+  unread: number;
+  workspaceName: string;
 }) {
-  const router = useRouter();
-  const [query, setQuery] = React.useState("");
-  const [open, setOpen] = React.useState(false);
-  const inputRef = React.useRef<HTMLInputElement>(null);
-  const containerRef = React.useRef<HTMLDivElement>(null);
-
-  React.useEffect(() => {
-    function onKeyDown(e: KeyboardEvent) {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
-        e.preventDefault();
-        inputRef.current?.focus();
-      }
-      if (e.key === "Escape") {
-        inputRef.current?.blur();
-        setOpen(false);
-      }
-    }
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, []);
-
-  React.useEffect(() => {
-    function onClickOutside(e: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) setOpen(false);
-    }
-    document.addEventListener("mousedown", onClickOutside);
-    return () => document.removeEventListener("mousedown", onClickOutside);
-  }, []);
-
-  const results = React.useMemo<SearchResult[]>(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return [];
-
-    const vehicleResults: SearchResult[] = vehicles
-      .filter((v) => v.name.toLowerCase().includes(q))
-      .slice(0, 5)
-      .map((v) => ({
-        id: `vehicle-${v.id}`,
-        kind: "vehicle",
-        title: v.name,
-        subtitle: v.nextEventLabel ?? `${v.tripCount} ${v.tripCount === 1 ? "reservation" : "reservations"}`,
-        href: `/fleet/${encodeURIComponent(v.name)}`,
-      }));
-
-    const messageResults: SearchResult[] = messages
-      .filter((m) => m.guestName.toLowerCase().includes(q) || m.vehicle.toLowerCase().includes(q))
-      .slice(0, 5)
-      .map((m) => ({
-        id: `message-${m.id}`,
-        kind: "message",
-        title: m.guestName,
-        subtitle: m.vehicle,
-        href: `/messages/${encodeURIComponent(m.id)}`,
-      }));
-
-    return [...vehicleResults, ...messageResults].slice(0, 8);
-  }, [query, vehicles, messages]);
-
-  function go(href: string) {
-    setQuery("");
-    setOpen(false);
-    router.push(href);
-  }
+  const pathname = usePathname();
+  const crumb = useBreadcrumb(pathname);
 
   return (
-    <div className="glass-surface sticky top-0 z-20 hidden items-center justify-between gap-4 border-b border-border px-8 py-3.5 md:flex">
-      <div ref={containerRef} className="relative w-full max-w-sm">
-        <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-        <input
-          ref={inputRef}
-          value={query}
-          onChange={(e) => {
-            setQuery(e.target.value);
-            setOpen(true);
-          }}
-          onFocus={() => setOpen(true)}
-          placeholder="Search vehicles, guests..."
-          className="h-9 w-full rounded-full border border-border bg-muted/60 pl-9 pr-12 text-[13px] outline-none transition-colors focus:border-accent/50 focus:bg-card"
-        />
-        <kbd className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 rounded border border-border bg-card px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground/70">
-          &#8984;K
-        </kbd>
-
-        <AnimatePresence>
-          {open && query.trim() && (
-            <motion.div
-              initial={{ opacity: 0, y: -6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.15 }}
-              className="absolute left-0 top-full mt-2 w-full overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)]"
-            >
-              {results.length === 0 ? (
-                <p className="px-4 py-3 text-[12.5px] text-muted-foreground">No matches for &ldquo;{query}&rdquo;.</p>
-              ) : (
-                <div className="max-h-80 overflow-y-auto py-1">
-                  {results.map((r) => (
-                    <button
-                      key={r.id}
-                      onClick={() => go(r.href)}
-                      className="flex w-full items-center gap-2.5 px-4 py-2 text-left transition-colors hover:bg-muted/60"
-                    >
-                      {r.kind === "vehicle" ? (
-                        <Car className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                      ) : (
-                        <MessageCircle className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                      )}
-                      <span className="min-w-0 flex-1">
-                        <span className="block truncate text-[13px] font-medium">{r.title}</span>
-                        <span className="block truncate text-[11.5px] text-muted-foreground">{r.subtitle}</span>
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </motion.div>
-          )}
-        </AnimatePresence>
+    <div className="glass-surface sticky top-0 z-20 hidden items-center justify-between gap-4 border-b px-8 py-3 md:flex">
+      <div className="flex min-w-0 items-center gap-3">
+        <p className="truncate text-[12.5px] text-muted-foreground">
+          <span className="text-foreground/70">{workspaceName}</span>
+          <span className="mx-1.5 text-muted-foreground/50">/</span>
+          <span className="font-medium text-foreground">{crumb}</span>
+        </p>
       </div>
 
       <div className="flex items-center gap-2">
-        <Link
-          href="/notifications"
-          aria-label="Notifications"
-          className="relative flex h-9 w-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-accent/40 hover:text-foreground"
+        <button
+          type="button"
+          onClick={openCommandPalette}
+          className="flex h-9 w-72 items-center gap-2.5 rounded-full border border-border bg-muted/50 pl-3.5 pr-2 text-[13px] text-muted-foreground transition-colors hover:border-accent/40 hover:bg-card"
         >
-          <Bell className="h-4 w-4" strokeWidth={1.75} />
-          {unreadNotifications > 0 && (
-            <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-danger px-1 text-[9.5px] font-semibold text-white">
-              {unreadNotifications > 9 ? "9+" : unreadNotifications}
-            </span>
-          )}
-        </Link>
+          <Search className="h-3.5 w-3.5" />
+          <span className="flex-1 text-left">Search or jump to…</span>
+          <span className="flex items-center gap-0.5">
+            <Kbd>⌘</Kbd>
+            <Kbd>K</Kbd>
+          </span>
+        </button>
+
+        <Button asChild variant="ghost" size="icon" pill aria-label="Ask the Butler">
+          <Link href={routes.butler}>
+            <Sparkles className="h-4 w-4 text-accent" />
+          </Link>
+        </Button>
+
+        <NotificationBell initial={notifications} unread={unread} />
         <UserMenu user={user} roles={roles} showDetails />
       </div>
     </div>

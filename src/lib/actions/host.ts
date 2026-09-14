@@ -4,8 +4,8 @@ import { revalidatePath } from "next/cache";
 import { isSupabaseConfigured, runMutation } from "@/lib/supabase/server";
 import { getHost } from "@/lib/host/queries";
 import {
-  canEditCurrentFleet,
-  getCurrentFleet,
+  canManageIntegrations,
+  canManageSettings,
   getCurrentHostId,
   hasNoFleetAccess,
 } from "@/lib/host/context";
@@ -45,10 +45,10 @@ export async function regenerateCompanionApiKey(): Promise<RegenerateKeyResult> 
     };
   }
 
-  // A viewer can read the fleet but must not be able to hand out a credential
-  // that writes to it.
-  if (!(await canEditCurrentFleet())) {
-    return { ok: false, error: "You have read-only access to this fleet." };
+  // A pairing key is a credential that writes to the workspace: owners and
+  // admins only (workspace.integrations).
+  if (!(await canManageIntegrations())) {
+    return { ok: false, error: "Only an owner or admin can issue a pairing key." };
   }
 
   const host = await getHost(await getCurrentHostId());
@@ -69,11 +69,11 @@ export async function regenerateCompanionApiKey(): Promise<RegenerateKeyResult> 
 
   if (!result.ok) return { ok: false, error: result.error };
 
-  revalidatePath("/settings");
-  revalidatePath("/connectors");
+  revalidatePath("/app/settings");
+  revalidatePath("/app/connectors");
   // Pairing is a step on the Overview setup checklist, which reads the same
   // key — without this it keeps saying "not paired" until the next navigation.
-  revalidatePath("/");
+  revalidatePath("/app");
   return { ok: true, apiKey };
 }
 
@@ -105,11 +105,9 @@ export async function renameFleet(rawName: string): Promise<RenameFleetResult> {
     return { ok: false, error: "Your fleet isn't set up yet. Reload the page and try again." };
   }
 
-  const fleet = await getCurrentFleet();
-  // No membership row at all is single-tenant local mode (see
-  // canEditCurrentFleet); anything else must be an owner.
-  if (fleet && fleet.role !== "owner") {
-    return { ok: false, error: "Only a fleet owner can rename it." };
+  // Renaming is workspace configuration: owners, admins and managers.
+  if (!(await canManageSettings())) {
+    return { ok: false, error: "Only an owner, admin or manager can rename the workspace." };
   }
 
   // Resolved separately rather than read off `fleet`, which is null in local
@@ -123,6 +121,6 @@ export async function renameFleet(rawName: string): Promise<RenameFleetResult> {
   if (!result.ok) return { ok: false, error: result.error };
 
   // The name is in the sidebar on every page, so the whole tree is stale.
-  revalidatePath("/", "layout");
+  revalidatePath("/app", "layout");
   return { ok: true, name };
 }

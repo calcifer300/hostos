@@ -48,8 +48,8 @@ export async function setUserRoles(email: string, roles: string[]): Promise<Acti
 
   if (!result.ok) return { ok: false, error: result.error };
 
-  revalidatePath("/settings");
-  revalidatePath("/", "layout");
+  revalidatePath("/app/settings");
+  revalidatePath("/app", "layout");
   return { ok: true };
 }
 
@@ -63,7 +63,7 @@ export async function removeUserRoles(email: string): Promise<ActionResult> {
 
   if (!result.ok) return { ok: false, error: result.error };
 
-  revalidatePath("/settings");
-  revalidatePath("/", "layout");
+  revalidatePath("/app/settings");
+  revalidatePath("/app", "layout");
   return { ok: true };
 }

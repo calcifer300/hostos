@@ -73,6 +73,6 @@ export async function saveAlertPreferences(input: {
   const result = await saveAlertSettings(await getCurrentHostId(), settings);
   if (!result.ok) return { ok: false, error: result.error };
 
-  revalidatePath("/settings");
+  revalidatePath("/app/settings");
   return { ok: true, rejected: rejected.length > 0 ? rejected : undefined };
 }

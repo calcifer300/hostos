@@ -1,5 +1,7 @@
 "use client";
 
+
+import { can } from "@/lib/roles/permissions";
 import * as React from "react";
 import { AlertTriangle, Loader2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -29,7 +31,7 @@ export function BulkPasteDialog({
   onClose: () => void;
   onImported: () => void;
 }) {
-  const writable = fleets.filter((f) => f.role === "owner" || f.role === "member");
+  const writable = fleets.filter((f) => can(f.role, "workspace.write"));
 
   const [raw, setRaw] = React.useState("");
   const [drafts, setDrafts] = React.useState<TripDraft[] | null>(null);

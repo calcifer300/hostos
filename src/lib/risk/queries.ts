@@ -5,7 +5,7 @@ import { baseRentalForTrip, computeEarnings, type EarningsBreakdown } from "@/li
 import { assessTrip, type RiskAssessment, type RiskTripInput } from "@/lib/risk/engine";
 
 /**
- * Assembles the three operator queues — Unverified Licences, Profit Risk and
+ * Assembles the three operator queues — Unverified Licenses, Profit Risk and
  * the Earnings Estimator — from what the Companion has synced.
  *
  * Everything here is read through runQueryOr, so a fleet that has not run
@@ -50,7 +50,7 @@ export interface QueueTrip {
 }
 
 export interface RiskQueues {
-  /** Unverified licence, pickup within 24h. */
+  /** Unverified license, pickup within 24h. */
   licenses: QueueTrip[];
   /** Below $0.20/mile decisively, or the guest holds a $0-liability plan. */
   profitRisk: QueueTrip[];

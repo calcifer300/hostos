@@ -13,7 +13,7 @@ import { isEmailConfigured, sendEmail } from "@/lib/email/send";
  * driver: alerts describe changes in scraped data, so when the extension
  * isn't running there is nothing new to alert about anyway.
  *
- * The whole design rests on alert_deliveries. An unverified licence stays
+ * The whole design rests on alert_deliveries. An unverified license stays
  * unverified for hours; polling every five minutes without a record of what
  * was sent would email the same trip twelve times an hour, which is how
  * people learn to filter your alerts into a folder they never open.
@@ -31,7 +31,7 @@ function renderAlertEmail(fleetName: string, alerts: CompanionAlert[]): string {
 
   return (
     `${fleetName} — ${alerts.length} ${alerts.length === 1 ? "item needs" : "items need"} attention\n\n` +
-    section("UNVERIFIED LICENCES (pickup within 24h)", byKind.licence) +
+    section("UNVERIFIED LICENSES (pickup within 24h)", byKind.licence) +
     section("ZERO-DEDUCTIBLE BOOKINGS", byKind.premier) +
     section("BELOW $0.20 PER MILE", byKind.profit) +
     "Open HostOS: https://hostos-ten.vercel.app/risk\n\n" +
@@ -103,7 +103,7 @@ export async function POST(req: NextRequest) {
 
     // Recorded only AFTER the send succeeded. The other order loses an alert
     // permanently on a provider blip, which is the worse failure for something
-    // whose job is warning you about a licence before a pickup.
+    // whose job is warning you about a license before a pickup.
     const recorded = await recordDeliveries(host.id, fresh.map((a) => a.key));
     if (!recorded.ok) {
       // The mail is already gone; say so, and note the risk of a repeat rather

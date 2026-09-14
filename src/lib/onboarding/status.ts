@@ -68,7 +68,7 @@ export async function getSetupStatus(hostId: string): Promise<SetupStatus> {
         ? `Your fleet is called “${host.name}”. Rename it any time.`
         : "Your fleet is being set up.",
       done: Boolean(host?.name),
-      href: "/settings",
+      href: "/app/settings",
       cta: "Rename",
       optional: false,
     },
@@ -78,7 +78,7 @@ export async function getSetupStatus(hostId: string): Promise<SetupStatus> {
       description:
         "HostOS reads your fleet from Turo through a Chrome extension. Download it, then paste your pairing key.",
       done: paired,
-      href: "/connectors",
+      href: "/app/connectors",
       cta: paired ? "Manage" : "Get the extension",
       optional: false,
     },
@@ -89,7 +89,7 @@ export async function getSetupStatus(hostId: string): Promise<SetupStatus> {
         ? "Open Turo in Chrome and leave the tab open. The extension syncs on its own within a minute."
         : "Pair the extension first — syncing starts by itself once it's connected.",
       done: synced,
-      href: "/connectors",
+      href: "/app/connectors",
       cta: "How it works",
       optional: false,
     },
@@ -99,7 +99,7 @@ export async function getSetupStatus(hostId: string): Promise<SetupStatus> {
       description:
         "Your check-in process, policies and tone. Butler and the AI briefing ground every draft reply in this.",
       done: knowledgeSaved,
-      href: "/knowledge",
+      href: "/app/knowledge",
       cta: "Write them",
       optional: true,
     },

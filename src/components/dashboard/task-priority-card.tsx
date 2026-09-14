@@ -42,7 +42,7 @@ export function TaskPriorityCard({ suggestions }: { suggestions: Suggestion[] })
             </div>
           </div>
           <Link
-            href="/butler"
+            href="/app/butler"
             className="mt-4 block rounded-lg border border-border py-2 text-center text-[12.5px] font-medium text-foreground transition-colors hover:bg-muted/60"
           >
             Open Butler &rarr;

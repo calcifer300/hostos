@@ -49,8 +49,8 @@ export async function saveKnowledgeBase(input: {
 
   if (!result.ok) return { ok: false, error: result.error };
 
-  revalidatePath("/knowledge");
+  revalidatePath("/app/knowledge");
   // Knowledge is a step on the Overview setup checklist.
-  revalidatePath("/");
+  revalidatePath("/app");
   return { ok: true };
 }

@@ -952,7 +952,7 @@ function buildSuggestions(
       description: `Waiting since ${formatRelativeTime(oldestUnreadConversation.syncedAt)}. It's the longest-outstanding conversation in Guest Messages.`,
       priority: health.responseBacklog > 0 ? "high" : "medium",
       actionLabel: "Open messages",
-      href: `/messages/${encodeURIComponent(oldestUnreadConversation.tripId)}`,
+      href: `/app/messages/${encodeURIComponent(oldestUnreadConversation.tripId)}`,
     });
   } else if (oldestUnreadEmail) {
     out.push({
@@ -961,7 +961,7 @@ function buildSuggestions(
       description: `Waiting since ${formatRelativeTime(oldestUnreadEmail.occurredAt)}. It's the longest-outstanding message in your inbox.`,
       priority: health.responseBacklog > 0 ? "high" : "medium",
       actionLabel: "Open inbox",
-      href: "/inbox",
+      href: "/app/inbox",
     });
   }
 
@@ -976,7 +976,7 @@ function buildSuggestions(
       description: `${overdueWithMessage.vehicle} was due ${overdueWithMessage.time} and has an unanswered message.`,
       priority: "high",
       actionLabel: "Open conversation",
-      href: `/messages/${encodeURIComponent(overdueWithMessage.tripId)}`,
+      href: `/app/messages/${encodeURIComponent(overdueWithMessage.tripId)}`,
     });
   }
 

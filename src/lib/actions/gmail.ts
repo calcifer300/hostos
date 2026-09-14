@@ -78,8 +78,8 @@ export async function syncGmail(): Promise<SyncGmailResult> {
       }
     }
 
-    revalidatePath("/");
-    revalidatePath("/inbox");
+    revalidatePath("/app");
+    revalidatePath("/app/inbox");
 
     return { ok: true, count: messages.length };
   } catch (err) {

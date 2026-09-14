@@ -371,7 +371,7 @@ export async function getTripMessageThread(hostId: string, tripId: string): Prom
   try {
     // Both legs are failure-tolerant (see loadHostMessages), so neither can
     // reject the pair. The thread still renders if only the trip-context leg
-    // fails — it just loses the schedule/licence panel.
+    // fails — it just loses the schedule/license panel.
     const [messagesRes, tripRes] = await Promise.all([
       runQueryOr<TripMessageRow[]>("trip_messages.thread", [], (client) =>
         client

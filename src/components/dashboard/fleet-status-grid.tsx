@@ -5,6 +5,7 @@ import { CardEmptyState } from "@/components/dashboard/card-empty-state";
 import { CopyButton } from "@/components/ui/copy-button";
 import { cn, formatRelativeTime } from "@/lib/utils";
 import type { FleetVehicle, VehicleStatus } from "@/lib/dashboard/queries";
+import { routes } from "@/lib/routes";
 
 const statusMeta: Record<VehicleStatus, { label: string; dot: string; text: string }> = {
   on_trip: { label: "On trip", dot: "bg-accent", text: "text-accent" },
@@ -33,7 +34,7 @@ export function FleetStatusGrid({
             return (
               <Link
                 key={v.id}
-                href={`/fleet/${encodeURIComponent(v.name)}`}
+                href={routes.vehicle(v.name)}
                 className="group flex items-center justify-between gap-3 rounded-lg border border-border p-3.5 transition-colors hover:border-accent/40 hover:bg-muted/40"
               >
                 <div className="min-w-0">

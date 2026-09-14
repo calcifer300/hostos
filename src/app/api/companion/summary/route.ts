@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
     const queues = await getRiskQueues(host.id, host.timezone);
 
     /**
-     * Which reservations the extension should go and read a licence status for.
+     * Which reservations the extension should go and read a license status for.
      *
      * DECIDED HERE, NOT IN THE EXTENSION. isLicenseCheckEligible required the
      * extension to have computed a numeric startTs, which it only manages for
@@ -50,7 +50,7 @@ export async function GET(req: NextRequest) {
           .eq("action", "checkin")
           .gte("start_ts", new Date(now).toISOString())
           .lte("start_ts", in24h)
-          // Already-confirmed licences need no second look; null means never
+          // Already-confirmed licenses need no second look; null means never
           // checked, false means checked and still outstanding.
           .or("license_confirmed.is.null,license_confirmed.eq.false")
           .order("start_ts", { ascending: true })
@@ -72,7 +72,7 @@ export async function GET(req: NextRequest) {
       // build hardcoded one client's name into the markup, which stopped being
       // an option the moment one deployment served many fleets.
       fleetName: host.name ?? "HostOS",
-      // What the header number counts. Licences and profit risk are the two
+      // What the header number counts. Licenses and profit risk are the two
       // queues a person actually acts on; the earnings estimate is reference,
       // not a task, so it is deliberately excluded from the total.
       actionRequired: licenses + profitRisk,
@@ -82,7 +82,7 @@ export async function GET(req: NextRequest) {
       estimatedToday: Math.round(estimatedToday),
       // Says "we can't price these" rather than showing a confident $0.
       pricingUnavailable: queues.pricingUnavailable,
-      // Reservation ids for the extension's licence sweep to open.
+      // Reservation ids for the extension's license sweep to open.
       licenseQueue: pending.map((r) => r.id),
       /**
        * The actual things worth interrupting someone about.

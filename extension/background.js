@@ -42,7 +42,7 @@
 //    than matching the 1-minute loops since license status doesn't change
 //    that often and this bounds how many background tabs open per hour.
 
-importScripts("fleet.js", "fleetStore.js", "matcher.js", "parser.js", "formatter.js", "availability.js", "generator.js", "sync.js", "replyMatcher.js", "alerts.js");
+importScripts("sites.js", "fleet.js", "fleetStore.js", "matcher.js", "parser.js", "formatter.js", "availability.js", "generator.js", "sync.js", "replyMatcher.js", "alerts.js");
 
 function ensureAlarms() {
     chrome.alarms.create("hostosSync", { periodInMinutes: 1 });
@@ -111,7 +111,7 @@ chrome.alarms.onAlarm.addListener((alarm) => {
         return;
     }
     if (alarm.name === "hostosAlertPoll" || alarm.name === "hostosAlertPollKickoff") {
-        // Licences, zero-deductible bookings and thin margins, as the risk
+        // Licenses, zero-deductible bookings and thin margins, as the risk
         // engine sees them. raiseAlert de-dupes per trip and kind, so a
         // problem that stays outstanding is announced once, not every cycle.
         fetchWidgetSummary()
@@ -221,6 +221,32 @@ async function notifyAlertsByEmail() {
     }
 }
 
+/** Bearer-authenticated GET/POST against the paired HostOS, for the site modules. */
+async function companionRequest(path, init) {
+    const { url, apiKey } = await getHostOSConfig();
+    if (!apiKey) return { ok: false, notPaired: true, error: "Not paired with HostOS yet. Open the side panel's Sync tab and paste your pairing key." };
+    let res;
+    try {
+        res = await fetch(url.replace(/\/+$/, "") + path, {
+            ...init,
+            headers: { ...(init && init.headers), Authorization: "Bearer " + apiKey },
+        });
+    } catch {
+        return { ok: false, error: "Couldn't reach HostOS. Check your connection and try again." };
+    }
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) return { ok: false, ...body, error: body.error || body.hint || ("HostOS returned " + res.status) };
+    return { ok: true, ...body };
+}
+
+function companionGet(path) {
+    return companionRequest(path, { method: "GET" });
+}
+
+function companionPost(path, payload) {
+    return companionRequest(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+}
+
 async function fetchWidgetSummary() {
     const { url, apiKey } = await getHostOSConfig();
     if (!apiKey) return { ok: true, notPaired: true };
@@ -261,6 +287,36 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
         // page navigating away mid-sync, which a content script would not.
         case "hostos:sync":
             return reply(performSync().then((r) => ({ ok: true, ...r })));
+
+        // ---- multi-site: DoorDash Merchant Portal and Shopify admin ----
+        //
+        // Both content modules only ever talk to the worker. The pairing key
+        // stays here; the page never sees it.
+        case "hostos:context":
+            return reply(companionGet("/api/companion/context"));
+
+        case "hostos:doordash-status":
+            return reply(
+                companionPost("/api/companion/restaurants/status", {
+                    storeId: msg.storeId,
+                    status: msg.status,
+                    detail: msg.detail,
+                    storeName: msg.storeName,
+                }).then(async (res) => {
+                    const { url } = await getHostOSConfig();
+                    const base = url.replace(/\/+$/, "");
+                    return { ...res, href: res.restaurantId ? base + "/app/restaurants/" + res.restaurantId : undefined, link: base + "/app/restaurants" };
+                })
+            );
+
+        case "hostos:shopify-sync":
+            return reply(
+                companionPost("/api/companion/commerce/sync", { domain: msg.domain }).then(async (res) => {
+                    const { url } = await getHostOSConfig();
+                    const base = url.replace(/\/+$/, "");
+                    return { ...res, href: res.storeId ? base + "/app/commerce/" + res.storeId : base + "/app/commerce" };
+                })
+            );
 
         case "hostos:open":
             return reply(

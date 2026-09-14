@@ -3,6 +3,7 @@ import { Car } from "lucide-react";
 import { DashboardCard } from "@/components/dashboard/dashboard-card";
 import { DonutChart } from "@/components/dashboard/donut-chart";
 import type { FleetVehicle, VehicleStatus } from "@/lib/dashboard/queries";
+import { routes } from "@/lib/routes";
 
 const STATUS_META: Record<VehicleStatus, { label: string; colorVar: string; dot: string }> = {
   on_trip: { label: "On trip", colorVar: "--accent", dot: "bg-accent" },
@@ -43,7 +44,7 @@ export function FleetOverviewCard({ vehicles }: { vehicles: FleetVehicle[] }) {
             </div>
           </div>
           <Link
-            href="/fleet"
+            href={routes.vehicles}
             className="mt-4 block rounded-lg border border-border py-2 text-center text-[12.5px] font-medium text-foreground transition-colors hover:bg-muted/60"
           >
             View fleet &rarr;

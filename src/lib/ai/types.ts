@@ -3,7 +3,7 @@
  *
  * Every AI feature talks to this interface, never to a vendor SDK directly,
  * so swapping providers means adding one file under `src/lib/ai/` and
- * changing AI_PROVIDER — not touching iHost's prompts or call sites.
+ * changing AI_PROVIDER — not touching the Butler's prompts or call sites.
  */
 
 export interface AiJsonRequest {

@@ -189,7 +189,11 @@ function classifyResponse(op: string, error: NonNullable<PostgrestLike<unknown>[
 
   let kind: FailureKind;
 
-  if (isUndefinedTableError(error)) {
+  // A missing COLUMN is the same operational state as a missing table: a
+  // migration that hasn't been applied yet. It used to log as a query_error
+  // on every render of every page that read a newer column, which buried the
+  // one line an operator needed ("run the migration") under noise.
+  if (isUndefinedTableError(error) || isUndefinedColumnError(error)) {
     kind = "missing_table";
   } else if (UNAUTHORIZED_CODES.has(code) || status === 401 || status === 403 || /invalid api key|jwt|api key/i.test(reason)) {
     kind = "unauthorized";

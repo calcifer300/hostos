@@ -6,7 +6,7 @@ import { Check, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { saveKnowledgeBase } from "@/lib/actions/knowledge";
-import type { HostKnowledgeBase } from "@/types/ihost";
+import type { HostKnowledgeBase } from "@/types/butler";
 
 const FIELDS: {
   key: keyof HostKnowledgeBase;

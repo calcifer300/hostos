@@ -241,7 +241,7 @@ async function alertOnSyncEvents(syncResult) {
             title = "New guest message";
             severity = "high";
         } else if (kind.includes("licen") && settings.onLicenceOverdue) {
-            title = "Licence still unverified";
+            title = "License still unverified";
             severity = "critical";
         } else if ((kind.includes("premier") || kind.includes("protection")) && settings.onPremierBooking) {
             title = "Zero-deductible booking";

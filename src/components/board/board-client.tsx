@@ -1,5 +1,7 @@
 "use client";
 
+
+import { can } from "@/lib/roles/permissions";
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { AlertTriangle, Clock, Loader2, MapPin } from "lucide-react";
@@ -52,7 +54,7 @@ export function BoardClient({
   // The dialog needs somewhere to import INTO, which is a different question
   // from whether the viewer may edit the fleet the switcher happens to be on.
   const canPaste =
-    canEdit && fleets.some((f) => f.role === "owner" || f.role === "member");
+    canEdit && fleets.some((f) => can(f.role, "workspace.write"));
 
   // Drives the per-second recompute below. Storing the tick rather than the
   // readings keeps this to one state write a second regardless of trip count.

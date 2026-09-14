@@ -8,7 +8,7 @@ export type { AiProvider, AiJsonRequest } from "@/lib/ai/types";
 /**
  * Registry of available providers. To add one later, implement AiProvider
  * in its own file, register it here, and set AI_PROVIDER — nothing in
- * `src/lib/ihost/` needs to change.
+ * `src/lib/butler/` needs to change.
  */
 const providers: Record<string, AiProvider> = {
   gemini: geminiProvider,

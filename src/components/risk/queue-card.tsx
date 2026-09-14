@@ -18,7 +18,7 @@ import type { QueueTrip } from "@/lib/risk/queries";
  */
 
 const LICENSE_REMINDER =
-  "Hi! Just a quick reminder to upload your driver's licence in the Turo app before pickup — " +
+  "Hi! Just a quick reminder to upload your driver's license in the Turo app before pickup — " +
   "we can't release the keys until it's verified. It only takes a minute in the Trip Details " +
   "section. Thanks!";
 
@@ -114,7 +114,7 @@ export function QueueCard({
         {variant === "license" && (
           <span className="flex shrink-0 items-center gap-1.5 rounded-full bg-warning-bg px-2 py-0.5 text-[11px] font-medium text-warning">
             <ShieldAlert className="h-3 w-3" aria-hidden />
-            {trip.licenseStatusText || "Awaiting licence"}
+            {trip.licenseStatusText || "Awaiting license"}
           </span>
         )}
       </div>
@@ -232,7 +232,7 @@ export function QueueCard({
         </Link>
 
         <Link
-          href={`/messages/${encodeURIComponent(trip.id)}`}
+          href={`/app/messages/${encodeURIComponent(trip.id)}`}
           className="inline-flex h-8 items-center rounded-md border border-border px-3 text-[12.5px] font-medium transition-colors hover:bg-muted"
         >
           Messages

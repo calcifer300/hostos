@@ -1,6 +1,6 @@
 // fleetCalendar.js
 // Scrapes Turo's Fleet Calendar (turo.com/us/en/trips/calendar) for the real
-// vehicle roster: one row per vehicle, keyed by licence plate.
+// vehicle roster: one row per vehicle, keyed by license plate.
 //
 // WHY THIS EXISTS
 // ---------------

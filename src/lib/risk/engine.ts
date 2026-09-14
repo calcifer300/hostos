@@ -9,7 +9,7 @@ import {
  * The two rules this fleet actually operates on, ported from the CC build's
  * HostOS.riskEngine. Both came from the host directly:
  *
- *  1. Verify a guest's licence before pickup — but guests cannot upload until
+ *  1. Verify a guest's license before pickup — but guests cannot upload until
  *     within 24h of pickup, so flagging earlier is a false alarm.
  *  2. Flag trips that earn below $0.20 per included mile, and trips where the
  *     guest bought the zero-deductible ("Premier") plan — both are "consider
@@ -57,8 +57,8 @@ export interface RiskAssessment {
 const LICENSE_UPLOAD_WINDOW_MS = 24 * 60 * 60 * 1000;
 
 /**
- * Guests cannot upload a licence until within 24h of pickup, so an unverified
- * licence is only actionable inside that window. Flagging earlier trains people
+ * Guests cannot upload a license until within 24h of pickup, so an unverified
+ * license is only actionable inside that window. Flagging earlier trains people
  * to ignore the queue.
  */
 export function isWithinLicenseUploadWindow(startsAt: string | null, now = Date.now()): boolean {
@@ -148,7 +148,7 @@ export function assessTrip(trip: RiskTripInput, now = Date.now()): RiskAssessmen
     earningsRisk,
     riskReasons,
     // null means "not checked yet", never "not confirmed" — only an explicit
-    // false is an unverified licence.
+    // false is an unverified license.
     licenseRequiresAttention: trip.licenseConfirmed === false && dueSoon,
     licenseSeverity: dueSoon ? "critical" : "high",
   };

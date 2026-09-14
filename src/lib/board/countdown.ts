@@ -97,7 +97,7 @@ export function computeTimer(trip: TimerInput, now: number = Date.now()): TimerR
       const soon = diff <= TWO_HOURS;
       return {
         text: formatDuration(diff),
-        label: status === "Pending DL" ? "Licence pending · starts in" : "Starts in",
+        label: status === "Pending DL" ? "License pending · starts in" : "Starts in",
         windowKey: soon ? "starting" : "upcoming",
         tone: soon ? "warning" : "upcoming",
         sortWeight: diff,

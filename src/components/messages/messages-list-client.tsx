@@ -65,7 +65,7 @@ export function MessagesListClient({ initialConversations }: { initialConversati
           Pair the HostOS Companion extension to start pulling in guest message threads.
         </p>
         <Link
-          href="/connectors"
+          href="/app/connectors"
           className="mt-4 inline-flex items-center rounded-full bg-accent px-4 py-2 text-[13px] font-medium text-accent-foreground transition-opacity hover:opacity-90"
         >
           Open Connectors
@@ -87,7 +87,7 @@ export function MessagesListClient({ initialConversations }: { initialConversati
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
           >
             <Link
-              href={`/messages/${encodeURIComponent(c.tripId)}`}
+              href={`/app/messages/${encodeURIComponent(c.tripId)}`}
               className={
                 "flex items-center gap-3 px-4 py-2.5 transition-colors hover:bg-muted/50" +
                 (i > 0 ? " border-t border-border" : "")

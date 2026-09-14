@@ -1,0 +1,11 @@
+<svg viewBox="0 0 236 56" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="hostOS">
+  <!--
+    The hostOS wordmark John supplied on 2026-09-12: a heavy sans "host" in
+    white with "OS" in blue, on the panel's own dark ground. Drawn as text so
+    it stays crisp at any size and takes the surrounding font stack; the blue
+    is the mark's own, a shade deeper than the panel's #5aa9ff accent.
+  -->
+  <text x="0" y="45" font-family="Segoe UI, Inter, Helvetica Neue, Arial, sans-serif" font-size="46" font-weight="800" letter-spacing="-2">
+    <tspan fill="#f5f5f7">host</tspan><tspan fill="#1e8cff">OS</tspan>
+  </text>
+</svg>

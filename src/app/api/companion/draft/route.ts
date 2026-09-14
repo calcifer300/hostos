@@ -1,9 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { requireCompanionHost } from "@/lib/api/companion-auth";
-import { getKnowledgeBase } from "@/lib/knowledge/queries";
-import { findRelevantPolicy } from "@/lib/library/queries";
-import { analyzeInboundEmail } from "@/lib/ihost/analyze";
 import { getServerEnv } from "@/lib/env";
+import { analyzeFleetMessage } from "@/lib/butler";
 
 /**
  * Drafts a reply for the Companion extension.
@@ -66,22 +64,16 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const [kb, policy] = await Promise.all([
-      getKnowledgeBase(host.id),
-      findRelevantPolicy(message),
-    ]);
-
-    const analysis = await analyzeInboundEmail(
-      {
-        guestName: payload.guestName?.trim() || "This guest",
-        vehicle: payload.vehicle?.trim() || "their vehicle",
-        subject: payload.subject?.trim() || "",
-        body: message,
-        receivedAt: new Date().toISOString(),
-      },
-      kb,
-      policy
-    );
+    // One brain for every surface: the same grounding (knowledge base,
+    // templates, relevant Turo policy) the dashboard and the restaurant
+    // pages use — see lib/butler.
+    const analysis = await analyzeFleetMessage(host.id, {
+      guestName: payload.guestName?.trim() || "This guest",
+      vehicle: payload.vehicle?.trim() || "their vehicle",
+      subject: payload.subject?.trim() || "",
+      body: message,
+      receivedAt: new Date().toISOString(),
+    });
 
     return NextResponse.json({
       draft: analysis.draftReply,
@@ -92,7 +84,7 @@ export async function POST(req: NextRequest) {
       escalate: analysis.escalate ?? false,
       escalateReason: analysis.escalateReason ?? null,
       // Cited so a host can check the claim rather than trust it.
-      sources: policy.map((p) => ({ title: p.title, url: p.url })),
+      sources: analysis.sources.filter((s) => s.kind === "policy").map((p) => ({ title: p.title, url: p.url })),
     });
   } catch (err) {
     /**

@@ -51,7 +51,7 @@ export async function setAutomationEnabled(
 
   if (!result.ok) return { ok: false, error: result.error };
 
-  revalidatePath("/automations");
-  revalidatePath("/butler");
+  revalidatePath("/app/automations");
+  revalidatePath("/app/butler");
   return { ok: true };
 }

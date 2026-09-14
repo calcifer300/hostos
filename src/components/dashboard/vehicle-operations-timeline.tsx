@@ -7,6 +7,7 @@ import { DashboardCard } from "@/components/dashboard/dashboard-card";
 import { CardEmptyState } from "@/components/dashboard/card-empty-state";
 import { cn } from "@/lib/utils";
 import type { OperationsDay } from "@/lib/dashboard/queries";
+import { routes } from "@/lib/routes";
 
 /**
  * Day-by-day fleet operations board — Today, Tomorrow, then calendar dates —
@@ -49,7 +50,7 @@ export function VehicleOperationsTimeline({ days }: { days: OperationsDay[] }) {
                     transition={{ duration: 0.25, delay: Math.min(i, 6) * 0.03 }}
                   >
                     <Link
-                      href={`/fleet/${encodeURIComponent(entry.vehicle)}`}
+                      href={routes.vehicle(entry.vehicle)}
                       className="flex items-center gap-3 rounded-lg border border-border bg-background/40 p-3 transition-all hover:-translate-y-px hover:border-accent/40 hover:bg-muted/40 hover:shadow-sm"
                     >
                       <div

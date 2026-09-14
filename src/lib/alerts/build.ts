@@ -27,10 +27,10 @@ export function buildAlerts(queues: RiskQueues): CompanionAlert[] {
     alerts.push({
       key: `licence:${trip.id}`,
       kind: "licence",
-      title: "Licence still unverified",
+      title: "License still unverified",
       // The window matters: a guest cannot upload until 24h before pickup, so
       // this is the point where it stops being early and starts being late.
-      body: `${who(trip)} — pickup is within 24 hours and the licence isn't confirmed.`,
+      body: `${who(trip)} — pickup is within 24 hours and the license isn't confirmed.`,
       severity: "critical",
       tripId: trip.id,
     });

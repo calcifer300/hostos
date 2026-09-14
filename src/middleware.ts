@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { APP_BASE, LEGACY_APP_PATHS } from "@/lib/routes";
 
 /**
  * Auth gate for hosted deployments.
@@ -59,7 +60,37 @@ function requiresAuth(): boolean {
   return process.env.NODE_ENV === "production";
 }
 
+/**
+ * The product moved under /app when the root became the public landing page.
+ * Bookmarks, the Companion's deep links and a year of shared URLs still spell
+ * the old paths, so they are redirected (301) rather than left to 404.
+ */
+const LEGACY = new Set<string>(LEGACY_APP_PATHS);
+
+function legacyRedirect(req: NextRequest): NextResponse | null {
+  const segments = req.nextUrl.pathname.split("/").filter(Boolean);
+  const first = segments[0];
+  if (!first || !LEGACY.has(first)) return null;
+  // /fleet was the vehicle list and /fleet/<name> a vehicle; /app/fleet is now
+  // the Fleet dashboard, so both land under /app/fleet/vehicles.
+  const path = first === "fleet" && segments[1] !== "vehicles" ? `/fleet/vehicles${req.nextUrl.pathname.slice("/fleet".length)}` : req.nextUrl.pathname;
+  const target = new URL(`${APP_BASE}${path}`, req.url);
+  target.search = req.nextUrl.search;
+  return NextResponse.redirect(target, 301);
+}
+
+function isProductPath(pathname: string): boolean {
+  return pathname === APP_BASE || pathname.startsWith(`${APP_BASE}/`);
+}
+
 export function middleware(req: NextRequest) {
+  const legacy = legacyRedirect(req);
+  if (legacy) return legacy;
+
+  // Only the product is gated. The landing page, /login and the public assets
+  // are meant to be seen signed-out — that is what they are for.
+  if (!isProductPath(req.nextUrl.pathname)) return NextResponse.next();
+
   if (!requiresAuth()) return NextResponse.next();
   if (hasSessionCookie(req)) return NextResponse.next();
 
@@ -90,6 +121,6 @@ export const config = {
    * the route keeps, not one this file keeps for it.
    */
   matcher: [
-    "/((?!login|api/auth|api/turo|api/companion|api/cron|_next/static|_next/image|favicon.ico).*)",
+    "/((?!login|api/auth|api/turo|api/companion|api/cron|_next/static|_next/image|favicon.ico|icon.svg|icons/|og.png|robots.txt|sitemap.xml|manifest.webmanifest|sw.js|offline|install|hostos-companion.zip).*)",
   ],
 };

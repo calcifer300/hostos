@@ -1250,7 +1250,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         [
             ["onNewMessage", "New guest messages", "A guest replied on a reservation."],
-            ["onLicenceOverdue", "Unverified licences", "Pickup is close and the licence still isn't confirmed."],
+            ["onLicenceOverdue", "Unverified licenses", "Pickup is close and the license still isn't confirmed."],
             ["onPremierBooking", "Zero-deductible bookings", "Damage can't be billed to the guest on these."],
             ["onProfitRisk", "Trips below $0.20 a mile", "What you earn, divided by the miles included."],
         ].forEach(([key, title, sub]) => {

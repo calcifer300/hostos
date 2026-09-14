@@ -8,7 +8,7 @@ import "server-only";
  * rendered signed-out. That is a reasonable choice on localhost.
  *
  * It is NOT reasonable on a public URL. The dashboard shows guest full names,
- * their message threads, licence-verification status, vehicle plates and trip
+ * their message threads, license-verification status, vehicle plates and trip
  * schedules — personal data belonging to people who never agreed to publish it.
  * A deployed URL is effectively public: it gets shared, indexed, and forwarded.
  *

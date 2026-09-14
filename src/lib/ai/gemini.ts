@@ -92,7 +92,7 @@ export const geminiProvider: AiProvider = {
     }
 
     if (!text || !text.trim()) {
-      throw new Error("iHost returned no text content.");
+      throw new Error("The AI provider returned no text content.");
     }
 
     return text;

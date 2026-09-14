@@ -62,14 +62,14 @@ export function FleetSettings({
   return (
     <div className="rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-card)]">
       <p className="text-[11.5px] font-semibold uppercase tracking-wide text-muted-foreground">
-        Fleet
+        Workspace
       </p>
 
       <label htmlFor="fleet-name" className="mt-2 block text-[13.5px] font-medium">
-        Fleet name
+        Workspace name
       </label>
       <p className="mt-0.5 text-[12.5px] leading-relaxed text-muted-foreground">
-        Shown in the sidebar and on the daily digest. Everyone on this fleet sees it.
+        Shown in the sidebar and on the daily digest. Everyone on this workspace sees it.
       </p>
 
       {/* A real form rather than an onKeyDown="Enter" handler on the input.

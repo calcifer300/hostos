@@ -56,7 +56,7 @@ export function CompanionSetup({
           <h2 className="text-[14px] font-semibold tracking-tight">HostOS Companion</h2>
           <p className="mt-0.5 text-[12.5px] leading-relaxed text-muted-foreground">
             {connected
-              ? "Paired. The extension syncs trips, guest messages, licence status and protection plans on its own while Chrome is open."
+              ? "Paired. The extension syncs trips, guest messages, license status and protection plans on its own while Chrome is open."
               : "A Chrome extension that reads your fleet from Turo. Everything on your dashboard comes from it."}
           </p>
         </div>

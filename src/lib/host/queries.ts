@@ -99,3 +99,33 @@ export async function getHostByApiKey(token: string): Promise<Host | null> {
   const result = await authenticateCompanion(token);
   return result.status === "ok" ? result.host : null;
 }
+
+// ---------------------------------------------------------------- modules
+
+import { ALL_MODULES, type WorkspaceModule } from "@/lib/modules";
+
+export type { WorkspaceModule };
+export { ALL_MODULES };
+
+/**
+ * Which products this workspace runs (migration 0017's hosts.modules).
+ *
+ * Read separately from getHost for the same reason getVehicleSpecs is
+ * separate from getCompanionVehicles: the column only exists once 0017 has
+ * been applied, and a missing COLUMN fails the whole select rather than
+ * returning a partial row. Folding it into HOST_COLUMNS would blank the
+ * fleet name in the sidebar on every un-migrated deployment. Failing here
+ * costs only the module toggles, which default to "fleet" — exactly what
+ * every existing workspace is.
+ */
+export const getHostModules = cache(async function getHostModules(hostId: string): Promise<WorkspaceModule[]> {
+  const { data } = await runQueryOr<{ modules: string[] | null } | null>("hosts.modules", null, (client) =>
+    client.from("hosts").select("modules").eq("id", hostId).maybeSingle<{ modules: string[] | null }>()
+  );
+
+  const raw = data?.modules ?? [];
+  const valid = raw.filter((m): m is WorkspaceModule => (ALL_MODULES as string[]).includes(m));
+  // Registry order, so the sidebar and settings list modules consistently.
+  const ordered = ALL_MODULES.filter((m) => valid.includes(m));
+  return ordered.length > 0 ? ordered : ["fleet"];
+});

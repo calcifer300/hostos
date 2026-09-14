@@ -1,7 +1,7 @@
 import "server-only";
 import { runQueryOr } from "@/lib/supabase/server";
 import { defaultKnowledgeBase } from "@/lib/mock/seed-emails";
-import type { HostKnowledgeBase } from "@/types/ihost";
+import type { HostKnowledgeBase } from "@/types/butler";
 
 /**
  * The knowledge base belongs to a FLEET, not to a Google account.
@@ -27,7 +27,7 @@ const COLUMNS = "host_id, check_in_process, house_rules, policy, tone, updated_a
 
 /**
  * Reads the fleet's knowledge base, falling back to the shipped defaults when
- * nothing has been saved yet. Never throws: iHost still needs grounding text
+ * nothing has been saved yet. Never throws: the Butler still needs grounding text
  * even if Supabase is unreachable.
  */
 export async function getKnowledgeBase(hostId: string): Promise<HostKnowledgeBase> {

@@ -5,7 +5,7 @@ import { runQuery, runQueryOr, runMutation } from "@/lib/supabase/server";
  * Per-fleet alert delivery: what a fleet wants emailed, and what already was.
  *
  * Fleet-scoped rather than per-person because the alerts describe the FLEET's
- * problems. Two co-hosts watching one fleet want the same licence warning to
+ * problems. Two co-hosts watching one fleet want the same license warning to
  * reach the same inbox, not two private copies each configured separately —
  * which is the mistake knowledge_base and automation_settings made and
  * migration 0013 had to undo.
@@ -111,7 +111,7 @@ export async function getDeliveredKeys(hostId: string): Promise<Set<string> | nu
  * Written AFTER a successful send, so a provider outage means the alert is
  * retried on the next poll rather than silently dropped. The opposite ordering
  * loses alerts permanently, which is the worse failure for something whose
- * entire job is telling you about a licence before a pickup.
+ * entire job is telling you about a license before a pickup.
  */
 export async function recordDeliveries(
   hostId: string,

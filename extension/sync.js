@@ -742,7 +742,7 @@ function isLicenseCheckEligible(trip) {
 }
 
 /**
- * The reservation ids HostOS wants a licence status for.
+ * The reservation ids HostOS wants a license status for.
  *
  * Returns null — not an empty array — when the answer can't be obtained, so
  * the caller can tell "nothing to check" apart from "couldn't ask" and fall
@@ -758,7 +758,7 @@ async function fetchLicenseQueue(url, apiKey) {
         const data = await res.json();
         return Array.isArray(data.licenseQueue) ? data.licenseQueue : null;
     } catch (err) {
-        console.warn("[HostOS] Couldn't fetch the licence queue; using the local filter.", err);
+        console.warn("[HostOS] Couldn't fetch the license queue; using the local filter.", err);
         return null;
     }
 }
@@ -803,7 +803,7 @@ const performLicenseCheckSync = withGuard("performLicenseCheckSync", async funct
     if (queue) {
         const byReservation = new Map(trips.filter((t) => t && t.reservation).map((t) => [t.reservation, t]));
         // A queued reservation we have no scraped card for is still worth
-        // opening — the detail page is where the licence status lives, and the
+        // opening — the detail page is where the license status lives, and the
         // card only supplied the id.
         eligible = queue.map((id) => byReservation.get(id) || { reservation: id });
     } else {
@@ -836,7 +836,7 @@ const performLicenseCheckSync = withGuard("performLicenseCheckSync", async funct
                     submitted: status.submitted,
                     statusText: status.statusText || null,
                     // Captured opportunistically — this page is already open for
-                    // the licence check, and the host s own deductible is only
+                    // the license check, and the host s own deductible is only
                     // available from rendered markup, never from the JSON sweep.
                     hostDamageResponsibility:
                         typeof status.hostDamageResponsibility === "number"

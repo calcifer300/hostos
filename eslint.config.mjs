@@ -19,6 +19,12 @@ const eslintConfig = defineConfig([
     // 49 warnings, none of them real. It has no TypeScript, no JSX and no
     // React, so the Next config has nothing useful to say about it either.
     "extension/**",
+
+    // Vendored originals (Karl's tools, the retired CC extension, the legacy
+    // clone) are reference material with their own conventions, never part of
+    // the build. Linting them produced 19,000 findings about code that will
+    // never ship from here.
+    "vendor/**",
   ]),
 ]);
 

@@ -6,6 +6,7 @@ import { runQueryOr } from "@/lib/supabase/server";
 import { DEFAULT_HOST_ID } from "@/lib/host/queries";
 import { provisionFleetForUser } from "@/lib/host/provision";
 import { requiresAuth } from "@/lib/access";
+import { can, type Permission } from "@/lib/roles/permissions";
 
 /**
  * Resolves which fleet the current request is operating on.
@@ -180,23 +181,46 @@ export const getCurrentFleet = cache(async function getCurrentFleet(): Promise<F
   return fleets.find((f) => f.hostId === hostId) ?? null;
 });
 
-/** True when this user may write to the fleet they are currently viewing. */
-export async function canEditCurrentFleet(): Promise<boolean> {
-  // Signed in but invited to nothing: read-only, and there is nothing to read.
+/**
+ * Whether the signed-in person holds `permission` on the workspace they are
+ * viewing. The matrix lives in lib/roles/permissions.ts.
+ *
+ * No membership row at all is single-tenant local mode, which stays fully
+ * permitted — the pre-multi-tenancy behaviour. hasNoFleetAccess() excludes
+ * the hosted case first, so this cannot grant anything to a stranger.
+ */
+export async function hasPermission(permission: Permission): Promise<boolean> {
   if (await hasNoFleetAccess()) return false;
-
   const fleet = await getCurrentFleet();
-  // No membership row at all is single-tenant local mode, which stays
-  // writable — the pre-multi-tenancy behaviour. hasNoFleetAccess() above has
-  // already excluded the hosted case, so this cannot grant write access to a
-  // stranger on the internet.
   if (!fleet) return true;
-  return fleet.role === "owner" || fleet.role === "member";
+  return can(fleet.role, permission);
+}
+
+/** True when this user may write operational data to the workspace they are viewing. */
+export async function canEditCurrentFleet(): Promise<boolean> {
+  return hasPermission("workspace.write");
+}
+
+export async function canManageSettings(): Promise<boolean> {
+  return hasPermission("workspace.settings");
+}
+
+export async function canManageIntegrations(): Promise<boolean> {
+  return hasPermission("workspace.integrations");
+}
+
+export async function canManageMembers(): Promise<boolean> {
+  return hasPermission("workspace.members");
 }
 
 export interface FleetMember {
   email: string;
   role: string;
+  displayName: string | null;
+  invitedBy: string | null;
+  invitedAt: string | null;
+  acceptedAt: string | null;
+  createdAt: string;
 }
 
 /**
@@ -207,19 +231,39 @@ export interface FleetMember {
  * it with NO_FLEET_HOST_ID returns nothing, by construction.
  */
 export async function getFleetMembers(hostId: string): Promise<FleetMember[]> {
-  const { data } = await runQueryOr<{ user_email: string; role: string }[]>(
-    "host_members.for_fleet",
-    [],
-    (client) =>
-      client
-        .from("host_members")
-        .select("user_email, role")
-        .eq("host_id", hostId)
-        .order("created_at", { ascending: true })
-        .returns<{ user_email: string; role: string }[]>()
-  );
+  interface Row {
+    user_email: string;
+    role: string;
+    created_at: string;
+    display_name?: string | null;
+    invited_by?: string | null;
+    invited_at?: string | null;
+    accepted_at?: string | null;
+  }
 
-  return data.map((row) => ({ email: row.user_email, role: row.role }));
+  const read = (columns: string) =>
+    runQueryOr<Row[]>("host_members.for_fleet", [], (client) =>
+      client.from("host_members").select(columns).eq("host_id", hostId).order("created_at", { ascending: true }).returns<Row[]>()
+    );
+
+  // The invitation columns arrive with migration 0024; before it, fall back
+  // to the columns that have existed since 0009 rather than an empty roster.
+  let { data, degraded } = await read("user_email, role, created_at, display_name, invited_by, invited_at, accepted_at");
+  if (degraded && data.length === 0) {
+    const fallback = await read("user_email, role, created_at");
+    data = fallback.data;
+    degraded = fallback.degraded;
+  }
+
+  return data.map((row) => ({
+    email: row.user_email,
+    role: row.role,
+    displayName: row.display_name ?? null,
+    invitedBy: row.invited_by ?? null,
+    invitedAt: row.invited_at ?? null,
+    acceptedAt: row.accepted_at ?? null,
+    createdAt: row.created_at,
+  }));
 }
 
 export { SELECTED_HOST_COOKIE };

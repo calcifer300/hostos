@@ -60,7 +60,7 @@ export function AlertSettingsCard({
   }
 
   const KINDS: [boolean, (v: boolean) => void, string, string][] = [
-    [onLicence, setOnLicence, "Unverified licences", "Pickup is within 24 hours and the licence isn't confirmed."],
+    [onLicence, setOnLicence, "Unverified licenses", "Pickup is within 24 hours and the license isn't confirmed."],
     [onPremier, setOnPremier, "Zero-deductible bookings", "Damage can't be billed to the guest."],
     [onProfit, setOnProfit, "Below $0.20 a mile", "What you earn, divided by the miles included."],
   ];

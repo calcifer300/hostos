@@ -1,4 +1,4 @@
-import type { InboundTuroEmail } from "@/types/ihost";
+import type { InboundTuroEmail } from "@/types/butler";
 
 /**
  * These stand in for what a real Gmail Connector would deliver once
@@ -6,7 +6,7 @@ import type { InboundTuroEmail } from "@/types/ihost";
  * in v0.1 — see README "What's real vs staged." The shape here is
  * exactly what a real webhook payload would be normalized into, so
  * swapping the source later changes how InboundTuroEmail objects are
- * produced, not anything downstream (POST /api/ihost/analyze and
+ * produced, not anything downstream (POST /api/butler/analyze and
  * everything after it is unaffected).
  */
 export const seedEmails: InboundTuroEmail[] = [

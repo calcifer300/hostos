@@ -8,16 +8,16 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
-import { EmailArrival } from "@/components/ihost/email-arrival";
-import { EventBadge } from "@/components/ihost/event-badge";
-import { AnalysisPanel } from "@/components/ihost/analysis-panel";
-import { ReplyEditor } from "@/components/ihost/reply-editor";
+import { EmailArrival } from "@/components/butler/email-arrival";
+import { EventBadge } from "@/components/butler/event-badge";
+import { AnalysisPanel } from "@/components/butler/analysis-panel";
+import { ReplyEditor } from "@/components/butler/reply-editor";
 import { seedEmails } from "@/lib/mock/seed-emails";
-import type { IHostAnalysis, IHostBriefing, InboundTuroEmail } from "@/types/ihost";
+import type { ButlerAnalysis, ButlerBriefing, InboundTuroEmail } from "@/types/butler";
 
 type BriefingState =
   | { status: "loading" }
-  | { status: "ready"; briefing: IHostBriefing }
+  | { status: "ready"; briefing: ButlerBriefing }
   | { status: "not_configured"; message: string }
   | { status: "not_signed_in" }
   | { status: "no_messages" }
@@ -35,7 +35,7 @@ const fade = {
 /**
  * The dashboard's hero card. Its primary content is an AI-generated
  * briefing over the newest synced Gmail messages; the original
- * single-message pipeline (POST /api/ihost/analyze) is still here, reached
+ * single-message pipeline (POST /api/butler/analyze) is still here, reached
  * from the footer, so nothing from earlier sprints was lost.
  */
 export function AiBriefingCard({ initialEmail }: { initialEmail?: InboundTuroEmail | null }) {
@@ -43,7 +43,7 @@ export function AiBriefingCard({ initialEmail }: { initialEmail?: InboundTuroEma
 
   const [email, setEmail] = React.useState<InboundTuroEmail | null>(null);
   const [stage, setStage] = React.useState<AnalysisStage | null>(null);
-  const [analysis, setAnalysis] = React.useState<IHostAnalysis | null>(null);
+  const [analysis, setAnalysis] = React.useState<ButlerAnalysis | null>(null);
   const [analysisError, setAnalysisError] = React.useState<string | null>(null);
   const [source, setSource] = React.useState<Source>("demo");
   const [seedIndex, setSeedIndex] = React.useState(0);
@@ -56,17 +56,17 @@ export function AiBriefingCard({ initialEmail }: { initialEmail?: InboundTuroEma
 
     (async () => {
       try {
-        const res = await fetch("/api/ihost/briefing");
+        const res = await fetch("/api/butler/briefing");
         const data = await res.json();
         if (cancelled) return;
 
         if (data.briefing) {
-          setBriefingState({ status: "ready", briefing: data.briefing as IHostBriefing });
+          setBriefingState({ status: "ready", briefing: data.briefing as ButlerBriefing });
         } else if (data.reason === "unauthenticated") {
           setBriefingState({ status: "not_signed_in" });
         } else if (data.reason === "not_configured") {
           setBriefingState({ status: "not_configured", message: data.error });
-        } else if (data.reason === "no_messages") {
+        } else if (data.reason === "no_signals" || data.reason === "no_workspace") {
           setBriefingState({ status: "no_messages" });
         } else {
           setBriefingState({
@@ -97,14 +97,14 @@ export function AiBriefingCard({ initialEmail }: { initialEmail?: InboundTuroEma
     setStage("analyzing");
 
     try {
-      const res = await fetch("/api/ihost/analyze", {
+      const res = await fetch("/api/butler/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(inbound),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "HostOS could not process this message.");
-      setAnalysis(data as IHostAnalysis);
+      setAnalysis(data as ButlerAnalysis);
       setStage("result");
     } catch (err) {
       setAnalysisError(err instanceof Error ? err.message : "Something went wrong.");
@@ -165,7 +165,7 @@ export function AiBriefingCard({ initialEmail }: { initialEmail?: InboundTuroEma
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent/50" />
                 <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
               </span>
-              {briefingState.briefing.messageCount} synced
+              {briefingState.briefing.signalCount} signals
             </span>
           )
         )}
@@ -181,7 +181,7 @@ export function AiBriefingCard({ initialEmail }: { initialEmail?: InboundTuroEma
                 className="flex items-center gap-2.5 py-6 text-[13.5px] text-muted-foreground"
               >
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                Reading your inbox&hellip;
+                Reading your workspace&hellip;
               </motion.div>
             )}
 
@@ -275,9 +275,10 @@ export function AiBriefingCard({ initialEmail }: { initialEmail?: InboundTuroEma
               >
                 <Inbox className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" strokeWidth={1.75} />
                 <div>
-                  <p className="text-[13.5px] font-medium">Nothing synced yet</p>
+                  <p className="text-[13.5px] font-medium">Nothing to brief yet</p>
                   <p className="mt-0.5 text-[13px] leading-relaxed text-muted-foreground">
-                    Sync your Gmail from the Inbox and HostOS will brief you on what arrived.
+                    Pair the Companion or add a restaurant. Once trips, messages, orders or tasks land, the Butler
+                    summarises them here every morning.
                   </p>
                 </div>
               </motion.div>

@@ -22,7 +22,7 @@ export interface BoardResult {
   error?: string;
 }
 
-const WRITABLE_ROLES = new Set(["owner", "member"]);
+const WRITABLE_ROLES = new Set(["owner", "admin", "manager", "member"]);
 
 /**
  * Confirms the caller may write to `hostId`.
@@ -120,8 +120,8 @@ export async function setTripStatus(
 
   await logHistory(hostId, tripId, access.email, "status", before?.op_status ?? null, status);
 
-  revalidatePath("/board");
-  revalidatePath("/operations");
+  revalidatePath("/app/board");
+  revalidatePath("/app/operations");
   return { ok: true };
 }
 
@@ -185,7 +185,7 @@ export async function setTripTimezone(
     }
   }
 
-  revalidatePath("/board");
+  revalidatePath("/app/board");
   return { ok: true };
 }
 
@@ -288,9 +288,9 @@ export async function importTripDrafts(
     )
   );
 
-  revalidatePath("/board");
-  revalidatePath("/operations");
-  revalidatePath("/");
+  revalidatePath("/app/board");
+  revalidatePath("/app/operations");
+  revalidatePath("/app");
 
   return { ok: true, imported: rows.length - updated, updated, skipped };
 }

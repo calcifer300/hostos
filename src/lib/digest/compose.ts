@@ -45,9 +45,9 @@ export async function composeDigest(hostId: string, timezone = "America/Denver")
 
   if (q.licenses.length > 0) {
     sections.push({
-      title: `Unverified licences (${q.licenses.length})`,
+      title: `Unverified licenses (${q.licenses.length})`,
       lines: q.licenses.map(
-        (t) => `${tripLine(t, timezone)} — ${t.licenseStatusText || "awaiting licence"}`
+        (t) => `${tripLine(t, timezone)} — ${t.licenseStatusText || "awaiting license"}`
       ),
     });
   }
@@ -121,7 +121,7 @@ export async function composeDigest(hostId: string, timezone = "America/Denver")
   return {
     subject: empty
       ? "HostOS: nothing needs attention today"
-      : `HostOS: ${q.licenses.length} licence${q.licenses.length === 1 ? "" : "s"}, ${q.profitRisk.length} profit risk${q.profitRisk.length === 1 ? "" : "s"}`,
+      : `HostOS: ${q.licenses.length} license${q.licenses.length === 1 ? "" : "s"}, ${q.profitRisk.length} profit risk${q.profitRisk.length === 1 ? "" : "s"}`,
     sections,
     empty,
   };
@@ -130,7 +130,7 @@ export async function composeDigest(hostId: string, timezone = "America/Denver")
 /** Plain text, because a digest that renders badly is a digest nobody reads. */
 export function renderDigestText(digest: Digest): string {
   if (digest.empty) {
-    return "Nothing needs attention today — no unverified licences inside the 24h window, and no upcoming trip below the line.";
+    return "Nothing needs attention today — no unverified licenses inside the 24h window, and no upcoming trip below the line.";
   }
 
   return digest.sections

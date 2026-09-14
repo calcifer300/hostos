@@ -21,7 +21,7 @@ export function SuggestionsCard({ suggestions }: { suggestions: Suggestion[] }) 
       icon={Sparkles}
       title="Butler"
       action={
-        <Link href="/butler" className="text-[12px] font-medium text-accent hover:opacity-80">
+        <Link href="/app/butler" className="text-[12px] font-medium text-accent hover:opacity-80">
           Open Butler &rarr;
         </Link>
       }
@@ -30,7 +30,7 @@ export function SuggestionsCard({ suggestions }: { suggestions: Suggestion[] }) 
       <ButlerTaskList suggestions={suggestions.slice(0, OVERVIEW_PREVIEW_COUNT)} compact groupByPriority={false} />
       {remaining > 0 && (
         <Link
-          href="/butler"
+          href="/app/butler"
           className="mt-3 block rounded-lg border border-dashed border-border py-2 text-center text-[12px] font-medium text-muted-foreground transition-colors hover:border-accent/40 hover:text-accent"
         >
           +{remaining} more in Butler

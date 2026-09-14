@@ -129,7 +129,7 @@ export function buildMessageButlerTasks(recentMessages: RecentGuestMessage[]): S
     }`,
     priority: rule.priority,
     actionLabel: "Open conversation",
-    href: `/messages/${encodeURIComponent(message.tripId)}`,
+    href: `/app/messages/${encodeURIComponent(message.tripId)}`,
   }));
 
   const priorityRank: Record<SuggestionPriority, number> = { high: 0, medium: 1, low: 2 };

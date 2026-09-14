@@ -74,7 +74,7 @@ export function GuestMessagesCard({ initialMessages }: { initialMessages: GuestC
             </span>
             {status === "live" ? "Live" : status === "reconnecting" ? "Reconnecting" : "Offline"}
           </span>
-          <Link href="/messages" className="text-[12px] font-medium text-accent hover:opacity-80">
+          <Link href="/app/messages" className="text-[12px] font-medium text-accent hover:opacity-80">
             View all &rarr;
           </Link>
         </div>
@@ -99,7 +99,7 @@ export function GuestMessagesCard({ initialMessages }: { initialMessages: GuestC
                 transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
               >
                 <Link
-                  href={`/messages/${encodeURIComponent(c.tripId)}`}
+                  href={`/app/messages/${encodeURIComponent(c.tripId)}`}
                   className="group -mx-1.5 block rounded-lg px-1.5 py-2.5 transition-colors hover:bg-muted/60"
                 >
                   <div className="flex items-center justify-between gap-2">

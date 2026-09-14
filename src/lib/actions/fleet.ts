@@ -42,6 +42,6 @@ export async function switchFleet(hostId: string): Promise<SwitchFleetResult> {
   });
 
   // Every surface is fleet-scoped, so the whole tree is stale after a switch.
-  revalidatePath("/", "layout");
+  revalidatePath("/app", "layout");
   return { ok: true };
 }

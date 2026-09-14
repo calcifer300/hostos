@@ -3,55 +3,128 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { NAV_SECTIONS, isNavItemActive, type NavItem } from "@/components/shell/nav-items";
+import type { WorkspaceModule } from "@/lib/host/queries";
 import { cn } from "@/lib/utils";
-import { navItems } from "@/components/shell/nav-items";
+
+function Badge({ count, tone }: { count: number; tone: "accent" | "danger" }) {
+  if (count <= 0) return null;
+  return (
+    <span
+      className={cn(
+        "rounded-full px-1.5 py-0.5 text-[10.5px] font-semibold tabular-nums leading-none",
+        tone === "danger" ? "bg-danger/12 text-danger" : "bg-accent/12 text-accent"
+      )}
+    >
+      {count > 99 ? "99+" : count}
+    </span>
+  );
+}
+
+function NavLink({
+  item,
+  active,
+  count,
+  collapsed,
+  onNavigate,
+}: {
+  item: NavItem;
+  active: boolean;
+  count: number;
+  collapsed: boolean;
+  onNavigate?: () => void;
+}) {
+  const Icon = item.icon;
+  const dangerKeys = new Set(["risk", "notifications"]);
+  const link = (
+    <Link
+      href={item.href}
+      onClick={onNavigate}
+      aria-current={active ? "page" : undefined}
+      className={cn(
+        "group relative flex items-center gap-2.5 rounded-lg py-1.5 text-[13px] transition-[color,transform] duration-150 active:scale-[0.98]",
+        collapsed ? "justify-center px-0" : "px-2.5",
+        active ? "font-medium text-foreground" : "text-muted-foreground hover:text-foreground"
+      )}
+    >
+      {active && (
+        <motion.span
+          layoutId="sidebar-active"
+          transition={{ type: "spring", stiffness: 520, damping: 42 }}
+          className="absolute inset-0 -z-10 rounded-lg bg-muted"
+        />
+      )}
+      {!active && (
+        <span className="absolute inset-0 -z-10 rounded-lg bg-muted/0 transition-colors duration-150 group-hover:bg-muted/60" />
+      )}
+      <Icon className="h-[15px] w-[15px] shrink-0" strokeWidth={1.75} />
+      {!collapsed && (
+        <>
+          <span className="flex-1 truncate">{item.label}</span>
+          <Badge count={count} tone={dangerKeys.has(item.countKey ?? "") ? "danger" : "accent"} />
+        </>
+      )}
+      {collapsed && count > 0 && (
+        <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-accent ring-2 ring-background" />
+      )}
+    </Link>
+  );
+
+  if (!collapsed) return link;
+
+  return (
+    <Tooltip delayDuration={0}>
+      <TooltipTrigger asChild>{link}</TooltipTrigger>
+      <TooltipContent side="right">
+        {item.label}
+        {count > 0 ? ` · ${count}` : ""}
+      </TooltipContent>
+    </Tooltip>
+  );
+}
 
 export function SidebarNav({
   counts,
+  modules,
+  collapsed = false,
   onNavigate,
 }: {
-  /** Real per-route counts (e.g. today's pickups+returns, unread messages) — see AppShell. Absent or zero renders no badge. */
+  /** Real per-route counts from the layout. Absent or zero renders no badge. */
   counts?: Record<string, number>;
+  modules: WorkspaceModule[];
+  collapsed?: boolean;
   onNavigate?: () => void;
 }) {
   const pathname = usePathname();
 
   return (
-    <nav className="flex flex-col gap-0.5">
-      {navItems.map((item) => {
-        const active = pathname === item.href;
-        const Icon = item.icon;
-        const count = counts?.[item.href] ?? 0;
-        return (
-          <Link
-            key={item.href}
-            href={item.href}
-            onClick={onNavigate}
-            aria-current={active ? "page" : undefined}
-            className={cn(
-              "relative flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] transition-colors",
-              active
-                ? "text-foreground font-medium"
-                : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"
-            )}
-          >
-            {active && (
-              <motion.span
-                layoutId="sidebar-active"
-                transition={{ type: "spring", stiffness: 500, damping: 40 }}
-                className="absolute inset-0 -z-10 rounded-md bg-muted"
+    <nav className="flex flex-col gap-5" aria-label="Workspace">
+      {NAV_SECTIONS.filter((s) => !s.module || modules.includes(s.module)).map((section) => (
+        <div key={section.id}>
+          {section.label && !collapsed && (
+            <p className="mb-1.5 flex items-center gap-1.5 px-2.5 text-[10.5px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/70">
+              {section.label}
+              {section.platform && (
+                <span className="rounded-full border border-border/80 px-1.5 py-px text-[9.5px] font-medium normal-case tracking-normal text-muted-foreground/80">{section.platform}</span>
+              )}
+            </p>
+          )}
+          {section.label && collapsed && <div className="mx-auto mb-1.5 h-px w-6 bg-border" />}
+          <div className="flex flex-col gap-0.5">
+            {section.items.map((item) => (
+              <NavLink
+                key={item.href}
+                item={item}
+                active={isNavItemActive(item, pathname)}
+                count={counts?.[item.countKey ?? ""] ?? 0}
+                collapsed={collapsed}
+                onNavigate={onNavigate}
               />
-            )}
-            <Icon className="h-[15px] w-[15px] shrink-0" strokeWidth={1.75} />
-            <span className="flex-1">{item.label}</span>
-            {count > 0 && (
-              <span className="rounded-full bg-accent/10 px-1.5 py-0.5 text-[10.5px] font-semibold tabular-nums text-accent">
-                {count > 99 ? "99+" : count}
-              </span>
-            )}
-          </Link>
-        );
-      })}
+            ))}
+          </div>
+        </div>
+      ))}
     </nav>
   );
 }

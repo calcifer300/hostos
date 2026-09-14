@@ -107,7 +107,7 @@
     }
 
     const cards = el("div", "hw-cards");
-    const licenseCard = summaryCard("/risk", "!", "Unverified licences", "hw-danger");
+    const licenseCard = summaryCard("/risk", "!", "Unverified licenses", "hw-danger");
     const profitCard = summaryCard("/risk", "$", "Profit risk", "hw-profit");
     const earnCard = summaryCard("/board", "↩", "Returning today", "hw-earn");
     cards.append(licenseCard, profitCard, earnCard);

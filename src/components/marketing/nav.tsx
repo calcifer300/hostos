@@ -34,19 +34,19 @@ export function MarketingNav() {
           <Logo size="sm" />
         </Link>
 
-        <nav className="hidden items-center gap-1 md:flex" aria-label="Primary">
+        <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary">
           {NAV_LINKS.map((link) => (
             <a
               key={link.href}
               href={link.href}
-              className="rounded-full px-3 py-1.5 text-[13px] text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
+              className="whitespace-nowrap rounded-full px-3 py-1.5 text-[13px] text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
             >
               {link.label}
             </a>
           ))}
         </nav>
 
-        <div className="hidden items-center gap-2 md:flex">
+        <div className="hidden items-center gap-2 lg:flex">
           <Button asChild variant="ghost" size="sm" pill>
             <Link href={routes.login}>Sign in</Link>
           </Button>
@@ -62,7 +62,7 @@ export function MarketingNav() {
           type="button"
           aria-label={open ? "Close menu" : "Open menu"}
           onClick={() => setOpen((v) => !v)}
-          className="rounded-full p-2 text-muted-foreground hover:bg-muted md:hidden"
+          className="rounded-full p-2 text-muted-foreground hover:bg-muted lg:hidden"
         >
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
@@ -75,7 +75,7 @@ export function MarketingNav() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.2 }}
-            className="glass-surface mx-auto mt-2 max-w-6xl rounded-2xl border p-3 md:hidden"
+            className="mx-auto mt-2 max-w-6xl rounded-2xl border border-border bg-background/95 p-3 shadow-[var(--shadow-card)] backdrop-blur-xl lg:hidden"
           >
             <div className="flex flex-col">
               {NAV_LINKS.map((link) => (

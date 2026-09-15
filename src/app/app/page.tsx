@@ -1,17 +1,18 @@
-import { DashboardGrid } from "@/components/dashboard/dashboard-grid";
-import { assembleDashboard } from "@/lib/dashboard/assemble";
-import { acceptInvitation } from "@/lib/actions/members";
+import { redirect } from "next/navigation";
+import { getChosenVertical, getCurrentHostId } from "@/lib/host/context";
+import { getHostModules } from "@/lib/host/queries";
+import { routes } from "@/lib/routes";
+import { VERTICAL_ROUTES } from "@/lib/verticals";
 
 /**
- * Home: every line of business at a glance — one card per business with a
- * link to its own dashboard — plus the work that cuts across them (tasks,
- * notifications, the Butler's briefing, recent events).
+ * The product root. Whatever vertical this browser chose on /app/start is the
+ * command center it lands on; with nothing chosen yet, the chooser. The
+ * cross-business overview lives at /app/overview and is never the default —
+ * a Turo dashboard must not carry DoorDash tools.
  */
-export default async function Home() {
-  const page = await assembleDashboard("home");
-
-  // Someone opening a workspace they were invited to: record it (best effort).
-  if (page.signedIn) void acceptInvitation();
-
-  return <DashboardGrid scope="home" firstName={page.firstName} setup={page.setup} modules={page.modules} initialLayout={page.layout} data={page.data} signedIn={page.signedIn} />;
+export default async function AppRoot() {
+  const hostId = await getCurrentHostId();
+  const modules = await getHostModules(hostId);
+  const chosen = await getChosenVertical(modules);
+  redirect(chosen ? VERTICAL_ROUTES[chosen] : routes.start);
 }

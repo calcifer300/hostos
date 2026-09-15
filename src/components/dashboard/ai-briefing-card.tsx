@@ -290,7 +290,9 @@ export function AiBriefingCard({ initialEmail }: { initialEmail?: InboundTuroEma
                 {...fade}
                 className="rounded-md border border-danger/30 bg-danger-bg px-3.5 py-3 text-[13px] text-danger"
               >
-                {briefingState.message}
+                {/403|denied access|PERMISSION_DENIED/i.test(briefingState.message)
+                  ? "The AI Butler's Gemini key belongs to a Google Cloud project that has been denied access (403). Create a key in Google AI Studio under a project with the Generative Language API enabled, set it as GEMINI_API_KEY in Vercel, and redeploy."
+                  : briefingState.message}
               </motion.div>
             )}
           </AnimatePresence>

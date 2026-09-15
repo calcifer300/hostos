@@ -4,10 +4,13 @@ import * as React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
-import { ArrowRight, Check, Lock, Sparkles } from "lucide-react";
+import { ArrowRight, Check, Lock, Pencil, Sparkles } from "lucide-react";
 import { MODULE_ICONS } from "@/components/modules/module-icon";
 import { Button } from "@/components/ui/button";
 import { chooseVertical } from "@/lib/actions/verticals";
+import { renameFleet } from "@/lib/actions/host";
+import { setWorkspaceModules } from "@/lib/actions/workspace";
+import { useRouter } from "next/navigation";
 import { MODULES, type WorkspaceModule } from "@/lib/modules";
 import { routes } from "@/lib/routes";
 import { cn } from "@/lib/utils";
@@ -22,8 +25,42 @@ const EASE = [0.16, 1, 0.3, 1] as const;
  * required — everyone else sees it locked with the reason).
  */
 export function VerticalChooser({ firstName, enabled, current, canEnable, workspaceName }: { firstName: string | null; enabled: WorkspaceModule[]; current: WorkspaceModule | null; canEnable: boolean; workspaceName: string }) {
+  const router = useRouter();
   const [pending, startTransition] = React.useTransition();
   const [choosing, setChoosing] = React.useState<WorkspaceModule | null>(null);
+  const [renaming, setRenaming] = React.useState(false);
+  const [name, setName] = React.useState(workspaceName);
+
+  // A fresh server render after a rename carries the new name; adopt it.
+  const [seenName, setSeenName] = React.useState(workspaceName);
+  if (seenName !== workspaceName) {
+    setSeenName(workspaceName);
+    setName(workspaceName);
+  }
+
+  function submitRename(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const next = name.trim();
+    if (!next || next === workspaceName) return void setRenaming(false);
+    startTransition(async () => {
+      const result = await renameFleet(next);
+      if (!result.ok) return void toast.error(result.error ?? "Couldn't rename the workspace.");
+      toast.success(`Workspace renamed to ${result.name}`);
+      setRenaming(false);
+      router.refresh();
+    });
+  }
+
+  function turnOff(id: WorkspaceModule) {
+    const next = enabled.filter((m) => m !== id);
+    if (next.length === 0) return void toast.error("Keep at least one vertical on.");
+    startTransition(async () => {
+      const result = await setWorkspaceModules(next);
+      if (!result.ok) return void toast.error(result.error ?? "Couldn't switch it off.");
+      toast.success(`${MODULES.find((m) => m.id === id)?.title} switched off`);
+      router.refresh();
+    });
+  }
 
   function choose(id: WorkspaceModule) {
     setChoosing(id);
@@ -40,7 +77,33 @@ export function VerticalChooser({ firstName, enabled, current, canEnable, worksp
   return (
     <div className="mx-auto w-full max-w-6xl">
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: EASE }} className="mb-8 text-center">
-        <p className="text-[11.5px] font-semibold uppercase tracking-[0.14em] text-accent">{workspaceName}</p>
+        {renaming ? (
+          <form onSubmit={submitRename} className="mx-auto flex max-w-sm items-center justify-center gap-2">
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              maxLength={60}
+              autoFocus
+              aria-label="Workspace name"
+              className="h-9 w-full rounded-lg border border-accent/50 bg-card px-3 text-center text-[13px] font-semibold uppercase tracking-[0.1em] outline-none"
+            />
+            <Button type="submit" variant="primary" size="sm" loading={pending}>
+              Save
+            </Button>
+            <Button type="button" variant="ghost" size="sm" onClick={() => { setName(workspaceName); setRenaming(false); }}>
+              Cancel
+            </Button>
+          </form>
+        ) : (
+          <p className="inline-flex items-center gap-2 text-[11.5px] font-semibold uppercase tracking-[0.14em] text-accent">
+            {workspaceName}
+            {canEnable && (
+              <button type="button" onClick={() => setRenaming(true)} className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground" aria-label="Rename workspace" title="Rename workspace">
+                <Pencil className="h-3 w-3" />
+              </button>
+            )}
+          </p>
+        )}
         <h1 className="mt-2 text-balance text-[30px] font-semibold tracking-tight sm:text-[38px]">
           {firstName ? `${firstName}, which` : "Which"} business are we running today?
         </h1>
@@ -56,12 +119,11 @@ export function VerticalChooser({ firstName, enabled, current, canEnable, worksp
           const locked = !on && !canEnable;
           const isCurrent = current === m.id;
           return (
+            <motion.div key={m.id} variants={{ hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: EASE } } }} className="flex flex-col">
             <motion.button
-              key={m.id}
               type="button"
               disabled={pending || locked}
               onClick={() => choose(m.id)}
-              variants={{ hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: EASE } } }}
               whileHover={locked ? undefined : { y: -4 }}
               whileTap={locked ? undefined : { scale: 0.985 }}
               style={{ ["--hue" as string]: m.hue }}
@@ -109,13 +171,24 @@ export function VerticalChooser({ firstName, enabled, current, canEnable, worksp
                 <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
               </span>
             </motion.button>
+            {on && !isCurrent && canEnable && enabled.length > 1 && (
+              <button
+                type="button"
+                disabled={pending}
+                onClick={() => turnOff(m.id)}
+                className="mt-1.5 self-end rounded-md px-2 py-1 text-[11px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              >
+                Switch {m.title} off for this workspace
+              </button>
+            )}
+            </motion.div>
           );
         })}
       </motion.div>
 
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }} className="mt-8 flex flex-wrap items-center justify-center gap-3 text-[13px] text-muted-foreground">
         <Button asChild variant="ghost" size="sm">
-          <Link href={routes.overview}>Or see every business at once on Home →</Link>
+          <Link href={routes.overview}>Or see every business at once →</Link>
         </Button>
       </motion.div>
     </div>

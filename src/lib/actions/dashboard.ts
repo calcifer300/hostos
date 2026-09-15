@@ -8,7 +8,7 @@ import { DASHBOARDS, WIDGETS, type DashboardScope, type LayoutEntry } from "@/li
 import { routes } from "@/lib/routes";
 
 const SCOPE_PATH: Record<DashboardScope, string> = {
-  home: routes.app,
+  home: routes.overview,
   fleet: routes.fleet,
   restaurants: routes.restaurants,
   commerce: routes.commerce,

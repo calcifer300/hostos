@@ -53,7 +53,7 @@ export function GreetingHeader({ firstName }: { firstName?: string | null }) {
           {firstName ? `, ${firstName}` : ""}.
         </h1>
         <p className="mt-1.5 text-[15px] text-muted-foreground">
-          {healthy ? "Everything is under control." : "Some fleet data couldn't be loaded just now."}
+          {healthy ? "Every business you run, at a glance." : "Some data couldn't be loaded just now."}
         </p>
       </div>
       <div className="flex items-center gap-1.5 self-start rounded-full border border-border bg-card px-3 py-1.5 text-[12.5px] text-muted-foreground sm:self-auto">
@@ -65,7 +65,7 @@ export function GreetingHeader({ firstName }: { firstName?: string | null }) {
             className={`relative inline-flex h-1.5 w-1.5 rounded-full ${healthy ? "bg-success" : "bg-warning"}`}
           />
         </span>
-        {healthy ? "Fleet operating normally" : "Fleet status unavailable"}
+        {healthy ? "All systems live" : "Some data unavailable"}
       </div>
     </div>
   );

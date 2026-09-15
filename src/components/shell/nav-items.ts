@@ -57,7 +57,7 @@ export const NAV_SECTIONS: NavSection[] = [
     label: null,
     items: [
       { href: routes.start, label: "Choose vertical", icon: Compass },
-      { href: routes.overview, label: "Home", icon: LayoutGrid },
+      { href: routes.overview, label: "All businesses", icon: LayoutGrid },
       { href: routes.tasks, label: "Tasks", icon: CheckSquare, countKey: "tasks" },
       { href: routes.notifications, label: "Notifications", icon: Bell, countKey: "notifications" },
       { href: routes.butler, label: "AI Butler", icon: Sparkles, countKey: "butler" },

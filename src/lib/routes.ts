@@ -23,8 +23,10 @@ export const routes = {
   companionDownload: "/hostos-companion.zip",
 
   // Product shell
+  /** The product root: lands on the chosen vertical's dashboard, or the chooser. */
   app: app(),
-  overview: app(),
+  /** Every business at once — the cross-vertical overview. */
+  overview: app("overview"),
   /** The vertical chooser people land on after signing in. */
   start: app("start"),
   operations: app("operations"),

@@ -46,23 +46,24 @@ function isMissingColumn(reason: string): boolean {
 /**
  * A fleet name from whatever Google gave us.
  *
- * Uses the first name only: "Jonathan Briones" becomes "Jonathan's Fleet",
- * not "Jonathan Briones's Fleet". Falls back to the email's local part, then
- * to a bare "Fleet", so this always returns something renderable — a fleet
- * with a blank name is a state the sidebar and switcher would both have to
- * defend against.
+ * Uses the first name only: "Jonathan Briones" becomes "Jonathan's
+ * Workspace", not "Jonathan Briones's Workspace". Falls back to the email's
+ * local part, then to a bare "Workspace", so this always returns something
+ * renderable — a workspace with a blank name is a state the sidebar and
+ * switcher would both have to defend against. Renamed any time from
+ * Settings or the vertical chooser.
  */
 export function fleetNameFor(displayName: string | null, email: string): string {
   const fromProfile = (displayName ?? "").trim().split(/\s+/)[0] ?? "";
   const fromEmail = email.split("@")[0]?.replace(/[._-]+/g, " ").trim().split(/\s+/)[0] ?? "";
 
   const raw = fromProfile || fromEmail;
-  if (!raw) return "Fleet";
+  if (!raw) return "Workspace";
 
   const person = raw.charAt(0).toUpperCase() + raw.slice(1);
   // "Chris' Fleet" rather than "Chris's Fleet".
   const possessive = /s$/i.test(person) ? `${person}'` : `${person}'s`;
-  return `${possessive} Fleet`;
+  return `${possessive} Workspace`;
 }
 
 /**

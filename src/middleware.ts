@@ -97,9 +97,34 @@ function canonicalRedirect(req: NextRequest): NextResponse | null {
   return NextResponse.redirect(target, 308);
 }
 
+/**
+ * Paths that do their own auth (or none) and must never be gated here. They
+ * still get the canonical-host redirect above — /login and /api/auth on the
+ * www host produced a Google callback URL Google had never been told about
+ * ("Error 400: redirect_uri_mismatch") until that redirect covered them.
+ *
+ *  - /login and Auth.js's own routes, or signing in would loop
+ *  - /api/turo/* — the Companion extension authenticates with a bearer
+ *    pairing key, not a session cookie, and gating it here would break
+ *    ingest for every fleet
+ *  - /api/companion/* — same extension, same bearer key; every route under
+ *    it calls requireCompanionHost for itself
+ *  - /api/cron/*  — Vercel Cron sends a bearer CRON_SECRET; that route
+ *    refuses to run at all when the secret is unset
+ *
+ * EVERY ENTRY HERE IS A ROUTE THAT MUST DO ITS OWN AUTH.
+ */
+const OWN_AUTH_PREFIXES = ["/login", "/api/auth", "/api/turo", "/api/companion", "/api/cron"];
+
+function doesOwnAuth(pathname: string): boolean {
+  return OWN_AUTH_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
+}
+
 export function middleware(req: NextRequest) {
   const canonical = canonicalRedirect(req);
   if (canonical) return canonical;
+
+  if (doesOwnAuth(req.nextUrl.pathname)) return NextResponse.next();
 
   const legacy = legacyRedirect(req);
   if (legacy) return legacy;
@@ -119,25 +144,10 @@ export function middleware(req: NextRequest) {
 
 export const config = {
   /**
-   * Everything except:
-   *  - /login and Auth.js's own routes, or signing in would loop
-   *  - /api/turo/* — the Companion extension authenticates with a bearer
-   *    pairing key, not a session cookie, and gating it here would break
-   *    ingest for every fleet
-   *  - /api/companion/* — same extension, same bearer key. Drafting a reply
-   *    happens from a content script on turo.com or a mail tab, which carries
-   *    no HostOS session cookie; every route under it calls
-   *    requireCompanionHost for itself
-   *  - /api/cron/*  — Vercel Cron sends a bearer CRON_SECRET, also not a
-   *    session; that route refuses to run at all when the secret is unset
-   *  - Next's static assets and the favicon
-   *
-   * EVERY EXEMPTION HERE IS A ROUTE THAT MUST DO ITS OWN AUTH. The two under
-   * /api/turo that a browser can GET were reachable by anyone for exactly this
-   * reason until lib/api/browser-auth.ts was added — an exemption is a promise
-   * the route keeps, not one this file keeps for it.
+   * Every request except Next's static assets and the favicon, so the
+   * canonical-host redirect applies to /login, /api/auth and the public
+   * files too. Which routes are gated — and which do their own auth — is
+   * decided in middleware() above (see OWN_AUTH_PREFIXES), not here.
    */
-  matcher: [
-    "/((?!login|api/auth|api/turo|api/companion|api/cron|_next/static|_next/image|favicon.ico|icon.svg|icons/|og.png|robots.txt|sitemap.xml|manifest.webmanifest|sw.js|offline|install|hostos-companion.zip).*)",
-  ],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };

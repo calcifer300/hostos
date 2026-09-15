@@ -39,6 +39,13 @@ const SCOPE_LINKS: Record<Exclude<DashboardScope, "home">, { href: string; label
     { href: routes.connectors, label: "Connectors" },
     { href: routes.tasks, label: "Tasks" },
   ],
+  services: [
+    { href: routes.servicesDispatch, label: "Dispatch" },
+    { href: routes.servicesSchedule, label: "Schedule" },
+    { href: routes.servicesCustomers, label: "Customers" },
+    { href: routes.servicesEstimates, label: "Estimates" },
+    { href: routes.servicesKnowledge, label: "SOPs" },
+  ],
   web: [
     { href: routes.tasks, label: "Tasks" },
     { href: routes.notifications, label: "Notifications" },

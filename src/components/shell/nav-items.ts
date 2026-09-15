@@ -19,6 +19,11 @@ import {
   Gauge,
   Workflow,
   Compass,
+  CalendarDays,
+  KanbanSquare,
+  Users,
+  FileText,
+  BookOpenCheck,
 } from "lucide-react";
 import { routes } from "@/lib/routes";
 import type { WorkspaceModule } from "@/lib/host/queries";
@@ -97,6 +102,20 @@ export const NAV_SECTIONS: NavSection[] = [
     platform: "Shopify",
     module: "commerce",
     items: [{ href: routes.commerce, label: "Dashboard", icon: Gauge, countKey: "commerce", matchPrefix: true }],
+  },
+  {
+    id: "services",
+    label: "Service business",
+    platform: "Field ops",
+    module: "services",
+    items: [
+      { href: routes.services, label: "Dashboard", icon: Gauge, countKey: "services" },
+      { href: routes.servicesDispatch, label: "Dispatch", icon: KanbanSquare, countKey: "dispatch" },
+      { href: routes.servicesSchedule, label: "Schedule", icon: CalendarDays },
+      { href: routes.servicesCustomers, label: "Customers", icon: Users, matchPrefix: true },
+      { href: routes.servicesEstimates, label: "Estimates", icon: FileText, countKey: "estimates" },
+      { href: routes.servicesKnowledge, label: "SOPs & knowledge", icon: BookOpenCheck },
+    ],
   },
   {
     id: "web",

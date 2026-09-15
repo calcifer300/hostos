@@ -22,6 +22,8 @@ import { computeStoreAnalytics } from "@/lib/commerce/analytics";
 import { getProperties } from "@/lib/web/queries";
 import { clientsDueForRebooking, getAppointments, getChecklists, getClients, getLocations, getSales, getShifts, getStock, summarizeSales } from "@/lib/local/queries";
 import { getBuildRequests, getMetrics } from "@/lib/custom/queries";
+import { getCustomers, getDocs, getEstimates, getJobs, getServiceSettings, getStaff } from "@/lib/services/queries";
+import { EMPTY_SERVICES, type ServicesData } from "@/lib/services/types";
 import { todayInZone } from "@/lib/timezones";
 import type { InboundTuroEmail } from "@/types/butler";
 
@@ -39,6 +41,12 @@ const EMPTY_LOCAL: WidgetData["cafe"] = { locations: [], sales: [], stock: [], s
 
 function daysAgoIso(days: number): string {
   return new Date(Date.now() - days * 86_400_000).toISOString();
+}
+
+/** The Service Businesses vertical, read once for its dashboard and Home's card. */
+export async function loadServices(hostId: string): Promise<ServicesData> {
+  const [settings, customers, staff, jobs, estimates, docs] = await Promise.all([getServiceSettings(hostId), getCustomers(hostId), getStaff(hostId), getJobs(hostId), getEstimates(hostId), getDocs(hostId)]);
+  return { settings, customers, staff, jobs, estimates, docs };
 }
 
 /**
@@ -67,6 +75,7 @@ export async function assembleDashboard(scope: DashboardScope): Promise<Dashboar
   const cafeOn = modules.includes("cafe") && has("cafeSales", "cafeStock", "cafeShifts", "cafeChecklists", "cafeLocations", "businesses");
   const salonOn = modules.includes("salon") && has("salonSchedule", "salonRebooking", "salonRevenue", "salonShifts", "salonChecklists", "salonLocations", "businesses");
   const customOn = modules.includes("custom") && has("customMetrics", "customChecklists", "buildRequests", "businesses");
+  const servicesOn = modules.includes("services") && has("servicesToday", "servicesDispatch", "servicesEstimates", "servicesLeads", "servicesTeam", "servicesSetup", "businesses");
 
   const now = new Date();
   const dayStart = new Date(now);
@@ -181,7 +190,7 @@ export async function assembleDashboard(scope: DashboardScope): Promise<Dashboar
     };
   }
 
-  const [cafe, salon] = await Promise.all([cafeOn ? local("cafe") : Promise.resolve(EMPTY_LOCAL), salonOn ? local("salon") : Promise.resolve(EMPTY_LOCAL)]);
+  const [cafe, salon, services] = await Promise.all([cafeOn ? local("cafe") : Promise.resolve(EMPTY_LOCAL), salonOn ? local("salon") : Promise.resolve(EMPTY_LOCAL), servicesOn ? loadServices(hostId) : Promise.resolve(EMPTY_SERVICES)]);
 
   const widgetData: WidgetData = {
     scope,
@@ -203,6 +212,7 @@ export async function assembleDashboard(scope: DashboardScope): Promise<Dashboar
     cafe,
     salon,
     custom: { metrics, buildRequests, checklists: customChecklists },
+    services,
   };
 
   return { scope, firstName, signedIn: Boolean(email), modules, layout, setup, data: widgetData };

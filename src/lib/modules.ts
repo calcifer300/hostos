@@ -12,9 +12,9 @@
  * this file can be read by server code too.
  */
 
-export type WorkspaceModule = "fleet" | "restaurants" | "commerce" | "web" | "cafe" | "salon" | "custom";
+export type WorkspaceModule = "fleet" | "restaurants" | "commerce" | "services" | "web" | "cafe" | "salon" | "custom";
 
-export type ModuleIcon = "Car" | "ChefHat" | "ShoppingBag" | "Globe" | "Coffee" | "Scissors" | "Blocks";
+export type ModuleIcon = "Car" | "ChefHat" | "ShoppingBag" | "Wrench" | "Globe" | "Coffee" | "Scissors" | "Blocks";
 
 export interface ModuleDefinition {
   id: WorkspaceModule;
@@ -78,6 +78,19 @@ export const MODULES: ModuleDefinition[] = [
     integrations: ["shopify"],
     maturity: "beta",
     entity: "store",
+  },
+  {
+    id: "services",
+    title: "Service Businesses",
+    label: "Field operations",
+    short: "Services",
+    description: "Appointment, dispatch and field businesses — auto glass, mobile mechanics, towing, junk removal, HVAC, plumbing, cleaning, lawn care, locksmiths, movers and more: CRM, scheduling, dispatch, work orders, estimates and the SOPs that run them, from a template for your industry.",
+    outcomes: ["Every lead, estimate and job in one place instead of Messenger, spreadsheets and paper", "A dispatch board and calendar your VA can run for you", "Overdue jobs, unanswered estimates and missing photos caught by the Butler"],
+    icon: "Wrench",
+    hue: "#f59e0b",
+    integrations: [],
+    maturity: "new",
+    entity: "job",
   },
   {
     id: "web",

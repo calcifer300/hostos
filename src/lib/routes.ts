@@ -61,6 +61,16 @@ export const routes = {
   store: (id: string) => app(`commerce/${encodeURIComponent(id)}`),
   storeTab: (id: string, tab: string) => app(`commerce/${encodeURIComponent(id)}?tab=${encodeURIComponent(tab)}`),
 
+  // Service Businesses — dashboard, dispatch board, calendar, CRM, estimates, knowledge.
+  services: app("services"),
+  servicesDispatch: app("services/dispatch"),
+  servicesSchedule: app("services/schedule"),
+  servicesCustomers: app("services/customers"),
+  serviceCustomer: (id: string) => app(`services/customers/${encodeURIComponent(id)}`),
+  serviceJob: (id: string) => app(`services/jobs/${encodeURIComponent(id)}`),
+  servicesEstimates: app("services/estimates"),
+  servicesKnowledge: app("services/knowledge"),
+
   // Websites & Domains, cafés, barbershops, custom — each its own dashboard.
   web: app("web"),
   cafe: app("cafe"),

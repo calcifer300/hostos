@@ -19,6 +19,8 @@ import { getProperties } from "@/lib/web/queries";
 import { getLocations, getStock } from "@/lib/local/queries";
 import { getMetrics } from "@/lib/custom/queries";
 import { metricStatus } from "@/lib/custom/analytics";
+import { getEstimates, getJobs } from "@/lib/services/queries";
+import { isOpen as jobIsOpen, isOverdue, needsFollowUp } from "@/lib/services/analytics";
 
 /**
  * The product shell. Middleware has already gated this tree (see
@@ -48,7 +50,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   // membership — drives the sidebar, the badge counts and the chosen focus.
   const modulesEarly = await getAccessibleModules();
   const notesAllowed = await canUseQuickNotes();
-  const [data, modules, roles, fleets, notifications, unread, tasks, restaurants, stores, board, risk, focus, properties, cafeLocations, cafeStock, metrics, notes] = await Promise.all([
+  const [data, modules, roles, fleets, notifications, unread, tasks, restaurants, stores, board, risk, focus, properties, cafeLocations, cafeStock, metrics, notes, serviceJobs, serviceEstimates] = await Promise.all([
     getDashboardData(email),
     getAccessibleModules(),
     getUserRoles(email),
@@ -66,6 +68,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     modulesEarly.includes("cafe") ? getStock(hostId, "cafe") : Promise.resolve([]),
     modulesEarly.includes("custom") ? getMetrics(hostId, weekAgoDay()) : Promise.resolve([]),
     notesAllowed ? getQuickNotes(email) : Promise.resolve([]),
+    modulesEarly.includes("services") ? getJobs(hostId) : Promise.resolve([]),
+    modulesEarly.includes("services") ? getEstimates(hostId) : Promise.resolve([]),
   ]);
 
   // Read *after* the queries above, so it reflects this render's outcomes.
@@ -87,6 +91,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     web: properties.filter((p) => p.status === "down").length,
     cafe: cafeStock.filter((s) => s.quantity <= (s.lowStockThreshold ?? cafeLocations.find((l) => l.id === s.locationId)?.lowStockThreshold ?? 5)).length,
     custom: metrics.map(metricStatus).filter((m) => m.onTarget === false).length,
+    services: serviceJobs.filter((j) => isOverdue(j)).length,
+    dispatch: serviceJobs.filter((j) => jobIsOpen(j.status) && !j.staffId).length,
+    estimates: serviceEstimates.filter((e) => needsFollowUp(e)).length,
     butler: data.suggestions.length,
   };
 

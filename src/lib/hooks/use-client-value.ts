@@ -35,6 +35,20 @@ export function useClientValue<T>(read: () => T, serverValue: T): T {
   );
 }
 
+/**
+ * False during server rendering and hydration, true after. For output that
+ * depends on the browser's timezone or locale — a local time, a calendar
+ * week — which the server (UTC) cannot render identically: render a
+ * placeholder first, the real thing once mounted, and hydration matches.
+ */
+export function useMounted(): boolean {
+  return React.useSyncExternalStore(
+    noop,
+    () => true,
+    () => false
+  );
+}
+
 /** A stable "now" for a render — taken once on mount, never during render. */
 export function useNow(): number {
   const [now] = React.useState(() => Date.now());

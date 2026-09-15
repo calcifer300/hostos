@@ -8,6 +8,8 @@ import { createTask } from "@/lib/tasks/queries";
 import { notify } from "@/lib/notifications/queries";
 import { getDashboardData } from "@/lib/dashboard/queries";
 import { getHostModules } from "@/lib/host/queries";
+import { getEstimates, getJobs, getStaff } from "@/lib/services/queries";
+import { isOpen as jobIsOpen, isOverdue, missingPhotos, needsFollowUp, sameDay } from "@/lib/services/analytics";
 import { daysUntil, getProperties } from "@/lib/web/queries";
 import { clientsDueForRebooking, getClients, getLocations, getStock } from "@/lib/local/queries";
 import { getMetrics } from "@/lib/custom/queries";
@@ -233,6 +235,36 @@ export async function runButlerRules(hostId: string, options: { userEmail?: stri
         await track({ hostId, title: `Send rebooking reminders to ${due.length} client${due.length === 1 ? "" : "s"}`, description: due.slice(0, 12).map((c) => `${c.name} (${c.daysSince}d${c.phone ? `, ${c.phone}` : ""})`).join(", "), priority: "medium", source: "butler", relatedKind: "salon_client", relatedId: null, href: routes.salon, dedupeKey: `butler:rebook:${new Date().toISOString().slice(0, 10)}` });
       }
     }
+  }
+
+  if (modules.includes("services")) {
+    // The operations manager's morning: what is unassigned, what is late,
+    // which estimates went quiet, which finished jobs have no proof.
+    const [jobs, estimates, staff] = await Promise.all([getJobs(hostId), getEstimates(hostId), getStaff(hostId)]);
+    const day = new Date().toISOString().slice(0, 10);
+    const nameOf = (id: string | null) => staff.find((s) => s.id === id)?.name ?? "unassigned";
+    const unassignedToday = jobs.filter((j) => jobIsOpen(j.status) && !j.staffId && sameDay(j.scheduledStart, day));
+    if (unassignedToday.length > 0) {
+      summary.signals.push(`${unassignedToday.length} job(s) today have no technician`);
+      await track({ hostId, title: `Assign ${unassignedToday.length} job${unassignedToday.length === 1 ? "" : "s"} scheduled today`, description: unassignedToday.slice(0, 10).map((j) => `#${j.number} ${j.title}`).join(", "), priority: "critical", source: "butler", relatedKind: "service_job", relatedId: null, href: routes.servicesDispatch, dedupeKey: `services:unassigned:${day}` });
+    }
+    const overdue = jobs.filter((j) => isOverdue(j));
+    for (const j of overdue.slice(0, 20)) {
+      summary.signals.push(`#${j.number} ${j.title} is overdue (${nameOf(j.staffId)})`);
+      await track({ hostId, title: `Overdue: #${j.number} ${j.title}`, description: `Scheduled to finish ${j.scheduledEnd ? new Date(j.scheduledEnd).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" }) : ""}; still ${j.status.replace("_", " ")} with ${nameOf(j.staffId)}. Check in and update the status.`, priority: "high", source: "butler", relatedKind: "service_job", relatedId: j.id, href: routes.serviceJob(j.id), dedupeKey: `services:overdue:${j.id}` });
+    }
+    const quiet = estimates.filter((e) => needsFollowUp(e));
+    if (quiet.length > 0) {
+      summary.signals.push(`${quiet.length} estimate(s) sent 2+ days ago with no answer`);
+      await track({ hostId, title: `Follow up ${quiet.length} estimate${quiet.length === 1 ? "" : "s"}`, description: quiet.slice(0, 10).map((e) => `#${e.number} ${e.title} (${e.total.toFixed(0)})`).join(", "), priority: "medium", source: "butler", relatedKind: "service_estimate", relatedId: null, href: routes.servicesEstimates, dedupeKey: `services:followup:${day}` });
+    }
+    const noProof = jobs.filter((j) => missingPhotos(j) && j.completedAt && Date.now() - Date.parse(j.completedAt) < 7 * 86_400_000);
+    if (noProof.length > 0) {
+      summary.signals.push(`${noProof.length} completed job(s) have no after photos`);
+      await track({ hostId, title: `Add after photos to ${noProof.length} completed job${noProof.length === 1 ? "" : "s"}`, description: noProof.slice(0, 10).map((j) => `#${j.number} ${j.title} (${nameOf(j.staffId)})`).join(", "), priority: "low", source: "butler", relatedKind: "service_job", relatedId: null, href: routes.servicesDispatch, dedupeKey: `services:photos:${day}` });
+    }
+    const expired = estimates.filter((e) => e.status === "sent" && e.expiresAt && Date.parse(e.expiresAt) < Date.now());
+    if (expired.length > 0) summary.signals.push(`${expired.length} estimate(s) past their valid-until date`);
   }
 
   if (modules.includes("custom")) {

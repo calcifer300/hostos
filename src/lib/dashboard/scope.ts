@@ -30,6 +30,9 @@ const TASK_KIND_SCOPE: Record<string, DashboardScope> = {
   appointment: "salon",
   custom_metric: "custom",
   build_request: "custom",
+  service_job: "services",
+  service_estimate: "services",
+  service_customer: "services",
 };
 
 const NOTIFICATION_KIND_SCOPE: Record<string, DashboardScope> = {
@@ -43,6 +46,7 @@ const NOTIFICATION_KIND_SCOPE: Record<string, DashboardScope> = {
   cafe: "cafe",
   salon: "salon",
   custom: "custom",
+  services: "services",
 };
 
 const ACTIVITY_MODULE_SCOPE: Record<string, DashboardScope> = {
@@ -53,6 +57,7 @@ const ACTIVITY_MODULE_SCOPE: Record<string, DashboardScope> = {
   cafe: "cafe",
   salon: "salon",
   custom: "custom",
+  services: "services",
 };
 
 export function taskScope(task: { relatedKind: string | null; href?: string | null }): DashboardScope | null {

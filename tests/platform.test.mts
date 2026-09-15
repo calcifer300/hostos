@@ -47,8 +47,8 @@ eq("empty lands on the chooser", safeAppRedirect(null), "/app/start");
 eq("the bare product root lands on the chooser", safeAppRedirect("/app"), "/app/start");
 
 console.log("\n=== modules ===");
-eq("seven verticals", MODULES.map((m) => m.id), ["fleet", "restaurants", "commerce", "web", "cafe", "salon", "custom"]);
-eq("the chooser names people recognise", MODULES.map((m) => m.title), ["Turo", "DoorDash", "Shopify", "Websites & Domains", "Coffee Shops", "Barbershops", "Build a custom"]);
+eq("eight verticals", MODULES.map((m) => m.id), ["fleet", "restaurants", "commerce", "services", "web", "cafe", "salon", "custom"]);
+eq("the chooser names people recognise", MODULES.map((m) => m.title), ["Turo", "DoorDash", "Shopify", "Service Businesses", "Websites & Domains", "Coffee Shops", "Barbershops", "Build a custom"]);
 eq("module guard", [isWorkspaceModule("fleet"), isWorkspaceModule("hotels")], [true, false]);
 eq("every vertical has a route", MODULES.every((m) => typeof VERTICAL_ROUTES[m.id] === "string"), true);
 

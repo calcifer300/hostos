@@ -9,7 +9,7 @@ import { runQuery, runQueryOr } from "@/lib/supabase/server";
  * module and the Butler write to.
  */
 
-export type ActivityModule = "fleet" | "restaurant" | "commerce" | "web" | "cafe" | "salon" | "custom" | "butler" | "system" | "team";
+export type ActivityModule = "fleet" | "restaurant" | "commerce" | "services" | "web" | "cafe" | "salon" | "custom" | "butler" | "system" | "team";
 
 export interface ActivityEvent {
   id: string;

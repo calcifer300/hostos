@@ -1,6 +1,6 @@
 # HostOS — Tech Debt
 
-_Updated 2026-09-14. Known shortcuts, why they were taken, and what pays them off._
+_Updated 2026-09-15. Known shortcuts, why they were taken, and what pays them off._
 
 | # | Debt | Where | Why it exists | Pay-off |
 |---|---|---|---|---|
@@ -20,3 +20,12 @@ _Updated 2026-09-14. Known shortcuts, why they were taken, and what pays them of
 | 14 | **`butler/briefing` polls from the dashboard while signed out** (401 in dev) | `components/dashboard/ai-briefing-card.tsx` | Harmless in production (gate); noisy in dev | Skip the fetch when `signedIn` is false. |
 | 15 | **Crons run daily, not every 15 min / hourly** | `vercel.json` | The Vercel project is on the Hobby plan, which rejects any cron more frequent than daily (deploy failed on `*/15 * * * *`). Butler rules run daily at 13:00 UTC + on demand (Butler → Run now); Shopify syncs daily at 13:30 UTC + on demand (store → Sync now / Companion badge) | Upgrade the Vercel project to Pro and restore `*/15 * * * *` for the Butler and `0 * * * *` for commerce. |
 | 16 | **`vendor/` weight in the repo** | `vendor/cc-extension`, bundles | Kept as the audit's evidence and for reference | Move to a separate archive repo once Karl has reviewed the audit. |
+
+## Open notes (2026-09-15)
+
+- **Dev-only "unique key" warning attributed to `OuterLayoutRouter`** on
+  hydration of every /app page (2026-09-15). All stack frames are Next.js
+  internals, it does not reproduce on client-side navigation, and the
+  production React build does not emit it — bisected to the app layout's
+  data fetches (timing of the streamed RSC payload), not to any list in app
+  code. Re-check after the next Next.js upgrade.

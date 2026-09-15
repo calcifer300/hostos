@@ -32,6 +32,7 @@ export const DASHBOARDS: DashboardDefinition[] = [
   { scope: "fleet", module: "fleet", eyebrow: "Fleet operations", title: "Fleet dashboard", description: "Reservations, vehicles, guests and risk — what the fleet needs from you today.", platform: "Turo" },
   { scope: "restaurants", module: "restaurants", eyebrow: "Restaurant operations", title: "Restaurant dashboard", description: "Store status, menu sync, delivery orders and stock across every storefront.", platform: "DoorDash" },
   { scope: "commerce", module: "commerce", eyebrow: "Commerce operations", title: "Commerce dashboard", description: "Sales, orders, inventory and sync health across your online stores.", platform: "Shopify" },
+  { scope: "services", module: "services", eyebrow: "Field operations", title: "Service dashboard", description: "Today's jobs, who's on them, what's unassigned, estimates waiting on a customer, and the month's revenue.", platform: "Service Businesses" },
   { scope: "web", module: "web", eyebrow: "Web & domains", title: "Web dashboard", description: "Every site and domain you look after: uptime, SSL, renewals — checked daily and on demand.", platform: "Any registrar" },
   { scope: "cafe", module: "cafe", eyebrow: "Café operations", title: "Coffee shop dashboard", description: "Today's sales against last week, stock before it runs dry, who's on shift, and the routines that open and close the shop.", platform: "Coffee Shops" },
   { scope: "salon", module: "salon", eyebrow: "Barbershop operations", title: "Barbershop dashboard", description: "Today's chairs and appointments, no-shows, clients due for a rebooking reminder, revenue per barber.", platform: "Barbershops" },
@@ -57,7 +58,7 @@ export interface WidgetDefinition {
   size: WidgetSize;
 }
 
-const ALL: DashboardScope[] = ["home", "fleet", "restaurants", "commerce", "web", "cafe", "salon", "custom"];
+const ALL: DashboardScope[] = ["home", "fleet", "restaurants", "commerce", "services", "web", "cafe", "salon", "custom"];
 
 export const WIDGETS: WidgetDefinition[] = [
   // Shared — the content adapts to the dashboard it sits on.
@@ -95,6 +96,14 @@ export const WIDGETS: WidgetDefinition[] = [
 
   // Stock — restaurants and stores both carry inventory.
   { id: "lowstock", title: "Low stock", description: "Products and items running out.", module: null, scopes: ["home", "restaurants", "commerce"], size: "third" },
+
+  // Service Businesses
+  { id: "servicesToday", title: "Today's jobs", description: "Every visit scheduled today, by technician, with status in one tap.", module: "services", scopes: ["home", "services"], size: "two-thirds" },
+  { id: "servicesDispatch", title: "Dispatch snapshot", description: "Pending, assigned, in progress — and who is free.", module: "services", scopes: ["services"], size: "third" },
+  { id: "servicesEstimates", title: "Estimates pipeline", description: "Sent, waiting, accepted this month — with the ones that need a follow-up.", module: "services", scopes: ["home", "services"], size: "half" },
+  { id: "servicesLeads", title: "New leads", description: "The latest people who reached out, and where they came from.", module: "services", scopes: ["services"], size: "half" },
+  { id: "servicesTeam", title: "Technicians", description: "Completion rate and revenue per technician over 60 days; add people here.", module: "services", scopes: ["services"], size: "half" },
+  { id: "servicesSetup", title: "Industry template", description: "Which template this business runs on, and its service catalogue.", module: "services", scopes: ["services"], size: "half" },
 
   // Websites & Domains
   { id: "webProperties", title: "Sites & domains", description: "Every property with status, SSL and renewal — add, edit, check now.", module: "web", scopes: ["web"], size: "full" },

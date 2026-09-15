@@ -12,6 +12,7 @@ const SCOPE_PATH: Record<DashboardScope, string> = {
   fleet: routes.fleet,
   restaurants: routes.restaurants,
   commerce: routes.commerce,
+  services: routes.services,
   web: routes.web,
   cafe: routes.cafe,
   salon: routes.salon,

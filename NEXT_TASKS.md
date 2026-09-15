@@ -4,6 +4,14 @@ _Updated 2026-09-14. Ordered by what unblocks the most._
 
 ## Now (before / at deploy)
 
+- [x] Migrations 0026, 0027, 0028 applied to production (2026-09-15).
+- [ ] **Service Businesses, Phase 2** (see docs/SERVICE_BUSINESSES.md): photo
+      upload from the phone (Supabase Storage), the unified inbox (SMS via
+      Twilio, WhatsApp, Messenger, email) writing to the customer timeline,
+      the natural-language assistant over service data ("who is free
+      tomorrow?"), automation builder, custom forms, multi-location, PDF
+      estimates emailed to the customer, route optimisation.
+
 - [ ] **Apply migration 0026** — paste `supabase/bundles/0026-0026.sql` into the
       Supabase SQL editor. Until then: per-member vertical limits can't be
       saved (the picker says so), quick notes can't be added (the panel says

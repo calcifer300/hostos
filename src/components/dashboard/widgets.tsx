@@ -52,6 +52,11 @@ import { StoreList } from "@/components/commerce/store-list";
 import { ExpiringWidget, PropertiesWidget, UptimeWidget } from "@/components/web/web-widgets";
 import { ChecklistsWidget, LocationsWidget, RebookingWidget, RevenueByStaffWidget, SalesWidget as LocalSalesWidget, ScheduleWidget, ShiftsWidget, StockWidget, type LocalData } from "@/components/local/local-widgets";
 import { BuildRequestsWidget, MetricsWidget } from "@/components/custom/custom-widgets";
+import { DispatchSnapshotWidget, EstimatesPipelineWidget, LeadsWidget, SetupWidget, TeamWidget, TodayJobsWidget } from "@/components/services/service-widgets";
+import type { ServicesData } from "@/lib/services/types";
+import { isOpen as jobIsOpen, isOverdue, needsFollowUp, revenueSummary, sameDay } from "@/lib/services/analytics";
+import { industryById } from "@/lib/services/industries";
+import { FileText as FileTextIcon, Wrench } from "lucide-react";
 import type { WebProperty } from "@/lib/web/queries";
 import type { BuildRequest, CustomMetric } from "@/lib/custom/queries";
 import type { Checklist } from "@/lib/local/queries";
@@ -108,6 +113,7 @@ export interface WidgetData {
   cafe: LocalData;
   salon: LocalData;
   custom: { metrics: CustomMetric[]; buildRequests: BuildRequest[]; checklists: Checklist[] };
+  services: ServicesData;
 }
 
 const dayKey = () => new Date().toISOString().slice(0, 10);
@@ -218,6 +224,22 @@ function StatsWidget({ d }: { d: WidgetData }) {
       <StatCard key="rebook" icon={Users} label="Due for rebooking" value={c.rebookingDue.length} breakdown="Past the shop's rebooking window" href={routes.salon} tone={c.rebookingDue.length > 0 ? "warning" : "success"} />,
       tasksTile
     );
+  } else if (d.scope === "services") {
+    const s = d.services;
+    const today = dayKey();
+    const todays = s.jobs.filter((j) => sameDay(j.scheduledStart, today) && j.status !== "cancelled");
+    const unassigned = s.jobs.filter((j) => jobIsOpen(j.status) && !j.staffId).length;
+    const overdue = s.jobs.filter((j) => isOverdue(j)).length;
+    const waiting = s.estimates.filter((e) => e.status === "sent").length;
+    const followUps = s.estimates.filter((e) => needsFollowUp(e)).length;
+    const rev = revenueSummary(s.jobs);
+    tiles.push(
+      <StatCard key="today" icon={CalendarCheck} label="Jobs today" value={todays.length} breakdown={`${todays.filter((j) => j.status === "completed").length} done · ${todays.filter((j) => j.status === "in_progress").length} in progress`} href={routes.servicesSchedule} tone="accent" />,
+      <StatCard key="unassigned" icon={Wrench} label="Unassigned" value={unassigned} breakdown={overdue > 0 ? `${overdue} overdue` : "Nothing overdue"} href={routes.servicesDispatch} tone={overdue > 0 ? "danger" : unassigned > 0 ? "warning" : "success"} />,
+      <StatCard key="estimates" icon={FileTextIcon} label="Estimates waiting" value={waiting} breakdown={followUps > 0 ? `${followUps} need a follow-up` : "All recently sent"} href={routes.servicesEstimates} tone={followUps > 0 ? "warning" : "accent"} />,
+      <StatCard key="revenue" icon={DollarSign} label="Revenue · month" value={formatMoney(rev.month)} breakdown={rev.averageJobValue !== null ? `${formatMoney(rev.averageJobValue)} average job · ${formatMoney(rev.today)} today` : "No completed jobs yet"} href={routes.services} tone="success" />,
+      tasksTile
+    );
   } else if (d.scope === "custom") {
     const statuses = d.custom.metrics.map(metricStatus);
     const withTarget = statuses.filter((x) => x.onTarget !== null);
@@ -245,7 +267,7 @@ function StatsWidget({ d }: { d: WidgetData }) {
 
 /* --------------------------------------------------- lines of business */
 
-const BUSINESS_ICON = { Car, ChefHat, ShoppingBag, Globe, Coffee, Scissors, Blocks } as const;
+const BUSINESS_ICON = { Car, ChefHat, ShoppingBag, Wrench, Globe, Coffee, Scissors, Blocks } as const;
 
 function BusinessesWidget({ d }: { d: WidgetData }) {
   const now = useNow();
@@ -298,6 +320,25 @@ function BusinessesWidget({ d }: { d: WidgetData }) {
           { label: "Sales · 14d", value: formatMoney(d.stores.reduce((s, st) => s + st.revenue14d, 0)) },
         ],
         alert: low > 0 ? `${low} product${low === 1 ? "" : "s"} low on stock` : null,
+      };
+    }
+    if (m.id === "services") {
+      const s = d.services;
+      const today = dayKey();
+      const todays = s.jobs.filter((j) => sameDay(j.scheduledStart, today) && j.status !== "cancelled").length;
+      const unassigned = s.jobs.filter((j) => jobIsOpen(j.status) && !j.staffId).length;
+      const followUps = s.estimates.filter((e) => needsFollowUp(e)).length;
+      return {
+        module: m,
+        icon: Icon,
+        href: routes.services,
+        platform: industryById(s.settings?.industry)?.label ?? "Service Businesses",
+        stats: [
+          { label: "Jobs today", value: String(todays) },
+          { label: "Unassigned", value: String(unassigned) },
+          { label: "Revenue · month", value: formatMoney(revenueSummary(s.jobs).month) },
+        ],
+        alert: unassigned > 0 ? `${unassigned} job${unassigned === 1 ? "" : "s"} without a technician` : followUps > 0 ? `${followUps} estimate${followUps === 1 ? "" : "s"} need a follow-up` : null,
       };
     }
     if (m.id === "web") {
@@ -803,6 +844,18 @@ export function renderWidget(id: string, d: WidgetData): React.ReactNode {
       return <StoreSyncWidget d={d} />;
     case "lowstock":
       return <LowStockWidget d={d} />;
+    case "servicesToday":
+      return <TodayJobsWidget d={d.services} canEdit={d.canEdit} />;
+    case "servicesDispatch":
+      return <DispatchSnapshotWidget d={d.services} />;
+    case "servicesEstimates":
+      return <EstimatesPipelineWidget d={d.services} canEdit={d.canEdit} />;
+    case "servicesLeads":
+      return <LeadsWidget d={d.services} canEdit={d.canEdit} />;
+    case "servicesTeam":
+      return <TeamWidget d={d.services} canEdit={d.canEdit} />;
+    case "servicesSetup":
+      return <SetupWidget d={d.services} canEdit={d.canEdit} />;
     case "webProperties":
       return <PropertiesWidget properties={d.properties} canEdit={d.canEdit} />;
     case "webExpiring":

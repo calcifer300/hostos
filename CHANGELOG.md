@@ -2,7 +2,44 @@
 
 All notable changes to HostOS. Dates are when the work landed on `unified`.
 
-## [Unreleased] — 2026-09-15 · Karl's review: access per vertical, quick notes, a cleaner front door
+## [Unreleased] — 2026-09-15 · Service Businesses — the eighth vertical (Phase 1)
+
+- **A vertical for appointment, dispatch and field businesses** (migration
+  0027): auto glass, mobile mechanics, detailing, tires, towing, roadside,
+  window tint, mobile car wash, cleaning, pest control, appliance repair,
+  handyman, locksmiths, pools, painting, pressure washing, lawn care,
+  landscaping, tree services, dumpster rental, junk removal, portable
+  toilets, HVAC, plumbing, electrical, roofing, moving, construction, home
+  renovation — 29 industry templates in `src/lib/services/industries.ts`,
+  one schema. Applying a template loads the service catalogue (prices,
+  durations), the shared lead-to-review SOPs plus the industry's own,
+  and the technician's job checklist. A new industry is a new entry.
+- **CRM**: leads and customers with source, several service addresses,
+  service history, estimates, and a contact timeline (calls, texts, emails,
+  notes, every status change written automatically).
+- **Work orders**: kind, priority, technician, schedule, address (maps
+  link), price, labor hours, materials, before/after photos (links),
+  customer sign-off, job log, the template's checklist; recurring jobs
+  rebook themselves on completion; completion files the review task.
+- **Dispatch board**: pending / assigned / in progress / completed /
+  cancelled, technician filter, change technician or status on the card
+  (optimistic, animated); **schedule**: a week per technician with
+  move-to-day / reassign on the card and double-booking flagged.
+- **Estimates**: built from the catalogue, sent with a follow-up reminder,
+  accepted in one click → work order + dispatch task; win rate and won
+  value on the dashboard.
+- **Butler rules**: jobs today without a technician, overdue jobs,
+  estimates quiet for 2+ days, completed jobs missing after photos.
+- **Fixed a platform bug found on the way** (migration 0028): the
+  `(host_id, dedupe_key)` unique indexes on `tasks` and `notifications`
+  were partial, so every deduplicated insert — the path the Butler files
+  ALL its tasks and notifications through — failed silently with "no
+  unique or exclusion constraint matching the ON CONFLICT specification".
+  They are full unique indexes now.
+- New `useMounted()` for browser-timezone output (times, calendars) so
+  hydration never disagrees with the server.
+
+## 2026-09-15 · Karl's review: access per vertical, quick notes, a cleaner front door
 
 - **Per-member verticals** (migration 0026, `host_members.modules`): an
   invitation — or a member on the roster — can be limited to some of the

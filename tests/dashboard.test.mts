@@ -9,7 +9,7 @@ const eq = (label: string, got: unknown, want: unknown) => {
 };
 
 console.log("\n=== catalogue ===");
-eq("home plus one dashboard per vertical", DASHBOARDS.map((d) => d.scope), ["home", "fleet", "restaurants", "commerce", "web", "cafe", "salon", "custom"]);
+eq("home plus one dashboard per vertical", DASHBOARDS.map((d) => d.scope), ["home", "fleet", "restaurants", "commerce", "services", "web", "cafe", "salon", "custom"]);
 eq("every vertical dashboard needs its module", DASHBOARDS.filter((d) => d.scope !== "home").every((d) => d.module === d.scope), true);
 eq("a salon widget never lands on the café dashboard", availableWidgets("cafe", ["cafe", "salon"]).some((w) => w.module === "salon"), false);
 eq("the web dashboard has its own widgets", availableWidgets("web", ["web"]).map((w) => w.id).includes("webProperties"), true);

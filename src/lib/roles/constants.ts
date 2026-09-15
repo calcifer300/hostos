@@ -65,6 +65,19 @@ export function normalizeRoleName(raw: string): string {
   return known ?? titleCase(trimmed);
 }
 
+/**
+ * The founder's platform role is fixed in code, not in the table: whatever
+ * user_roles says, these sign-ins are "Founder" and nothing else, and the
+ * Settings picker refuses to change them. Add the founder's future
+ * @hostoscollective.com sign-in here before switching to it, so the new
+ * account is recognised on its first sign-in.
+ */
+export const FOUNDER_EMAILS: ReadonlySet<string> = new Set(["johnbriones774@gmail.com"]);
+
+export function isFounderEmail(email: string | null | undefined): boolean {
+  return Boolean(email) && FOUNDER_EMAILS.has(String(email).trim().toLowerCase());
+}
+
 /** Canonical, de-duplicated, empty strings dropped — the shape every consumer sees. */
 export function normalizeRoleList(raw: readonly string[] | null | undefined): string[] {
   const out: string[] = [];

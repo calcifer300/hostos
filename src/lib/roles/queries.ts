@@ -1,6 +1,6 @@
 import "server-only";
 import { runQueryOr } from "@/lib/supabase/server";
-import { normalizeRoleList } from "@/lib/roles/constants";
+import { FOUNDER_EMAILS, isFounderEmail, normalizeRoleList } from "@/lib/roles/constants";
 
 export interface UserRoleAssignment {
   email: string;
@@ -20,6 +20,8 @@ interface UserRoleRow {
  */
 export async function getUserRoles(email: string | null): Promise<string[]> {
   if (!email) return [];
+  // The founder is the founder regardless of what the table says.
+  if (isFounderEmail(email)) return ["Founder"];
 
   const { data } = await runQueryOr<{ roles: string[] | null } | null>("user_roles.for_email", null, (client) =>
     client.from("user_roles").select("roles").eq("user_email", email).maybeSingle<{ roles: string[] | null }>()
@@ -38,5 +40,8 @@ export async function getAllUserRoles(): Promise<UserRoleAssignment[]> {
       .returns<UserRoleRow[]>()
   );
 
-  return data.map((row) => ({ email: row.user_email, roles: normalizeRoleList(row.roles) }));
+  const rows = data.map((row) => ({ email: row.user_email, roles: isFounderEmail(row.user_email) ? ["Founder"] : normalizeRoleList(row.roles) }));
+  // Founders appear in the list even without a row, so nobody wonders where they went.
+  for (const email of FOUNDER_EMAILS) if (!rows.some((r) => r.email.toLowerCase() === email)) rows.unshift({ email, roles: ["Founder"] });
+  return rows;
 }

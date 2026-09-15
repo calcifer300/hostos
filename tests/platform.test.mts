@@ -1,5 +1,5 @@
 import { asWorkspaceRole, can, canAssignRole, roleRank, WORKSPACE_ROLES } from "../src/lib/roles/permissions.ts";
-import { DEV_TOOLS_ROLES, normalizeRoleList, normalizeRoleName, ROLE_OPTIONS, titleCase } from "../src/lib/roles/constants.ts";
+import { DEV_TOOLS_ROLES, isFounderEmail, normalizeRoleList, normalizeRoleName, ROLE_OPTIONS, titleCase } from "../src/lib/roles/constants.ts";
 import { verticalFromPath, asVertical, VERTICAL_ROUTES } from "../src/lib/verticals.ts";
 import { routes, safeAppRedirect } from "../src/lib/routes.ts";
 import { looksLikeAccessToken, normalizeShopDomain } from "../src/lib/commerce/shopify.ts";
@@ -66,6 +66,7 @@ eq("legacy lower-case spellings normalise", [normalizeRoleName("Virtual assistan
 eq("unknown roles are title-cased, not dropped", normalizeRoleName("night shift supervisor"), "Night Shift Supervisor");
 eq("lists de-duplicate after normalising", normalizeRoleList(["tech lead", "Tech Lead", "", "developer"]), ["Tech Lead", "Developer"]);
 eq("Tech Lead has dev tools", DEV_TOOLS_ROLES.has("Tech Lead"), true);
+eq("the founder is recognised case-insensitively", [isFounderEmail(" JohnBriones774@gmail.com "), isFounderEmail("karl@example.com"), isFounderEmail(null)], [true, false, false]);
 
 console.log("\n=== shopify ===");
 eq("handle becomes a domain", normalizeShopDomain("My-Shop"), "my-shop.myshopify.com");

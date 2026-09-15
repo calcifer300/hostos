@@ -19,6 +19,11 @@ _Updated 2026-09-14. Ordered by what unblocks the most._
    WhatsApp). The previous site labelled its testimonials as demo examples;
    decide whether they stay, and update `src/components/marketing/data.ts`.
 
+6. **Vercel plan:** Hobby limits crons to once a day, so the Butler and the Shopify
+   sync run daily (13:00 / 13:30 UTC) plus on demand. Upgrading the project to
+   Pro and restoring `*/15 * * * *` / `0 * * * *` in `vercel.json` brings back
+   the 15-minute Butler and hourly sync.
+
 ## Next (product)
 
 - **Restaurants:** DoorDash order/menu ingestion beyond CSV (Merchant Portal

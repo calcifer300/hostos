@@ -143,7 +143,7 @@ provider (Gemini, `GEMINI_MODEL`, default `gemini-3.6-flash`). `grounding.ts`
 assembles context (knowledge base + reply templates + `search_turo_articles`
 RPC over the 725-article policy library); `signals.ts` turns workspace state
 into the facts a briefing reasons over; `tasks.ts` is the rule-based task and
-notification generator that `/api/cron/butler` runs every 15 minutes;
+notification generator that `/api/cron/butler` runs daily on the Hobby plan (every 15 minutes on Pro) and Butler → Run now triggers on demand;
 `prompts.ts` holds every prompt. Surfaces: `/app/butler` workspace,
 `/api/butler/{briefing,analyze}` (browser), `/api/companion/draft`
 (extension), dashboard briefing widget. The Butler never sends, cancels or

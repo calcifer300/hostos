@@ -59,7 +59,7 @@ name and contact details are in `src/lib/site.ts`; every word of copy is in
   RLS on, service-role only.
 - API: `/api/turo/*` (Companion ingest), `/api/companion/*` (draft, summary,
   alerts, context, restaurants/status, commerce/sync), `/api/butler/*`,
-  `/api/cron/{digest,butler,commerce}` (vercel.json: daily / 15 min / hourly).
+  `/api/cron/{digest,butler,commerce}` (vercel.json: all daily on the Hobby plan; Pro unlocks 15-min Butler and hourly commerce).
 - Server actions per domain in `src/lib/actions/*`, all `{ ok, error? }`,
   permission-checked.
 

@@ -126,16 +126,16 @@ export function VerticalChooser({ firstName, enabled, current, canEnable, worksp
               onClick={() => choose(m.id)}
               whileHover={locked ? undefined : { y: -4 }}
               whileTap={locked ? undefined : { scale: 0.985 }}
-              style={{ ["--hue" as string]: m.hue }}
+              style={{ ["--hue" as string]: m.hue, ["--spot" as string]: m.hue }}
               className={cn(
-                "group relative flex h-full flex-col overflow-hidden rounded-2xl border bg-card p-5 text-left shadow-[var(--shadow-card)] transition-[border-color,box-shadow] duration-300",
+                "spot group relative flex h-full flex-col overflow-hidden rounded-2xl border bg-card p-5 text-left shadow-[var(--shadow-card)] transition-[border-color,box-shadow] duration-300 hover:shadow-[var(--shadow-card-hover)]",
                 isCurrent ? "border-[var(--hue)]" : "border-border hover:border-[color-mix(in_oklab,var(--hue)_55%,var(--border))]",
                 locked && "cursor-not-allowed opacity-70"
               )}
             >
               <div aria-hidden className="pointer-events-none absolute -right-14 -top-14 h-40 w-40 rounded-full opacity-30 blur-3xl transition-opacity duration-500 group-hover:opacity-60" style={{ background: m.hue }} />
               <div className="flex items-start justify-between gap-3">
-                <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-border" style={{ background: `color-mix(in oklab, ${m.hue} 16%, transparent)`, color: m.hue }}>
+                <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-border transition-transform duration-300 ease-[var(--ease-out-expo)] group-hover:-rotate-3 group-hover:scale-110" style={{ background: `color-mix(in oklab, ${m.hue} 16%, transparent)`, color: m.hue }}>
                   <Icon className="h-5 w-5" strokeWidth={1.75} />
                 </span>
                 <span className="flex items-center gap-1.5">

@@ -26,6 +26,9 @@ export function TapFeedback() {
       pulse.className = "tap-pulse";
       pulse.style.left = `${event.clientX}px`;
       pulse.style.top = `${event.clientY}px`;
+      // A card with its own hue (the vertical chooser) pulses in that hue.
+      const hue = getComputedStyle(target).getPropertyValue("--hue").trim();
+      if (hue) pulse.style.setProperty("--pulse", hue);
       pulse.addEventListener("animationend", () => pulse.remove(), { once: true });
       document.body.appendChild(pulse);
       // Belt and braces: never leave one behind if the animation is interrupted.

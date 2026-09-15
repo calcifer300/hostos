@@ -67,7 +67,7 @@ export function LoginScreen({ callbackUrl, error }: { callbackUrl?: string | nul
         href={routes.home}
         className="absolute left-6 top-6 inline-flex items-center gap-1.5 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
       >
-        <ArrowLeft className="h-3.5 w-3.5" /> Back to hostos
+        <ArrowLeft className="h-3.5 w-3.5" /> Back to HostOS
       </Link>
 
       <motion.div
@@ -100,7 +100,7 @@ export function LoginScreen({ callbackUrl, error }: { callbackUrl?: string | nul
 
         <motion.div
           variants={item}
-          className="gradient-border relative rounded-[1.75rem] border border-border bg-card p-8 shadow-[var(--shadow-elevated)]"
+          className="spot gradient-border relative rounded-[1.75rem] border border-border bg-card p-8 shadow-[var(--shadow-elevated)]"
         >
           <div className="mb-8 flex flex-col items-center text-center lg:items-start lg:text-left">
             <Logo size="md" />

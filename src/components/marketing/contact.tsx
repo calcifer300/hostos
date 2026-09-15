@@ -44,7 +44,7 @@ export function Contact() {
           <Reveal delay={0.1} className="space-y-3">
             <a
               href={`mailto:${SITE.contactEmail}`}
-              className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4 text-[14px] shadow-[var(--shadow-card)] transition-[border-color,transform] duration-200 hover:border-accent/40 active:scale-[0.99]"
+              className="spot flex items-center gap-3 rounded-2xl border border-border bg-card p-4 text-[14px] shadow-[var(--shadow-card)] transition-[border-color,transform] duration-200 hover:border-accent/40 active:scale-[0.99]"
             >
               <span className="flex h-9 w-9 items-center justify-center rounded-full bg-accent/10 text-accent">
                 <Mail className="h-4 w-4" />
@@ -55,7 +55,7 @@ export function Contact() {
               href={SITE.whatsapp}
               target="_blank"
               rel="noreferrer"
-              className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4 text-[14px] shadow-[var(--shadow-card)] transition-[border-color,transform] duration-200 hover:border-accent/40 active:scale-[0.99]"
+              className="spot flex items-center gap-3 rounded-2xl border border-border bg-card p-4 text-[14px] shadow-[var(--shadow-card)] transition-[border-color,transform] duration-200 hover:border-accent/40 active:scale-[0.99]"
             >
               <span className="flex h-9 w-9 items-center justify-center rounded-full bg-success/10 text-success">
                 <Phone className="h-4 w-4" />

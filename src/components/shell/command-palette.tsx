@@ -135,7 +135,7 @@ export function CommandPalette({ sources }: { sources: PaletteSources }) {
 
   return (
     <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) setQuery(""); }}>
-      <DialogContent size="lg" className="top-[18%] translate-y-0 p-0">
+      <DialogContent size="lg" hideClose className="top-[18%] translate-y-0 p-0">
         <DialogTitle className="sr-only">Search HostOS</DialogTitle>
         <div className="flex items-center gap-3 border-b border-border px-4 py-3">
           <Search className="h-4 w-4 text-muted-foreground" />

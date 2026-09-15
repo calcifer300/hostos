@@ -113,7 +113,7 @@ export function AiSection() {
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {SKILLS.map((s, i) => (
-              <Reveal key={s.title} delay={i * 0.05} className="rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-card)]">
+              <Reveal key={s.title} delay={i * 0.05} className="spot rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-card)]">
                 <s.icon className="h-5 w-5 text-accent" strokeWidth={1.75} />
                 <h3 className="mt-3 text-[14px] font-semibold tracking-tight">{s.title}</h3>
                 <p className="mt-1.5 text-[12.5px] leading-relaxed text-muted-foreground">{s.text}</p>

@@ -51,7 +51,7 @@ export function IconBadge({ icon: Icon, className }: { icon: LucideIcon; classNa
   return (
     <span
       className={cn(
-        "inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-[linear-gradient(135deg,color-mix(in_oklab,var(--accent)_16%,transparent),color-mix(in_oklab,var(--accent-2)_10%,transparent))] text-accent",
+        "inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-[linear-gradient(135deg,color-mix(in_oklab,var(--accent)_16%,transparent),color-mix(in_oklab,var(--accent-2)_10%,transparent))] text-accent transition-transform duration-300 ease-[var(--ease-out-expo)] group-hover:-rotate-3 group-hover:scale-110",
         className
       )}
     >
@@ -94,7 +94,7 @@ export function WhoWeAre() {
 
         <Stagger className="grid grid-cols-2 gap-4">
           {STATS.map((stat) => (
-            <StaggerItem key={stat.label} className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
+            <StaggerItem key={stat.label} className="spot rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
               <p className="text-[36px] font-semibold leading-none tracking-tight text-foreground">
                 <AnimatedNumber value={stat.value} />
                 <span className="text-gradient">{stat.suffix}</span>
@@ -127,7 +127,7 @@ export function Services() {
                 whileTap={{ scale: 0.99 }}
                 transition={{ type: "spring", stiffness: 300, damping: 24 }}
                 className={cn(
-                  "group relative h-full overflow-hidden rounded-2xl border bg-card p-5 shadow-[var(--shadow-card)] transition-colors hover:border-accent/40",
+                  "spot group relative h-full overflow-hidden rounded-2xl border bg-card p-5 shadow-[var(--shadow-card)] transition-colors hover:border-accent/40",
                   s.featured ? "gradient-border border-transparent" : "border-border"
                 )}
               >
@@ -165,18 +165,33 @@ export function Industries() {
             We&rsquo;ve worked with businesses like yours
           </p>
         </Reveal>
-        <Stagger className="flex flex-wrap justify-center gap-3" gap={0.04}>
-          {INDUSTRIES.map((i) => (
-            <StaggerItem key={i.label}>
-              <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-[13px] text-foreground transition-[border-color,transform] duration-200 hover:border-accent/40 active:scale-[0.97]">
-                <i.icon className="h-4 w-4 text-accent" strokeWidth={1.75} />
-                {i.label}
-              </span>
-            </StaggerItem>
-          ))}
-        </Stagger>
+        <Reveal delay={0.1} className="marquee-pause relative overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_10%,#000_90%,transparent)]">
+          <IndustryRow items={INDUSTRIES} className="animate-marquee" />
+          <IndustryRow items={[...INDUSTRIES.slice(5), ...INDUSTRIES.slice(0, 5)]} className="mt-3 animate-marquee-reverse" />
+        </Reveal>
       </div>
     </section>
+  );
+}
+
+/**
+ * One marquee row: the chips twice over, so the track can slide by half its
+ * width and loop without a seam. The second copy is decoration only.
+ */
+function IndustryRow({ items, className }: { items: typeof INDUSTRIES; className?: string }) {
+  return (
+    <div className={cn("flex w-max gap-3", className)}>
+      {[...items, ...items].map((i, idx) => (
+        <span
+          key={`${i.label}-${idx}`}
+          aria-hidden={idx >= items.length || undefined}
+          className="inline-flex shrink-0 items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-[13px] text-foreground transition-[border-color,scale] duration-200 hover:border-accent/40 hover:scale-105"
+        >
+          <i.icon className="h-4 w-4 text-accent" strokeWidth={1.75} />
+          {i.label}
+        </span>
+      ))}
+    </div>
   );
 }
 
@@ -215,7 +230,7 @@ export function PlatformIntro() {
                 whileHover={{ y: -4 }}
                 whileTap={{ scale: 0.99 }}
                 transition={{ type: "spring", stiffness: 300, damping: 24 }}
-                className="group block h-full rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-card)] transition-colors hover:border-accent/40"
+                className="spot group block h-full rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-card)] transition-colors hover:border-accent/40"
               >
                 <div className="flex items-start justify-between gap-3">
                   <IconBadge icon={l.icon} />
@@ -251,7 +266,7 @@ export function Features() {
             <StaggerItem
               key={f.title}
               className={cn(
-                "group relative overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)] transition-colors hover:border-accent/40",
+                "spot group relative overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)] transition-colors hover:border-accent/40",
                 f.span === "wide" && "md:col-span-2",
                 f.span === "tall" && "md:row-span-2"
               )}
@@ -336,7 +351,7 @@ export function Integrations() {
           {INTEGRATIONS.map((i) => (
             <StaggerItem
               key={i.name}
-              className="flex h-full flex-col rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-card)] transition-colors hover:border-accent/40"
+              className="spot flex h-full flex-col rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-card)] transition-colors hover:border-accent/40"
             >
               <div className="flex items-start justify-between gap-3">
                 <IconBadge icon={i.icon} />
@@ -374,7 +389,7 @@ export function Team() {
             />
             <Stagger className="grid grid-cols-1 gap-3 sm:grid-cols-3" gap={0.06}>
               {CHANNELS.map((c) => (
-                <StaggerItem key={c.title} className="rounded-2xl border border-border bg-card p-4 shadow-[var(--shadow-card)]">
+                <StaggerItem key={c.title} className="spot rounded-2xl border border-border bg-card p-4 shadow-[var(--shadow-card)]">
                   <c.icon className="h-4 w-4 text-accent" strokeWidth={1.75} />
                   <p className="mt-3 text-[13.5px] font-semibold tracking-tight">{c.title}</p>
                   <p className="mt-1 text-[12px] leading-relaxed text-muted-foreground">{c.description}</p>
@@ -393,7 +408,7 @@ export function Team() {
 
           <Stagger className="grid grid-cols-1 gap-4 sm:grid-cols-2" gap={0.07}>
             {TEAM_POINTS.map((p) => (
-              <StaggerItem key={p.title} className="rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-card)] transition-colors hover:border-accent/40">
+              <StaggerItem key={p.title} className="spot rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-card)] transition-colors hover:border-accent/40">
                 <IconBadge icon={p.icon} />
                 <h3 className="mt-4 text-[15px] font-semibold tracking-tight">{p.title}</h3>
                 <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">{p.description}</p>
@@ -443,7 +458,7 @@ export function Work() {
               <motion.article
                 whileHover={{ y: -4 }}
                 transition={{ type: "spring", stiffness: 300, damping: 24 }}
-                className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)] transition-colors hover:border-accent/40"
+                className="spot group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)] transition-colors hover:border-accent/40"
               >
                 <div className="relative h-36 overflow-hidden border-b border-border bg-[linear-gradient(135deg,color-mix(in_oklab,var(--accent)_14%,transparent),color-mix(in_oklab,var(--accent-2)_10%,transparent))]">
                   <div aria-hidden className="bg-grid absolute inset-0 opacity-70" />
@@ -479,7 +494,7 @@ export function Process() {
         <SectionHeading eyebrow="Our process" title="How we work together." description="Four steps, no surprises — and you're in the loop at every one." />
         <Stagger className="grid grid-cols-1 gap-4 md:grid-cols-4" gap={0.1}>
           {PROCESS.map((s, i) => (
-            <StaggerItem key={s.step} className="relative rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-card)]">
+            <StaggerItem key={s.step} className="spot relative rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-card)]">
               {i < PROCESS.length - 1 && <span aria-hidden className="absolute -right-2 top-8 hidden h-px w-4 bg-border md:block" />}
               <p className="text-gradient text-[28px] font-semibold leading-none tracking-tight">{s.step}</p>
               <h3 className="mt-4 text-[15px] font-semibold tracking-tight">{s.title}</h3>
@@ -501,7 +516,7 @@ export function Testimonials() {
         <SectionHeading eyebrow="Testimonials" title="What our clients say." align="center" />
         <Stagger className="grid grid-cols-1 gap-4 md:grid-cols-3" gap={0.08}>
           {TESTIMONIALS.map((t) => (
-            <StaggerItem key={t.name} className="flex h-full flex-col rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
+            <StaggerItem key={t.name} className="spot flex h-full flex-col rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-card)] transition-[translate,border-color] duration-300 ease-[var(--ease-out-expo)] hover:-translate-y-1 hover:border-accent/40">
               <div className="mb-4 flex gap-0.5 text-warning" aria-label="5 stars">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <Star key={i} className="h-3.5 w-3.5 fill-current" />

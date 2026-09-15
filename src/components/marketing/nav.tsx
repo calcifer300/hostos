@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { AnimatePresence, motion, useScroll, useMotionValueEvent } from "framer-motion";
+import { AnimatePresence, motion, useScroll, useMotionValueEvent, useSpring } from "framer-motion";
 import { ArrowRight, Menu, X } from "lucide-react";
 import { Logo } from "@/components/brand/logo-mark";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,9 @@ import { cn } from "@/lib/utils";
 export function MarketingNav() {
   const [scrolled, setScrolled] = React.useState(false);
   const [open, setOpen] = React.useState(false);
-  const { scrollY } = useScroll();
+  const { scrollY, scrollYProgress } = useScroll();
+  // A hairline at the very top fills as the page is read.
+  const progress = useSpring(scrollYProgress, { stiffness: 160, damping: 28, mass: 0.4 });
 
   useMotionValueEvent(scrollY, "change", (y) => setScrolled(y > 24));
 
@@ -24,6 +26,11 @@ export function MarketingNav() {
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       className="fixed inset-x-0 top-0 z-50 px-4 pt-4"
     >
+      <motion.div
+        aria-hidden
+        style={{ scaleX: progress }}
+        className="pointer-events-none absolute inset-x-0 top-0 h-[2px] origin-left bg-[linear-gradient(90deg,var(--accent),var(--accent-2))]"
+      />
       <div
         className={cn(
           "mx-auto flex max-w-6xl items-center justify-between rounded-2xl border px-4 py-2.5 transition-all duration-300",

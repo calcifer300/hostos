@@ -50,16 +50,24 @@ function NavLink({
       )}
     >
       {active && (
-        <motion.span
-          layoutId="sidebar-active"
-          transition={{ type: "spring", stiffness: 520, damping: 42 }}
-          className="absolute inset-0 -z-10 rounded-lg bg-muted"
-        />
+        <>
+          <motion.span
+            layoutId="sidebar-active"
+            transition={{ type: "spring", stiffness: 520, damping: 42 }}
+            className="absolute inset-0 -z-10 rounded-lg bg-muted"
+          />
+          {/* The accent rail slides between items with the pill. */}
+          <motion.span
+            layoutId="sidebar-rail"
+            transition={{ type: "spring", stiffness: 520, damping: 42 }}
+            className={cn("absolute top-1/2 h-4 w-0.5 -translate-y-1/2 rounded-full bg-accent", collapsed ? "left-0.5" : "left-0")}
+          />
+        </>
       )}
       {!active && (
         <span className="absolute inset-0 -z-10 rounded-lg bg-muted/0 transition-colors duration-150 group-hover:bg-muted/60" />
       )}
-      <Icon className="h-[15px] w-[15px] shrink-0" strokeWidth={1.75} />
+      <Icon className="h-[15px] w-[15px] shrink-0 transition-transform duration-300 ease-[var(--ease-out-expo)] group-hover:-rotate-6 group-hover:scale-110" strokeWidth={1.75} />
       {!collapsed && (
         <>
           <span className="flex-1 truncate">{item.label}</span>

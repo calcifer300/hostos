@@ -133,6 +133,13 @@
   --animate-marquee: marquee 40s linear infinite;
   --animate-spin-slow: spin 14s linear infinite;
   --animate-gradient: gradient-shift 9s ease infinite;
+  --animate-marquee-reverse: marquee-reverse 46s linear infinite;
+  --animate-drift: drift 18s ease-in-out infinite;
+  --animate-drift-slow: drift 26s ease-in-out infinite reverse;
+  --animate-dialog-in: dialog-in 0.36s var(--ease-out-expo) both;
+  --animate-dialog-out: dialog-out 0.22s var(--ease-out-expo) both;
+  --animate-overlay-in: overlay-in 0.28s ease-out both;
+  --animate-overlay-out: overlay-out 0.22s ease-in both;
 }
 
 * {
@@ -248,7 +255,8 @@ body::before {
   height: 14px;
   margin: 0;
   border-radius: 999px;
-  background: radial-gradient(circle, color-mix(in oklab, var(--accent) 55%, transparent) 0%, color-mix(in oklab, var(--accent) 25%, transparent) 45%, transparent 72%);
+  /* --pulse is the pressed element's own --hue when it has one (the vertical chooser), the accent otherwise. */
+  background: radial-gradient(circle, color-mix(in oklab, var(--pulse, var(--accent)) 55%, transparent) 0%, color-mix(in oklab, var(--pulse, var(--accent)) 25%, transparent) 45%, transparent 72%);
   pointer-events: none;
   transform: translate(-50%, -50%) scale(0.4);
   animation: tap-pulse 520ms var(--ease-out-expo) forwards;
@@ -283,7 +291,93 @@ body::before {
   -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 20%, #000 40%, transparent 100%);
 }
 
+/* ------------------------------------------------------------- spotlight */
+
+/*
+ * A glow that follows the pointer across a card. One document listener
+ * (components/motion/spotlight.tsx) writes --mx/--my on the card under the
+ * pointer; everything else is CSS, so a page of forty cards costs nothing
+ * until one is hovered. Opt in with the `spot` class; set --spot to tint the
+ * glow in the card's own colour (the vertical chooser does). Uses ::after so
+ * it composes with .gradient-border's ::before.
+ */
+.spot {
+  position: relative;
+  isolation: isolate;
+}
+.spot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    420px circle at var(--mx, 50%) var(--my, 50%),
+    color-mix(in oklab, var(--spot, var(--accent)) 16%, transparent),
+    transparent 62%
+  );
+  transition: opacity 0.45s var(--ease-out-expo);
+}
+.spot:hover::after {
+  opacity: 1;
+}
+
+/* A light sweep across filled buttons on hover — restarts on every hover. */
+.btn-shine {
+  overflow: hidden;
+}
+.btn-shine::after {
+  content: "";
+  position: absolute;
+  top: -20%;
+  bottom: -20%;
+  left: 0;
+  width: 38%;
+  transform: translateX(-160%) skewX(-18deg);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.32), transparent);
+  pointer-events: none;
+}
+.btn-shine:hover::after {
+  animation: shine 0.85s var(--ease-out-expo) forwards;
+}
+
+/* Marquee rows pause while the pointer is over them, so a chip can be read. */
+.marquee-pause:hover > * {
+  animation-play-state: paused;
+}
+
 /* ------------------------------------------------------------- keyframes */
+
+@keyframes shine {
+  to { transform: translateX(420%) skewX(-18deg); }
+}
+@keyframes marquee-reverse {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+@keyframes drift {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  33% { transform: translate3d(36px, -28px, 0) scale(1.08); }
+  66% { transform: translate3d(-24px, 22px, 0) scale(0.96); }
+}
+@keyframes dialog-in {
+  from { opacity: 0; transform: scale(0.95) translateY(12px); filter: blur(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+}
+@keyframes dialog-out {
+  from { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+  to { opacity: 0; transform: scale(0.97) translateY(8px); filter: blur(6px); }
+}
+@keyframes overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes overlay-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
 
 @keyframes shimmer {
   100% { transform: translateX(100%); }

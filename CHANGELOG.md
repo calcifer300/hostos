@@ -2,7 +2,26 @@
 
 All notable changes to HostOS. Dates are when the work landed on `unified`.
 
-## [Unreleased] — 2026-09-15 · Seven verticals and the chooser
+## [Unreleased] — 2026-09-15 · hostoscollective.com, sign-in fix, motion pass
+
+- **Sign-in from www.hostoscollective.com works**: the canonical www → apex
+  redirect now covers `/login` and `/api/auth/*` too (they were excluded from
+  middleware entirely), so Google is only ever sent the apex callback. The www
+  callback is also registered on the OAuth client as a belt-and-braces.
+- **Motion pass**: pointer-following spotlight on every card (`.spot`, one
+  document listener), light sweep on filled buttons, headline that arrives a
+  word at a time over drifting orbs, counter-rotating industries marquee,
+  reading-progress hairline in the marketing nav, dialogs that scale-and-blur
+  in and out, sidebar accent rail that slides with the active item, stat
+  cards that count up, icon badges that answer a hover, press pulses in the
+  card's own hue on the chooser.
+- **SEO/share**: `robots.txt`, `sitemap.xml` and a generated Open Graph /
+  X card image (`/opengraph-image`) — links pasted into WhatsApp, Facebook
+  and LinkedIn now show a preview.
+- Command palette no longer draws a close "×" under its `esc` hint
+  (`DialogContent hideClose`).
+
+## 2026-09-15 · Seven verticals and the chooser
 
 - **Vertical chooser after sign-in** (`/app/start`): Turo, DoorDash, Shopify,
   GoDaddy, Coffee Shops, Barbershops, Build a custom — one designed card each.

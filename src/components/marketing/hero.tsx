@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, ChevronDown, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,16 @@ const item = {
   show: { opacity: 1, y: 0, transition: { duration: 0.75, ease: EASE } },
 };
 
+// The headline arrives a word at a time — each one rising out of a blur.
+const title = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.055, delayChildren: 0.05 } },
+};
+const word = {
+  hidden: { opacity: 0, y: 22, rotateX: -35, filter: "blur(8px)" },
+  show: { opacity: 1, y: 0, rotateX: 0, filter: "blur(0px)", transition: { duration: 0.8, ease: EASE } },
+};
+
 export function Hero() {
   return (
     <section className="relative overflow-hidden pt-32 pb-16 md:pt-40 md:pb-24">
@@ -27,6 +38,9 @@ export function Hero() {
         aria-hidden
         className="absolute left-1/2 top-0 -z-10 h-[560px] w-[900px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,var(--accent-glow),transparent)] blur-3xl"
       />
+      {/* Two slow orbs drifting behind the copy give the hero depth without competing with it. */}
+      <div aria-hidden className="pointer-events-none absolute -left-24 top-28 -z-10 h-72 w-72 rounded-full bg-accent/20 blur-3xl animate-drift" />
+      <div aria-hidden className="pointer-events-none absolute -right-20 top-48 -z-10 h-80 w-80 rounded-full bg-accent-2/15 blur-3xl animate-drift-slow" />
 
       <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-12 px-6 lg:grid-cols-[1.05fr_1fr] lg:gap-10">
         <motion.div variants={container} initial="hidden" animate="show" className="relative">
@@ -39,10 +53,20 @@ export function Hero() {
           </motion.p>
 
           <motion.h1
-            variants={item}
+            variants={title}
+            style={{ perspective: 900 }}
             className="text-balance text-[40px] font-semibold leading-[1.05] tracking-[-0.03em] sm:text-[54px] md:text-[62px]"
           >
-            {HERO.title[0]} <span className="text-gradient">{HERO.title[1]}</span>
+            {HERO.title[0].split(" ").map((w, i) => (
+              <React.Fragment key={i}>
+                <motion.span variants={word} className="inline-block">
+                  {w}
+                </motion.span>{" "}
+              </React.Fragment>
+            ))}
+            <motion.span variants={word} className="text-gradient inline-block">
+              {HERO.title[1]}
+            </motion.span>
           </motion.h1>
 
           <motion.p variants={item} className="mt-6 max-w-xl text-pretty text-[16px] leading-relaxed text-muted-foreground md:text-[18px]">
@@ -71,8 +95,8 @@ export function Hero() {
 
           <motion.dl variants={item} className="mt-10 grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-4">
             {HERO.facts.map((f) => (
-              <div key={f.label}>
-                <dt className="text-[20px] font-semibold tracking-tight text-foreground">{f.value}</dt>
+              <div key={f.label} className="group border-l border-border pl-3 transition-colors duration-300 hover:border-accent">
+                <dt className="text-[20px] font-semibold tracking-tight text-foreground transition-transform duration-300 ease-[var(--ease-out-expo)] group-hover:translate-x-0.5">{f.value}</dt>
                 <dd className="text-[12px] text-muted-foreground">{f.label}</dd>
               </div>
             ))}

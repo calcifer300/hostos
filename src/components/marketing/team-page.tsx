@@ -35,7 +35,7 @@ export function TeamPage() {
           <SectionHeading eyebrow="What sets us apart" title="Built on standards, not shortcuts." description="Here's what makes our team different from a typical freelance VA arrangement." />
           <Stagger className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4" gap={0.07}>
             {TEAM_POINTS.map((p) => (
-              <StaggerItem key={p.title} className="rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-card)] transition-colors hover:border-accent/40">
+              <StaggerItem key={p.title} className="spot rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-card)] transition-colors hover:border-accent/40">
                 <IconBadge icon={p.icon} />
                 <h3 className="mt-4 text-[15px] font-semibold tracking-tight">{p.title}</h3>
                 <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">{p.description}</p>
@@ -72,7 +72,7 @@ export function TeamPage() {
           <SectionHeading eyebrow="Channels" title="We've got every channel covered." description="Whether your customers prefer to call, email, or chat — our team is ready, and every conversation lands in your HostOS workspace." align="center" />
           <Stagger className="grid grid-cols-1 gap-4 md:grid-cols-3" gap={0.08}>
             {CHANNELS.map((c) => (
-              <StaggerItem key={c.title} className="rounded-2xl border border-border bg-card p-6 text-center shadow-[var(--shadow-card)]">
+              <StaggerItem key={c.title} className="spot rounded-2xl border border-border bg-card p-6 text-center shadow-[var(--shadow-card)]">
                 <IconBadge icon={c.icon} className="mx-auto" />
                 <h3 className="mt-4 text-[15px] font-semibold tracking-tight">{c.title}</h3>
                 <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">{c.description}</p>

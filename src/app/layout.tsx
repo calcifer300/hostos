@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { RegisterServiceWorker } from "@/components/pwa/register-sw";
 import { TapFeedback } from "@/components/motion/tap-feedback";
+import { SpotlightEffect } from "@/components/motion/spotlight";
 import { getPublicAppUrl, SITE } from "@/lib/site";
 import "./globals.css";
 
@@ -57,6 +58,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Toaster />
           <RegisterServiceWorker />
           <TapFeedback />
+          <SpotlightEffect />
         </ThemeProvider>
       </body>
     </html>

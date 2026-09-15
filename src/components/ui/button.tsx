@@ -5,14 +5,14 @@ import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "relative inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-[background-color,color,border-color,box-shadow,transform,opacity] duration-200 ease-[var(--ease-out-expo)] active:scale-[0.985] disabled:pointer-events-none disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 [&_svg]:size-4 [&_svg]:shrink-0",
+  "relative inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-[background-color,color,border-color,box-shadow,transform,translate,scale,opacity,filter] duration-200 ease-[var(--ease-out-expo)] active:scale-[0.985] disabled:pointer-events-none disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         primary:
-          "bg-accent text-accent-foreground shadow-[0_1px_0_rgba(255,255,255,0.12)_inset,0_8px_24px_-12px_var(--accent)] hover:brightness-110",
+          "btn-shine bg-accent text-accent-foreground shadow-[0_1px_0_rgba(255,255,255,0.12)_inset,0_8px_24px_-12px_var(--accent)] hover:-translate-y-px hover:brightness-110 hover:shadow-[0_1px_0_rgba(255,255,255,0.12)_inset,0_14px_32px_-12px_var(--accent)]",
         gradient:
-          "bg-[linear-gradient(120deg,var(--accent),var(--accent-2))] text-white shadow-[0_1px_0_rgba(255,255,255,0.18)_inset,0_12px_32px_-12px_var(--accent)] hover:brightness-110",
+          "btn-shine bg-[linear-gradient(120deg,var(--accent),var(--accent-2))] text-white shadow-[0_1px_0_rgba(255,255,255,0.18)_inset,0_12px_32px_-12px_var(--accent)] hover:-translate-y-px hover:brightness-110 hover:shadow-[0_1px_0_rgba(255,255,255,0.18)_inset,0_18px_40px_-12px_var(--accent)]",
         secondary: "border border-border bg-card text-foreground hover:border-border-strong hover:bg-muted/60",
         ghost: "bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground",
         outline: "border border-border bg-transparent text-foreground hover:bg-muted/60",

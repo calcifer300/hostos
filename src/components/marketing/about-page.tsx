@@ -41,7 +41,7 @@ export function AboutPage() {
           <SectionHeading eyebrow="Founder's background" title="We understand businesses from the inside out." description="Our founder's background spans the full spectrum — operations, customer service, technology, leadership, and real business strategy — and it is what every member of the Collective is trained in." />
           <Stagger className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" gap={0.06}>
             {EXPERTISE.map((e) => (
-              <StaggerItem key={e.title} className="rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-card)] transition-colors hover:border-accent/40">
+              <StaggerItem key={e.title} className="spot rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-card)] transition-colors hover:border-accent/40">
                 <IconBadge icon={e.icon} />
                 <h3 className="mt-4 text-[15px] font-semibold tracking-tight">{e.title}</h3>
                 <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">{e.description}</p>

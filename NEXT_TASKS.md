@@ -4,10 +4,10 @@ _Updated 2026-09-14. Ordered by what unblocks the most._
 
 ## Now (before / at deploy)
 
-1. **Apply migrations 0017–0024** in the Supabase SQL editor
-   (`supabase/bundles/0017-0024.sql`). Until then restaurants, commerce,
-   tasks, notifications, templates, roles and dashboard layouts run in
-   degraded (empty) mode.
+1. **Apply migrations 0017–0025** in the Supabase SQL editor
+   (`supabase/bundles/0017-0025.sql`). Until then restaurants, commerce,
+   web, cafés, barbershops, custom, tasks, notifications, templates, roles
+   and dashboard layouts run in degraded (empty) mode.
 2. **Set the new Vercel env vars** — `NEXT_PUBLIC_APP_URL`,
    `HOSTOS_ENCRYPTION_KEY`, `CRON_SECRET`, `MAIL_FROM_EMAIL` (+ `RESEND_API_KEY`).
 3. **Deploy `unified` to hostos-ten.vercel.app** and run the smoke test in
@@ -25,6 +25,11 @@ _Updated 2026-09-14. Ordered by what unblocks the most._
    the 15-minute Butler and hourly sync.
 
 ## Next (product)
+
+- **New verticals, second pass:** CSV import for café sales (Square/Toast
+  exports) and barbershop appointments (Square Appointments/Booksy); SMS
+  reminders for rebooking and no-shows once the SMS channel exists; GoDaddy
+  API sync of domain expiries; weekly checklist reset on a cron.
 
 - **Restaurants:** DoorDash order/menu ingestion beyond CSV (Merchant Portal
   reads via the Companion, then the DoorDash Drive/Marketplace APIs when

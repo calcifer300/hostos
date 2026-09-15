@@ -4,16 +4,17 @@ import type { WorkspaceModule } from "@/lib/modules";
  * The dashboards and their widget catalogue.
  *
  * Every line of business gets its own dashboard — a Turo fleet is not run
- * from the same screen as a DoorDash kitchen or a Shopify store — and the
- * workspace Home ties them together. Layout (order + visibility) is stored
- * per person, per workspace, per dashboard (migration 0019, one JSON object
- * keyed by scope); the catalogue itself lives in code so a widget that is
- * removed simply disappears from stored layouts.
+ * from the same screen as a DoorDash kitchen, a Shopify store, a client's
+ * websites, a café or a barbershop — and the workspace Home ties them
+ * together. Layout (order + visibility) is stored per person, per workspace,
+ * per dashboard (migration 0019, one JSON object keyed by scope); the
+ * catalogue itself lives in code so a widget that is removed simply
+ * disappears from stored layouts.
  *
  * Client-safe: no imports beyond a type.
  */
 
-export type DashboardScope = "home" | "fleet" | "restaurants" | "commerce";
+export type DashboardScope = "home" | WorkspaceModule;
 
 export interface DashboardDefinition {
   scope: DashboardScope;
@@ -22,7 +23,7 @@ export interface DashboardDefinition {
   eyebrow: string;
   title: string;
   description: string;
-  /** The platform this line of business runs on today, for the header chip. */
+  /** The platform or business type this line of business runs on today, for the header chip. */
   platform: string | null;
 }
 
@@ -31,6 +32,10 @@ export const DASHBOARDS: DashboardDefinition[] = [
   { scope: "fleet", module: "fleet", eyebrow: "Fleet operations", title: "Fleet dashboard", description: "Reservations, vehicles, guests and risk — what the fleet needs from you today.", platform: "Turo" },
   { scope: "restaurants", module: "restaurants", eyebrow: "Restaurant operations", title: "Restaurant dashboard", description: "Store status, menu sync, delivery orders and stock across every storefront.", platform: "DoorDash" },
   { scope: "commerce", module: "commerce", eyebrow: "Commerce operations", title: "Commerce dashboard", description: "Sales, orders, inventory and sync health across your online stores.", platform: "Shopify" },
+  { scope: "web", module: "web", eyebrow: "Web & domains", title: "Web dashboard", description: "Every site and domain you look after: uptime, SSL, renewals — checked daily and on demand.", platform: "GoDaddy" },
+  { scope: "cafe", module: "cafe", eyebrow: "Café operations", title: "Coffee shop dashboard", description: "Today's sales against last week, stock before it runs dry, who's on shift, and the routines that open and close the shop.", platform: "Coffee Shops" },
+  { scope: "salon", module: "salon", eyebrow: "Barbershop operations", title: "Barbershop dashboard", description: "Today's chairs and appointments, no-shows, clients due for a rebooking reminder, revenue per barber.", platform: "Barbershops" },
+  { scope: "custom", module: "custom", eyebrow: "Custom operations", title: "Custom dashboard", description: "The numbers you chose to watch, the checklists that keep the business running, and a line to the people who build the rest.", platform: "Build a custom" },
 ];
 
 export function dashboardFor(scope: DashboardScope): DashboardDefinition {
@@ -52,7 +57,7 @@ export interface WidgetDefinition {
   size: WidgetSize;
 }
 
-const ALL: DashboardScope[] = ["home", "fleet", "restaurants", "commerce"];
+const ALL: DashboardScope[] = ["home", "fleet", "restaurants", "commerce", "web", "cafe", "salon", "custom"];
 
 export const WIDGETS: WidgetDefinition[] = [
   // Shared — the content adapts to the dashboard it sits on.
@@ -90,6 +95,31 @@ export const WIDGETS: WidgetDefinition[] = [
 
   // Stock — restaurants and stores both carry inventory.
   { id: "lowstock", title: "Low stock", description: "Products and items running out.", module: null, scopes: ["home", "restaurants", "commerce"], size: "third" },
+
+  // Web & domains (GoDaddy)
+  { id: "webProperties", title: "Sites & domains", description: "Every property with status, SSL and renewal — add, edit, check now.", module: "web", scopes: ["web"], size: "full" },
+  { id: "webExpiring", title: "Renewals & SSL due", description: "Domains and certificates expiring inside 45 days.", module: "web", scopes: ["home", "web"], size: "half" },
+  { id: "webStatus", title: "Uptime", description: "Which sites answered on the last check, and how fast.", module: "web", scopes: ["home", "web"], size: "half" },
+
+  // Cafés
+  { id: "cafeSales", title: "Sales · 14 days", description: "Daily sales across locations, with today logged in one tap.", module: "cafe", scopes: ["home", "cafe"], size: "two-thirds" },
+  { id: "cafeStock", title: "Stock", description: "Milk, beans, cups — what's low, update counts in place.", module: "cafe", scopes: ["home", "cafe"], size: "third" },
+  { id: "cafeShifts", title: "Shifts", description: "Who's on today and tomorrow.", module: "cafe", scopes: ["cafe"], size: "half" },
+  { id: "cafeChecklists", title: "Opening & closing", description: "Today's routines, ticked off by whoever is there.", module: "cafe", scopes: ["cafe"], size: "half" },
+  { id: "cafeLocations", title: "Locations", description: "Every shop, with hours and POS.", module: "cafe", scopes: ["cafe"], size: "full" },
+
+  // Barbershops
+  { id: "salonSchedule", title: "Today's chairs", description: "Every appointment today — complete, no-show or cancel in one tap.", module: "salon", scopes: ["home", "salon"], size: "two-thirds" },
+  { id: "salonRebooking", title: "Due for a rebooking", description: "Clients past the rebooking window, longest first.", module: "salon", scopes: ["home", "salon"], size: "third" },
+  { id: "salonRevenue", title: "Revenue per barber", description: "Completed appointments over 14 days, by staff.", module: "salon", scopes: ["salon"], size: "half" },
+  { id: "salonShifts", title: "Shifts", description: "Who's on the chairs today and tomorrow.", module: "salon", scopes: ["salon"], size: "half" },
+  { id: "salonChecklists", title: "Opening & closing", description: "Today's routines, ticked off by whoever is there.", module: "salon", scopes: ["salon"], size: "half" },
+  { id: "salonLocations", title: "Locations", description: "Every shop, with chairs and hours.", module: "salon", scopes: ["salon"], size: "half" },
+
+  // Custom
+  { id: "customMetrics", title: "Your numbers", description: "The metrics you chose, logged daily and charted.", module: "custom", scopes: ["home", "custom"], size: "full" },
+  { id: "customChecklists", title: "Checklists", description: "The routines that keep the business running.", module: "custom", scopes: ["custom"], size: "half" },
+  { id: "buildRequests", title: "Build requests", description: "What you've asked HostOS Collective to build, and where it stands.", module: "custom", scopes: ["custom"], size: "half" },
 ];
 
 export interface LayoutEntry {

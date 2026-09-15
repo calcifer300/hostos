@@ -25,6 +25,8 @@ export const routes = {
   // Product shell
   app: app(),
   overview: app(),
+  /** The vertical chooser people land on after signing in. */
+  start: app("start"),
   operations: app("operations"),
   board: app("board"),
   messages: app("messages"),
@@ -57,6 +59,12 @@ export const routes = {
   store: (id: string) => app(`commerce/${encodeURIComponent(id)}`),
   storeTab: (id: string, tab: string) => app(`commerce/${encodeURIComponent(id)}?tab=${encodeURIComponent(tab)}`),
 
+  // Web & domains (GoDaddy), cafés, barbershops, custom — each its own dashboard.
+  web: app("web"),
+  cafe: app("cafe"),
+  salon: app("salon"),
+  custom: app("custom"),
+
   // Shared
   team: app("settings/team"),
   install: "/install",
@@ -74,8 +82,10 @@ export const LEGACY_APP_PATHS = [
  * would turn the login page into an open redirect.
  */
 export function safeAppRedirect(candidate: string | null | undefined): string {
-  if (!candidate) return routes.app;
-  if (!candidate.startsWith(`${APP_BASE}/`) && candidate !== APP_BASE) return routes.app;
-  if (candidate.startsWith("//")) return routes.app;
+  // No deep link (or just the bare product root): land on the vertical
+  // chooser, so signing in always starts with "which business today?".
+  if (!candidate || candidate === APP_BASE || candidate === `${APP_BASE}/`) return routes.start;
+  if (!candidate.startsWith(`${APP_BASE}/`)) return routes.start;
+  if (candidate.startsWith("//")) return routes.start;
   return candidate;
 }

@@ -21,6 +21,15 @@ const TASK_KIND_SCOPE: Record<string, DashboardScope> = {
   store: "commerce",
   product: "commerce",
   commerce_order: "commerce",
+  web_property: "web",
+  cafe_location: "cafe",
+  cafe_stock: "cafe",
+  cafe_sales: "cafe",
+  salon_location: "salon",
+  salon_client: "salon",
+  appointment: "salon",
+  custom_metric: "custom",
+  build_request: "custom",
 };
 
 const NOTIFICATION_KIND_SCOPE: Record<string, DashboardScope> = {
@@ -30,12 +39,20 @@ const NOTIFICATION_KIND_SCOPE: Record<string, DashboardScope> = {
   restaurant: "restaurants",
   order: "restaurants",
   store: "commerce",
+  web: "web",
+  cafe: "cafe",
+  salon: "salon",
+  custom: "custom",
 };
 
 const ACTIVITY_MODULE_SCOPE: Record<string, DashboardScope> = {
   fleet: "fleet",
   restaurant: "restaurants",
   commerce: "commerce",
+  web: "web",
+  cafe: "cafe",
+  salon: "salon",
+  custom: "custom",
 };
 
 export function taskScope(task: { relatedKind: string | null; href?: string | null }): DashboardScope | null {
@@ -56,6 +73,10 @@ export function scopeFromHref(href: string | null): DashboardScope | null {
   if (!href) return null;
   const path = href.replace(/^https?:\/\/[^/]+/, "");
   if (/^\/app\/(commerce)(\/|$|\?)/.test(path)) return "commerce";
+  if (/^\/app\/(web)(\/|$|\?)/.test(path)) return "web";
+  if (/^\/app\/(cafe)(\/|$|\?)/.test(path)) return "cafe";
+  if (/^\/app\/(salon)(\/|$|\?)/.test(path)) return "salon";
+  if (/^\/app\/(custom)(\/|$|\?)/.test(path)) return "custom";
   if (/^\/app\/(restaurants)(\/|$|\?)/.test(path)) return "restaurants";
   if (/^\/app\/(fleet|board|operations|messages|reservations|risk|inbox|library)(\/|$|\?)/.test(path)) return "fleet";
   return null;

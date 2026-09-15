@@ -9,7 +9,7 @@ import { runQuery, runQueryOr } from "@/lib/supabase/server";
  * module and the Butler write to.
  */
 
-export type ActivityModule = "fleet" | "restaurant" | "commerce" | "butler" | "system" | "team";
+export type ActivityModule = "fleet" | "restaurant" | "commerce" | "web" | "cafe" | "salon" | "custom" | "butler" | "system" | "team";
 
 export interface ActivityEvent {
   id: string;
@@ -31,7 +31,7 @@ interface ActivityRow {
   occurred_at: string;
 }
 
-const MODULES = new Set<string>(["fleet", "restaurant", "butler", "system", "team", "commerce"]);
+const MODULES = new Set<string>(["fleet", "restaurant", "butler", "system", "team", "commerce", "web", "cafe", "salon", "custom"]);
 
 export const getActivity = cache(async function getActivity(hostId: string, limit = 40): Promise<ActivityEvent[]> {
   const { data } = await runQueryOr<ActivityRow[]>("activity_log.list", [], (client) =>

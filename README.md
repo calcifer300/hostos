@@ -17,10 +17,10 @@ Production: **https://hostos-ten.vercel.app** (branch `unified`).
 |---|---|
 | **Public site** | `/` — HostOS Collective: business solutions (virtual assistants & support, automation & custom systems, websites, apps, SEO) and the HostOS platform. `/team`, `/about`, `/install`. |
 | **Product** | `/app/*` — gated by session. Home + one dashboard per enabled module + shared pages (tasks, notifications, Butler, insights, settings). |
-| **Modules** | `fleet` (Turo, live), `restaurants` (DoorDash, beta), `commerce` (Shopify, beta). Switched on per workspace in Settings; stored in `hosts.modules`. |
+| **Verticals** | `fleet` (Turo), `restaurants` (DoorDash), `commerce` (Shopify), `web` (GoDaddy), `cafe` (Coffee Shops), `salon` (Barbershops), `custom` (Build a custom). Chosen on `/app/start` after sign-in — the shell focuses on one at a time — and switched on per workspace (`hosts.modules`). |
 | **Companion** | `extension/` — MV3 Chrome extension that recognises turo.com, the DoorDash Merchant Portal and the Shopify admin, injects tools and syncs with a per-workspace pairing key. Packaged to `public/hostos-companion.zip` on build. |
 | **AI Butler** | One orchestrator (`src/lib/butler`) over Gemini: drafts, briefings, task generation, policy answers — grounded in the workspace knowledge base, reply templates and Turo's policy library. Never sends anything itself. |
-| **Roles** | Workspace: owner / admin / manager / member / viewer (`src/lib/roles/permissions.ts`). Platform: Founder, CTO, Lead Developer, Developer, Support, Fleet Owner, Co-host/VA (`src/lib/roles/constants.ts`). |
+| **Roles** | Workspace: owner / admin / manager / member / viewer (`src/lib/roles/permissions.ts`). Platform: Founder, CTO, Tech Lead, Lead Developer, Developer, Operations Manager, Support, Fleet Owner, Virtual Assistant, Co-Host / VA (`src/lib/roles/constants.ts`) — always Title Case; legacy spellings normalise on read. |
 | **PWA** | Installs on iPhone, iPad, Android and desktop from the browser — no app store. Guide at `/install` and in Settings → Install. |
 
 ## Run it locally
@@ -58,11 +58,12 @@ New since the unification: `NEXT_PUBLIC_APP_URL` (canonical URL),
 Migrations live in `supabase/migrations/` and are **additive and idempotent** —
 re-running is safe. Apply them in order in the Supabase SQL editor.
 
-Migrations **0017–0024** (platform repairs, restaurants, workspace layer,
-templates, marketing, integrations, commerce, roles) are bundled for one paste:
+Migrations **0017–0025** (platform repairs, restaurants, workspace layer,
+templates, marketing, integrations, commerce, roles, the four new verticals)
+are bundled for one paste:
 
 ```bash
-node scripts/bundle-migrations.mjs 0017 0024   # → supabase/bundles/0017-0024.sql
+node scripts/bundle-migrations.mjs 0017 0025   # → supabase/bundles/0017-0025.sql
 ```
 
 Code deployed ahead of a migration degrades quietly (missing tables and columns
@@ -86,7 +87,7 @@ read as empty, and the affected pages say so) rather than erroring.
           lib/*/queries.ts (never throw) · lib/actions/* ({ok, error}) · lib/butler
                                │
                                ▼
-     Home  ·  Fleet dashboard  ·  Restaurant dashboard  ·  Commerce dashboard
+     /app/start chooser → Home · Fleet · Restaurants · Commerce · Web · Café · Barbershop · Custom
      tasks · notifications · activity · Butler · insights · settings (shared)
 ```
 
@@ -120,7 +121,7 @@ src/components/        ui (primitives) · shell · dashboard · marketing · fle
 src/lib/               one folder per domain; queries.ts (reads), actions/*.ts (writes), pure engines beside them
 src/middleware.ts      the auth gate + legacy redirects (must stay middleware — see the file)
 extension/             HostOS Companion (MV3); scripts/build-extension.mjs zips it
-supabase/migrations/   0001 … 0024, additive; supabase/bundles/ for one-paste bundles
+supabase/migrations/   0001 … 0025, additive; supabase/bundles/ for one-paste bundles
 tests/                 node --experimental-strip-types, no framework
 vendor/                originals that were merged in (reference only, excluded from lint/tsc)
 docs/                  AUDIT.md (classification + dependency map), history/

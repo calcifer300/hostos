@@ -33,7 +33,7 @@ function Avatar({ user, size }: { user: SessionUser; size: number }) {
 }
 
 /** Shown beside the name, colored — the rest of `roles` (e.g. "Co-host/VA") stays a plain line underneath, same as before this existed. */
-const FOUNDER_TIER_ROLES = new Set(["Founder", "Lead Developer"]);
+const FOUNDER_TIER_ROLES = new Set(["Founder", "CTO", "Tech Lead", "Lead Developer"]);
 
 export function UserMenu({
   user,

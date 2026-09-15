@@ -1,20 +1,21 @@
 # HostOS — Project Status
 
-_Compiled 2026-09-14 · branch `unified` · production https://hostos-ten.vercel.app_
+_Compiled 2026-09-15 · branch `unified` · production https://hostos-ten.vercel.app_
 
 ## At a glance
 
 | | |
 |---|---|
 | **Positioning** | HostOS Collective = business solutions (VAs & support, automation & custom systems, websites, apps, SEO). HostOS = the operations platform everything runs on. |
-| **Verticals** | Fleet (Turo) **live** · Restaurants (DoorDash) **beta** · Commerce (Shopify) **beta** · any business via modules |
-| **Dashboards** | Home + one per line of business, each with its own widget catalogue and saved layout |
+| **Verticals** | Turo (fleet) **live** · DoorDash (restaurants) **beta** · Shopify (commerce) **beta** · GoDaddy (web & domains) **new** · Coffee Shops **new** · Barbershops **new** · Build a custom **new** |
+| **After sign-in** | `/app/start` — choose the vertical to run; the shell focuses on it (sidebar shows only that vertical + shared pages) |
+| **Dashboards** | Home + one per vertical, each with its own widget catalogue and saved layout |
 | **Tenancy** | Multi-workspace; roles owner / admin / manager / member / viewer + platform roles |
 | **Extension** | HostOS Companion v4.0 — Turo, DoorDash Merchant Portal, Shopify admin |
 | **AI** | One Butler (Gemini) — drafts, briefings, task generation, policy answers; never acts alone |
 | **Mobile** | Installable PWA on iOS / Android / desktop, guide at `/install` |
 | **Quality gates** | `tsc` clean · `eslint` clean · `npm test` 6 files all passing · production build (see CHANGELOG) |
-| **Blocking for production** | Migrations **0017–0024** must be applied in Supabase (bundle: `supabase/bundles/0017-0024.sql`); new env vars set in Vercel (see below) |
+| **Blocking for production** | Migrations **0017–0025** must be applied in Supabase (bundle: `supabase/bundles/0017-0025.sql`); 0025 adds the four new verticals' tables |
 
 ## What exists now
 
@@ -44,6 +45,17 @@ name and contact details are in `src/lib/site.ts`; every word of copy is in
 - **Commerce dashboard** — sales 14d, orders 14d, low stock, stores, tasks;
   store cards (connect Shopify / manual + CSV), sales chart, top products,
   sync health, low stock. Detail: overview, products, orders, sync runs.
+- **Web dashboard (GoDaddy)** — sites & domains table (add / edit / check now /
+  remove), renewals & SSL due, uptime; daily cron check.
+- **Coffee shop dashboard** — sales today vs same day last week, tickets, low
+  stock, on shift; 14-day sales chart with "log a day", stock counts in place,
+  shifts, opening/closing checklists, locations.
+- **Barbershop dashboard** — appointments today, revenue 7d, no-shows, due for
+  rebooking; today's chairs (book / done / no-show / cancel), rebooking list,
+  revenue per barber, shifts, checklists, locations.
+- **Custom dashboard** — numbers tracked / on target / build requests; metric
+  cards with log-today and sparklines, checklists, build requests to the
+  Collective.
 - **Shared** — tasks board, notifications, AI Butler workspace, insights,
   knowledge, automations, connectors (registry-driven), settings (modules,
   fleet identity, alerts, reply templates, team & roles, install guide).
@@ -70,8 +82,9 @@ content scripts in `manifest.json`; zip rebuilt on `npm run build`.
 
 ## Deploy checklist (hostos-ten.vercel.app)
 
-1. **Supabase → SQL editor:** paste and run `supabase/bundles/0017-0024.sql`
-   (additive, idempotent; safe to re-run).
+1. **Supabase → SQL editor:** paste and run `supabase/bundles/0017-0025.sql`
+   (additive, idempotent; safe to re-run). Without 0025 the four new
+   verticals show empty dashboards and every add says "Run migration 0025".
 2. **Vercel → Environment variables:** add `NEXT_PUBLIC_APP_URL=https://hostos-ten.vercel.app`,
    `HOSTOS_ENCRYPTION_KEY` (32 random bytes, base64), `CRON_SECRET`,
    `RESEND_API_KEY` + `MAIL_FROM_EMAIL` (if not already), keep the existing

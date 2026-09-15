@@ -4,6 +4,8 @@ import { cookies } from "next/headers";
 import { auth } from "@/auth";
 import { runQueryOr } from "@/lib/supabase/server";
 import { DEFAULT_HOST_ID } from "@/lib/host/queries";
+import type { WorkspaceModule } from "@/lib/modules";
+import { asVertical, VERTICAL_COOKIE } from "@/lib/verticals";
 import { provisionFleetForUser } from "@/lib/host/provision";
 import { requiresAuth } from "@/lib/access";
 import { can, type Permission } from "@/lib/roles/permissions";
@@ -267,3 +269,9 @@ export async function getFleetMembers(hostId: string): Promise<FleetMember[]> {
 }
 
 export { SELECTED_HOST_COOKIE };
+
+/** The vertical this browser chose on /app/start, if it is still enabled for the workspace. */
+export async function getChosenVertical(enabled: WorkspaceModule[]): Promise<WorkspaceModule | null> {
+  const chosen = asVertical((await cookies()).get(VERTICAL_COOKIE)?.value);
+  return chosen && enabled.includes(chosen) ? chosen : null;
+}

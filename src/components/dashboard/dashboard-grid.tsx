@@ -5,7 +5,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion, Reorder, useDragControls } from "framer-motion";
 import { toast } from "sonner";
-import { Car, ChefHat, Check, Eye, EyeOff, GripVertical, RotateCcw, ShoppingBag, SlidersHorizontal, type LucideIcon } from "lucide-react";
+import { Check, Eye, EyeOff, GripVertical, RotateCcw, SlidersHorizontal } from "lucide-react";
+import { MODULE_ICONS } from "@/components/modules/module-icon";
+import { moduleById } from "@/lib/modules";
 import { Button } from "@/components/ui/button";
 import { GreetingHeader } from "@/components/dashboard/greeting-header";
 import { SetupChecklist } from "@/components/dashboard/setup-checklist";
@@ -19,8 +21,6 @@ import { routes } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
-
-const SCOPE_ICON: Record<Exclude<DashboardScope, "home">, LucideIcon> = { fleet: Car, restaurants: ChefHat, commerce: ShoppingBag };
 
 /** Where a line-of-business dashboard sends people for the detailed views. */
 const SCOPE_LINKS: Record<Exclude<DashboardScope, "home">, { href: string; label: string }[]> = {
@@ -39,11 +39,27 @@ const SCOPE_LINKS: Record<Exclude<DashboardScope, "home">, { href: string; label
     { href: routes.connectors, label: "Connectors" },
     { href: routes.tasks, label: "Tasks" },
   ],
+  web: [
+    { href: routes.tasks, label: "Tasks" },
+    { href: routes.notifications, label: "Notifications" },
+  ],
+  cafe: [
+    { href: routes.tasks, label: "Tasks" },
+    { href: routes.notifications, label: "Notifications" },
+  ],
+  salon: [
+    { href: routes.tasks, label: "Tasks" },
+    { href: routes.notifications, label: "Notifications" },
+  ],
+  custom: [
+    { href: routes.tasks, label: "Tasks" },
+    { href: routes.butler, label: "AI Butler" },
+  ],
 };
 
 function DashboardHeader({ scope }: { scope: Exclude<DashboardScope, "home"> }) {
   const def = dashboardFor(scope);
-  const Icon = SCOPE_ICON[scope];
+  const Icon = MODULE_ICONS[moduleById(scope)?.icon ?? "Blocks"];
   const healthy = useBackendHealthy();
   return (
     <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">

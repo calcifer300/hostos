@@ -13,6 +13,11 @@ import { getStores } from "@/lib/commerce/queries";
 import { getBoardData } from "@/lib/board/queries";
 import { getRiskQueues } from "@/lib/risk/queries";
 import { needsAttention } from "@/lib/board/countdown";
+import { getChosenVertical } from "@/lib/host/context";
+import { getProperties } from "@/lib/web/queries";
+import { getLocations, getStock } from "@/lib/local/queries";
+import { getMetrics } from "@/lib/custom/queries";
+import { metricStatus } from "@/lib/custom/analytics";
 
 /**
  * The product shell. Middleware has already gated this tree (see
@@ -25,6 +30,11 @@ import { needsAttention } from "@/lib/board/countdown";
  * every read is React.cache()'d, so a page that needs the same data pays for
  * it once per request, not twice.
  */
+/** The custom vertical's badge counts metrics against the last week; the cutoff is computed once per request. */
+function weekAgoDay(): string {
+  return new Date(Date.now() - 7 * 86_400_000).toISOString().slice(0, 10);
+}
+
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
   const email = session?.user?.email ?? null;
@@ -33,7 +43,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   // The host row first: the risk queues need its timezone, and getHost is
   // React.cache()'d so the pages beneath pay nothing extra for it.
   const host = await getHost(hostId);
-  const [data, modules, roles, fleets, notifications, unread, tasks, restaurants, stores, board, risk] = await Promise.all([
+  const modulesEarly = await getHostModules(hostId);
+  const [data, modules, roles, fleets, notifications, unread, tasks, restaurants, stores, board, risk, focus, properties, cafeLocations, cafeStock, metrics] = await Promise.all([
     getDashboardData(email),
     getHostModules(hostId),
     getUserRoles(email),
@@ -45,6 +56,11 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     getStores(hostId),
     getBoardData(),
     getRiskQueues(hostId, host?.timezone ?? "America/Denver"),
+    getChosenVertical(modulesEarly),
+    modulesEarly.includes("web") ? getProperties(hostId) : Promise.resolve([]),
+    modulesEarly.includes("cafe") ? getLocations(hostId, "cafe") : Promise.resolve([]),
+    modulesEarly.includes("cafe") ? getStock(hostId, "cafe") : Promise.resolve([]),
+    modulesEarly.includes("custom") ? getMetrics(hostId, weekAgoDay()) : Promise.resolve([]),
   ]);
 
   // Read *after* the queries above, so it reflects this render's outcomes.
@@ -63,6 +79,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     risk: risk.licenses.length + risk.profitRisk.length,
     restaurants: restaurants.filter((r) => r.status === "paused" || r.status === "closed").length,
     commerce: stores.filter((s) => s.status === "paused").length,
+    web: properties.filter((p) => p.status === "down").length,
+    cafe: cafeStock.filter((s) => s.quantity <= (s.lowStockThreshold ?? cafeLocations.find((l) => l.id === s.locationId)?.lowStockThreshold ?? 5)).length,
+    custom: metrics.map(metricStatus).filter((m) => m.onTarget === false).length,
     butler: data.suggestions.length,
   };
 
@@ -76,6 +95,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       currentHostId={hostId}
       workspaceName={workspaceName}
       modules={modules}
+      focus={focus}
       navCounts={navCounts}
       notifications={notifications}
       unreadNotifications={unread}

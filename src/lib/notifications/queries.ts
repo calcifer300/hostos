@@ -11,7 +11,7 @@ import { runMutation, runQuery, runQueryOr } from "@/lib/supabase/server";
  * every minute can call notify() every minute and the same fact lands once.
  */
 
-export type NotificationKind = "trip" | "message" | "alert" | "restaurant" | "order" | "store" | "task" | "system" | "butler";
+export type NotificationKind = "trip" | "message" | "alert" | "restaurant" | "order" | "store" | "web" | "cafe" | "salon" | "custom" | "task" | "system" | "butler";
 export type NotificationSeverity = "info" | "success" | "warning" | "critical";
 
 export interface Notification {
@@ -38,7 +38,7 @@ interface NotificationRow {
 
 const COLUMNS = "id, kind, severity, title, body, href, read_at, created_at";
 
-const KINDS = new Set<string>(["trip", "message", "alert", "restaurant", "order", "store", "task", "system", "butler"]);
+const KINDS = new Set<string>(["trip", "message", "alert", "restaurant", "order", "store", "web", "cafe", "salon", "custom", "task", "system", "butler"]);
 const SEVERITIES = new Set<string>(["info", "success", "warning", "critical"]);
 
 function rowToNotification(row: NotificationRow): Notification {

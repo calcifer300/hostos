@@ -33,6 +33,8 @@ export interface AppShellProps {
   workspaces: WorkspaceOption[];
   workspaceName: string;
   modules: WorkspaceModule[];
+  /** The vertical chosen on /app/start, remembered per browser. */
+  focus: WorkspaceModule | null;
   navCounts: Record<string, number>;
   notifications: Notification[];
   unreadNotifications: number;
@@ -54,6 +56,7 @@ export function AppShell({
   workspaces,
   workspaceName,
   modules,
+  focus,
   navCounts,
   notifications,
   unreadNotifications,
@@ -101,7 +104,7 @@ export function AppShell({
       <div className="mt-6 flex-1 overflow-y-auto pb-4">
         <SidebarNav
           counts={navCounts}
-          modules={modules}
+          modules={modules} focus={focus}
           collapsed={collapsed && !mobile}
           onNavigate={mobile ? () => setDrawerOpen(false) : undefined}
         />

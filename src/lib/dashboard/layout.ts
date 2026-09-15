@@ -1,7 +1,7 @@
 import "server-only";
 import { cache } from "react";
 import { runMutation, runQueryOr } from "@/lib/supabase/server";
-import { storedLayoutFor, type DashboardScope, type LayoutEntry, type StoredLayouts } from "@/lib/dashboard/widgets";
+import { DASHBOARDS, storedLayoutFor, type DashboardScope, type LayoutEntry, type StoredLayouts } from "@/lib/dashboard/widgets";
 
 /**
  * The stored widget arrangements for one person on one workspace (migration
@@ -26,7 +26,7 @@ export async function saveDashboardLayout(hostId: string, userEmail: string, sco
   const next: StoredLayouts = {};
   if (Array.isArray(current)) next.home = storedLayoutFor(current, "home") ?? [];
   else if (typeof current === "object" && current !== null) {
-    for (const key of ["home", "fleet", "restaurants", "commerce"] as DashboardScope[]) {
+    for (const key of DASHBOARDS.map((d) => d.scope)) {
       const existing = storedLayoutFor(current, key);
       if (existing) next[key] = existing;
     }

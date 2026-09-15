@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, Car, Check, ChefHat, ShoppingBag, Star, type LucideIcon } from "lucide-react";
+import { ArrowRight, Blocks, Car, Check, ChefHat, Coffee, Globe, Scissors, ShoppingBag, Star, type LucideIcon } from "lucide-react";
 import { Reveal, Stagger, StaggerItem, AnimatedNumber } from "@/components/motion/reveal";
 import { Button } from "@/components/ui/button";
 import {
@@ -183,9 +183,13 @@ export function Industries() {
 /* ------------------------------------------------------------- platform */
 
 const LINES = [
-  { icon: Car, name: "Fleet operations", platform: "Turo", href: "#fleet", text: "Reservations, vehicles, guest messaging, risk and license checks, the cross-fleet board." },
-  { icon: ChefHat, name: "Restaurant operations", platform: "DoorDash", href: "#restaurants", text: "Store monitoring, POS-vs-marketplace menu sync, orders, customer messages, inventory." },
-  { icon: ShoppingBag, name: "Commerce operations", platform: "Shopify", href: "#commerce", text: "Products and inventory, orders and fulfilment, low-stock alerts, sales analytics." },
+  { icon: Car, name: "Turo", platform: "Fleet operations", href: "#fleet", text: "Reservations, vehicles, guest messaging, risk and license checks, the cross-fleet board." },
+  { icon: ChefHat, name: "DoorDash", platform: "Restaurant operations", href: "#restaurants", text: "Store monitoring, POS-vs-marketplace menu sync, orders, customer messages, inventory." },
+  { icon: ShoppingBag, name: "Shopify", platform: "Commerce operations", href: "#commerce", text: "Products and inventory, orders and fulfilment, low-stock alerts, sales analytics." },
+  { icon: Globe, name: "GoDaddy", platform: "Web & domains", href: "#benefits", text: "Every site and domain you look after: uptime and SSL checked daily, renewals caught 30 days out." },
+  { icon: Coffee, name: "Coffee Shops", platform: "Café operations", href: "#benefits", text: "Sales against last week, stock before the morning rush runs dry, shifts and opening/closing routines." },
+  { icon: Scissors, name: "Barbershops", platform: "Barbershop operations", href: "#benefits", text: "Today's chairs, no-shows, clients due for a rebooking reminder, revenue per barber." },
+  { icon: Blocks, name: "Build a custom", platform: "Any business", href: "#contact", text: "Your own numbers logged and charted, your checklists, and a build request straight to our engineers." },
 ];
 
 export function PlatformIntro() {
@@ -199,11 +203,11 @@ export function PlatformIntro() {
               One workspace. <span className="text-gradient">A dashboard for every line of business.</span>
             </>
           }
-          description="HostOS is the operations platform we built for our own clients and our own team. A Turo fleet, a DoorDash kitchen and a Shopify store are not run from the same screen — so each gets its own dashboard, its own widgets and its own saved layout, while teams, tasks, notifications, automation and the AI Butler are shared. Any business can run on it; new platforms arrive as modules, never as a second product."
+          description="HostOS is the operations platform we built for our own clients and our own team. After you sign in you choose the business you're running today — a Turo fleet, DoorDash kitchens, a Shopify store, client websites on GoDaddy, a coffee shop, a barbershop, or something we build for you — and get a command center with only the tools that work for it. Teams, tasks, notifications, automation and the AI Butler are shared underneath."
           align="center"
           className="max-w-3xl"
         />
-        <Stagger className="grid grid-cols-1 gap-4 md:grid-cols-3" gap={0.08}>
+        <Stagger className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4" gap={0.06}>
           {LINES.map((l) => (
             <StaggerItem key={l.name}>
               <motion.a
@@ -215,7 +219,7 @@ export function PlatformIntro() {
               >
                 <div className="flex items-start justify-between gap-3">
                   <IconBadge icon={l.icon} />
-                  <span className="rounded-full border border-border px-2 py-0.5 text-[10.5px] font-medium text-muted-foreground">{l.platform} today</span>
+                  <span className="rounded-full border border-border px-2 py-0.5 text-[10.5px] font-medium text-muted-foreground">{l.platform}</span>
                 </div>
                 <h3 className="mt-4 text-[15px] font-semibold tracking-tight">{l.name}</h3>
                 <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">{l.text}</p>

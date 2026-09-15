@@ -19,6 +19,9 @@ import { getRestaurants, getLatestComparisonSummaries, getOrders, getInventory }
 import { computeOrderAnalytics } from "@/lib/restaurants/analytics";
 import { getStores, getCommerceOrders, getProducts, getProductCounts, getSyncRuns } from "@/lib/commerce/queries";
 import { computeStoreAnalytics } from "@/lib/commerce/analytics";
+import { getProperties } from "@/lib/web/queries";
+import { clientsDueForRebooking, getAppointments, getChecklists, getClients, getLocations, getSales, getShifts, getStock, summarizeSales } from "@/lib/local/queries";
+import { getBuildRequests, getMetrics } from "@/lib/custom/queries";
 import { todayInZone } from "@/lib/timezones";
 import type { InboundTuroEmail } from "@/types/butler";
 
@@ -30,6 +33,12 @@ export interface DashboardPageData {
   layout: LayoutEntry[] | null;
   setup: SetupStatus;
   data: WidgetData;
+}
+
+const EMPTY_LOCAL: WidgetData["cafe"] = { locations: [], sales: [], stock: [], shifts: [], appointments: [], clients: [], rebookingDue: [], checklists: [], summary: summarizeSales([]) };
+
+function daysAgoIso(days: number): string {
+  return new Date(Date.now() - days * 86_400_000).toISOString();
 }
 
 /**
@@ -52,8 +61,18 @@ export async function assembleDashboard(scope: DashboardScope): Promise<Dashboar
   const fleet = modules.includes("fleet") && has("stats", "board", "messages", "fleet", "occupancy", "priority", "pickups", "returns", "timeline", "unscheduled", "businesses");
   const restaurantsOn = modules.includes("restaurants") && has("restaurants", "restaurantList", "orders", "menusync", "topitems", "lowstock", "businesses");
   const commerceOn = modules.includes("commerce") && has("commerce", "storeList", "sales", "topproducts", "storesync", "lowstock", "businesses");
+  const webOn = modules.includes("web") && has("webProperties", "webExpiring", "webStatus", "businesses");
+  const cafeOn = modules.includes("cafe") && has("cafeSales", "cafeStock", "cafeShifts", "cafeChecklists", "cafeLocations", "businesses");
+  const salonOn = modules.includes("salon") && has("salonSchedule", "salonRebooking", "salonRevenue", "salonShifts", "salonChecklists", "salonLocations", "businesses");
+  const customOn = modules.includes("custom") && has("customMetrics", "customChecklists", "buildRequests", "businesses");
 
-  const [data, latestUnread, guestMessages, setup, layout, tasks, notifications, activity, board, restaurants, comparisons, restaurantOrders, stores, commerceOrders, productCounts, canEdit] =
+  const now = new Date();
+  const dayStart = new Date(now);
+  dayStart.setUTCHours(0, 0, 0, 0);
+  const windowFrom = new Date(dayStart.getTime() - 14 * 86_400_000).toISOString();
+  const windowTo = new Date(dayStart.getTime() + 2 * 86_400_000).toISOString();
+
+  const [data, latestUnread, guestMessages, setup, layout, tasks, notifications, activity, board, restaurants, comparisons, restaurantOrders, stores, commerceOrders, productCounts, canEdit, properties, metrics, buildRequests, customChecklists] =
     await Promise.all([
       getDashboardData(email),
       email && has("briefing") ? getLatestUnreadEmail(email) : Promise.resolve(null),
@@ -71,6 +90,10 @@ export async function assembleDashboard(scope: DashboardScope): Promise<Dashboar
       commerceOn ? getCommerceOrders(hostId, null, 3000) : Promise.resolve([]),
       commerceOn ? getProductCounts(hostId) : Promise.resolve(new Map<string, number>()),
       canEditCurrentFleet(),
+      webOn ? getProperties(hostId) : Promise.resolve([]),
+      customOn ? getMetrics(hostId, daysAgoIso(30).slice(0, 10)) : Promise.resolve([]),
+      customOn ? getBuildRequests(hostId) : Promise.resolve([]),
+      customOn ? getChecklists(hostId, "custom") : Promise.resolve([]),
     ]);
 
   const initialEmail: InboundTuroEmail | null = latestUnread
@@ -128,6 +151,36 @@ export async function assembleDashboard(scope: DashboardScope): Promise<Dashboar
     })
   );
 
+  // Cafés and barbershops share the local-business tables.
+  async function local(kind: "cafe" | "salon"): Promise<WidgetData["cafe"]> {
+    const [locations, sales, stock, shifts, appointments, clients, checklists] = await Promise.all([
+      getLocations(hostId, kind),
+      getSales(hostId, windowFrom.slice(0, 10)),
+      getStock(hostId, kind),
+      getShifts(hostId, kind, dayStart.toISOString(), windowTo),
+      kind === "salon" ? getAppointments(hostId, windowFrom, windowTo) : Promise.resolve([]),
+      kind === "salon" ? getClients(hostId) : Promise.resolve([]),
+      getChecklists(hostId, kind),
+    ]);
+    const ids = new Set(locations.map((l) => l.id));
+    const ownSales = sales.filter((s) => ids.has(s.locationId));
+    const ownAppointments = appointments.filter((a) => ids.has(a.locationId));
+    const ownClients = clients.filter((c) => ids.has(c.locationId));
+    return {
+      locations,
+      sales: ownSales,
+      stock,
+      shifts,
+      appointments: ownAppointments,
+      clients: ownClients,
+      rebookingDue: clientsDueForRebooking(ownClients, locations).slice(0, 12),
+      checklists,
+      summary: summarizeSales(ownSales, 14, now),
+    };
+  }
+
+  const [cafe, salon] = await Promise.all([cafeOn ? local("cafe") : Promise.resolve(EMPTY_LOCAL), salonOn ? local("salon") : Promise.resolve(EMPTY_LOCAL)]);
+
   const widgetData: WidgetData = {
     scope,
     modules,
@@ -144,6 +197,10 @@ export async function assembleDashboard(scope: DashboardScope): Promise<Dashboar
     restaurantTopItems: restaurantAnalytics.topItems.slice(0, 6),
     restaurantLowStock,
     stores: storeEntries,
+    properties,
+    cafe,
+    salon,
+    custom: { metrics, buildRequests, checklists: customChecklists },
   };
 
   return { scope, firstName, signedIn: Boolean(email), modules, layout, setup, data: widgetData };

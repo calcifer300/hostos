@@ -3,25 +3,35 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
+  Activity,
   AlertTriangle,
   ArrowRight,
   ArrowUpRight,
   Bell,
+  Blocks,
   Bot,
   Calendar,
+  CalendarCheck,
+  CalendarClock,
   Car,
   ChefHat,
   CheckSquare,
   Clock3,
+  Coffee,
+  DollarSign,
+  Globe,
+  Hammer,
   ListChecks,
   LogIn,
   LogOut,
   MessageCircle,
   Package,
   RefreshCw,
+  Scissors,
   ShieldAlert,
   ShoppingBag,
   Store,
+  Target,
   TrendingUp,
   Users,
   UtensilsCrossed,
@@ -39,6 +49,13 @@ import { FleetStatusGrid } from "@/components/dashboard/fleet-status-grid";
 import { StatusPill } from "@/components/restaurants/status-pill";
 import { RestaurantList } from "@/components/restaurants/restaurant-list";
 import { StoreList } from "@/components/commerce/store-list";
+import { ExpiringWidget, PropertiesWidget, UptimeWidget } from "@/components/web/web-widgets";
+import { ChecklistsWidget, LocationsWidget, RebookingWidget, RevenueByStaffWidget, SalesWidget as LocalSalesWidget, ScheduleWidget, ShiftsWidget, StockWidget, type LocalData } from "@/components/local/local-widgets";
+import { BuildRequestsWidget, MetricsWidget } from "@/components/custom/custom-widgets";
+import type { WebProperty } from "@/lib/web/queries";
+import type { BuildRequest, CustomMetric } from "@/lib/custom/queries";
+import type { Checklist } from "@/lib/local/queries";
+import { metricStatus } from "@/lib/custom/analytics";
 import { BarChart, RankBar, Sparkline } from "@/components/charts/charts";
 import { Badge } from "@/components/ui/badge";
 import { formatMoney } from "@/lib/restaurants/analytics";
@@ -87,7 +104,18 @@ export interface WidgetData {
     topProducts: { title: string; quantity: number; revenue: number }[];
     lastRun: { ok: boolean | null; at: string; error: string | null } | null;
   }[];
+  properties: WebProperty[];
+  cafe: LocalData;
+  salon: LocalData;
+  custom: { metrics: CustomMetric[]; buildRequests: BuildRequest[]; checklists: Checklist[] };
 }
+
+const dayKey = () => new Date().toISOString().slice(0, 10);
+const daysUntilIso = (iso: string | null, now: number) => {
+  if (!iso) return null;
+  const t = Date.parse(iso);
+  return Number.isFinite(t) ? Math.floor((t - now) / 86_400_000) : null;
+};
 
 const viewAll = (href: string, label = "View all →") => (
   <Link href={href} className="text-[12px] font-medium text-accent transition-opacity hover:opacity-80">
@@ -98,6 +126,7 @@ const viewAll = (href: string, label = "View all →") => (
 /* -------------------------------------------------------------- stats */
 
 function StatsWidget({ d }: { d: WidgetData }) {
+  const now = useNow();
   const fleet = d.modules.includes("fleet");
   const restaurants = d.modules.includes("restaurants");
   const commerce = d.modules.includes("commerce");
@@ -147,6 +176,59 @@ function StatsWidget({ d }: { d: WidgetData }) {
       <StatCard key="stores" icon={Store} label="Stores" value={d.stores.length} breakdown={`${d.stores.filter((s) => s.store.status === "active").length} active`} href={routes.commerce} tone="accent" />,
       tasksTile
     );
+  } else if (d.scope === "web") {
+    const down = d.properties.filter((p) => p.status === "down").length;
+    const expiring = d.properties.filter((p) => {
+      const a = daysUntilIso(p.domainExpiresAt, now);
+      const b = daysUntilIso(p.sslExpiresAt, now);
+      return (a !== null && a <= 30) || (b !== null && b <= 30);
+    }).length;
+    const avg = d.properties.filter((p) => p.responseMs !== null);
+    const avgMs = avg.length ? Math.round(avg.reduce((s, p) => s + (p.responseMs ?? 0), 0) / avg.length) : null;
+    tiles.push(
+      <StatCard key="sites" icon={Globe} label="Sites & domains" value={d.properties.length} breakdown={`${d.properties.filter((p) => p.status === "up").length} up on last check`} href={routes.web} tone="accent" />,
+      <StatCard key="down" icon={Activity} label="Down right now" value={down} breakdown={avgMs !== null ? `${avgMs} ms average response` : "Not checked yet"} href={routes.web} tone={down > 0 ? "danger" : "success"} />,
+      <StatCard key="expiring" icon={CalendarClock} label="Expiring · 30d" value={expiring} breakdown="Domains and SSL certificates" href={routes.web} tone={expiring > 0 ? "warning" : "success"} />,
+      tasksTile
+    );
+  } else if (d.scope === "cafe") {
+    const c = d.cafe;
+    const delta = c.summary.sameDayLastWeek > 0 ? ((c.summary.today - c.summary.sameDayLastWeek) / c.summary.sameDayLastWeek) * 100 : null;
+    const locById = new Map(c.locations.map((l) => [l.id, l]));
+    const low = c.stock.filter((s) => s.quantity <= (s.lowStockThreshold ?? locById.get(s.locationId)?.lowStockThreshold ?? 5)).length;
+    const onToday = c.shifts.filter((s) => s.startsAt.slice(0, 10) === dayKey()).length;
+    tiles.push(
+      <StatCard key="today" icon={DollarSign} label="Sales today" value={formatMoney(c.summary.today)} breakdown={delta === null ? "Log today to compare with last week" : `${delta >= 0 ? "+" : ""}${delta.toFixed(0)}% vs same day last week`} href={routes.cafe} tone={delta !== null && delta < 0 ? "warning" : "success"} />,
+      <StatCard key="tickets" icon={Coffee} label="Tickets today" value={c.summary.todayTransactions} breakdown={c.summary.avgTicket !== null ? `${formatMoney(c.summary.avgTicket)} average over 14 days` : "No tickets logged yet"} href={routes.cafe} tone="accent" />,
+      <StatCard key="stock" icon={Package} label="Low stock" value={low} breakdown={`${c.stock.length} items tracked`} href={routes.cafe} tone={low > 0 ? "warning" : "success"} />,
+      <StatCard key="shifts" icon={Clock3} label="On shift today" value={onToday} breakdown={`${c.locations.length} location${c.locations.length === 1 ? "" : "s"}`} href={routes.cafe} tone="accent" />,
+      tasksTile
+    );
+  } else if (d.scope === "salon") {
+    const c = d.salon;
+    const todays = c.appointments.filter((a) => a.startsAt.slice(0, 10) === dayKey());
+    const weekAgo = now - 7 * 86_400_000;
+    const noShows = c.appointments.filter((a) => a.status === "no_show" && Date.parse(a.startsAt) >= weekAgo).length;
+    const revenue7 = c.appointments.filter((a) => a.status === "completed" && Date.parse(a.startsAt) >= weekAgo).reduce((s, a) => s + (a.price ?? 0), 0);
+    const chairs = c.locations.reduce((s, l) => s + (l.chairs ?? 0), 0);
+    tiles.push(
+      <StatCard key="today" icon={CalendarCheck} label="Appointments today" value={todays.length} breakdown={`${todays.filter((a) => a.status === "completed").length} done · ${todays.filter((a) => a.status === "booked").length} to go`} href={routes.salon} tone="accent" />,
+      <StatCard key="revenue" icon={DollarSign} label="Revenue · 7d" value={formatMoney(revenue7)} breakdown={`${chairs || "—"} chairs across ${c.locations.length} shop${c.locations.length === 1 ? "" : "s"}`} href={routes.salon} tone="success" />,
+      <StatCard key="noshow" icon={AlertTriangle} label="No-shows · 7d" value={noShows} breakdown={noShows > 0 ? "Follow up and rebook" : "Everyone turned up"} href={routes.salon} tone={noShows > 0 ? "warning" : "success"} />,
+      <StatCard key="rebook" icon={Users} label="Due for rebooking" value={c.rebookingDue.length} breakdown="Past the shop's rebooking window" href={routes.salon} tone={c.rebookingDue.length > 0 ? "warning" : "success"} />,
+      tasksTile
+    );
+  } else if (d.scope === "custom") {
+    const statuses = d.custom.metrics.map(metricStatus);
+    const withTarget = statuses.filter((x) => x.onTarget !== null);
+    const openReqs = d.custom.buildRequests.filter((r) => r.status !== "done" && r.status !== "declined").length;
+    const loggedToday = d.custom.metrics.filter((m) => m.entries.some((e) => e.day === dayKey())).length;
+    tiles.push(
+      <StatCard key="metrics" icon={Target} label="Numbers tracked" value={d.custom.metrics.length} breakdown={`${loggedToday} logged today`} href={routes.custom} tone="accent" />,
+      <StatCard key="target" icon={TrendingUp} label="On target" value={withTarget.length ? `${withTarget.filter((x) => x.onTarget).length}/${withTarget.length}` : "—"} breakdown={withTarget.length ? "Against the targets you set" : "Set a target to track it"} href={routes.custom} tone={withTarget.some((x) => x.onTarget === false) ? "warning" : "success"} />,
+      <StatCard key="builds" icon={Hammer} label="Build requests" value={openReqs} breakdown={openReqs > 0 ? "With HostOS Collective" : "Nothing in the queue"} href={routes.custom} tone="accent" />,
+      tasksTile
+    );
   } else {
     // Home: one headline per line of business, then the shared numbers.
     if (fleet) tiles.push(<StatCard key="trips" icon={Calendar} label="Today's trips" value={d.data.pickups.length + d.data.returns.length} breakdown={`${d.data.pickups.length} pickups · ${d.data.returns.length} returns`} href={routes.fleet} tone="accent" />);
@@ -163,9 +245,10 @@ function StatsWidget({ d }: { d: WidgetData }) {
 
 /* --------------------------------------------------- lines of business */
 
-const BUSINESS_ICON = { Car, ChefHat, ShoppingBag } as const;
+const BUSINESS_ICON = { Car, ChefHat, ShoppingBag, Globe, Coffee, Scissors, Blocks } as const;
 
 function BusinessesWidget({ d }: { d: WidgetData }) {
+  const now = useNow();
   const enabled = MODULES.filter((m) => d.modules.includes(m.id));
   if (enabled.length === 0) return null;
 
@@ -202,18 +285,84 @@ function BusinessesWidget({ d }: { d: WidgetData }) {
         alert: paused > 0 ? `${paused} store${paused === 1 ? "" : "s"} not taking orders` : pending > 0 ? `${pending} menu change${pending === 1 ? "" : "s"} pending` : null,
       };
     }
-    const low = d.stores.reduce((s, st) => s + st.lowStockCount, 0);
+    if (m.id === "commerce") {
+      const low = d.stores.reduce((s, st) => s + st.lowStockCount, 0);
+      return {
+        module: m,
+        icon: Icon,
+        href: routes.commerce,
+        platform: "Shopify",
+        stats: [
+          { label: "Stores", value: String(d.stores.length) },
+          { label: "Orders · 14d", value: String(d.stores.reduce((s, st) => s + st.orders14d, 0)) },
+          { label: "Sales · 14d", value: formatMoney(d.stores.reduce((s, st) => s + st.revenue14d, 0)) },
+        ],
+        alert: low > 0 ? `${low} product${low === 1 ? "" : "s"} low on stock` : null,
+      };
+    }
+    if (m.id === "web") {
+      const down = d.properties.filter((p) => p.status === "down").length;
+      const expiring = d.properties.filter((p) => [daysUntilIso(p.domainExpiresAt, now), daysUntilIso(p.sslExpiresAt, now)].some((x) => x !== null && x <= 30)).length;
+      return {
+        module: m,
+        icon: Icon,
+        href: routes.web,
+        platform: "GoDaddy",
+        stats: [
+          { label: "Sites", value: String(d.properties.length) },
+          { label: "Up", value: String(d.properties.filter((p) => p.status === "up").length) },
+          { label: "Expiring · 30d", value: String(expiring) },
+        ],
+        alert: down > 0 ? `${down} site${down === 1 ? "" : "s"} down` : expiring > 0 ? `${expiring} renewal${expiring === 1 ? "" : "s"} due soon` : null,
+      };
+    }
+    if (m.id === "cafe") {
+      const c = d.cafe;
+      const locById = new Map(c.locations.map((l) => [l.id, l]));
+      const low = c.stock.filter((s) => s.quantity <= (s.lowStockThreshold ?? locById.get(s.locationId)?.lowStockThreshold ?? 5)).length;
+      return {
+        module: m,
+        icon: Icon,
+        href: routes.cafe,
+        platform: "Coffee Shops",
+        stats: [
+          { label: "Shops", value: String(c.locations.length) },
+          { label: "Sales today", value: formatMoney(c.summary.today) },
+          { label: "Sales · 14d", value: formatMoney(c.summary.total14d) },
+        ],
+        alert: low > 0 ? `${low} item${low === 1 ? "" : "s"} low on stock` : null,
+      };
+    }
+    if (m.id === "salon") {
+      const c = d.salon;
+      const todays = c.appointments.filter((a) => a.startsAt.slice(0, 10) === dayKey());
+      return {
+        module: m,
+        icon: Icon,
+        href: routes.salon,
+        platform: "Barbershops",
+        stats: [
+          { label: "Shops", value: String(c.locations.length) },
+          { label: "Today", value: `${todays.length} appts` },
+          { label: "Rebook due", value: String(c.rebookingDue.length) },
+        ],
+        alert: c.rebookingDue.length > 0 ? `${c.rebookingDue.length} client${c.rebookingDue.length === 1 ? "" : "s"} due for a rebooking` : null,
+      };
+    }
+    const statuses = d.custom.metrics.map(metricStatus);
+    const missing = statuses.filter((x) => x.onTarget === false).length;
+    const openReqs = d.custom.buildRequests.filter((r) => r.status !== "done" && r.status !== "declined").length;
     return {
       module: m,
       icon: Icon,
-      href: routes.commerce,
-      platform: "Shopify",
+      href: routes.custom,
+      platform: "Build a custom",
       stats: [
-        { label: "Stores", value: String(d.stores.length) },
-        { label: "Orders · 14d", value: String(d.stores.reduce((s, st) => s + st.orders14d, 0)) },
-        { label: "Sales · 14d", value: formatMoney(d.stores.reduce((s, st) => s + st.revenue14d, 0)) },
+        { label: "Numbers", value: String(d.custom.metrics.length) },
+        { label: "Below target", value: String(missing) },
+        { label: "Build requests", value: String(openReqs) },
       ],
-      alert: low > 0 ? `${low} product${low === 1 ? "" : "s"} low on stock` : null,
+      alert: missing > 0 ? `${missing} number${missing === 1 ? "" : "s"} below target` : null,
     };
   });
 
@@ -654,6 +803,40 @@ export function renderWidget(id: string, d: WidgetData): React.ReactNode {
       return <StoreSyncWidget d={d} />;
     case "lowstock":
       return <LowStockWidget d={d} />;
+    case "webProperties":
+      return <PropertiesWidget properties={d.properties} canEdit={d.canEdit} />;
+    case "webExpiring":
+      return <ExpiringWidget properties={d.properties} />;
+    case "webStatus":
+      return <UptimeWidget properties={d.properties} />;
+    case "cafeSales":
+      return <LocalSalesWidget kind="cafe" d={d.cafe} canEdit={d.canEdit} />;
+    case "cafeStock":
+      return <StockWidget kind="cafe" d={d.cafe} canEdit={d.canEdit} />;
+    case "cafeShifts":
+      return <ShiftsWidget kind="cafe" d={d.cafe} canEdit={d.canEdit} />;
+    case "cafeChecklists":
+      return <ChecklistsWidget module="cafe" checklists={d.cafe.checklists} locations={d.cafe.locations} canEdit={d.canEdit} />;
+    case "cafeLocations":
+      return <LocationsWidget kind="cafe" d={d.cafe} canEdit={d.canEdit} />;
+    case "salonSchedule":
+      return <ScheduleWidget d={d.salon} canEdit={d.canEdit} />;
+    case "salonRebooking":
+      return <RebookingWidget d={d.salon} />;
+    case "salonRevenue":
+      return <RevenueByStaffWidget d={d.salon} />;
+    case "salonShifts":
+      return <ShiftsWidget kind="salon" d={d.salon} canEdit={d.canEdit} />;
+    case "salonChecklists":
+      return <ChecklistsWidget module="salon" checklists={d.salon.checklists} locations={d.salon.locations} canEdit={d.canEdit} />;
+    case "salonLocations":
+      return <LocationsWidget kind="salon" d={d.salon} canEdit={d.canEdit} />;
+    case "customMetrics":
+      return <MetricsWidget metrics={d.custom.metrics} canEdit={d.canEdit} />;
+    case "customChecklists":
+      return <ChecklistsWidget module="custom" checklists={d.custom.checklists} locations={[]} canEdit={d.canEdit} title="Checklists" />;
+    case "buildRequests":
+      return <BuildRequestsWidget requests={d.custom.buildRequests} canEdit={d.canEdit} />;
     default:
       return null;
   }

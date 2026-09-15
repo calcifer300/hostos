@@ -7,6 +7,11 @@ import { getRestaurants, getInventory, getLatestComparisonSummaries } from "@/li
 import { createTask } from "@/lib/tasks/queries";
 import { notify } from "@/lib/notifications/queries";
 import { getDashboardData } from "@/lib/dashboard/queries";
+import { getHostModules } from "@/lib/host/queries";
+import { daysUntil, getProperties } from "@/lib/web/queries";
+import { clientsDueForRebooking, getClients, getLocations, getStock } from "@/lib/local/queries";
+import { getMetrics } from "@/lib/custom/queries";
+import { metricStatus } from "@/lib/custom/analytics";
 import { routes } from "@/lib/routes";
 
 /**
@@ -188,6 +193,53 @@ export async function runButlerRules(hostId: string, options: { userEmail?: stri
           dedupeKey: `lowstock:${r.id}:${new Date().toISOString().slice(0, 10)}`,
         }
       );
+    }
+  }
+
+  /* ------------------------------------------- web, cafés, barbershops, custom */
+
+  const modules = await getHostModules(hostId);
+
+  if (modules.includes("web")) {
+    for (const p of await getProperties(hostId)) {
+      const dom = daysUntil(p.domainExpiresAt);
+      const ssl = daysUntil(p.sslExpiresAt);
+      if (p.status === "down") summary.signals.push(`${p.domain} is down`);
+      if (dom !== null && dom <= 30) {
+        summary.signals.push(`${p.domain} renews in ${dom} days`);
+        await track({ hostId, title: `Renew ${p.domain} — ${dom <= 0 ? "expired" : `${dom} day${dom === 1 ? "" : "s"} left`}`, description: p.autoRenew ? "Auto-renew is on; confirm the card on file still works." : "Auto-renew is off. Renew before it lapses.", priority: dom <= 7 ? "critical" : "high", source: "butler", relatedKind: "web_property", relatedId: p.id, href: routes.web, dedupeKey: `web-renew:${p.id}:${p.domainExpiresAt}` });
+      }
+      if (ssl !== null && ssl <= 14) summary.signals.push(`${p.domain}: SSL expires in ${ssl} days`);
+    }
+  }
+
+  for (const kind of ["cafe", "salon"] as const) {
+    if (!modules.includes(kind)) continue;
+    const [locations, stock] = await Promise.all([getLocations(hostId, kind), getStock(hostId, kind)]);
+    const href = kind === "cafe" ? routes.cafe : routes.salon;
+    for (const l of locations) {
+      const low = stock.filter((s) => s.locationId === l.id && s.quantity <= (s.lowStockThreshold ?? l.lowStockThreshold));
+      if (low.length === 0) continue;
+      summary.signals.push(`${l.name}: ${low.length} item(s) low on stock`);
+      await track(
+        { hostId, title: `Restock ${low.length} item${low.length === 1 ? "" : "s"} at ${l.name}`, description: low.map((i) => `${i.name}: ${i.quantity} ${i.unit}`).join(", ").slice(0, 3000), priority: "medium", source: "butler", relatedKind: `${kind}_stock`, relatedId: l.id, href, dedupeKey: `butler:lowstock:${l.id}:${low.map((i) => i.id).sort().join(",").slice(0, 120)}` },
+        { hostId, kind, severity: "warning", title: `${l.name}: ${low.length} item${low.length === 1 ? "" : "s"} low on stock`, body: low.slice(0, 4).map((i) => `${i.name} (${i.quantity} ${i.unit})`).join(", "), href, dedupeKey: `lowstock:${l.id}:${new Date().toISOString().slice(0, 10)}` }
+      );
+    }
+    if (kind === "salon") {
+      const due = clientsDueForRebooking(await getClients(hostId), locations);
+      if (due.length > 0) {
+        summary.signals.push(`${due.length} client(s) due for a rebooking reminder`);
+        await track({ hostId, title: `Send rebooking reminders to ${due.length} client${due.length === 1 ? "" : "s"}`, description: due.slice(0, 12).map((c) => `${c.name} (${c.daysSince}d${c.phone ? `, ${c.phone}` : ""})`).join(", "), priority: "medium", source: "butler", relatedKind: "salon_client", relatedId: null, href: routes.salon, dedupeKey: `butler:rebook:${new Date().toISOString().slice(0, 10)}` });
+      }
+    }
+  }
+
+  if (modules.includes("custom")) {
+    const metrics = await getMetrics(hostId, new Date(Date.now() - 14 * 86_400_000).toISOString().slice(0, 10));
+    for (const m of metrics) {
+      const s = metricStatus(m);
+      if (s.onTarget === false) summary.signals.push(`${m.name} is below target (${s.latest} vs ${m.target})`);
     }
   }
 

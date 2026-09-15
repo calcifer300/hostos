@@ -2,7 +2,37 @@
 
 All notable changes to HostOS. Dates are when the work landed on `unified`.
 
-## [Unreleased] — 2026-09-14 · The unification
+## [Unreleased] — 2026-09-15 · Seven verticals and the chooser
+
+- **Vertical chooser after sign-in** (`/app/start`): Turo, DoorDash, Shopify,
+  GoDaddy, Coffee Shops, Barbershops, Build a custom — one designed card each.
+  Choosing focuses the shell on that vertical (remembered per browser) and
+  switches it on for the workspace when needed (settings permission).
+- **Clean command center per vertical**: the sidebar shows only the chosen
+  vertical's section plus what is shared (Home, tasks, notifications, Butler,
+  knowledge, connectors, settings). The page's own vertical always wins.
+- **Four new verticals** (migration 0025):
+  - *Web & domains (GoDaddy)* — properties with registrar, hosting, client,
+    renewal date; HostOS checks uptime, response time and SSL expiry itself
+    (on add, on demand, daily cron); renewals and outages become tasks and
+    notifications.
+  - *Coffee shops* — locations, daily sales log with same-day-last-week
+    comparison and 14-day chart, stock with in-place counts and low-stock
+    tasks, shifts, opening/closing checklists (one-tap defaults).
+  - *Barbershops* — locations with chairs, appointments (book, done, no-show,
+    cancel), clients built from visits with rebooking-due reminders, revenue
+    per barber, shifts, checklists.
+  - *Build a custom* — user-defined metrics with targets, daily logging and
+    sparklines; checklists; build requests filed to HostOS Collective (task +
+    notification + email).
+- Butler rules for the new verticals (renewals, low stock, rebooking, metrics
+  below target); `/api/cron/web` daily site checks.
+- Platform role names are Title Case everywhere ("Virtual Assistant", "Tech
+  Lead", "Co-Host / VA"); stored legacy spellings are normalised on read and
+  write; new options Tech Lead, Operations Manager, Virtual Assistant.
+- Landing "platform" section lists all seven verticals.
+
+## [0.17] — 2026-09-14 · The unification
 
 Everything from the audit (`docs/AUDIT.md`) to a single platform. One repo,
 one app, one database, one extension.

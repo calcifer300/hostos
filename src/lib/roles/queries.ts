@@ -1,5 +1,6 @@
 import "server-only";
 import { runQueryOr } from "@/lib/supabase/server";
+import { normalizeRoleList } from "@/lib/roles/constants";
 
 export interface UserRoleAssignment {
   email: string;
@@ -24,7 +25,7 @@ export async function getUserRoles(email: string | null): Promise<string[]> {
     client.from("user_roles").select("roles").eq("user_email", email).maybeSingle<{ roles: string[] | null }>()
   );
 
-  return data?.roles ?? [];
+  return normalizeRoleList(data?.roles);
 }
 
 /** Every assigned email, for the Settings admin list. */
@@ -37,5 +38,5 @@ export async function getAllUserRoles(): Promise<UserRoleAssignment[]> {
       .returns<UserRoleRow[]>()
   );
 
-  return data.map((row) => ({ email: row.user_email, roles: row.roles ?? [] }));
+  return data.map((row) => ({ email: row.user_email, roles: normalizeRoleList(row.roles) }));
 }

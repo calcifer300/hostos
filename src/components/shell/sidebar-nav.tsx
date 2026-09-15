@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { NAV_SECTIONS, isNavItemActive, type NavItem } from "@/components/shell/nav-items";
 import type { WorkspaceModule } from "@/lib/host/queries";
+import { verticalFromPath } from "@/lib/verticals";
 import { cn } from "@/lib/utils";
 
 function Badge({ count, tone }: { count: number; tone: "accent" | "danger" }) {
@@ -87,20 +88,29 @@ function NavLink({
 export function SidebarNav({
   counts,
   modules,
+  focus = null,
   collapsed = false,
   onNavigate,
 }: {
   /** Real per-route counts from the layout. Absent or zero renders no badge. */
   counts?: Record<string, number>;
   modules: WorkspaceModule[];
+  /** The vertical chosen on /app/start, remembered per browser. */
+  focus?: WorkspaceModule | null;
   collapsed?: boolean;
   onNavigate?: () => void;
 }) {
   const pathname = usePathname();
 
+  // One line of business at a time: the page's own vertical wins, then the
+  // chosen one, then the first enabled — so the sidebar is always a clean
+  // command center for exactly one business plus what is shared.
+  const pathVertical = verticalFromPath(pathname);
+  const active = (pathVertical && modules.includes(pathVertical) ? pathVertical : null) ?? (focus && modules.includes(focus) ? focus : null) ?? modules[0] ?? null;
+
   return (
     <nav className="flex flex-col gap-5" aria-label="Workspace">
-      {NAV_SECTIONS.filter((s) => !s.module || modules.includes(s.module)).map((section) => (
+      {NAV_SECTIONS.filter((s) => !s.module || s.module === active).map((section) => (
         <div key={section.id}>
           {section.label && !collapsed && (
             <p className="mb-1.5 flex items-center gap-1.5 px-2.5 text-[10.5px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/70">

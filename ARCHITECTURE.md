@@ -15,9 +15,14 @@ concern lives, how a request flows, and the rules that keep the map true.
 │  /team /about /install /login /offline                          │
 └────────────────────────────────────────────────────────────────┘
 ┌──────────────────────────── product (/app, session-gated) ─────┐
-│  Home ──┬── Fleet dashboard (Turo)        /app/fleet            │
-│         ├── Restaurant dashboard (DoorDash) /app/restaurants    │
-│         └── Commerce dashboard (Shopify)  /app/commerce         │
+│  /app/start  choose the vertical to run (focuses the sidebar)   │
+│  Home ──┬── Fleet (Turo)            /app/fleet                  │
+│         ├── Restaurants (DoorDash)  /app/restaurants            │
+│         ├── Commerce (Shopify)      /app/commerce               │
+│         ├── Web & domains (GoDaddy) /app/web                    │
+│         ├── Coffee shops            /app/cafe                   │
+│         ├── Barbershops             /app/salon                  │
+│         └── Custom                  /app/custom                 │
 │  shared: tasks · notifications · Butler · insights · knowledge  │
 │          automations · connectors · settings (team, alerts,     │
 │          templates, install)                                    │
@@ -116,6 +121,17 @@ A dashboard for a module that is switched off renders
 | **fleet** (Turo) | `trips`, `trip_messages`, `trip_events`, `trip_history`, `vehicles`, `board_locations`, `alert_settings`, `alert_deliveries`, `turo_articles` | Companion loops (sync 1m, messages 1m, license 15m, enrichment 10m, calendar 6h) → `/api/turo/*`; Gmail optional | `/app/fleet` (dashboard), board, operations, reservations, vehicles, messages, inbox, risk, library | `lib/board/{countdown,bulk-paste}`, `lib/timezones`, `lib/risk`, `lib/alerts`, `lib/trips` |
 | **restaurants** (DoorDash) | `restaurants`, `menu_uploads`, `menu_comparisons`, `menu_item_links`, `restaurant_orders`, `restaurant_messages`, `restaurant_status_events`, `inventory_items` | Companion `doordash.js` (store status) → `/api/companion/restaurants/status`; CSV exports uploaded in-app | `/app/restaurants` (dashboard), `/app/restaurants/[id]` (overview, menu, orders, messages, inventory), UPC tool | `lib/restaurants/{match,compare,parse,upc,analytics,export}` |
 | **commerce** (Shopify) | `commerce_stores`, `commerce_products`, `commerce_orders`, `commerce_sync_runs`, `integration_connections` | Shopify Admin API (`lib/commerce/shopify.ts` client, `lib/commerce/sync.ts`), hourly cron + Companion `shopify.js` "Sync now"; CSV import | `/app/commerce` (dashboard), `/app/commerce/[id]` (overview, products, orders, sync) | `lib/commerce/analytics` |
+| **web** (GoDaddy) | `web_properties` | Typed in; HostOS probes HTTPS + TLS itself (`lib/web/check.ts`) on add, on demand and via `/api/cron/web` | `/app/web` (dashboard with the properties table) | `lib/web/queries.ts` (`daysUntil`) |
+| **cafe** (Coffee Shops) | `locations`, `sales_entries`, `stock_items`, `shifts`, `checklists` | Logged in the dashboard (POS/CSV import next) | `/app/cafe` | `lib/local/queries.ts` (`summarizeSales`) |
+| **salon** (Barbershops) | `locations`, `appointments`, `clients`, `stock_items`, `shifts`, `checklists` | Booked in the dashboard (Square Appointments / Booksy import next) | `/app/salon` | `lib/local/queries.ts` (`clientsDueForRebooking`) |
+| **custom** (Build a custom) | `custom_metrics`, `custom_metric_entries`, `build_requests`, `checklists` | Logged in the dashboard; build requests emailed to the Collective | `/app/custom` | `lib/custom/analytics.ts` (`metricStatus`) |
+
+**Vertical focus.** `src/lib/verticals.ts` maps each vertical to its route and
+each product path to its vertical; `chooseVertical()` (`lib/actions/verticals.ts`)
+stores the choice in the `hostos_vertical` cookie and enables the module if
+needed; `SidebarNav` renders the shared sections plus exactly one vertical
+section — the current page's vertical, else the cookie's, else the first
+enabled.
 
 Adding a module: a `MODULES` entry (`src/lib/modules.ts`), a migration, a
 `lib/<module>/` folder with `queries.ts` + engines, actions, a nav section

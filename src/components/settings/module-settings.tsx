@@ -3,15 +3,13 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Car, ChefHat, ShoppingBag } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { MODULES, type WorkspaceModule } from "@/lib/modules";
+import { MODULE_ICONS } from "@/components/modules/module-icon";
 import { setWorkspaceModules } from "@/lib/actions/workspace";
 import { cn } from "@/lib/utils";
-
-const ICONS = { Car, ChefHat, ShoppingBag } as const;
 
 /**
  * Which verticals this workspace runs. Turning one on adds its section to
@@ -48,7 +46,7 @@ export function ModuleSettings({ enabled, canEdit }: { enabled: WorkspaceModule[
       </p>
       <ul className="mt-4 space-y-2">
         {MODULES.map((m) => {
-          const Icon = ICONS[m.icon];
+          const Icon = MODULE_ICONS[m.icon];
           const on = state.includes(m.id);
           return (
             <li key={m.id} className={cn("flex items-start gap-3 rounded-xl border px-4 py-3 transition-colors", on ? "border-accent/40 bg-accent/5" : "border-border")}>
@@ -57,8 +55,8 @@ export function ModuleSettings({ enabled, canEdit }: { enabled: WorkspaceModule[
               </span>
               <div className="min-w-0 flex-1">
                 <p className="flex items-center gap-2 text-[13.5px] font-medium">
-                  {m.label}
-                  <Badge variant={m.maturity === "live" ? "success" : "accent"}>{m.maturity === "live" ? "Live" : "Beta"}</Badge>
+                  {m.title} <span className="font-normal text-muted-foreground">· {m.label}</span>
+                  <Badge variant={m.maturity === "live" ? "success" : "accent"}>{m.maturity === "live" ? "Live" : m.maturity === "beta" ? "Beta" : "New"}</Badge>
                 </p>
                 <p className="mt-0.5 text-[12px] leading-relaxed text-muted-foreground">{m.description}</p>
               </div>

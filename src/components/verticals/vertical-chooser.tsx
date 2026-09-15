@@ -1,0 +1,123 @@
+"use client";
+
+import * as React from "react";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { toast } from "sonner";
+import { ArrowRight, Check, Lock, Sparkles } from "lucide-react";
+import { MODULE_ICONS } from "@/components/modules/module-icon";
+import { Button } from "@/components/ui/button";
+import { chooseVertical } from "@/lib/actions/verticals";
+import { MODULES, type WorkspaceModule } from "@/lib/modules";
+import { routes } from "@/lib/routes";
+import { cn } from "@/lib/utils";
+
+const EASE = [0.16, 1, 0.3, 1] as const;
+
+/**
+ * The first screen after sign-in: which business are we running HostOS for
+ * today? One card per vertical, each designed for its line of business.
+ * Picking one focuses the shell on it and opens its dashboard; a vertical the
+ * workspace hasn't switched on is enabled on the way (settings permission
+ * required — everyone else sees it locked with the reason).
+ */
+export function VerticalChooser({ firstName, enabled, current, canEnable, workspaceName }: { firstName: string | null; enabled: WorkspaceModule[]; current: WorkspaceModule | null; canEnable: boolean; workspaceName: string }) {
+  const [pending, startTransition] = React.useTransition();
+  const [choosing, setChoosing] = React.useState<WorkspaceModule | null>(null);
+
+  function choose(id: WorkspaceModule) {
+    setChoosing(id);
+    startTransition(async () => {
+      const result = await chooseVertical(id);
+      // A successful choice redirects; only failures come back.
+      if (result && !result.ok) {
+        toast.error(result.error);
+        setChoosing(null);
+      }
+    });
+  }
+
+  return (
+    <div className="mx-auto w-full max-w-6xl">
+      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: EASE }} className="mb-8 text-center">
+        <p className="text-[11.5px] font-semibold uppercase tracking-[0.14em] text-accent">{workspaceName}</p>
+        <h1 className="mt-2 text-balance text-[30px] font-semibold tracking-tight sm:text-[38px]">
+          {firstName ? `${firstName}, which` : "Which"} business are we running today?
+        </h1>
+        <p className="mx-auto mt-3 max-w-2xl text-pretty text-[15px] text-muted-foreground">
+          Every vertical gets its own command center — only the tools that work for that line of business, nothing else in the way. Switch any time from the sidebar.
+        </p>
+      </motion.div>
+
+      <motion.div initial="hidden" animate="show" variants={{ hidden: {}, show: { transition: { staggerChildren: 0.06, delayChildren: 0.1 } } }} className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {MODULES.map((m) => {
+          const Icon = MODULE_ICONS[m.icon];
+          const on = enabled.includes(m.id);
+          const locked = !on && !canEnable;
+          const isCurrent = current === m.id;
+          return (
+            <motion.button
+              key={m.id}
+              type="button"
+              disabled={pending || locked}
+              onClick={() => choose(m.id)}
+              variants={{ hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: EASE } } }}
+              whileHover={locked ? undefined : { y: -4 }}
+              whileTap={locked ? undefined : { scale: 0.985 }}
+              style={{ ["--hue" as string]: m.hue }}
+              className={cn(
+                "group relative flex h-full flex-col overflow-hidden rounded-2xl border bg-card p-5 text-left shadow-[var(--shadow-card)] transition-[border-color,box-shadow] duration-300",
+                isCurrent ? "border-[var(--hue)]" : "border-border hover:border-[color-mix(in_oklab,var(--hue)_55%,var(--border))]",
+                locked && "cursor-not-allowed opacity-70"
+              )}
+            >
+              <div aria-hidden className="pointer-events-none absolute -right-14 -top-14 h-40 w-40 rounded-full opacity-30 blur-3xl transition-opacity duration-500 group-hover:opacity-60" style={{ background: m.hue }} />
+              <div className="flex items-start justify-between gap-3">
+                <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-border" style={{ background: `color-mix(in oklab, ${m.hue} 16%, transparent)`, color: m.hue }}>
+                  <Icon className="h-5 w-5" strokeWidth={1.75} />
+                </span>
+                <span className="flex items-center gap-1.5">
+                  {isCurrent && (
+                    <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10.5px] font-semibold" style={{ background: `color-mix(in oklab, ${m.hue} 18%, transparent)`, color: m.hue }}>
+                      <Check className="h-3 w-3" /> Current
+                    </span>
+                  )}
+                  {locked ? (
+                    <span className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-0.5 text-[10.5px] font-medium text-muted-foreground">
+                      <Lock className="h-3 w-3" /> Ask an admin
+                    </span>
+                  ) : !on ? (
+                    <span className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-0.5 text-[10.5px] font-medium text-muted-foreground">
+                      <Sparkles className="h-3 w-3" /> Set up
+                    </span>
+                  ) : null}
+                </span>
+              </div>
+              <h2 className="mt-4 text-[19px] font-semibold tracking-tight">{m.title}</h2>
+              <p className="text-[12px] font-medium text-muted-foreground">{m.label}</p>
+              <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">{m.description}</p>
+              <ul className="mt-3 space-y-1">
+                {m.outcomes.map((o) => (
+                  <li key={o} className="flex items-start gap-2 text-[12.5px] text-foreground/85">
+                    <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: m.hue }} />
+                    {o}
+                  </li>
+                ))}
+              </ul>
+              <span className="mt-auto flex items-center gap-1 pt-4 text-[13px] font-semibold" style={{ color: m.hue }}>
+                {choosing === m.id ? "Opening…" : on ? "Open dashboard" : "Set up and open"}
+                <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+              </span>
+            </motion.button>
+          );
+        })}
+      </motion.div>
+
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }} className="mt-8 flex flex-wrap items-center justify-center gap-3 text-[13px] text-muted-foreground">
+        <Button asChild variant="ghost" size="sm">
+          <Link href={routes.overview}>Or see every business at once on Home →</Link>
+        </Button>
+      </motion.div>
+    </div>
+  );
+}

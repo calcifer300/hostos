@@ -18,6 +18,7 @@ import {
   Barcode,
   Gauge,
   Workflow,
+  Compass,
 } from "lucide-react";
 import { routes } from "@/lib/routes";
 import type { WorkspaceModule } from "@/lib/host/queries";
@@ -33,32 +34,29 @@ export interface NavItem {
 }
 
 export interface NavSection {
-  id: "workspace" | "fleet" | "restaurants" | "commerce" | "intelligence" | "system";
+  id: "workspace" | WorkspaceModule | "system";
   label: string | null;
   /** Shown next to the label: the platform this line of business runs on. */
   platform?: string;
-  /** Rendered only when the workspace runs this module. */
+  /** Rendered only when the workspace runs this module — and, in the sidebar, only when it is the vertical in focus. */
   module?: WorkspaceModule;
   items: NavItem[];
 }
 
 /**
  * The sidebar, grouped by line of business. Each business the workspace runs
- * — a Turo fleet, DoorDash restaurants, Shopify stores — gets its own group
- * headed by its own dashboard, because none of them is run from the same
- * screen. "Workspace" is what cuts across them (Home, tasks, notifications,
- * the Butler); "Intelligence" is analytics and the knowledge the Butler
- * grounds in; "System" is plumbing. Groups appear according to
- * hosts.modules (migration 0017).
- *
- * Reservations, Automations and Knowledge stay live as deep links rather
- * than top-level entries.
+ * gets its own group headed by its own dashboard, and the shell shows one
+ * group at a time — the vertical in focus — so every dashboard is a clean
+ * command center for that business. "Workspace" is what cuts across them
+ * (Home, tasks, notifications, the Butler, knowledge); "System" is plumbing.
+ * The chooser (/app/start) switches focus.
  */
 export const NAV_SECTIONS: NavSection[] = [
   {
     id: "workspace",
     label: null,
     items: [
+      { href: routes.start, label: "Choose vertical", icon: Compass },
       { href: routes.overview, label: "Home", icon: LayoutGrid },
       { href: routes.tasks, label: "Tasks", icon: CheckSquare, countKey: "tasks" },
       { href: routes.notifications, label: "Notifications", icon: Bell, countKey: "notifications" },
@@ -77,8 +75,10 @@ export const NAV_SECTIONS: NavSection[] = [
       { href: routes.messages, label: "Messages", icon: MessageCircle, countKey: "messages", matchPrefix: true },
       { href: routes.vehicles, label: "Vehicles", icon: Car, matchPrefix: true },
       { href: routes.risk, label: "Risk", icon: ShieldAlert, countKey: "risk" },
+      { href: routes.insights, label: "Insights", icon: BarChart3 },
       { href: routes.inbox, label: "Gmail inbox", icon: Inbox },
       { href: routes.library, label: "Turo policy", icon: BookMarked, matchPrefix: true },
+      { href: routes.automations, label: "Automations", icon: Workflow },
     ],
   },
   {
@@ -99,18 +99,38 @@ export const NAV_SECTIONS: NavSection[] = [
     items: [{ href: routes.commerce, label: "Dashboard", icon: Gauge, countKey: "commerce", matchPrefix: true }],
   },
   {
-    id: "intelligence",
-    label: "Intelligence",
-    items: [
-      { href: routes.insights, label: "Insights", icon: BarChart3 },
-      { href: routes.knowledge, label: "Knowledge", icon: BookOpen },
-      { href: routes.automations, label: "Automations", icon: Workflow },
-    ],
+    id: "web",
+    label: "Web & domains",
+    platform: "GoDaddy",
+    module: "web",
+    items: [{ href: routes.web, label: "Dashboard", icon: Gauge, countKey: "web", matchPrefix: true }],
+  },
+  {
+    id: "cafe",
+    label: "Coffee shop",
+    platform: "Café",
+    module: "cafe",
+    items: [{ href: routes.cafe, label: "Dashboard", icon: Gauge, countKey: "cafe", matchPrefix: true }],
+  },
+  {
+    id: "salon",
+    label: "Barbershop",
+    platform: "Salon",
+    module: "salon",
+    items: [{ href: routes.salon, label: "Dashboard", icon: Gauge, countKey: "salon", matchPrefix: true }],
+  },
+  {
+    id: "custom",
+    label: "Custom",
+    platform: "Build",
+    module: "custom",
+    items: [{ href: routes.custom, label: "Dashboard", icon: Gauge, countKey: "custom", matchPrefix: true }],
   },
   {
     id: "system",
     label: "System",
     items: [
+      { href: routes.knowledge, label: "Knowledge", icon: BookOpen },
       { href: routes.connectors, label: "Connectors", icon: Plug },
       { href: routes.settings, label: "Settings", icon: Settings, matchPrefix: true },
     ],

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { toast } from "sonner";
-import { Bell, Car, Check, ChefHat, CheckSquare, Info, MessageCircle, ShieldAlert, ShoppingBag, Sparkles, Store } from "lucide-react";
+import { Bell, Blocks, Car, Check, ChefHat, CheckSquare, Coffee, Globe, Info, MessageCircle, Scissors, ShieldAlert, ShoppingBag, Sparkles, Store } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { markRead } from "@/lib/actions/notifications";
@@ -19,6 +19,10 @@ const KIND_ICON: Record<NotificationKind, React.ElementType> = {
   restaurant: ChefHat,
   order: ShoppingBag,
   store: Store,
+  web: Globe,
+  cafe: Coffee,
+  salon: Scissors,
+  custom: Blocks,
   task: CheckSquare,
   system: Info,
   butler: Sparkles,
@@ -31,6 +35,10 @@ const KIND_LABEL: Record<NotificationKind, string> = {
   restaurant: "Restaurants",
   order: "Orders",
   store: "Stores",
+  web: "Web & domains",
+  cafe: "Café",
+  salon: "Barbershop",
+  custom: "Custom",
   task: "Tasks",
   system: "System",
   butler: "Butler",

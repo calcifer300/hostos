@@ -1,10 +1,9 @@
 import Link from "next/link";
-import { ArrowRight, Car, ChefHat, ShoppingBag, Settings } from "lucide-react";
+import { ArrowRight, Settings } from "lucide-react";
+import { MODULE_ICONS } from "@/components/modules/module-icon";
 import { Button } from "@/components/ui/button";
 import { moduleById, type WorkspaceModule } from "@/lib/modules";
 import { routes } from "@/lib/routes";
-
-const ICON = { Car, ChefHat, ShoppingBag } as const;
 
 /**
  * What a line-of-business dashboard shows when the workspace hasn't switched
@@ -13,7 +12,7 @@ const ICON = { Car, ChefHat, ShoppingBag } as const;
 export function ModuleOff({ module }: { module: WorkspaceModule }) {
   const def = moduleById(module);
   if (!def) return null;
-  const Icon = ICON[def.icon];
+  const Icon = MODULE_ICONS[def.icon];
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col items-start rounded-2xl border border-dashed border-border bg-card/60 p-8">
       <span className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-[linear-gradient(135deg,color-mix(in_oklab,var(--accent)_16%,transparent),color-mix(in_oklab,var(--accent-2)_10%,transparent))] text-accent">

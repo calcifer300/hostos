@@ -12,6 +12,10 @@ const SCOPE_PATH: Record<DashboardScope, string> = {
   fleet: routes.fleet,
   restaurants: routes.restaurants,
   commerce: routes.commerce,
+  web: routes.web,
+  cafe: routes.cafe,
+  salon: routes.salon,
+  custom: routes.custom,
 };
 
 /** Saves the caller's own arrangement of one dashboard. Personal, so no write permission is needed — only access. */

@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { Bell, Check, ChefHat, MessageCircle, ShieldAlert, Sparkles, Car, Info, CheckSquare, ShoppingBag, Store } from "lucide-react";
+import { Bell, Blocks, Check, ChefHat, Coffee, Globe, MessageCircle, Scissors, ShieldAlert, Sparkles, Car, Info, CheckSquare, ShoppingBag, Store } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { markRead } from "@/lib/actions/notifications";
@@ -19,6 +19,10 @@ const KIND_ICON: Record<NotificationKind, React.ElementType> = {
   restaurant: ChefHat,
   order: ShoppingBag,
   store: Store,
+  web: Globe,
+  cafe: Coffee,
+  salon: Scissors,
+  custom: Blocks,
   task: CheckSquare,
   system: Info,
   butler: Sparkles,

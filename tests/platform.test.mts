@@ -1,4 +1,6 @@
 import { asWorkspaceRole, can, canAssignRole, roleRank, WORKSPACE_ROLES } from "../src/lib/roles/permissions.ts";
+import { DEV_TOOLS_ROLES, normalizeRoleList, normalizeRoleName, ROLE_OPTIONS, titleCase } from "../src/lib/roles/constants.ts";
+import { verticalFromPath, asVertical, VERTICAL_ROUTES } from "../src/lib/verticals.ts";
 import { routes, safeAppRedirect } from "../src/lib/routes.ts";
 import { looksLikeAccessToken, normalizeShopDomain } from "../src/lib/commerce/shopify.ts";
 import { isWorkspaceModule, MODULES } from "../src/lib/modules.ts";
@@ -37,15 +39,33 @@ eq("product lives under /app", routes.app, "/app");
 eq("fleet dashboard and vehicles are separate", [routes.fleet, routes.vehicles], ["/app/fleet", "/app/fleet/vehicles"]);
 eq("vehicle names are encoded once", routes.vehicle("Mazda CX-50"), "/app/fleet/vehicles/Mazda%20CX-50");
 eq("restaurant tabs carry the query", routes.restaurantTab("r1", "menu"), "/app/restaurants/r1?tab=menu");
-eq("open redirect refused", safeAppRedirect("https://evil.example/app"), "/app");
-eq("protocol-relative refused", safeAppRedirect("//evil.example"), "/app");
-eq("outside the product refused", safeAppRedirect("/login"), "/app");
+eq("open redirect refused", safeAppRedirect("https://evil.example/app"), "/app/start");
+eq("protocol-relative refused", safeAppRedirect("//evil.example"), "/app/start");
+eq("outside the product refused", safeAppRedirect("/login"), "/app/start");
 eq("inside the product honoured", safeAppRedirect("/app/tasks"), "/app/tasks");
-eq("empty falls back", safeAppRedirect(null), "/app");
+eq("empty lands on the chooser", safeAppRedirect(null), "/app/start");
+eq("the bare product root lands on the chooser", safeAppRedirect("/app"), "/app/start");
 
 console.log("\n=== modules ===");
-eq("three modules today", MODULES.map((m) => m.id), ["fleet", "restaurants", "commerce"]);
+eq("seven verticals", MODULES.map((m) => m.id), ["fleet", "restaurants", "commerce", "web", "cafe", "salon", "custom"]);
+eq("the chooser names people recognise", MODULES.map((m) => m.title), ["Turo", "DoorDash", "Shopify", "GoDaddy", "Coffee Shops", "Barbershops", "Build a custom"]);
 eq("module guard", [isWorkspaceModule("fleet"), isWorkspaceModule("hotels")], [true, false]);
+eq("every vertical has a route", MODULES.every((m) => typeof VERTICAL_ROUTES[m.id] === "string"), true);
+
+console.log("\n=== vertical focus ===");
+eq("board belongs to the fleet", verticalFromPath("/app/board"), "fleet");
+eq("vehicle page belongs to the fleet", verticalFromPath("/app/fleet/vehicles/X"), "fleet");
+eq("salon dashboard", verticalFromPath("/app/salon"), "salon");
+eq("tasks are shared", verticalFromPath("/app/tasks"), null);
+eq("chooser is shared", verticalFromPath("/app/start"), null);
+eq("asVertical guards", [asVertical("cafe"), asVertical("nope"), asVertical(null)], ["cafe", null, null]);
+
+console.log("\n=== platform role names ===");
+eq("every option is Title Case", ROLE_OPTIONS.every((r) => r === titleCase(r)), true);
+eq("legacy lower-case spellings normalise", [normalizeRoleName("Virtual assistant"), normalizeRoleName("Tech lead"), normalizeRoleName("co-host/va")], ["Virtual Assistant", "Tech Lead", "Co-Host / VA"]);
+eq("unknown roles are title-cased, not dropped", normalizeRoleName("night shift supervisor"), "Night Shift Supervisor");
+eq("lists de-duplicate after normalising", normalizeRoleList(["tech lead", "Tech Lead", "", "developer"]), ["Tech Lead", "Developer"]);
+eq("Tech Lead has dev tools", DEV_TOOLS_ROLES.has("Tech Lead"), true);
 
 console.log("\n=== shopify ===");
 eq("handle becomes a domain", normalizeShopDomain("My-Shop"), "my-shop.myshopify.com");

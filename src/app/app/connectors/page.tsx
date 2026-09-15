@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Calendar, ChefHat, Car, Hash, Mail, Phone, Puzzle, ShoppingBag, type LucideIcon } from "lucide-react";
+import { Calendar, ChefHat, Car, CreditCard, Globe, Hash, Mail, Phone, Puzzle, ShoppingBag, type LucideIcon } from "lucide-react";
 import { auth } from "@/auth";
 import { getHost, getHostModules } from "@/lib/host/queries";
 import { canManageIntegrations, getCurrentHostId } from "@/lib/host/context";
@@ -23,6 +23,8 @@ const ICONS: Record<IntegrationProvider, LucideIcon> = {
   google_calendar: Calendar,
   slack: Hash,
   sms: Phone,
+  godaddy: Globe,
+  square: CreditCard,
 };
 
 function Row({ icon: Icon, name, status, action, description }: { icon: LucideIcon; name: string; status: React.ReactNode; action?: React.ReactNode; description?: string }) {

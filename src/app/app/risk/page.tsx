@@ -2,6 +2,8 @@ import { BadgeDollarSign, CircleCheck, HelpCircle, ShieldAlert, Wallet } from "l
 import { getCurrentFleet, getCurrentHostId } from "@/lib/host/context";
 import { getRiskQueues, type QueueTrip } from "@/lib/risk/queries";
 import { QueueCard } from "@/components/risk/queue-card";
+import { ModuleOff } from "@/components/dashboard/module-off";
+import { verticalAccess } from "@/lib/host/context";
 
 /**
  * The three operator queues, ported from the CC extension's popup into HostOS
@@ -56,6 +58,10 @@ function Section({
 }
 
 export default async function RiskPage() {
+  // Belongs to the fleet vertical: nothing here renders — or queries — unless this person may open it.
+  const access = await verticalAccess("fleet");
+  if (access !== "ok") return <ModuleOff module="fleet" reason={access} />;
+
   const hostId = await getCurrentHostId();
   const fleet = await getCurrentFleet();
   const timezone = fleet?.timezone ?? "America/Denver";

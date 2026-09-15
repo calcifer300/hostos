@@ -16,6 +16,7 @@
  */
 
 :root {
+  color-scheme: light;
   --background: #F5F5F7;
   --surface: #FFFFFF;
   --foreground: #1D1D1F;
@@ -59,13 +60,14 @@
 }
 
 .dark {
+  color-scheme: dark;
   --background: #09090B;
   --surface: #0F0F12;
   --foreground: #F5F5F7;
   --card: #131316;
   --card-foreground: #F5F5F7;
   --muted: #1C1C21;
-  --muted-foreground: #9A9AA3;
+  --muted-foreground: #A6A6AF;
   --border: #232329;
   --border-strong: #2E2E36;
   --accent: #0A84FF;
@@ -163,6 +165,19 @@ body {
 ::selection {
   background: var(--color-accent);
   color: var(--color-accent-foreground);
+}
+
+/*
+ * Native select popups paint their own list; give it the theme's colours so
+ * an option is never dark text on a dark popup (or the reverse in light mode).
+ */
+select option,
+select optgroup {
+  background-color: var(--card);
+  color: var(--foreground);
+}
+select option:disabled {
+  color: var(--muted-foreground);
 }
 
 /* Thin, quiet scrollbars — the default Windows bar is the loudest element on a dark UI. */

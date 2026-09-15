@@ -16,7 +16,8 @@ import type { WebProperty } from "@/lib/web/queries";
 import { cn, formatRelativeTime } from "@/lib/utils";
 import { useNow } from "@/lib/hooks/use-client-value";
 
-const REGISTRARS = ["godaddy", "namecheap", "cloudflare", "google", "porkbun", "squarespace", "vercel", "other"];
+// Recommended registrars first; GoDaddy stays for clients already there.
+const REGISTRARS = ["cloudflare", "porkbun", "namecheap", "godaddy", "google", "squarespace", "vercel", "other"];
 const REGISTRAR_LABEL: Record<string, string> = { godaddy: "GoDaddy", namecheap: "Namecheap", cloudflare: "Cloudflare", google: "Google Domains", porkbun: "Porkbun", squarespace: "Squarespace", vercel: "Vercel", other: "Other" };
 
 function daysUntil(iso: string | null, now: number): number | null {
@@ -46,7 +47,7 @@ export function PropertyDialog({ open, onOpenChange, property }: { open: boolean
       name: String(fd.get("name") ?? ""),
       domain: String(fd.get("domain") ?? ""),
       siteUrl: String(fd.get("siteUrl") ?? ""),
-      registrar: String(fd.get("registrar") ?? "godaddy"),
+      registrar: String(fd.get("registrar") ?? "cloudflare"),
       hosting: String(fd.get("hosting") ?? ""),
       clientName: String(fd.get("clientName") ?? ""),
       domainExpiresAt: String(fd.get("domainExpiresAt") ?? ""),
@@ -86,7 +87,7 @@ export function PropertyDialog({ open, onOpenChange, property }: { open: boolean
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="w-registrar">Registrar</Label>
-                <NativeSelect id="w-registrar" name="registrar" defaultValue={property?.registrar ?? "godaddy"}>
+                <NativeSelect id="w-registrar" name="registrar" defaultValue={property?.registrar ?? "cloudflare"}>
                   {REGISTRARS.map((r) => (
                     <option key={r} value={r}>
                       {REGISTRAR_LABEL[r]}
@@ -96,7 +97,7 @@ export function PropertyDialog({ open, onOpenChange, property }: { open: boolean
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="w-hosting">Hosting</Label>
-                <Input id="w-hosting" name="hosting" defaultValue={property?.hosting ?? ""} placeholder="GoDaddy Managed WordPress, Vercel…" />
+                <Input id="w-hosting" name="hosting" defaultValue={property?.hosting ?? ""} placeholder="Cloudflare Pages, Vercel, WordPress host…" />
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="w-client">Client</Label>

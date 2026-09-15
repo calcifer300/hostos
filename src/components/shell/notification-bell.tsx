@@ -127,7 +127,7 @@ export function NotificationBell({ initial, unread }: { initial: Notification[];
                   <span className="min-w-0 flex-1">
                     <span className={cn("block truncate text-[13px]", !n.readAt ? "font-medium text-foreground" : "text-foreground/85")}>{n.title}</span>
                     {n.body && <span className="mt-0.5 line-clamp-2 block text-[12px] leading-snug text-muted-foreground">{n.body}</span>}
-                    <span className="mt-1 block text-[11px] text-muted-foreground/70">{formatRelativeTime(n.createdAt)}</span>
+                    <span className="mt-1 block text-[11px] text-muted-foreground/85">{formatRelativeTime(n.createdAt)}</span>
                   </span>
                   {!n.readAt && <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />}
                 </button>

@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { switchFleet } from "@/lib/actions/fleet";
+import { moduleById, type WorkspaceModule } from "@/lib/modules";
 import { cn } from "@/lib/utils";
 
 export interface WorkspaceOption {
@@ -30,11 +31,15 @@ export function WorkspaceSwitcher({
   workspaces,
   currentHostId,
   collapsed = false,
+  focus = null,
 }: {
   workspaces: WorkspaceOption[];
   currentHostId: string;
   collapsed?: boolean;
+  /** The vertical in focus, shown under the name so "which business am I in" is never in doubt. */
+  focus?: WorkspaceModule | null;
 }) {
+  const vertical = focus ? moduleById(focus) : undefined;
   const router = useRouter();
   const [pending, startTransition] = React.useTransition();
   const current = workspaces.find((w) => w.hostId === currentHostId) ?? workspaces[0] ?? null;
@@ -75,7 +80,15 @@ export function WorkspaceSwitcher({
         <>
           <span className="min-w-0 flex-1">
             <span className="block truncate text-[13px] font-medium">{pending ? "Switching…" : current?.name ?? "Workspace"}</span>
-            <span className="block truncate text-[11px] capitalize text-muted-foreground">{current?.role ?? "member"}</span>
+            <span className="block truncate text-[11px] text-muted-foreground">
+              <span className="capitalize">{current?.role ?? "member"}</span>
+              {vertical && (
+                <>
+                  <span className="mx-1 text-muted-foreground/60">·</span>
+                  <span style={{ color: vertical.hue }}>{vertical.title}</span>
+                </>
+              )}
+            </span>
           </span>
           <ChevronsUpDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
         </>

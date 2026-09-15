@@ -129,11 +129,11 @@ export function LoginScreen({ callbackUrl, error }: { callbackUrl?: string | nul
             </p>
           )}
 
-          <p className="mt-6 text-center text-[12px] leading-relaxed text-muted-foreground/70 lg:text-left">
+          <p className="mt-6 text-center text-[12px] leading-relaxed text-muted-foreground/85 lg:text-left">
             By continuing you agree to let HostOS act on your behalf within the permissions you grant. New accounts get
             their own workspace automatically.
           </p>
-          <p className="mt-6 text-center text-[11px] uppercase tracking-[0.16em] text-muted-foreground/60 lg:text-left">
+          <p className="mt-6 text-center text-[11px] uppercase tracking-[0.16em] text-muted-foreground/80 lg:text-left">
             Built by {SITE.company}
           </p>
         </motion.div>

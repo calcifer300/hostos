@@ -5,7 +5,7 @@ import { assembleDashboard } from "@/lib/dashboard/assemble";
 
 export const metadata: Metadata = { title: "Web dashboard" };
 
-/** Web & domains (GoDaddy): every site and domain, uptime, SSL and renewals. */
+/** Websites & Domains: every site and domain, uptime, SSL and renewals — whatever the registrar. */
 export default async function WebDashboardPage() {
   const page = await assembleDashboard("web");
   if (!page.modules.includes("web")) return <ModuleOff module="web" />;

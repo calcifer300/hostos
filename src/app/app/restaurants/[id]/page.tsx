@@ -17,6 +17,8 @@ import { computeOrderAnalytics } from "@/lib/restaurants/analytics";
 import { RestaurantTabs } from "@/components/restaurants/restaurant-tabs";
 import { StatusPill } from "@/components/restaurants/status-pill";
 import { routes } from "@/lib/routes";
+import { ModuleOff } from "@/components/dashboard/module-off";
+import { verticalAccess } from "@/lib/host/context";
 
 export const metadata: Metadata = { title: "Restaurant" };
 
@@ -27,6 +29,10 @@ export default async function RestaurantPage({
   params: Promise<{ id: string }>;
   searchParams: Promise<{ tab?: string; comparison?: string }>;
 }) {
+  // Belongs to the restaurants vertical: nothing here renders — or queries — unless this person may open it.
+  const access = await verticalAccess("restaurants");
+  if (access !== "ok") return <ModuleOff module="restaurants" reason={access} />;
+
   const { id } = await params;
   const { tab, comparison: comparisonId } = await searchParams;
   const hostId = await getCurrentHostId();

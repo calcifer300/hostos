@@ -6,7 +6,7 @@ import { getDashboardLayout } from "@/lib/dashboard/layout";
 import { availableWidgets, type DashboardScope, type LayoutEntry } from "@/lib/dashboard/widgets";
 import { getLatestUnreadEmail } from "@/lib/gmail/queries";
 import { canEditCurrentFleet, getCurrentHostId } from "@/lib/host/context";
-import { getHostModules } from "@/lib/host/queries";
+import { getAccessibleModules } from "@/lib/host/context";
 import type { WorkspaceModule } from "@/lib/modules";
 import { getGuestConversations } from "@/lib/messages/queries";
 import { getSetupStatus, type SetupStatus } from "@/lib/onboarding/status";
@@ -54,7 +54,9 @@ export async function assembleDashboard(scope: DashboardScope): Promise<Dashboar
   const firstName = session?.user?.name?.split(" ")[0] ?? null;
 
   const hostId = await getCurrentHostId();
-  const modules = await getHostModules(hostId);
+  // What this person may open here — the workspace's verticals narrowed by
+  // their membership — so Home's business cards and every widget follow suit.
+  const modules = await getAccessibleModules();
   const widgets = new Set(availableWidgets(scope, modules).map((w) => w.id));
   const has = (...ids: string[]) => ids.some((id) => widgets.has(id));
 

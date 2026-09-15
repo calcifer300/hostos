@@ -201,7 +201,7 @@ const LINES = [
   { icon: Car, name: "Turo", platform: "Fleet operations", href: "#fleet", text: "Reservations, vehicles, guest messaging, risk and license checks, the cross-fleet board." },
   { icon: ChefHat, name: "DoorDash", platform: "Restaurant operations", href: "#restaurants", text: "Store monitoring, POS-vs-marketplace menu sync, orders, customer messages, inventory." },
   { icon: ShoppingBag, name: "Shopify", platform: "Commerce operations", href: "#commerce", text: "Products and inventory, orders and fulfilment, low-stock alerts, sales analytics." },
-  { icon: Globe, name: "GoDaddy", platform: "Web & domains", href: "#benefits", text: "Every site and domain you look after: uptime and SSL checked daily, renewals caught 30 days out." },
+  { icon: Globe, name: "Websites & Domains", platform: "Any registrar", href: "#benefits", text: "Every site and domain you look after — Cloudflare, Porkbun, Namecheap or GoDaddy: uptime and SSL checked daily, renewals caught 30 days out." },
   { icon: Coffee, name: "Coffee Shops", platform: "Café operations", href: "#benefits", text: "Sales against last week, stock before the morning rush runs dry, shifts and opening/closing routines." },
   { icon: Scissors, name: "Barbershops", platform: "Barbershop operations", href: "#benefits", text: "Today's chairs, no-shows, clients due for a rebooking reminder, revenue per barber." },
   { icon: Blocks, name: "Build a custom", platform: "Any business", href: "#contact", text: "Your own numbers logged and charted, your checklists, and a build request straight to our engineers." },
@@ -218,7 +218,7 @@ export function PlatformIntro() {
               One workspace. <span className="text-gradient">A dashboard for every line of business.</span>
             </>
           }
-          description="HostOS is the operations platform we built for our own clients and our own team. After you sign in you choose the business you're running today — a Turo fleet, DoorDash kitchens, a Shopify store, client websites on GoDaddy, a coffee shop, a barbershop, or something we build for you — and get a command center with only the tools that work for it. Teams, tasks, notifications, automation and the AI Butler are shared underneath."
+          description="HostOS is the operations platform we built for our own clients and our own team. After you sign in you choose the business you're running today — a Turo fleet, DoorDash kitchens, a Shopify store, client websites and domains, a coffee shop, a barbershop, or something we build for you — and get a command center with only the tools that work for it. Teams, tasks, notifications, automation and the AI Butler are shared underneath."
           align="center"
           className="max-w-3xl"
         />

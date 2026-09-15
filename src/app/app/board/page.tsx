@@ -1,6 +1,8 @@
 import { BoardClient } from "@/components/board/board-client";
 import { getBoardData } from "@/lib/board/queries";
 import { canEditCurrentFleet } from "@/lib/host/context";
+import { ModuleOff } from "@/components/dashboard/module-off";
+import { verticalAccess } from "@/lib/host/context";
 
 /**
  * The cross-fleet operations board.
@@ -10,6 +12,10 @@ import { canEditCurrentFleet } from "@/lib/host/context";
  * why that split rather than either alone.
  */
 export default async function BoardPage() {
+  // Belongs to the fleet vertical: nothing here renders — or queries — unless this person may open it.
+  const access = await verticalAccess("fleet");
+  if (access !== "ok") return <ModuleOff module="fleet" reason={access} />;
+
   const [{ trips, fleets, degraded }, canEdit] = await Promise.all([
     getBoardData(),
     canEditCurrentFleet(),

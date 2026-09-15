@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { runMutation } from "@/lib/supabase/server";
-import { canManageSettings, getCurrentHostId, hasNoFleetAccess } from "@/lib/host/context";
+import { canManageSettings, getAccessibleModules, getCurrentHostId, hasNoFleetAccess } from "@/lib/host/context";
 import { getHostModules } from "@/lib/host/queries";
 import { isWorkspaceModule, moduleById } from "@/lib/modules";
 import { VERTICAL_COOKIE, VERTICAL_ROUTES } from "@/lib/verticals";
@@ -24,6 +24,9 @@ export async function chooseVertical(moduleId: string): Promise<{ ok: false; err
 
   const hostId = await getCurrentHostId();
   const enabled = await getHostModules(hostId);
+  if (enabled.includes(moduleId) && !(await getAccessibleModules()).includes(moduleId)) {
+    return { ok: false, error: `${moduleById(moduleId)?.title} isn't assigned to you in this workspace — ask an owner or admin.` };
+  }
   if (!enabled.includes(moduleId)) {
     if (!(await canManageSettings())) return { ok: false, error: `${moduleById(moduleId)?.title} isn't switched on for this workspace yet — ask an owner, admin or manager to enable it.` };
     const next = [...enabled, moduleId];

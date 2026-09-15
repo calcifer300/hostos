@@ -307,7 +307,7 @@ function BusinessesWidget({ d }: { d: WidgetData }) {
         module: m,
         icon: Icon,
         href: routes.web,
-        platform: "GoDaddy",
+        platform: "Any registrar",
         stats: [
           { label: "Sites", value: String(d.properties.length) },
           { label: "Up", value: String(d.properties.filter((p) => p.status === "up").length) },

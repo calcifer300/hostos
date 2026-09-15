@@ -2,7 +2,38 @@
 
 All notable changes to HostOS. Dates are when the work landed on `unified`.
 
-## [Unreleased] — 2026-09-15 · hostoscollective.com, sign-in fix, motion pass
+## [Unreleased] — 2026-09-15 · Karl's review: access per vertical, quick notes, a cleaner front door
+
+- **Per-member verticals** (migration 0026, `host_members.modules`): an
+  invitation — or a member on the roster — can be limited to some of the
+  verticals the workspace runs ("Juan: Shopify and Turo"). Null means every
+  vertical; owners and admins always see everything. Enforced in
+  `getAccessibleModules()`/`verticalAccess()`: the sidebar, the chooser
+  ("Not assigned to you"), the dashboards and every page that belongs to a
+  vertical check it *before* querying, so a vertical you can't open never
+  reaches your browser.
+- **Quick notes** (migration 0026, `quick_notes`): an owner/admin scratchpad
+  in the corner of every page that follows the person across pages and
+  workspaces. Pin, edit in place (saves on blur), ⌘↵ to add; also in the top
+  bar.
+- **The chooser is the front door**: on `/app/start` the sidebar shows only
+  what is shared — the vertical's group appears once you have picked one.
+  The group is headed by the platform's own name and colour ("DoorDash", in
+  DoorDash red), the top bar reads *Workspace / DoorDash / Dashboard*, the
+  workspace switcher shows the vertical under the name, and each dashboard's
+  eyebrow wears its colour — so "which business am I in" is never in doubt.
+- **Workspace names**: auto-named "<First>'s Fleet" workspaces become
+  "<First>'s Workspace" (0026) — a workspace running DoorDash is not a fleet.
+- **Registrar-neutral web vertical**: "GoDaddy" is now **Websites & Domains**;
+  Cloudflare, Porkbun and Namecheap lead the registrar list (GoDaddy stays for
+  clients already there). The `godaddy` integration id is kept for existing
+  rows; it is labelled "Domain registrars".
+- **Dark-mode legibility**: `color-scheme` follows the theme so native
+  `<select>` popups no longer paint dark-on-dark options (the contact form's
+  "Service interested in"); secondary text lifted from /70 → /85 and the dark
+  muted tone brightened.
+
+## 2026-09-15 · hostoscollective.com, sign-in fix, motion pass
 
 - **Sign-in from www.hostoscollective.com works**: the canonical www → apex
   redirect now covers `/login` and `/api/auth/*` too (they were excluded from

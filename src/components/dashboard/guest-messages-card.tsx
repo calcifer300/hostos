@@ -125,7 +125,7 @@ export function GuestMessagesCard({ initialMessages }: { initialMessages: GuestC
                     )}
                   >
                     <span className="min-w-0 flex-1 truncate">
-                      {c.fromHost && <span className="text-muted-foreground/70">You: </span>}
+                      {c.fromHost && <span className="text-muted-foreground/85">You: </span>}
                       {c.preview}
                     </span>
                     <CopyButton
@@ -141,7 +141,7 @@ export function GuestMessagesCard({ initialMessages }: { initialMessages: GuestC
         </div>
       )}
       {lastPolledAt && (
-        <p className="mt-3 text-[11px] text-muted-foreground/60">
+        <p className="mt-3 text-[11px] text-muted-foreground/80">
           Checked {lastPolledAt.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
         </p>
       )}

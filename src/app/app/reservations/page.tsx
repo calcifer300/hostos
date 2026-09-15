@@ -4,6 +4,8 @@ import { cleanSubject, getDashboardData } from "@/lib/dashboard/queries";
 import { Badge } from "@/components/ui/badge";
 import { formatRelativeTime } from "@/lib/utils";
 import type { TuroReservation } from "@/types/turo";
+import { ModuleOff } from "@/components/dashboard/module-off";
+import { verticalAccess } from "@/lib/host/context";
 
 const statusVariant: Record<TuroReservation["status"], "accent" | "success" | "neutral" | "danger"> = {
   active: "accent",
@@ -23,6 +25,10 @@ function formatDate(iso: string | null): string {
 }
 
 export default async function ReservationsPage() {
+  // Belongs to the fleet vertical: nothing here renders — or queries — unless this person may open it.
+  const access = await verticalAccess("fleet");
+  if (access !== "ok") return <ModuleOff module="fleet" reason={access} />;
+
   const session = await auth();
   const email = session?.user?.email ?? null;
 
@@ -100,7 +106,7 @@ export default async function ReservationsPage() {
                     <li key={e.id} className="flex items-baseline gap-2 text-[12.5px]">
                       <span className="shrink-0 capitalize text-muted-foreground">{e.kind}</span>
                       <span className="truncate">{cleanSubject(e.subject) || "(no subject)"}</span>
-                      <span className="ml-auto shrink-0 text-muted-foreground/70">
+                      <span className="ml-auto shrink-0 text-muted-foreground/85">
                         {formatRelativeTime(e.occurredAt)}
                       </span>
                     </li>

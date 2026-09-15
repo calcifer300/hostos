@@ -8,10 +8,16 @@ import { computeStoreAnalytics } from "@/lib/commerce/analytics";
 import { StoreDetail } from "@/components/commerce/store-detail";
 import { Badge } from "@/components/ui/badge";
 import { routes } from "@/lib/routes";
+import { ModuleOff } from "@/components/dashboard/module-off";
+import { verticalAccess } from "@/lib/host/context";
 
 export const metadata: Metadata = { title: "Store" };
 
 export default async function StorePage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ tab?: string }> }) {
+  // Belongs to the commerce vertical: nothing here renders — or queries — unless this person may open it.
+  const access = await verticalAccess("commerce");
+  if (access !== "ok") return <ModuleOff module="commerce" reason={access} />;
+
   const { id } = await params;
   const { tab } = await searchParams;
   const hostId = await getCurrentHostId();

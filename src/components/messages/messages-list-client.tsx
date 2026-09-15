@@ -114,12 +114,12 @@ export function MessagesListClient({ initialConversations }: { initialConversati
                     </span>
                   )}
                   <p className="min-w-0 flex-1 truncate text-[12px] leading-relaxed text-muted-foreground">
-                    {c.fromHost && <span className="text-muted-foreground/70">You: </span>}
+                    {c.fromHost && <span className="text-muted-foreground/85">You: </span>}
                     {c.preview}
                   </p>
                 </div>
               </div>
-              <span className="shrink-0 text-[10.5px] text-muted-foreground/70">{c.messageCount}</span>
+              <span className="shrink-0 text-[10.5px] text-muted-foreground/85">{c.messageCount}</span>
             </Link>
           </motion.div>
         ))}

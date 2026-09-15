@@ -149,7 +149,7 @@ export function CommandPalette({ sources }: { sources: PaletteSources }) {
             }}
             onKeyDown={onKeyDown}
             placeholder="Search pages, vehicles, guests, restaurants…"
-            className="h-9 flex-1 bg-transparent text-[14px] outline-none placeholder:text-muted-foreground/70"
+            className="h-9 flex-1 bg-transparent text-[14px] outline-none placeholder:text-muted-foreground/85"
           />
           <Kbd>esc</Kbd>
         </div>
@@ -159,7 +159,7 @@ export function CommandPalette({ sources }: { sources: PaletteSources }) {
           ) : (
             grouped.map((g) => (
               <div key={g.group} className="mb-1">
-                <p className="px-3 pb-1 pt-2 text-[10.5px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/70">{g.group}</p>
+                <p className="px-3 pb-1 pt-2 text-[10.5px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/85">{g.group}</p>
                 {g.items.map((r) => {
                   flat += 1;
                   const current = flat;

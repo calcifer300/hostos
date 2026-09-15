@@ -93,7 +93,7 @@ function StepRow({ step, isNext }: { step: SetupStep; isNext: boolean }) {
         >
           {step.title}
           {step.optional && (
-            <span className="ml-2 text-[11px] font-normal uppercase tracking-wide text-muted-foreground/70">
+            <span className="ml-2 text-[11px] font-normal uppercase tracking-wide text-muted-foreground/85">
               Optional
             </span>
           )}

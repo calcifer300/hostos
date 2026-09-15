@@ -59,15 +59,20 @@ const SCOPE_LINKS: Record<Exclude<DashboardScope, "home">, { href: string; label
 
 function DashboardHeader({ scope }: { scope: Exclude<DashboardScope, "home"> }) {
   const def = dashboardFor(scope);
-  const Icon = MODULE_ICONS[moduleById(scope)?.icon ?? "Blocks"];
+  const mod = moduleById(scope);
+  const Icon = MODULE_ICONS[mod?.icon ?? "Blocks"];
   const healthy = useBackendHealthy();
   return (
     <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
       <div className="min-w-0">
-        <p className="flex items-center gap-2 text-[11.5px] font-semibold uppercase tracking-[0.14em] text-accent">
-          <Icon className="h-3.5 w-3.5" strokeWidth={2} />
-          {def.eyebrow}
-          {def.platform && <span className="rounded-full border border-border bg-card px-2 py-0.5 text-[10.5px] font-medium normal-case tracking-normal text-muted-foreground">{def.platform}</span>}
+        {/* The eyebrow wears the vertical's own colour — the same one as its chooser card and sidebar group. */}
+        <p className="flex items-center gap-2 text-[11.5px] font-semibold uppercase tracking-[0.14em]" style={{ color: mod?.hue ?? "var(--accent)" }}>
+          <motion.span initial={{ scale: 0.6, rotate: -20, opacity: 0 }} animate={{ scale: 1, rotate: 0, opacity: 1 }} transition={{ type: "spring", stiffness: 380, damping: 22 }} className="flex h-6 w-6 items-center justify-center rounded-md border border-border" style={{ background: `color-mix(in oklab, ${mod?.hue ?? "var(--accent)"} 16%, transparent)` }}>
+            <Icon className="h-3.5 w-3.5" strokeWidth={2} />
+          </motion.span>
+          {mod?.title ?? def.eyebrow}
+          {/* The chip is the kind of business ("Restaurant operations"); the title already names the platform. */}
+          <span className="rounded-full border border-border bg-card px-2 py-0.5 text-[10.5px] font-medium normal-case tracking-normal text-muted-foreground">{mod ? def.eyebrow : def.platform}</span>
         </p>
         <h1 className="mt-2 text-[30px] font-semibold tracking-tight sm:text-[34px]">{def.title}</h1>
         <p className="mt-1.5 text-[14.5px] text-muted-foreground">{healthy ? def.description : "Some data couldn't be loaded just now — showing what we have."}</p>

@@ -7,6 +7,8 @@ import { ConnectGoogleNotice } from "@/components/shell/connect-google-notice";
 import { routes } from "@/lib/routes";
 import { cn, formatRelativeTime } from "@/lib/utils";
 import type { VehicleStatus } from "@/lib/dashboard/queries";
+import { ModuleOff } from "@/components/dashboard/module-off";
+import { verticalAccess } from "@/lib/host/context";
 
 const statusMeta: Record<VehicleStatus, { label: string; dot: string; text: string }> = {
   on_trip: { label: "On trip", dot: "bg-accent", text: "text-accent" },
@@ -18,6 +20,10 @@ const statusMeta: Record<VehicleStatus, { label: string; dot: string; text: stri
 export const metadata: Metadata = { title: "Vehicles" };
 
 export default async function VehiclesPage() {
+  // Belongs to the fleet vertical: nothing here renders — or queries — unless this person may open it.
+  const access = await verticalAccess("fleet");
+  if (access !== "ok") return <ModuleOff module="fleet" reason={access} />;
+
   const session = await auth();
   const email = session?.user?.email ?? null;
 
@@ -64,7 +70,7 @@ export default async function VehiclesPage() {
                   </p>
                 )}
                 {v.lastActivity && (
-                  <p className="mt-1 text-[11.5px] text-muted-foreground/70">
+                  <p className="mt-1 text-[11.5px] text-muted-foreground/85">
                     Last activity {formatRelativeTime(v.lastActivity)}
                   </p>
                 )}

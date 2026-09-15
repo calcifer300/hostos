@@ -4,8 +4,14 @@ import { getSyncedEmails } from "@/lib/gmail/queries";
 import { SyncGmailButton } from "@/components/inbox/sync-gmail-button";
 import { InboxList } from "@/components/inbox/inbox-list";
 import { ConnectGoogleNotice } from "@/components/shell/connect-google-notice";
+import { ModuleOff } from "@/components/dashboard/module-off";
+import { verticalAccess } from "@/lib/host/context";
 
 export default async function InboxPage() {
+  // Belongs to the fleet vertical: nothing here renders — or queries — unless this person may open it.
+  const access = await verticalAccess("fleet");
+  if (access !== "ok") return <ModuleOff module="fleet" reason={access} />;
+
   const session = await auth();
   const email = session?.user?.email ?? null;
 

@@ -1,6 +1,8 @@
 import { getCurrentHostId } from "@/lib/host/context";
 import { getGuestConversations } from "@/lib/messages/queries";
 import { MessagesListClient } from "@/components/messages/messages-list-client";
+import { ModuleOff } from "@/components/dashboard/module-off";
+import { verticalAccess } from "@/lib/host/context";
 
 /**
  * Every reservation thread the Companion extension has synced, raw —
@@ -12,6 +14,10 @@ import { MessagesListClient } from "@/components/messages/messages-list-client";
  * so a new guest message moves its thread to the top automatically.
  */
 export default async function MessagesPage() {
+  // Belongs to the fleet vertical: nothing here renders — or queries — unless this person may open it.
+  const access = await verticalAccess("fleet");
+  if (access !== "ok") return <ModuleOff module="fleet" reason={access} />;
+
   const conversations = await getGuestConversations(await getCurrentHostId(), 200);
 
   return (

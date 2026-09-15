@@ -6,6 +6,8 @@ import { motion } from "framer-motion";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { NAV_SECTIONS, isNavItemActive, type NavItem } from "@/components/shell/nav-items";
 import type { WorkspaceModule } from "@/lib/host/queries";
+import { moduleById } from "@/lib/modules";
+import { routes } from "@/lib/routes";
 import { verticalFromPath } from "@/lib/verticals";
 import { cn } from "@/lib/utils";
 
@@ -114,17 +116,25 @@ export function SidebarNav({
   // chosen one, then the first enabled — so the sidebar is always a clean
   // command center for exactly one business plus what is shared.
   const pathVertical = verticalFromPath(pathname);
-  const active = (pathVertical && modules.includes(pathVertical) ? pathVertical : null) ?? (focus && modules.includes(focus) ? focus : null) ?? modules[0] ?? null;
+  // The chooser is the one page with no business in focus: it is where you
+  // pick one, so the sidebar shows only what is shared until you have.
+  const choosing = pathname === routes.start;
+  const active = choosing ? null : (pathVertical && modules.includes(pathVertical) ? pathVertical : null) ?? (focus && modules.includes(focus) ? focus : null) ?? modules[0] ?? null;
 
   return (
     <nav className="flex flex-col gap-5" aria-label="Workspace">
-      {NAV_SECTIONS.filter((s) => !s.module || s.module === active).map((section) => (
-        <div key={section.id}>
+      {NAV_SECTIONS.filter((s) => !s.module || s.module === active).map((section) => {
+        // A vertical's group is headed by the platform people know it by
+        // ("DoorDash"), in its own colour, with the kind of business as a chip.
+        const def = section.module ? moduleById(section.module) : undefined;
+        return (
+        <motion.div key={section.id} initial={section.module ? { opacity: 0, x: -6 } : false} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}>
           {section.label && !collapsed && (
-            <p className="mb-1.5 flex items-center gap-1.5 px-2.5 text-[10.5px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/70">
-              {section.label}
-              {section.platform && (
-                <span className="rounded-full border border-border/80 px-1.5 py-px text-[9.5px] font-medium normal-case tracking-normal text-muted-foreground/80">{section.platform}</span>
+            <p className="mb-1.5 flex items-center gap-1.5 px-2.5 text-[10.5px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/80">
+              {def && <span aria-hidden className="h-1.5 w-1.5 rounded-full" style={{ background: def.hue }} />}
+              <span style={def ? { color: def.hue } : undefined}>{def ? def.title : section.label}</span>
+              {def && (
+                <span className="rounded-full border border-border/80 px-1.5 py-px text-[9.5px] font-medium normal-case tracking-normal text-muted-foreground">{def.short}</span>
               )}
             </p>
           )}
@@ -141,8 +151,9 @@ export function SidebarNav({
               />
             ))}
           </div>
-        </div>
-      ))}
+        </motion.div>
+        );
+      })}
     </nav>
   );
 }

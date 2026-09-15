@@ -52,7 +52,7 @@ export function FleetStatusGrid({
                     </p>
                   )}
                   {v.lastActivity && (
-                    <p className="mt-1.5 text-[11.5px] text-muted-foreground/70">
+                    <p className="mt-1.5 text-[11.5px] text-muted-foreground/85">
                       Last activity {formatRelativeTime(v.lastActivity)}
                     </p>
                   )}

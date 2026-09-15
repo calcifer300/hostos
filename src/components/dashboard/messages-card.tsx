@@ -42,7 +42,7 @@ export function MessagesCard({ messages }: { messages: AttentionMessage[] }) {
                 </Badge>
               </div>
               <p className="mt-0.5 truncate text-[12.5px] text-muted-foreground">{m.preview}</p>
-              <p className="mt-0.5 text-[11px] text-muted-foreground/70">{m.receivedAgo}</p>
+              <p className="mt-0.5 text-[11px] text-muted-foreground/85">{m.receivedAgo}</p>
             </div>
           ))}
         </div>

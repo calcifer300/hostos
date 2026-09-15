@@ -5,7 +5,7 @@ import { runMutation, runQuery, runQueryOr } from "@/lib/supabase/server";
 /**
  * Web & domains (migration 0025): the websites and domains a workspace looks
  * after — its own and its clients'. Registrar and hosting are recorded by
- * name (GoDaddy first); HostOS does the checking itself (lib/web/check.ts),
+ * name (any registrar); HostOS does the checking itself (lib/web/check.ts),
  * so a property is useful the moment it is typed in, API or no API.
  */
 

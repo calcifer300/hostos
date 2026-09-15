@@ -12,6 +12,8 @@ import { Badge } from "@/components/ui/badge";
 import { CopyButton } from "@/components/ui/copy-button";
 import type { TuroReservation } from "@/types/turo";
 import { routes } from "@/lib/routes";
+import { ModuleOff } from "@/components/dashboard/module-off";
+import { verticalAccess } from "@/lib/host/context";
 
 const statusVariant: Record<TuroReservation["status"], "accent" | "success" | "neutral" | "danger"> = {
   active: "accent",
@@ -35,6 +37,10 @@ export default async function VehicleDetailPage({
 }: {
   params: Promise<{ vehicle: string }>;
 }) {
+  // Belongs to the fleet vertical: nothing here renders — or queries — unless this person may open it.
+  const access = await verticalAccess("fleet");
+  if (access !== "ok") return <ModuleOff module="fleet" reason={access} />;
+
   const { vehicle: encodedVehicle } = await params;
   const vehicleName = decodeURIComponent(encodedVehicle);
 
@@ -207,7 +213,7 @@ export default async function VehicleDetailPage({
               </div>
             )}
           </div>
-          <p className="mt-4 text-[11px] text-muted-foreground/70">
+          <p className="mt-4 text-[11px] text-muted-foreground/85">
             From Colorado Cruisers&rsquo; Vehicle Summary export, not the live Companion sync.
           </p>
         </div>

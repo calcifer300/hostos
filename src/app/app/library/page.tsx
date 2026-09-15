@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { BookMarked, ExternalLink } from "lucide-react";
 import { getCategories, searchArticles, getArticleCount } from "@/lib/library/queries";
+import { ModuleOff } from "@/components/dashboard/module-off";
+import { verticalAccess } from "@/lib/host/context";
 
 /**
  * Turo's help centre, searchable — imported from Karl's Turo-Context-Library.
@@ -16,6 +18,10 @@ export default async function LibraryPage({
 }: {
   searchParams: Promise<{ q?: string; category?: string }>;
 }) {
+  // Belongs to the fleet vertical: nothing here renders — or queries — unless this person may open it.
+  const access = await verticalAccess("fleet");
+  if (access !== "ok") return <ModuleOff module="fleet" reason={access} />;
+
   const params = await searchParams;
   const query = params.q?.trim() ?? "";
   const category = params.category ?? null;

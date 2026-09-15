@@ -15,7 +15,7 @@ export const alt = `${SITE.company} — Smarter operations. Higher earnings. Les
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-const VERTICALS = ["Turo", "DoorDash", "Shopify", "GoDaddy", "Coffee Shops", "Barbershops", "Custom"];
+const VERTICALS = ["Turo", "DoorDash", "Shopify", "Websites & Domains", "Coffee Shops", "Barbershops", "Custom"];
 
 /** A soft glow from four concentric low-alpha discs — what a blurred orb looks like once Satori has had its say. */
 function Orb({ x, y, size, rgb }: { x: number; y: number; size: number; rgb: string }) {

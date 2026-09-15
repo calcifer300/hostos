@@ -61,7 +61,7 @@ export const routes = {
   store: (id: string) => app(`commerce/${encodeURIComponent(id)}`),
   storeTab: (id: string, tab: string) => app(`commerce/${encodeURIComponent(id)}?tab=${encodeURIComponent(tab)}`),
 
-  // Web & domains (GoDaddy), cafés, barbershops, custom — each its own dashboard.
+  // Websites & Domains, cafés, barbershops, custom — each its own dashboard.
   web: app("web"),
   cafe: app("cafe"),
   salon: app("salon"),

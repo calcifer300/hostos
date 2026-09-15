@@ -16,6 +16,8 @@ import { BackendStatusBanner, type BackendStatusView } from "@/components/shell/
 import { BackendStatusProvider } from "@/components/shell/backend-status-context";
 import { WorkspaceSwitcher, type WorkspaceOption } from "@/components/shell/workspace-switcher";
 import { CommandPalette, type PaletteSources } from "@/components/shell/command-palette";
+import { QuickNotes } from "@/components/notes/quick-notes";
+import type { QuickNote } from "@/lib/notes/queries";
 import type { SessionUser } from "@/types/auth";
 import type { Notification } from "@/lib/notifications/queries";
 import type { WorkspaceModule } from "@/lib/host/queries";
@@ -35,6 +37,8 @@ export interface AppShellProps {
   modules: WorkspaceModule[];
   /** The vertical chosen on /app/start, remembered per browser. */
   focus: WorkspaceModule | null;
+  /** The signed-in person's quick notes; null when they may not use them (members, viewers, signed out). */
+  quickNotes: QuickNote[] | null;
   navCounts: Record<string, number>;
   notifications: Notification[];
   unreadNotifications: number;
@@ -57,6 +61,7 @@ export function AppShell({
   workspaceName,
   modules,
   focus,
+  quickNotes,
   navCounts,
   notifications,
   unreadNotifications,
@@ -98,7 +103,7 @@ export function AppShell({
           <Logo size="sm" />
         )}
         <div className="mt-4">
-          <WorkspaceSwitcher workspaces={workspaces} currentHostId={currentHostId} collapsed={collapsed && !mobile} />
+          <WorkspaceSwitcher workspaces={workspaces} currentHostId={currentHostId} collapsed={collapsed && !mobile} focus={focus} />
         </div>
       </div>
       <div className="mt-6 flex-1 overflow-y-auto pb-4">
@@ -138,6 +143,7 @@ export function AppShell({
           <AutoRefresh />
           {user && <GmailAutoSync />}
           <CommandPalette sources={palette} />
+          {quickNotes && <QuickNotes initial={quickNotes} />}
 
           {/* Desktop rail */}
           <motion.aside
@@ -203,6 +209,8 @@ export function AppShell({
               notifications={notifications}
               unread={unreadNotifications}
               workspaceName={workspaceName}
+              focus={focus}
+              notesEnabled={quickNotes !== null}
             />
             <BackendStatusBanner status={backendStatus} />
             <main className="px-5 pb-24 pt-8 md:px-8">{children}</main>

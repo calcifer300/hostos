@@ -60,10 +60,12 @@ re-running is safe. Apply them in order in the Supabase SQL editor.
 
 Migrations **0017–0025** (platform repairs, restaurants, workspace layer,
 templates, marketing, integrations, commerce, roles, the four new verticals)
-are bundled for one paste:
+are bundled for one paste, and **0026** (per-member verticals, quick notes,
+workspace names) on its own:
 
 ```bash
 node scripts/bundle-migrations.mjs 0017 0025   # → supabase/bundles/0017-0025.sql
+node scripts/bundle-migrations.mjs 0026 0026   # → supabase/bundles/0026-0026.sql
 ```
 
 Code deployed ahead of a migration degrades quietly (missing tables and columns
@@ -121,7 +123,7 @@ src/components/        ui (primitives) · shell · dashboard · marketing · fle
 src/lib/               one folder per domain; queries.ts (reads), actions/*.ts (writes), pure engines beside them
 src/middleware.ts      the auth gate + legacy redirects (must stay middleware — see the file)
 extension/             HostOS Companion (MV3); scripts/build-extension.mjs zips it
-supabase/migrations/   0001 … 0025, additive; supabase/bundles/ for one-paste bundles
+supabase/migrations/   0001 … 0026, additive; supabase/bundles/ for one-paste bundles
 tests/                 node --experimental-strip-types, no framework
 vendor/                originals that were merged in (reference only, excluded from lint/tsc)
 docs/                  AUDIT.md (classification + dependency map), history/

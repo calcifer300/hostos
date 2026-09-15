@@ -24,7 +24,23 @@ const EASE = [0.16, 1, 0.3, 1] as const;
  * workspace hasn't switched on is enabled on the way (settings permission
  * required — everyone else sees it locked with the reason).
  */
-export function VerticalChooser({ firstName, enabled, current, canEnable, workspaceName }: { firstName: string | null; enabled: WorkspaceModule[]; current: WorkspaceModule | null; canEnable: boolean; workspaceName: string }) {
+export function VerticalChooser({
+  firstName,
+  enabled,
+  workspaceEnabled = enabled,
+  current,
+  canEnable,
+  workspaceName,
+}: {
+  firstName: string | null;
+  /** The verticals this person may open here. */
+  enabled: WorkspaceModule[];
+  /** Everything the workspace runs — a superset of `enabled` for a member limited to some of them. */
+  workspaceEnabled?: WorkspaceModule[];
+  current: WorkspaceModule | null;
+  canEnable: boolean;
+  workspaceName: string;
+}) {
   const router = useRouter();
   const [pending, startTransition] = React.useTransition();
   const [choosing, setChoosing] = React.useState<WorkspaceModule | null>(null);
@@ -75,7 +91,13 @@ export function VerticalChooser({ firstName, enabled, current, canEnable, worksp
   }
 
   return (
-    <div className="mx-auto w-full max-w-6xl">
+    <div className="relative mx-auto w-full max-w-6xl">
+      {/* The same ambient backdrop as the landing hero: this is the front door of the product. Clipped so it can never widen the page. */}
+      <div aria-hidden className="pointer-events-none absolute -inset-y-10 inset-x-0 -z-10 overflow-hidden rounded-[2rem]">
+        <div className="bg-grid absolute inset-0 opacity-70" />
+        <div className="absolute -left-10 top-0 h-64 w-64 rounded-full bg-accent/15 blur-3xl animate-drift" />
+        <div className="absolute right-0 top-24 h-72 w-72 rounded-full bg-accent-2/12 blur-3xl animate-drift-slow" />
+      </div>
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: EASE }} className="mb-8 text-center">
         {renaming ? (
           <form onSubmit={submitRename} className="mx-auto flex max-w-sm items-center justify-center gap-2">
@@ -116,7 +138,9 @@ export function VerticalChooser({ firstName, enabled, current, canEnable, worksp
         {MODULES.map((m) => {
           const Icon = MODULE_ICONS[m.icon];
           const on = enabled.includes(m.id);
-          const locked = !on && !canEnable;
+          // Runs in the workspace, but this member wasn't given it.
+          const unassigned = !on && workspaceEnabled.includes(m.id);
+          const locked = unassigned || (!on && !canEnable);
           const isCurrent = current === m.id;
           return (
             <motion.div key={m.id} variants={{ hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: EASE } } }} className="flex flex-col">
@@ -146,7 +170,7 @@ export function VerticalChooser({ firstName, enabled, current, canEnable, worksp
                   )}
                   {locked ? (
                     <span className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-0.5 text-[10.5px] font-medium text-muted-foreground">
-                      <Lock className="h-3 w-3" /> Ask an admin
+                      <Lock className="h-3 w-3" /> {unassigned ? "Not assigned to you" : "Ask an admin"}
                     </span>
                   ) : !on ? (
                     <span className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-0.5 text-[10.5px] font-medium text-muted-foreground">
@@ -167,7 +191,7 @@ export function VerticalChooser({ firstName, enabled, current, canEnable, worksp
                 ))}
               </ul>
               <span className="mt-auto flex items-center gap-1 pt-4 text-[13px] font-semibold" style={{ color: m.hue }}>
-                {choosing === m.id ? "Opening…" : on ? "Open dashboard" : "Set up and open"}
+                {choosing === m.id ? "Opening…" : on ? "Open dashboard" : unassigned ? "Ask an owner or admin" : locked ? "Not switched on" : "Set up and open"}
                 <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
               </span>
             </motion.button>

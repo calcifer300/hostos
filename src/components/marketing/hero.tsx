@@ -122,7 +122,7 @@ export function Hero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 2.2, duration: 0.8 }}
-        className="mx-auto mt-16 flex w-fit flex-col items-center gap-1 text-muted-foreground/60"
+        className="mx-auto mt-16 flex w-fit flex-col items-center gap-1 text-muted-foreground/80"
       >
         <span className="text-[11px] uppercase tracking-[0.18em]">Explore</span>
         <ChevronDown className="h-4 w-4 animate-bounce" />

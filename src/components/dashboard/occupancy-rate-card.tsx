@@ -54,7 +54,7 @@ export function OccupancyRateCard({ trend }: { trend: OccupancyPoint[] }) {
             <path d={areaPath} fill="url(#occupancy-fill)" />
             <path d={linePath} fill="none" stroke="var(--color-accent)" strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" />
           </svg>
-          <div className="mt-1.5 flex justify-between text-[10.5px] text-muted-foreground/70">
+          <div className="mt-1.5 flex justify-between text-[10.5px] text-muted-foreground/85">
             {trend.map((p) => (
               <span key={p.label}>{p.label}</span>
             ))}

@@ -101,7 +101,7 @@ export const NAV_SECTIONS: NavSection[] = [
   {
     id: "web",
     label: "Web & domains",
-    platform: "GoDaddy",
+    platform: "Websites",
     module: "web",
     items: [{ href: routes.web, label: "Dashboard", icon: Gauge, countKey: "web", matchPrefix: true }],
   },

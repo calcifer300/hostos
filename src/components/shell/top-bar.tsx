@@ -2,12 +2,15 @@
 
 import * as React from "react";
 import { usePathname } from "next/navigation";
-import { Search, Sparkles } from "lucide-react";
+import { Search, Sparkles, StickyNote } from "lucide-react";
 import Link from "next/link";
 import { UserMenu } from "@/components/auth/user-menu";
 import { NotificationBell } from "@/components/shell/notification-bell";
 import { openCommandPalette } from "@/components/shell/command-palette";
 import { ALL_NAV_ITEMS } from "@/components/shell/nav-items";
+import { toggleQuickNotes } from "@/components/notes/quick-notes";
+import { moduleById, type WorkspaceModule } from "@/lib/modules";
+import { verticalFromPath } from "@/lib/verticals";
 import { Kbd } from "@/components/ui/kbd";
 import { Button } from "@/components/ui/button";
 import type { SessionUser } from "@/types/auth";
@@ -27,22 +30,38 @@ export function TopBar({
   notifications,
   unread,
   workspaceName,
+  focus = null,
+  notesEnabled = false,
 }: {
   user: SessionUser | null;
   roles: string[];
   notifications: Notification[];
   unread: number;
   workspaceName: string;
+  /** The vertical in focus, so the trail reads "Workspace / DoorDash / Dashboard". */
+  focus?: WorkspaceModule | null;
+  notesEnabled?: boolean;
 }) {
   const pathname = usePathname();
   const crumb = useBreadcrumb(pathname);
+  // The page's own vertical wins over the remembered one; shared pages show none.
+  const vertical = moduleById(verticalFromPath(pathname) ?? focus ?? "");
 
   return (
     <div className="glass-surface sticky top-0 z-20 hidden items-center justify-between gap-4 border-b px-8 py-3 md:flex">
       <div className="flex min-w-0 items-center gap-3">
-        <p className="truncate text-[12.5px] text-muted-foreground">
-          <span className="text-foreground/70">{workspaceName}</span>
-          <span className="mx-1.5 text-muted-foreground/50">/</span>
+        <p className="flex min-w-0 items-center truncate text-[12.5px] text-muted-foreground">
+          <span className="text-foreground/80">{workspaceName}</span>
+          {vertical && (
+            <>
+              <span className="mx-1.5 text-muted-foreground/60">/</span>
+              <span className="inline-flex items-center gap-1.5 font-medium" style={{ color: vertical.hue }}>
+                <span aria-hidden className="h-1.5 w-1.5 rounded-full" style={{ background: vertical.hue }} />
+                {vertical.title}
+              </span>
+            </>
+          )}
+          <span className="mx-1.5 text-muted-foreground/60">/</span>
           <span className="font-medium text-foreground">{crumb}</span>
         </p>
       </div>
@@ -61,6 +80,11 @@ export function TopBar({
           </span>
         </button>
 
+        {notesEnabled && (
+          <Button variant="ghost" size="icon" pill aria-label="Quick notes" title="Quick notes" onClick={toggleQuickNotes}>
+            <StickyNote className="h-4 w-4" />
+          </Button>
+        )}
         <Button asChild variant="ghost" size="icon" pill aria-label="Ask the Butler">
           <Link href={routes.butler}>
             <Sparkles className="h-4 w-4 text-accent" />

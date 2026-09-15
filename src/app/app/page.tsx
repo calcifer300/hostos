@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
-import { getChosenVertical, getCurrentHostId } from "@/lib/host/context";
-import { getHostModules } from "@/lib/host/queries";
+import { getAccessibleModules, getChosenVertical } from "@/lib/host/context";
 import { routes } from "@/lib/routes";
 import { VERTICAL_ROUTES } from "@/lib/verticals";
 
@@ -11,8 +10,7 @@ import { VERTICAL_ROUTES } from "@/lib/verticals";
  * a Turo dashboard must not carry DoorDash tools.
  */
 export default async function AppRoot() {
-  const hostId = await getCurrentHostId();
-  const modules = await getHostModules(hostId);
+  const modules = await getAccessibleModules();
   const chosen = await getChosenVertical(modules);
   redirect(chosen ? VERTICAL_ROUTES[chosen] : routes.start);
 }

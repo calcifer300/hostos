@@ -2,10 +2,11 @@ import { auth } from "@/auth";
 import { AppShell } from "@/components/shell/app-shell";
 import type { BackendStatusView } from "@/components/shell/backend-status-banner";
 import { getDashboardData } from "@/lib/dashboard/queries";
-import { getHost, getHostModules } from "@/lib/host/queries";
+import { getHost } from "@/lib/host/queries";
 import { getUserRoles } from "@/lib/roles/queries";
 import { getBackendHealth } from "@/lib/supabase/server";
-import { getCurrentHostId, getFleetsForUser } from "@/lib/host/context";
+import { canUseQuickNotes, getAccessibleModules, getCurrentHostId, getFleetsForUser } from "@/lib/host/context";
+import { getQuickNotes } from "@/lib/notes/queries";
 import { getNotifications, getUnreadNotificationCount } from "@/lib/notifications/queries";
 import { getTasks, summarizeTasks } from "@/lib/tasks/queries";
 import { getRestaurants } from "@/lib/restaurants/queries";
@@ -43,10 +44,13 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   // The host row first: the risk queues need its timezone, and getHost is
   // React.cache()'d so the pages beneath pay nothing extra for it.
   const host = await getHost(hostId);
-  const modulesEarly = await getHostModules(hostId);
-  const [data, modules, roles, fleets, notifications, unread, tasks, restaurants, stores, board, risk, focus, properties, cafeLocations, cafeStock, metrics] = await Promise.all([
+  // What this person may open — the workspace's verticals narrowed by their
+  // membership — drives the sidebar, the badge counts and the chosen focus.
+  const modulesEarly = await getAccessibleModules();
+  const notesAllowed = await canUseQuickNotes();
+  const [data, modules, roles, fleets, notifications, unread, tasks, restaurants, stores, board, risk, focus, properties, cafeLocations, cafeStock, metrics, notes] = await Promise.all([
     getDashboardData(email),
-    getHostModules(hostId),
+    getAccessibleModules(),
     getUserRoles(email),
     getFleetsForUser(email),
     getNotifications(hostId, email, 12),
@@ -61,6 +65,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     modulesEarly.includes("cafe") ? getLocations(hostId, "cafe") : Promise.resolve([]),
     modulesEarly.includes("cafe") ? getStock(hostId, "cafe") : Promise.resolve([]),
     modulesEarly.includes("custom") ? getMetrics(hostId, weekAgoDay()) : Promise.resolve([]),
+    notesAllowed ? getQuickNotes(email) : Promise.resolve([]),
   ]);
 
   // Read *after* the queries above, so it reflects this render's outcomes.
@@ -96,6 +101,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       workspaceName={workspaceName}
       modules={modules}
       focus={focus}
+      quickNotes={notesAllowed ? notes : null}
       navCounts={navCounts}
       notifications={notifications}
       unreadNotifications={unread}

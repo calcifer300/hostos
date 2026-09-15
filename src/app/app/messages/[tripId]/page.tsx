@@ -8,12 +8,18 @@ import { getBackendHealth } from "@/lib/supabase/server";
 import { ConversationThreadClient } from "@/components/messages/conversation-thread-client";
 import { DetailUnavailable } from "@/components/shell/detail-unavailable";
 import { QuickReplies } from "@/components/messages/quick-replies";
+import { ModuleOff } from "@/components/dashboard/module-off";
+import { verticalAccess } from "@/lib/host/context";
 
 export default async function ConversationPage({
   params,
 }: {
   params: Promise<{ tripId: string }>;
 }) {
+  // Belongs to the fleet vertical: nothing here renders — or queries — unless this person may open it.
+  const access = await verticalAccess("fleet");
+  if (access !== "ok") return <ModuleOff module="fleet" reason={access} />;
+
   const { tripId: encodedTripId } = await params;
   const tripId = decodeURIComponent(encodedTripId);
 

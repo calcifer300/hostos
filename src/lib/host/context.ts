@@ -3,8 +3,8 @@ import { cache } from "react";
 import { cookies } from "next/headers";
 import { auth } from "@/auth";
 import { runQueryOr } from "@/lib/supabase/server";
-import { DEFAULT_HOST_ID } from "@/lib/host/queries";
-import type { WorkspaceModule } from "@/lib/modules";
+import { DEFAULT_HOST_ID, getHostModules } from "@/lib/host/queries";
+import { isWorkspaceModule, type WorkspaceModule } from "@/lib/modules";
 import { asVertical, VERTICAL_COOKIE } from "@/lib/verticals";
 import { provisionFleetForUser } from "@/lib/host/provision";
 import { requiresAuth } from "@/lib/access";
@@ -218,6 +218,8 @@ export async function canManageMembers(): Promise<boolean> {
 export interface FleetMember {
   email: string;
   role: string;
+  /** Verticals this member may open; null = every vertical the workspace runs (migration 0026). */
+  modules: WorkspaceModule[] | null;
   displayName: string | null;
   invitedBy: string | null;
   invitedAt: string | null;
@@ -237,6 +239,7 @@ export async function getFleetMembers(hostId: string): Promise<FleetMember[]> {
     user_email: string;
     role: string;
     created_at: string;
+    modules?: string[] | null;
     display_name?: string | null;
     invited_by?: string | null;
     invited_at?: string | null;
@@ -248,9 +251,15 @@ export async function getFleetMembers(hostId: string): Promise<FleetMember[]> {
       client.from("host_members").select(columns).eq("host_id", hostId).order("created_at", { ascending: true }).returns<Row[]>()
     );
 
-  // The invitation columns arrive with migration 0024; before it, fall back
-  // to the columns that have existed since 0009 rather than an empty roster.
-  let { data, degraded } = await read("user_email, role, created_at, display_name, invited_by, invited_at, accepted_at");
+  // Columns arrive with migrations: modules with 0026, the invitation
+  // columns with 0024. A missing column fails the whole select, so fall back
+  // one migration at a time rather than show an empty roster.
+  let { data, degraded } = await read("user_email, role, created_at, modules, display_name, invited_by, invited_at, accepted_at");
+  if (degraded && data.length === 0) {
+    const fallback = await read("user_email, role, created_at, display_name, invited_by, invited_at, accepted_at");
+    data = fallback.data;
+    degraded = fallback.degraded;
+  }
   if (degraded && data.length === 0) {
     const fallback = await read("user_email, role, created_at");
     data = fallback.data;
@@ -260,6 +269,7 @@ export async function getFleetMembers(hostId: string): Promise<FleetMember[]> {
   return data.map((row) => ({
     email: row.user_email,
     role: row.role,
+    modules: Array.isArray(row.modules) ? row.modules.filter(isWorkspaceModule) : null,
     displayName: row.display_name ?? null,
     invitedBy: row.invited_by ?? null,
     invitedAt: row.invited_at ?? null,
@@ -274,4 +284,67 @@ export { SELECTED_HOST_COOKIE };
 export async function getChosenVertical(enabled: WorkspaceModule[]): Promise<WorkspaceModule | null> {
   const chosen = asVertical((await cookies()).get(VERTICAL_COOKIE)?.value);
   return chosen && enabled.includes(chosen) ? chosen : null;
+}
+
+// ------------------------------------------------- per-member verticals
+
+/**
+ * The verticals one membership row is limited to. Read on its own rather
+ * than folded into getFleetsForUser: the column only exists once 0026 has
+ * been applied, and a failing select there would empty the membership list
+ * — which provisions the person a brand-new workspace. Failing here costs
+ * only the restriction, and no restriction means "every vertical", which is
+ * exactly what every membership was before 0026.
+ */
+const getMemberModules = cache(async function getMemberModules(hostId: string, email: string): Promise<WorkspaceModule[] | null> {
+  const { data } = await runQueryOr<{ modules: string[] | null } | null>("host_members.modules", null, (client) =>
+    client.from("host_members").select("modules").eq("host_id", hostId).eq("user_email", email).maybeSingle<{ modules: string[] | null }>()
+  );
+  const raw = data?.modules;
+  return Array.isArray(raw) ? raw.filter(isWorkspaceModule) : null;
+});
+
+/**
+ * The verticals the signed-in person may open in the workspace they are
+ * viewing: what the workspace runs, narrowed by their membership row.
+ * Owners and admins always get everything — they manage the workspace, and
+ * a restriction they could lift for themselves is not one. Nothing narrows
+ * a signed-out local visitor.
+ */
+export const getAccessibleModules = cache(async function getAccessibleModules(): Promise<WorkspaceModule[]> {
+  const hostId = await getCurrentHostId();
+  const enabled = await getHostModules(hostId);
+  const session = await auth();
+  const email = session?.user?.email ?? null;
+  if (!email) return enabled;
+  const fleet = await getCurrentFleet();
+  if (!fleet || can(fleet.role, "workspace.members")) return enabled;
+  const assigned = await getMemberModules(hostId, email);
+  return assigned ? enabled.filter((m) => assigned.includes(m)) : enabled;
+});
+
+export type VerticalAccess = "ok" | "off" | "unassigned";
+
+/**
+ * Whether the signed-in person may open `module` here: "off" when the
+ * workspace doesn't run it, "unassigned" when it does but this member
+ * wasn't given it. Every page that belongs to a vertical checks this first
+ * and renders <ModuleOff> otherwise — a page that checks before it queries
+ * never puts that vertical's data in its own payload.
+ */
+export const verticalAccess = cache(async function verticalAccess(module: WorkspaceModule): Promise<VerticalAccess> {
+  const hostId = await getCurrentHostId();
+  const enabled = await getHostModules(hostId);
+  if (!enabled.includes(module)) return "off";
+  const mine = await getAccessibleModules();
+  return mine.includes(module) ? "ok" : "unassigned";
+});
+
+/** Quick notes (migration 0026) are for owners and admins; the open local shell counts as an owner. */
+export async function canUseQuickNotes(): Promise<boolean> {
+  const session = await auth();
+  if (!session?.user?.email) return false;
+  if (await hasNoFleetAccess()) return false;
+  const fleet = await getCurrentFleet();
+  return !fleet || can(fleet.role, "workspace.members");
 }

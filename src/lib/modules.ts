@@ -81,10 +81,10 @@ export const MODULES: ModuleDefinition[] = [
   },
   {
     id: "web",
-    title: "GoDaddy",
+    title: "Websites & Domains",
     label: "Web & domains",
     short: "Web",
-    description: "Websites and domains for you and your clients: registrations, renewals, SSL certificates and uptime — GoDaddy today, any registrar tomorrow.",
+    description: "Websites and domains for you and your clients: registrations, renewals, SSL certificates and uptime — Cloudflare, Porkbun, Namecheap, GoDaddy or any registrar.",
     outcomes: ["Domain and SSL expiries caught 30 days out", "Sites checked daily for uptime and response time", "Client properties and hosting in one list"],
     icon: "Globe",
     hue: "#1bdbdb",
@@ -186,9 +186,10 @@ export const INTEGRATIONS: IntegrationDefinition[] = [
     docsUrl: "https://help.shopify.com/en/manual/apps/app-types/custom-apps",
   },
   {
+    // The id predates the registrar-neutral vertical and is what integration_connections rows carry; it names every registrar now.
     id: "godaddy",
-    name: "GoDaddy",
-    description: "Domains and hosting tracked by name; HostOS checks each site's uptime and SSL itself. Registrar API sync is next.",
+    name: "Domain registrars",
+    description: "Cloudflare, Porkbun, Namecheap, GoDaddy — domains and hosting tracked by name; HostOS checks each site's uptime and SSL itself. Registrar API sync is next.",
     method: "manual",
     modules: ["web"],
     status: "beta",

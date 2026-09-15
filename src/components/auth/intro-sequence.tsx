@@ -148,7 +148,7 @@ export function IntroSequence({ onDone }: { onDone: () => void }) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 2, duration: 0.6 }}
-        className="absolute bottom-8 text-[11px] text-muted-foreground/60"
+        className="absolute bottom-8 text-[11px] text-muted-foreground/80"
       >
         Click anywhere to skip
       </motion.p>

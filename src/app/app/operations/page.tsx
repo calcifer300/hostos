@@ -5,8 +5,14 @@ import { getDashboardData } from "@/lib/dashboard/queries";
 import { ScheduleCard } from "@/components/dashboard/schedule-card";
 import { MessagesCard } from "@/components/dashboard/messages-card";
 import { ConnectGoogleNotice } from "@/components/shell/connect-google-notice";
+import { ModuleOff } from "@/components/dashboard/module-off";
+import { verticalAccess } from "@/lib/host/context";
 
 export default async function OperationsPage() {
+  // Belongs to the fleet vertical: nothing here renders — or queries — unless this person may open it.
+  const access = await verticalAccess("fleet");
+  if (access !== "ok") return <ModuleOff module="fleet" reason={access} />;
+
   const session = await auth();
   const email = session?.user?.email ?? null;
 

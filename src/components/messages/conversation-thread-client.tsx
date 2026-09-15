@@ -83,7 +83,7 @@ export function ConversationThreadClient({ initialThread }: { initialThread: Tri
               >
                 {m.body}
               </div>
-              <p className="mt-0.5 px-1 text-[10.5px] text-muted-foreground/70">
+              <p className="mt-0.5 px-1 text-[10.5px] text-muted-foreground/85">
                 {m.fromHost ? "Host" : thread.guestName}
                 {" · "}
                 {formatMessageTimestamp(m)}

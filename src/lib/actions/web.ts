@@ -56,7 +56,7 @@ function toWrite(input: PropertyInput): PropertyWrite | { error: string } {
     name,
     domain,
     siteUrl: siteUrl || null,
-    registrar: str(input.registrar, 60) || "godaddy",
+    registrar: str(input.registrar, 60) || "cloudflare",
     hosting: str(input.hosting, 120) || null,
     clientName: str(input.clientName, 120) || null,
     domainExpiresAt: expires || null,

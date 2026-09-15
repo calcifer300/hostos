@@ -6,6 +6,7 @@ import { runMutation, runQuery } from "@/lib/supabase/server";
 import { canManageMembers, getCurrentFleet, getCurrentHostId, getFleetMembers, hasNoFleetAccess } from "@/lib/host/context";
 import { getHost } from "@/lib/host/queries";
 import { asWorkspaceRole, canAssignRole, ROLE_LABELS, type WorkspaceRole } from "@/lib/roles/permissions";
+import { isWorkspaceModule, moduleById, type WorkspaceModule } from "@/lib/modules";
 import { logActivity } from "@/lib/activity/queries";
 import { notify } from "@/lib/notifications/queries";
 import { isEmailConfigured, sendEmail } from "@/lib/email/send";
@@ -41,7 +42,23 @@ async function actor(): Promise<{ hostId: string; email: string; role: Workspace
  * workspace. An email goes out when Resend is configured; otherwise the
  * inviter is told to send the link themselves.
  */
-export async function inviteMember(input: { email: string; role: string; displayName?: string }): Promise<MemberActionResult & { emailed?: boolean }> {
+/**
+ * Which verticals an invitation or a membership is limited to. Null is
+ * "every vertical the workspace runs"; an empty list is refused rather than
+ * stored, because a member who can open nothing is a mistake, not a choice.
+ * Owners and admins are never limited (see getAccessibleModules).
+ */
+function parseModules(role: WorkspaceRole, raw: unknown): { modules: WorkspaceModule[] | null } | { error: string } {
+  if (raw === null || raw === undefined) return { modules: null };
+  if (!Array.isArray(raw)) return { error: "Pick the verticals as a list." };
+  const modules = raw.filter((m): m is WorkspaceModule => typeof m === "string" && isWorkspaceModule(m));
+  if (modules.length !== raw.length) return { error: "Unknown vertical." };
+  if (asWorkspaceRole(role) === "owner" || asWorkspaceRole(role) === "admin") return { modules: null };
+  if (modules.length === 0) return { error: "Give them at least one vertical, or every vertical." };
+  return { modules };
+}
+
+export async function inviteMember(input: { email: string; role: string; displayName?: string; modules?: string[] | null }): Promise<MemberActionResult & { emailed?: boolean }> {
   const a = await actor();
   if ("error" in a) return { ok: false, error: a.error };
 
@@ -50,25 +67,39 @@ export async function inviteMember(input: { email: string; role: string; display
   const role = asWorkspaceRole(input.role);
   if (input.role !== role) return { ok: false, error: "Unknown role." };
   if (!canAssignRole(a.role, "viewer", role)) return { ok: false, error: `You can't invite someone as ${ROLE_LABELS[role].label}.` };
+  const parsed = parseModules(role, input.modules ?? null);
+  if ("error" in parsed) return { ok: false, error: parsed.error };
 
   const existing = (await getFleetMembers(a.hostId)).find((m) => m.email === email);
   if (existing) return { ok: false, error: "That person is already on this workspace." };
 
-  const result = await runMutation("host_members.invite", (client) =>
-    client.from("host_members").insert({
-      host_id: a.hostId,
-      user_email: email,
-      role,
-      display_name: input.displayName?.trim().slice(0, 120) || null,
-      invited_by: a.email,
-      invited_at: new Date().toISOString(),
-    })
-  );
-  if (!result.ok) {
-    // Pre-0024 deployments lack the invitation columns; the membership itself still works.
-    const bare = await runMutation("host_members.invite_bare", (client) => client.from("host_members").insert({ host_id: a.hostId, user_email: email, role }));
-    if (!bare.ok) return { ok: false, error: bare.error };
+  const invitation = {
+    host_id: a.hostId,
+    user_email: email,
+    role,
+    display_name: input.displayName?.trim().slice(0, 120) || null,
+    invited_by: a.email,
+    invited_at: new Date().toISOString(),
+  };
+  // Columns arrive with migrations (modules: 0026, invitation details: 0024);
+  // an insert naming a missing column fails outright, so retry without it
+  // rather than lose the membership — which is the part that matters.
+  const attempts = [
+    { op: "host_members.invite", row: { ...invitation, modules: parsed.modules } },
+    { op: "host_members.invite_0024", row: invitation },
+    { op: "host_members.invite_bare", row: { host_id: a.hostId, user_email: email, role } },
+  ];
+  let lastError = "";
+  let inserted = false;
+  for (const attempt of attempts) {
+    const result = await runMutation(attempt.op, (client) => client.from("host_members").insert(attempt.row));
+    if (result.ok) {
+      inserted = true;
+      break;
+    }
+    lastError = result.error;
   }
+  if (!inserted) return { ok: false, error: lastError };
 
   const host = await getHost(a.hostId);
   const workspaceName = host?.name ?? "a HostOS workspace";
@@ -96,6 +127,31 @@ export async function inviteMember(input: { email: string; role: string; display
   return { ok: true, emailed };
 }
 
+/** Limits (or un-limits) which verticals a member may open. Owners and admins always see every vertical, so nothing is stored for them. */
+export async function setMemberModules(email: string, modules: string[] | null): Promise<MemberActionResult> {
+  const a = await actor();
+  if ("error" in a) return { ok: false, error: a.error };
+
+  const target = email.trim().toLowerCase();
+  const members = await getFleetMembers(a.hostId);
+  const current = members.find((m) => m.email === target);
+  if (!current) return { ok: false, error: "That person isn't on this workspace." };
+  const role = asWorkspaceRole(current.role);
+  if (role === "owner" || role === "admin") return { ok: false, error: `${ROLE_LABELS[role].label}s always see every vertical.` };
+  if (!canAssignRole(a.role, role, role)) return { ok: false, error: "You can't change what that person can open." };
+  const parsed = parseModules(role, modules);
+  if ("error" in parsed) return { ok: false, error: parsed.error };
+
+  const result = await runMutation("host_members.modules", (client) => client.from("host_members").update({ modules: parsed.modules }).eq("host_id", a.hostId).eq("user_email", target));
+  if (!result.ok) return { ok: false, error: /column|modules/i.test(result.error) ? "Run migration 0026 to assign verticals per member." : result.error };
+
+  const summary = parsed.modules ? parsed.modules.map((m) => moduleById(m)?.title ?? m).join(", ") : "every vertical";
+  await logActivity({ hostId: a.hostId, module: "team", event: "member.modules", description: `${target} can now open ${summary}`, actorEmail: a.email, href: routes.team });
+  revalidatePath(routes.team);
+  revalidatePath(routes.app, "layout");
+  return { ok: true };
+}
+
 export async function changeMemberRole(email: string, role: string): Promise<MemberActionResult> {
   const a = await actor();
   if ("error" in a) return { ok: false, error: a.error };
@@ -117,6 +173,10 @@ export async function changeMemberRole(email: string, role: string): Promise<Mem
 
   const result = await runMutation("host_members.role", (client) => client.from("host_members").update({ role: newRole }).eq("host_id", a.hostId).eq("user_email", target));
   if (!result.ok) return { ok: false, error: result.error };
+  if ((newRole === "owner" || newRole === "admin") && current.modules) {
+    // Best effort: an owner or admin is never limited, so drop the stale list (no-op before 0026).
+    await runMutation("host_members.modules_clear", (client) => client.from("host_members").update({ modules: null }).eq("host_id", a.hostId).eq("user_email", target));
+  }
 
   await logActivity({ hostId: a.hostId, module: "team", event: "member.role", description: `${target} is now ${ROLE_LABELS[newRole].label}`, actorEmail: a.email, href: routes.team });
   revalidatePath(routes.team);

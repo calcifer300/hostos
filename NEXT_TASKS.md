@@ -4,6 +4,11 @@ _Updated 2026-09-14. Ordered by what unblocks the most._
 
 ## Now (before / at deploy)
 
+- [ ] **Apply migration 0026** — paste `supabase/bundles/0026-0026.sql` into the
+      Supabase SQL editor. Until then: per-member vertical limits can't be
+      saved (the picker says so), quick notes can't be added (the panel says
+      so), and auto-named workspaces still read "<First>'s Fleet".
+
 1. **Apply migrations 0017–0025** in the Supabase SQL editor
    (`supabase/bundles/0017-0025.sql`). Until then restaurants, commerce,
    web, cafés, barbershops, custom, tasks, notifications, templates, roles

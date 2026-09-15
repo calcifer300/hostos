@@ -3,6 +3,8 @@ import { auth } from "@/auth";
 import { getDashboardData } from "@/lib/dashboard/queries";
 import { ConnectGoogleNotice } from "@/components/shell/connect-google-notice";
 import type { TuroEventKind } from "@/types/turo";
+import { ModuleOff } from "@/components/dashboard/module-off";
+import { verticalAccess } from "@/lib/host/context";
 
 function StatTile({
   label,
@@ -40,6 +42,10 @@ function Bar({ label, count, max }: { label: string; count: number; max: number 
 }
 
 export default async function InsightsPage() {
+  // Belongs to the fleet vertical: nothing here renders — or queries — unless this person may open it.
+  const access = await verticalAccess("fleet");
+  if (access !== "ok") return <ModuleOff module="fleet" reason={access} />;
+
   const session = await auth();
   const email = session?.user?.email ?? null;
 

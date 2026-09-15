@@ -256,7 +256,7 @@ export function ButlerWorkspace({
                     <div className="min-w-0 flex-1">
                       <p className="text-[13.5px] font-medium">{t.title}</p>
                       {t.description && <p className="mt-0.5 line-clamp-2 text-[12.5px] text-muted-foreground">{t.description}</p>}
-                      <p className="mt-1 text-[11px] text-muted-foreground/70">
+                      <p className="mt-1 text-[11px] text-muted-foreground/85">
                         {t.priority} · {formatRelativeTime(t.createdAt)}
                       </p>
                     </div>

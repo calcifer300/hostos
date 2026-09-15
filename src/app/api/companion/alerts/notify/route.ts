@@ -34,7 +34,7 @@ function renderAlertEmail(fleetName: string, alerts: CompanionAlert[]): string {
     section("UNVERIFIED LICENSES (pickup within 24h)", byKind.licence) +
     section("ZERO-DEDUCTIBLE BOOKINGS", byKind.premier) +
     section("BELOW $0.20 PER MILE", byKind.profit) +
-    "Open HostOS: https://hostos-ten.vercel.app/risk\n\n" +
+    "Open HostOS: https://hostoscollective.com/app/risk\n\n" +
     "You're getting this because email alerts are on for this fleet.\n" +
     "Turn them off or change who receives them in Settings."
   );

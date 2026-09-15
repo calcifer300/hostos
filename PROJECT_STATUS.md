@@ -1,6 +1,6 @@
 # HostOS — Project Status
 
-_Compiled 2026-09-15 · branch `unified` · production https://hostos-ten.vercel.app_
+_Compiled 2026-09-15 · branch `unified` · production https://hostoscollective.com_
 
 ## At a glance
 
@@ -85,12 +85,12 @@ content scripts in `manifest.json`; zip rebuilt on `npm run build`.
 1. **Supabase → SQL editor:** paste and run `supabase/bundles/0017-0025.sql`
    (additive, idempotent; safe to re-run). Without 0025 the four new
    verticals show empty dashboards and every add says "Run migration 0025".
-2. **Vercel → Environment variables:** add `NEXT_PUBLIC_APP_URL=https://hostos-ten.vercel.app`,
+2. **Vercel → Environment variables:** add `NEXT_PUBLIC_APP_URL=https://hostoscollective.com`,
    `HOSTOS_ENCRYPTION_KEY` (32 random bytes, base64), `CRON_SECRET`,
    `RESEND_API_KEY` + `MAIL_FROM_EMAIL` (if not already), keep the existing
    Supabase / Google / Auth / Gemini values.
 3. **Google Cloud → OAuth client:** redirect URI
-   `https://hostos-ten.vercel.app/api/auth/callback/google` (unchanged if
+   `https://hostoscollective.com/api/auth/callback/google` (unchanged if
    already set).
 4. Deploy branch `unified` (`npx vercel --prod` from the repo root, or connect
    the GitHub repo to the Vercel project).

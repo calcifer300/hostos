@@ -83,7 +83,24 @@ function isProductPath(pathname: string): boolean {
   return pathname === APP_BASE || pathname.startsWith(`${APP_BASE}/`);
 }
 
+/**
+ * One canonical host. www.hostoscollective.com is served by the same
+ * deployment but redirects to the apex, so cookies, OAuth callbacks and
+ * search engines all see a single address. hostos-ten.vercel.app is left
+ * alone on purpose: it keeps working as a fallback and the Companion's
+ * existing pairings still point at it.
+ */
+function canonicalRedirect(req: NextRequest): NextResponse | null {
+  const host = req.headers.get("host")?.toLowerCase() ?? "";
+  if (!host.startsWith("www.")) return null;
+  const target = new URL(req.nextUrl.pathname + req.nextUrl.search, `https://${host.slice(4)}`);
+  return NextResponse.redirect(target, 308);
+}
+
 export function middleware(req: NextRequest) {
+  const canonical = canonicalRedirect(req);
+  if (canonical) return canonical;
+
   const legacy = legacyRedirect(req);
   if (legacy) return legacy;
 

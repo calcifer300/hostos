@@ -10,7 +10,7 @@ export const SITE = {
   tagline: "Business solutions built to save time and grow revenue.",
   description: "Full-stack development, AI automation, virtual assistant support, and customer service solutions for growing businesses — all run on HostOS.",
   /** Public contact channels, as published on the company's site. */
-  contactEmail: "johnbriones774@gmail.com",
+  contactEmail: "hello@hostoscollective.com",
   phone: "+63 991 474 5117",
   whatsapp: "https://wa.me/639914745117",
   whatsappConsultation: "https://wa.me/639914745117?text=Hi%20HostOS%20Collective!%20I%27d%20like%20to%20book%20a%20free%20consultation.",
@@ -28,3 +28,6 @@ export function getPublicAppUrl(): string {
   if (vercel) return `https://${vercel}`;
   return "http://localhost:3000";
 }
+
+/** The company's own domain, once DNS moved there (2026-09-15). */
+export const PRIMARY_DOMAIN = "hostoscollective.com";

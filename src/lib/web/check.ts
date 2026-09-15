@@ -27,7 +27,7 @@ async function probeHttp(url: string): Promise<{ status: number | null; ms: numb
       method: "GET",
       redirect: "follow",
       signal: controller.signal,
-      headers: { "User-Agent": "HostOS-Monitor/1.0 (+https://hostos-ten.vercel.app)" },
+      headers: { "User-Agent": "HostOS-Monitor/1.0 (+https://hostoscollective.com)" },
       cache: "no-store",
     });
     return { status: res.status, ms: Date.now() - started, error: null };

@@ -1,13 +1,13 @@
 # HostOS
 
-**The operations platform by [HostOS Collective](https://hostos-ten.vercel.app).**
+**The operations platform by [HostOS Collective](https://hostoscollective.com).**
 One workspace for any business, with a dashboard per line of business — Turo
 fleets, DoorDash restaurants, Shopify stores today; more as modules tomorrow —
 plus the teams, tasks, notifications, automation and AI Butler they share.
 
 Next.js 16 · React 19 · TypeScript · Tailwind v4 · Framer Motion · Supabase (Postgres) · one Chrome extension (the **HostOS Companion**) · installable PWA.
 
-Production: **https://hostos-ten.vercel.app** (branch `unified`).
+Production: **https://hostoscollective.com** (branch `unified`; hostos-ten.vercel.app still serves the same deployment).
 
 ---
 
@@ -98,7 +98,7 @@ The audit that produced this layout: [docs/AUDIT.md](docs/AUDIT.md).
 
 ## Installing HostOS as an app (no App Store / Play Store)
 
-HostOS is a Progressive Web App. Open **https://hostos-ten.vercel.app** in the
+HostOS is a Progressive Web App. Open **https://hostoscollective.com** in the
 device's browser and:
 
 - **iPhone / iPad (Safari):** tap **Share** → **Add to Home Screen** → **Add**.

@@ -133,7 +133,7 @@ export function InstallGuide({ compact = false }: { compact?: boolean }) {
 
         <TabsContent value="ios">
           <Stagger className="space-y-3" inView={false}>
-            <Step n={1} icon={Apple} title="Open hostos-ten.vercel.app in Safari" text="Installation only works from Safari on iOS — Chrome and other browsers can't add web apps to the home screen." />
+            <Step n={1} icon={Apple} title="Open hostoscollective.com in Safari" text="Installation only works from Safari on iOS — Chrome and other browsers can't add web apps to the home screen." />
             <Step n={2} icon={Share} title="Tap the Share button" text="The square with an arrow, at the bottom of the screen on iPhone or top-right on iPad." />
             <Step n={3} icon={PlusSquare} title="Choose “Add to Home Screen”" text="Scroll the sheet if you don't see it. Keep the name HostOS and tap Add." />
             <Step n={4} icon={CheckCircle2} title="Open HostOS from your home screen" text="It launches full-screen with its own icon. Sign in with Google once; you stay signed in." />
@@ -142,7 +142,7 @@ export function InstallGuide({ compact = false }: { compact?: boolean }) {
 
         <TabsContent value="android">
           <Stagger className="space-y-3" inView={false}>
-            <Step n={1} icon={Smartphone} title="Open hostos-ten.vercel.app in Chrome" text="Samsung Internet and Edge work too; the menu wording differs slightly." />
+            <Step n={1} icon={Smartphone} title="Open hostoscollective.com in Chrome" text="Samsung Internet and Edge work too; the menu wording differs slightly." />
             <Step n={2} icon={MoreVertical} title="Tap the ⋮ menu (top-right)" text="Or look for the “Install app” banner Chrome shows at the bottom of the page." />
             <Step n={3} icon={Download} title="Choose “Install app” or “Add to Home screen”" text="Confirm in the dialog. Chrome creates a real app entry — it appears in your app drawer, not just as a bookmark." />
             <Step n={4} icon={CheckCircle2} title="Open HostOS from the app drawer" text="It runs full-screen. Notifications and the Companion's alerts still arrive by email; desktop pings need the Chrome extension on a computer." />
@@ -151,7 +151,7 @@ export function InstallGuide({ compact = false }: { compact?: boolean }) {
 
         <TabsContent value="desktop">
           <Stagger className="space-y-3" inView={false}>
-            <Step n={1} icon={MonitorSmartphone} title="Open hostos-ten.vercel.app in Chrome, Edge or Brave" text="Desktop installation gives HostOS its own window, dock/taskbar icon and keyboard shortcuts (⌘K works there too)." />
+            <Step n={1} icon={MonitorSmartphone} title="Open hostoscollective.com in Chrome, Edge or Brave" text="Desktop installation gives HostOS its own window, dock/taskbar icon and keyboard shortcuts (⌘K works there too)." />
             <Step n={2} icon={Download} title="Click the install icon in the address bar" text="It looks like a monitor with an arrow, at the right end of the URL bar — or use the browser menu → “Install HostOS”." />
             <Step n={3} icon={CheckCircle2} title="Pair the Companion" text="On desktop Chrome, also install the HostOS Companion extension from Connectors so Turo, DoorDash and Shopify sync on their own." />
           </Stagger>
@@ -162,7 +162,7 @@ export function InstallGuide({ compact = false }: { compact?: boolean }) {
         <Reveal className="mt-8 rounded-2xl border border-dashed border-border p-5 text-[13px] leading-relaxed text-muted-foreground">
           <p className="font-medium text-foreground">Why no app store?</p>
           <p className="mt-1">
-            A web app updates the moment HostOS Collective ships, works on every device with a browser, and needs no review queue. Everything you install this way is the same HostOS that runs at hostos-ten.vercel.app — same account, same data, same Butler.
+            A web app updates the moment HostOS Collective ships, works on every device with a browser, and needs no review queue. Everything you install this way is the same HostOS that runs at hostoscollective.com — same account, same data, same Butler.
           </p>
         </Reveal>
       )}

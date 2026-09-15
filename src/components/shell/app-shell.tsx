@@ -17,6 +17,7 @@ import { BackendStatusProvider } from "@/components/shell/backend-status-context
 import { WorkspaceSwitcher, type WorkspaceOption } from "@/components/shell/workspace-switcher";
 import { CommandPalette, type PaletteSources } from "@/components/shell/command-palette";
 import { QuickNotes } from "@/components/notes/quick-notes";
+import { QuietBoundary } from "@/components/ui/quiet-boundary";
 import type { QuickNote } from "@/lib/notes/queries";
 import type { SessionUser } from "@/types/auth";
 import type { Notification } from "@/lib/notifications/queries";
@@ -143,7 +144,11 @@ export function AppShell({
           <AutoRefresh />
           {user && <GmailAutoSync />}
           <CommandPalette sources={palette} />
-          {quickNotes && <QuickNotes initial={quickNotes} />}
+          {quickNotes && (
+            <QuietBoundary name="quick-notes">
+              <QuickNotes initial={quickNotes} />
+            </QuietBoundary>
+          )}
 
           {/* Desktop rail */}
           <motion.aside

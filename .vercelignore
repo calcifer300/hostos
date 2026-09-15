@@ -1,0 +1,14 @@
+# Not part of the deployed app. vendor/ alone is 2.6 GB of reference material.
+vendor
+docs
+tests
+supabase
+.git
+.github
+.claude
+node_modules
+.next
+.env
+.env.*
+!.env.local.example
+*.md

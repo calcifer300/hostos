@@ -23,6 +23,20 @@ _Updated 2026-09-15. Known shortcuts, why they were taken, and what pays them of
 
 ## Open notes (2026-09-16)
 
+- **Landing intro photographs start on Unsplash** (hotlinked through
+  next/image, `images.unsplash.com` allowed). Fine to ship; the Founder is
+  expected to replace them with the company's own from Settings → Website.
+  The upload path stores the file as-is (no resize) so a 4K original keeps
+  its detail; next/image serves sized variants.
+- **The intro's split layout is `lg` and up (1024px).** Below that it
+  stacks. The desktop-vs-phone photograph is decided by CSS, so both copies
+  are in the DOM; the hidden one is lazy and never fetched.
+- **`site_content` has RLS enabled** (created via the dashboard's "Run and
+  enable RLS"); the app reads and writes it with the service role only.
+- **Gerald's own photo is at `/team/2.png`** (the Founder dropped it in);
+  the roster row still points at `/team/2.jpg` — one character in the
+  editor's photo link, or an upload through it, fixes the tile.
+
 - **Team roster order lives in the database.** Migration 0031 reset it to
   the hierarchy (Founder, CTO, directors, specialists, coordinator); the
   Founder can still reorder in Settings → Our Team page. `DEFAULT_TEAM` in

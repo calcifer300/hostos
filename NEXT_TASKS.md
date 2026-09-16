@@ -2,6 +2,12 @@
 
 _Updated 2026-09-16. Ordered by what unblocks the most._
 
+## Website (2026-09-16)
+
+- [x] Migration 0032 applied to production (site_content).
+- [ ] Replace the four Unsplash photographs with the company's own (Settings → Website → each system → Photograph).
+- [ ] Read the intro copy once as the Founder — the stats and figures are editable and should be numbers the company will stand behind.
+
 ## Team page (2026-09-16)
 
 - [x] Migration 0031 applied to production (2026-09-16): full names, nicknames, hierarchy order.

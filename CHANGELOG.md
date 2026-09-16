@@ -2,7 +2,39 @@
 
 All notable changes to HostOS. Dates are when the work landed on `unified`.
 
-## [Unreleased] — 2026-09-16 · The fingerprint mark, the roster introduced
+## [Unreleased] — 2026-09-16 · The landing intro (console), the mark on every wall
+
+- **The landing intro.** Ahead of the classic landing page: four
+  full-screen "systems", one per line of business — car rental fleets,
+  restaurants, field service (a windshield job), websites for a coffee shop
+  or barbershop — text on one side, a large photograph on the other, the
+  two tracks sliding in opposite directions as the page scrolls, with a HUD
+  (system number, percent, progress line, arrows, a hint until the first
+  scroll, a crosshair readout and caption on every photograph). Each system
+  has its own interaction: the opener's live clock and stats; a blueprint
+  accordion whose open line moves the crosshair; a ring of 3D cards that
+  turns itself (drag, arrows, numbers, pause); channel tabs under a figure
+  drawn in outline. Stacks photograph-then-text on phones, each system
+  arriving as it is reached; reduced motion drops the spring.
+  `src/components/marketing/intro/`, content model and defaults in
+  `src/lib/site/intro.ts`. Inspired by TemplateMo's "Machina" layout,
+  rebuilt in React on the site's own stack.
+- **Founder edits all of it** at Settings → Website (migration 0032,
+  `site_content`): every word, the button, each photograph (drop a 4K JPG —
+  stored as-is in the public `site` bucket — or paste an upload/Unsplash
+  link), the crosshair's readout and position, the lines/cards/channels.
+  "Show on the landing page" off = the landing page exactly as before;
+  "Restore defaults" drops the saved copy. Photographs no longer used are
+  removed from the bucket on save.
+- **The mark on every wall.** The twelve studio portraits carried the old
+  "H" on the wall behind each person; `scripts/team-wall-mark.mjs` finds
+  the glyph, paints it out with the wall's own colour and draws the
+  fingerprint in its place (brushed silver, softened to the wall's depth of
+  field). All twelve republished.
+- The Founder's seal and ring no longer carry white light sweeps (asked
+  for): the ring is the person's colour only, the seal is still.
+
+## 2026-09-16 · The fingerprint mark, the roster introduced
 
 - **A new mark.** hostOS is now the fingerprint: a rounded square in the
   brand gradient with three ridges over a core line — one identity, many

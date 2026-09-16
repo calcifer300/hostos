@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { Bell, Building2, FileText, Globe, Smartphone, Users } from "lucide-react";
+import { Bell, Building2, FileText, Globe, PanelsTopLeft, Smartphone, Users } from "lucide-react";
 import { routes } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 
@@ -17,7 +17,7 @@ const ITEMS = [
 
 export function SettingsNav({ founder = false }: { founder?: boolean }) {
   const pathname = usePathname();
-  const items = founder ? [...ITEMS, { href: `${routes.settings}/company`, label: "Our Team page", icon: Globe }] : ITEMS;
+  const items = founder ? [...ITEMS, { href: `${routes.settings}/website`, label: "Website", icon: PanelsTopLeft }, { href: `${routes.settings}/company`, label: "Our Team page", icon: Globe }] : ITEMS;
   return (
     <nav className="mb-8 flex gap-1 overflow-x-auto rounded-full border border-border bg-muted/50 p-1" aria-label="Settings sections">
       {items.map((item) => {

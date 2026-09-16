@@ -380,17 +380,8 @@ body::before {
 .motif .motif-draw { stroke-dasharray: 220; stroke-dashoffset: 220; animation: motif-draw 4.5s ease-in-out infinite; }
 .motif .motif-pulse { animation: motif-pulse 2.6s ease-in-out infinite; }
 
-/* A light passes over the Founder seal every few seconds. */
-.seal-shine::after {
-  content: "";
-  position: absolute;
-  inset: -40% auto -40% -60%;
-  width: 40%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
-  transform: translateX(0) skewX(-18deg);
-  animation: seal-shine 4.2s ease-in-out infinite;
-  pointer-events: none;
-}
+/* The Founder seal is still: no light passes over it (the Founder asked for the white sweeps to go). */
+.seal-shine::after { content: none; }
 
 /* The ring around the Founder tile: a conic light circling a rounded frame. */
 .founder-ring { position: relative; border-radius: 18px; padding: 2px; }
@@ -400,7 +391,8 @@ body::before {
   inset: 0;
   border-radius: inherit;
   padding: 2px;
-  background: conic-gradient(from var(--ring-angle, 0deg), transparent 0deg 200deg, color-mix(in oklab, var(--hue) 70%, transparent) 260deg, #fff 300deg, color-mix(in oklab, var(--hue) 70%, transparent) 330deg, transparent 360deg);
+  /* the ring is the person's colour only — no white highlight */
+  background: conic-gradient(from var(--ring-angle, 0deg), transparent 0deg 200deg, color-mix(in oklab, var(--hue) 45%, transparent) 260deg, var(--hue) 300deg, color-mix(in oklab, var(--hue) 45%, transparent) 330deg, transparent 360deg);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
@@ -410,7 +402,29 @@ body::before {
 }
 @property --ring-angle { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
 
+/* --------------------------------------------- the landing intro (console) */
+/* src/components/marketing/intro: its own dark palette whatever the theme, a display face, telemetry bits. */
+.intro-root {
+  --intro-void: #05070c;
+  --intro-ink: #e6ebf5;
+  --intro-dim: rgba(230, 235, 245, 0.58);
+  --intro-faint: rgba(230, 235, 245, 0.3);
+  --intro-line: rgba(230, 235, 245, 0.11);
+  --intro-accent: #3b9cff;
+  --intro-hot: #ff375f;
+  color-scheme: dark;
+}
+.intro-display { font-family: var(--font-grotesk), var(--font-sans); }
+.intro-outline { color: transparent; -webkit-text-stroke: 2px var(--intro-accent); paint-order: stroke fill; }
+.intro-scan { animation: intro-scan 11s linear infinite; }
+.intro-blink { animation: intro-blink 1s steps(2, start) infinite; }
+.intro-pulse { animation: intro-pulse 2.4s ease-out infinite; }
+
 /* ------------------------------------------------------------- keyframes */
+
+@keyframes intro-scan { from { top: -2%; } to { top: 102%; } }
+@keyframes intro-blink { to { opacity: 0; } }
+@keyframes intro-pulse { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(2.6); opacity: 0; } }
 
 @keyframes motif-spin { to { transform: rotate(360deg); } }
 @keyframes motif-rise { 0%, 100% { transform: scaleY(0.35); } 50% { transform: scaleY(1); } }

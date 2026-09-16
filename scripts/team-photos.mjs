@@ -2,7 +2,8 @@
 //
 //   node scripts/team-photos.mjs <folder of originals> public/team
 //
-// Originals are named 01.webp … 12.webp (see MAP). Each becomes a full-frame
+// Originals are named 01.webp … 12.webp (see MAP); run scripts/team-wall-mark.mjs
+// on them first so the wall behind each person carries the fingerprint mark. Each becomes a full-frame
 // 4:5 portrait, 900×1125 JPEG, with lighting and colour matched to one
 // reference frame (per-channel mean/std over the face region, 80% of the
 // way), a little less saturation, soft-light grain and a light sharpen, so

@@ -70,6 +70,7 @@ node scripts/bundle-migrations.mjs 0027 0028   # → services vertical + dedupe-
 node scripts/bundle-migrations.mjs 0029 0029   # → public team roster
 node scripts/bundle-migrations.mjs 0030 0030   # → a colour per team member
 node scripts/bundle-migrations.mjs 0031 0031   # → full names + nicknames, hierarchy order
+node scripts/bundle-migrations.mjs 0032 0032   # → site_content (the editable landing intro)
 ```
 
 Code deployed ahead of a migration degrades quietly (missing tables and columns
@@ -127,8 +128,9 @@ src/components/        ui (primitives) · shell · dashboard · marketing · fle
 src/lib/               one folder per domain; queries.ts (reads), actions/*.ts (writes), pure engines beside them
 src/middleware.ts      the auth gate + legacy redirects (must stay middleware — see the file)
 extension/             HostOS Companion (MV3); scripts/build-extension.mjs zips it
-public/team/           team portraits; scripts/team-photos.mjs crops and colour-matches a new set
-supabase/migrations/   0001 … 0031, additive; supabase/bundles/ for one-paste bundles
+public/team/           team portraits; scripts/team-wall-mark.mjs puts the mark on the wall, scripts/team-photos.mjs crops and colour-matches
+src/components/marketing/intro/  the landing intro (four systems, console HUD); content in src/lib/site/intro.ts, editor at /app/settings/website
+supabase/migrations/   0001 … 0032, additive; supabase/bundles/ for one-paste bundles
 tests/                 node --experimental-strip-types, no framework
 vendor/                originals that were merged in (reference only, excluded from lint/tsc)
 docs/                  AUDIT.md (classification + dependency map), history/

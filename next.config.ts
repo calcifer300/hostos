@@ -23,17 +23,22 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "*.googleusercontent.com",
       },
-      // Team portraits uploaded from the editor (public bucket "team").
+      // Team portraits and landing photographs uploaded from the editors (public buckets "team", "site").
       {
         protocol: "https",
         hostname: "*.supabase.co",
         pathname: "/storage/v1/object/public/**",
       },
+      // The landing intro starts with Unsplash photographs until the Founder uploads his own.
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
     ],
   },
-  // The team-photo upload is a server action carrying one prepared JPEG (~150 KB); the default 1 MB cap leaves no room for a PNG export.
+  // Photo uploads are server actions: a prepared team portrait is ~150 KB, a 4K landing photograph can be 10 MB+.
   experimental: {
-    serverActions: { bodySizeLimit: "6mb" },
+    serverActions: { bodySizeLimit: "16mb" },
   },
 };
 

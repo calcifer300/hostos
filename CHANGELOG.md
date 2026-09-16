@@ -2,7 +2,21 @@
 
 All notable changes to HostOS. Dates are when the work landed on `unified`.
 
-## [Unreleased] — 2026-09-15 · Service Businesses — the eighth vertical (Phase 1)
+## [Unreleased] — 2026-09-15 · Our Team page, back-to-site links
+
+- **/team shows the roster as tiles** in the vertical chooser's language: a
+  colour per department, photo (or initials until the photo arrives), title,
+  focus words, one-line promise and responsibilities; staggered in with the
+  same spotlight and lift. Twelve members seeded from code with formal
+  titles (`src/lib/team/profiles.ts`).
+- **Founder-only editor** at Settings → Our Team page (migration 0029,
+  `team_profiles`): add, edit, hide, remove and reorder members, set the
+  photo by link or /team/<slug>.jpg. The tab is only shown to the Founder
+  and every action re-checks `isFounderEmail`.
+- **Back to hostoscollective.com** from the app: a "Website" item in the
+  sidebar's System group and a link in the account menu.
+
+## 2026-09-15 · Service Businesses — the eighth vertical (Phase 1)
 
 - **A vertical for appointment, dispatch and field businesses** (migration
   0027): auto glass, mobile mechanics, detailing, tires, towing, roadside,

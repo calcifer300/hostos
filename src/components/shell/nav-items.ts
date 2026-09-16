@@ -19,6 +19,7 @@ import {
   Gauge,
   Workflow,
   Compass,
+  Globe,
   CalendarDays,
   KanbanSquare,
   Users,
@@ -152,6 +153,8 @@ export const NAV_SECTIONS: NavSection[] = [
       { href: routes.knowledge, label: "Knowledge", icon: BookOpen },
       { href: routes.connectors, label: "Connectors", icon: Plug },
       { href: routes.settings, label: "Settings", icon: Settings, matchPrefix: true },
+      // The public site: every user can step back out to hostoscollective.com.
+      { href: routes.home, label: "Website", icon: Globe },
     ],
   },
 ];

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { Bell, Building2, FileText, Smartphone, Users } from "lucide-react";
+import { Bell, Building2, FileText, Globe, Smartphone, Users } from "lucide-react";
 import { routes } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 
@@ -15,11 +15,12 @@ const ITEMS = [
   { href: `${routes.settings}/install`, label: "Install app", icon: Smartphone },
 ];
 
-export function SettingsNav() {
+export function SettingsNav({ founder = false }: { founder?: boolean }) {
   const pathname = usePathname();
+  const items = founder ? [...ITEMS, { href: `${routes.settings}/company`, label: "Our Team page", icon: Globe }] : ITEMS;
   return (
     <nav className="mb-8 flex gap-1 overflow-x-auto rounded-full border border-border bg-muted/50 p-1" aria-label="Settings sections">
-      {ITEMS.map((item) => {
+      {items.map((item) => {
         const active = pathname === item.href;
         return (
           <Link

@@ -7,12 +7,14 @@ import { Reveal, Stagger, StaggerItem } from "@/components/motion/reveal";
 import { Button } from "@/components/ui/button";
 import { Bullets, IconBadge, SectionHeading } from "@/components/marketing/sections";
 import { CHANNELS, TEAM_POINTS, TEAM_PROMISES } from "@/components/marketing/data";
+import { TeamTiles } from "@/components/marketing/team-tiles";
+import type { TeamProfile } from "@/lib/team/profiles";
 import { routes } from "@/lib/routes";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
 /** /team — the virtual-assistance and support team, and the standards behind it. */
-export function TeamPage() {
+export function TeamPage({ members }: { members: TeamProfile[] }) {
   return (
     <>
       <section className="relative overflow-hidden px-6 pt-36 pb-16 md:pt-44 md:pb-20">
@@ -30,7 +32,28 @@ export function TeamPage() {
         </motion.div>
       </section>
 
-      <section className="px-6 py-16 md:py-24">
+      {/* The roster: one tile per person, in the same language as the vertical chooser. */}
+      <section id="roles" className="scroll-mt-24 px-6 pb-16 md:pb-24">
+        <div className="mx-auto max-w-7xl">
+          <SectionHeading
+            eyebrow="Roles & responsibilities"
+            title={
+              <>
+                Different strengths. <span className="text-gradient">One mission.</span>
+              </>
+            }
+            description="Delivering world-class solutions for Turo hosts, service businesses and modern companies — every role below works inside HostOS, so what we sell is what we use."
+            align="center"
+            className="max-w-3xl"
+          />
+          <TeamTiles members={members} />
+          <Reveal delay={0.2} className="mx-auto mt-10 max-w-3xl text-center text-[14px] italic text-muted-foreground">
+            &ldquo;Alone we can do so little. Together we can do so much.&rdquo; — Helen Keller
+          </Reveal>
+        </div>
+      </section>
+
+      <section className="border-y border-border bg-surface/60 px-6 py-16 md:py-24">
         <div className="mx-auto max-w-6xl">
           <SectionHeading eyebrow="What sets us apart" title="Built on standards, not shortcuts." description="Here's what makes our team different from a typical freelance VA arrangement." />
           <Stagger className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4" gap={0.07}>
@@ -45,7 +68,7 @@ export function TeamPage() {
         </div>
       </section>
 
-      <section className="border-y border-border bg-surface/60 px-6 py-16 md:py-24">
+      <section className="px-6 py-16 md:py-24">
         <div className="mx-auto grid max-w-6xl grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-16">
           <SectionHeading
             eyebrow="Team leadership"

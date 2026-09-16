@@ -4,7 +4,7 @@ import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { LogIn, LogOut } from "lucide-react";
+import { Globe, LogIn, LogOut } from "lucide-react";
 import { userSignOut } from "@/lib/actions/auth";
 import { cn } from "@/lib/utils";
 import type { SessionUser } from "@/types/auth";
@@ -121,6 +121,14 @@ export function UserMenu({
               </div>
             </div>
             <div className="my-1 h-px bg-border" />
+            <Link
+              href="/"
+              onClick={() => setOpen(false)}
+              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-[13px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              <Globe className="h-3.5 w-3.5" />
+              hostoscollective.com
+            </Link>
             <form action={userSignOut}>
               <button
                 type="submit"

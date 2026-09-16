@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { TeamPage } from "@/components/marketing/team-page";
+import { getPublicTeam } from "@/lib/team/queries";
 import { SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -8,6 +9,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/team" },
 };
 
-export default function Page() {
-  return <TeamPage />;
+export default async function Page() {
+  const members = await getPublicTeam();
+  return <TeamPage members={members} />;
 }

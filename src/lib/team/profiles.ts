@@ -7,7 +7,7 @@
  * what the page shows until the Founder saves the roster to the database (migration 0029, team_profiles); after that the database
  * is the source and this list is only the "restore defaults" option.
  *
- * Photos live at /public/team/<slug>.jpg (a face-centred 800px square,
+ * Photos live at /public/team/<slug>.jpg (a 4:5 portrait, 900×1125,
  * produced by scripts/team-photos.mjs); the editor can point elsewhere.
  *
  * Client-safe: no imports.

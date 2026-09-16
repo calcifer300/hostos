@@ -9,6 +9,7 @@ interface Row {
   id: string;
   slug: string;
   name: string;
+  nickname: string | null;
   title: string;
   department: string;
   focus: string[] | null;
@@ -20,8 +21,8 @@ interface Row {
   position: number;
   active: boolean;
 }
-const COLUMNS = "id, slug, name, title, department, focus, quote, responsibilities, photo_url, hue, email, position, active";
-const rowToProfile = (r: Row): TeamProfile => ({ id: r.id, slug: r.slug, name: r.name, title: r.title, department: asDepartment(r.department), focus: r.focus ?? [], quote: r.quote, responsibilities: r.responsibilities ?? [], photoUrl: r.photo_url, hue: r.hue, email: r.email, position: r.position, active: r.active });
+const COLUMNS = "id, slug, name, nickname, title, department, focus, quote, responsibilities, photo_url, hue, email, position, active";
+const rowToProfile = (r: Row): TeamProfile => ({ id: r.id, slug: r.slug, name: r.name, nickname: r.nickname, title: r.title, department: asDepartment(r.department), focus: r.focus ?? [], quote: r.quote, responsibilities: r.responsibilities ?? [], photoUrl: r.photo_url, hue: r.hue, email: r.email, position: r.position, active: r.active });
 
 /** Every saved profile, including inactive ones (the editor shows them greyed). */
 export const getTeamProfiles = cache(async function getTeamProfiles(): Promise<{ profiles: TeamProfile[]; fromDatabase: boolean }> {
@@ -39,7 +40,7 @@ export async function getPublicTeam(): Promise<TeamProfile[]> {
 type Done = { ok: true } | { ok: false; error: string };
 
 export async function upsertTeamProfile(p: Omit<TeamProfile, "id"> & { id?: string | null }): Promise<{ ok: true; id: string } | { ok: false; error: string }> {
-  const row = { slug: p.slug, name: p.name, title: p.title, department: p.department, focus: p.focus, quote: p.quote, responsibilities: p.responsibilities, photo_url: p.photoUrl, hue: p.hue, email: p.email, position: p.position, active: p.active };
+  const row = { slug: p.slug, name: p.name, nickname: p.nickname, title: p.title, department: p.department, focus: p.focus, quote: p.quote, responsibilities: p.responsibilities, photo_url: p.photoUrl, hue: p.hue, email: p.email, position: p.position, active: p.active };
   const outcome = await runQuery<{ id: string }>("team_profiles.upsert", (client) =>
     (p.id ? client.from("team_profiles").update(row).eq("id", p.id) : client.from("team_profiles").insert(row)).select("id").single<{ id: string }>()
   );
@@ -53,7 +54,7 @@ export async function deleteTeamProfile(id: string): Promise<Done> {
 
 /** Writes the whole default roster — used once, when the Founder first saves, so every default becomes an editable row. */
 export async function seedTeamProfiles(): Promise<Done> {
-  const rows = DEFAULT_TEAM.map((p) => ({ slug: p.slug, name: p.name, title: p.title, department: p.department, focus: p.focus, quote: p.quote, responsibilities: p.responsibilities, photo_url: p.photoUrl, hue: p.hue, email: p.email, position: p.position, active: true }));
+  const rows = DEFAULT_TEAM.map((p) => ({ slug: p.slug, name: p.name, nickname: p.nickname, title: p.title, department: p.department, focus: p.focus, quote: p.quote, responsibilities: p.responsibilities, photo_url: p.photoUrl, hue: p.hue, email: p.email, position: p.position, active: true }));
   const result = await runMutation("team_profiles.seed", (client) => client.from("team_profiles").upsert(rows, { onConflict: "slug", ignoreDuplicates: true }));
   return result.ok ? { ok: true } : { ok: false, error: result.error };
 }

@@ -4,6 +4,7 @@ _Updated 2026-09-16. Ordered by what unblocks the most._
 
 ## Team page (2026-09-16)
 
+- [x] Migration 0031 applied to production (2026-09-16): full names, nicknames, hierarchy order.
 - [ ] Gerald's portrait — upload via Settings → Our Team page → Edit → Photo.
 - [ ] Sitemap entry and an OG image for `/team` (the roster is now a real
       page worth sharing).

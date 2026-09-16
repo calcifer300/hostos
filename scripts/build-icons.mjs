@@ -1,16 +1,14 @@
 /**
- * Renders the Companion's icon set from one SVG source.
+ * Renders the Companion's icon set from the brand mark.
  *
  *   node scripts/build-icons.mjs
  *
- * The mark is a rounded square in the app's accent blue carrying a white "H",
- * with the counter cut as a horizontal bar rather than a letterform crossbar —
- * so at 16px, where a real H's stems merge into a blob, it still reads as a
- * distinct shape rather than a smudge.
- *
- * Generated rather than hand-drawn because the three sizes must stay
- * identical, and because a 16px icon is not a scaled-down 128px one: the small
- * size gets thicker strokes and less corner rounding, or it turns to mush.
+ * The mark is the hostOS fingerprint (src/components/brand/logo-mark.tsx,
+ * public/icon.svg): a rounded square in the brand gradient with three
+ * ridges over a core line. Generated rather than hand-drawn because the
+ * three sizes must stay identical in spirit but not in geometry: at 16px a
+ * scaled-down print is a smudge, so the small icon keeps the frame, the
+ * outer ridge and the core only, with heavier strokes.
  */
 
 import sharp from "sharp";
@@ -21,59 +19,44 @@ import { fileURLToPath } from "node:url";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const out = join(root, "extension");
 
-// The app's dark-theme accent, so the toolbar icon and the dashboard it opens
-// are visibly the same product. See globals.css.
-const ACCENT = "#0A84FF";
-const ACCENT_DEEP = "#0060DF";
+// The app's accents (globals.css), so the toolbar icon and the dashboard it opens are visibly one product.
+const ACCENT = "#3B9CFF";
+const ACCENT_2 = "#9B6BFF";
 
 /**
- * @param size      pixel size of the square
- * @param radius    corner radius, as a fraction of size
- * @param stemRatio stem width, as a fraction of size
+ * @param size    pixel size of the square
+ * @param stroke  stroke width in 64-unit mark space
+ * @param detail  "full" (three ridges) or "small" (outer ridge and core only)
  */
-function mark(size, radius, stemRatio) {
-  const r = size * radius;
-  const stem = size * stemRatio;
-
-  // The H, centred, with generous side bearing so it never touches the edge.
-  const boxW = size * 0.46;
-  const boxH = size * 0.44;
-  const x0 = (size - boxW) / 2;
-  const y0 = (size - boxH) / 2;
-  const barH = Math.max(stem * 0.9, size * 0.075);
-  const barY = y0 + boxH / 2 - barH / 2;
-
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+function mark(size, stroke, detail) {
+  const ridges = detail === "full" ? ["M18 46V36a14 14 0 0 1 28 0v5", "M23 50V36a9 9 0 0 1 18 0v8", "M27.5 47.5V36.5a4.5 4.5 0 0 1 9 0v9"] : ["M19 47V36a13 13 0 0 1 26 0v6"];
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 64 64" fill="none">
   <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+    <linearGradient id="frame" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="${ACCENT}"/>
-      <stop offset="1" stop-color="${ACCENT_DEEP}"/>
+      <stop offset="1" stop-color="${ACCENT_2}"/>
     </linearGradient>
   </defs>
-  <rect width="${size}" height="${size}" rx="${r}" ry="${r}" fill="url(#g)"/>
-  <g fill="#FFFFFF">
-    <rect x="${x0}" y="${y0}" width="${stem}" height="${boxH}" rx="${stem / 2}"/>
-    <rect x="${x0 + boxW - stem}" y="${y0}" width="${stem}" height="${boxH}" rx="${stem / 2}"/>
-    <rect x="${x0}" y="${barY}" width="${boxW}" height="${barH}" rx="${barH / 2}"/>
+  <rect x="1" y="1" width="62" height="62" rx="17" fill="#0B0D14"/>
+  <rect x="${detail === "full" ? 8 : 7}" y="${detail === "full" ? 8 : 7}" width="${detail === "full" ? 48 : 50}" height="${detail === "full" ? 48 : 50}" rx="14" stroke="url(#frame)" stroke-width="${stroke + 0.5}"/>
+  <g stroke="#F5F7FF" stroke-width="${stroke}" stroke-linecap="round">
+    ${ridges.map((d) => `<path d="${d}"/>`).join("\n    ")}
+    <path d="M32 40v13"/>
   </g>
 </svg>`;
 }
 
-/**
- * Per-size tuning. Smaller icons get proportionally thicker stems and less
- * rounding — the usual optical correction, because at 16px a mathematically
- * scaled stem is a single grey pixel.
- */
+/** Per-size tuning: heavier strokes and less detail as the icon shrinks. */
 const SIZES = [
-  { size: 16, radius: 0.22, stem: 0.115, file: "icon16.png" },
-  { size: 48, radius: 0.235, stem: 0.098, file: "icon48.png" },
-  { size: 128, radius: 0.24, stem: 0.09, file: "icon128.png" },
+  { size: 16, stroke: 6, detail: "small", file: "icon16.png" },
+  { size: 48, stroke: 4, detail: "full", file: "icon48.png" },
+  { size: 128, stroke: 3.25, detail: "full", file: "icon128.png" },
 ];
 
 const written = [];
 
-for (const { size, radius, stem, file } of SIZES) {
-  const svg = mark(size, radius, stem);
+for (const { size, stroke, detail, file } of SIZES) {
+  const svg = mark(size, stroke, detail);
   const png = await sharp(Buffer.from(svg)).png({ compressionLevel: 9 }).toBuffer();
   writeFileSync(join(out, file), png);
   written.push(`${file} (${size}px, ${png.length} B)`);

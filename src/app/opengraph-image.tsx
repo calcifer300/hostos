@@ -82,7 +82,15 @@ export default async function OpenGraphImage() {
         <Orb x={-200} y={330} size={620} rgb="56,189,248" />
 
         <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-          <div style={{ width: 56, height: 56, borderRadius: 16, background: "linear-gradient(135deg, #6366F1, #38BDF8)", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontSize: 30, fontWeight: 700 }}>H</div>
+          {/* the mark (src/components/brand/logo-mark.tsx), in flat colours since Satori has no gradients */}
+          <svg width="60" height="60" viewBox="0 0 64 64" fill="none">
+            <rect x="2" y="2" width="60" height="60" rx="17" fill="#0B0D14" />
+            <rect x="8" y="8" width="48" height="48" rx="14" stroke="#6E8CFF" strokeWidth="3.25" />
+            <path d="M18 46V36a14 14 0 0 1 28 0v5" stroke="#F5F7FF" strokeWidth="3" strokeLinecap="round" />
+            <path d="M23 50V36a9 9 0 0 1 18 0v8" stroke="#F5F7FF" strokeWidth="3" strokeLinecap="round" />
+            <path d="M27.5 47.5V36.5a4.5 4.5 0 0 1 9 0v9" stroke="#F5F7FF" strokeWidth="3" strokeLinecap="round" />
+            <path d="M32 40v13" stroke="#F5F7FF" strokeWidth="3" strokeLinecap="round" />
+          </svg>
           <div style={{ display: "flex", flexDirection: "column" }}>
             <div style={{ fontSize: 30, fontWeight: 700, letterSpacing: -0.5 }}>{SITE.company}</div>
             <div style={{ fontSize: 18, color: "#A1A1AA" }}>hostoscollective.com</div>

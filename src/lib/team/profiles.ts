@@ -44,7 +44,10 @@ export interface TeamProfile {
   id: string;
   /** URL-safe handle, also the default photo filename (/team/<slug>.jpg). */
   slug: string;
+  /** Full name — what the tile shows. */
   name: string;
+  /** What everyone calls them; shown once a tile is opened. Falls back to the first name. */
+  nickname: string | null;
   title: string;
   department: Department;
   /** Three short words the tile leads with: "Vision · Strategy · Growth". */
@@ -61,10 +64,11 @@ export interface TeamProfile {
   active: boolean;
 }
 
-const member = (slug: string, name: string, title: string, department: Department, hue: string, focus: string[], quote: string, responsibilities: string[]): TeamProfile => ({
+const member = (slug: string, name: string, nickname: string, title: string, department: Department, hue: string, focus: string[], quote: string, responsibilities: string[]): TeamProfile => ({
   id: `default-${slug}`,
   slug,
   name,
+  nickname,
   title,
   department,
   focus,
@@ -78,7 +82,7 @@ const member = (slug: string, name: string, title: string, department: Departmen
 });
 
 export const DEFAULT_TEAM: TeamProfile[] = [
-  member("john", "John", "Founder & Chief Executive Officer", "leadership", "#0a84ff", ["Vision", "Strategy", "Growth"], "Leads the company toward a bigger future.", [
+  member("john", "John Briones", "John", "Founder & CEO", "leadership", "#0a84ff", ["Vision", "Strategy", "Growth"], "Leads the company toward a bigger future.", [
     "Sets the company's vision, mission and long-term goals",
     "Directs overall business strategy and priorities",
     "Builds key partnerships and client relationships",
@@ -86,7 +90,7 @@ export const DEFAULT_TEAM: TeamProfile[] = [
     "Makes executive decisions and guides the leadership team",
     "Represents the company to clients, partners and the industry",
   ]),
-  member("karl", "Karl", "Chief Technology Officer", "technology", "#8b7cff", ["Technology", "Innovation", "AI"], "Builds the systems that power our success.", [
+  member("karl", "Karl Rodriguez", "Karl", "Chief Technology Officer", "technology", "#8b7cff", ["Technology", "Innovation", "AI"], "Builds the systems that power our success.", [
     "Leads technology strategy and infrastructure",
     "Oversees product development and architecture",
     "Manages integrations, automation and AI initiatives",
@@ -94,7 +98,7 @@ export const DEFAULT_TEAM: TeamProfile[] = [
     "Evaluates and implements new technologies",
     "Leads and mentors the engineering team",
   ]),
-  member("gerald", "Gerald", "Director of Operations", "operations", "#30d158", ["Operations", "Client Success"], "Turns strategy into smooth daily operations.", [
+  member("gerald", "Gerald Ramirez", "Gerald", "Director of Operations", "operations", "#30d158", ["Operations", "Client Success"], "Turns strategy into smooth daily operations.", [
     "Oversees day-to-day operations across all client accounts",
     "Ensures service quality and client satisfaction",
     "Manages onboarding, training and standard operating procedures",
@@ -102,7 +106,7 @@ export const DEFAULT_TEAM: TeamProfile[] = [
     "Tracks performance and key metrics",
     "Leads and develops the operations team",
   ]),
-  member("belle", "Belle", "Director of Finance", "finance", "#f5b301", ["Finance", "Compliance", "Planning"], "Keeps our business strong and sustainable.", [
+  member("belle", "Maribel Magbual", "Belle", "Director of Finance", "finance", "#f5b301", ["Finance", "Compliance", "Planning"], "Keeps our business strong and sustainable.", [
     "Manages invoicing and payments",
     "Tracks expenses and budgets",
     "Maintains financial records and reporting",
@@ -110,7 +114,7 @@ export const DEFAULT_TEAM: TeamProfile[] = [
     "Ensures tax compliance and documentation",
     "Supports financial forecasting, payroll and planning with the CEO",
   ]),
-  member("devie", "Devie", "Director of Marketing & Growth", "marketing", "#ff9f0a", ["Marketing", "Brand", "Demand"], "Drives awareness and brings in opportunities.", [
+  member("devie", "John Devie Ulanday", "Devie", "Director of Marketing & Growth", "marketing", "#ff9f0a", ["Marketing", "Brand", "Demand"], "Drives awareness and brings in opportunities.", [
     "Leads marketing strategy and campaigns",
     "Manages email, social media and content marketing",
     "Builds brand awareness and positioning",
@@ -118,7 +122,7 @@ export const DEFAULT_TEAM: TeamProfile[] = [
     "Develops marketing materials and sales enablement",
     "Analyses market trends and campaign performance",
   ]),
-  member("red", "Red", "Director of Sales & Partnerships", "sales", "#ff375f", ["Sales", "Partnerships", "Revenue"], "Builds relationships that create long-term value.", [
+  member("red", "Givhine Leosala", "Red", "Director of Sales & Partnerships", "sales", "#ff375f", ["Sales", "Partnerships", "Revenue"], "Builds relationships that create long-term value.", [
     "Identifies and reaches out to prospective clients",
     "Presents HostOS services and solutions",
     "Prepares proposals and contracts",
@@ -126,7 +130,7 @@ export const DEFAULT_TEAM: TeamProfile[] = [
     "Manages client onboarding handover",
     "Maintains and grows partner relationships",
   ]),
-  member("loisa", "Loisa", "Director of Content & Communications", "content", "#40c8e0", ["Content", "Brand", "Community"], "Tells our story and keeps everyone connected.", [
+  member("loisa", "Loisa Celetaria", "Loisa", "Director of Content & Communications", "content", "#40c8e0", ["Content", "Brand", "Community"], "Tells our story and keeps everyone connected.", [
     "Leads content creation and editorial standards",
     "Manages email templates and client communication",
     "Maintains the knowledge base and articles",
@@ -134,7 +138,7 @@ export const DEFAULT_TEAM: TeamProfile[] = [
     "Supports marketing content and branding",
     "Ensures consistent messaging across every channel",
   ]),
-  member("princess", "Princess", "Director of Operations Support & Scheduling", "operations", "#5ac8fa", ["Scheduling", "Team Support"], "Keeps operations organised and on track.", [
+  member("princess", "Princess Vergara", "Princess", "Director of Operations Support & Scheduling", "operations", "#5ac8fa", ["Scheduling", "Team Support"], "Keeps operations organised and on track.", [
     "Manages team schedules and calendars",
     "Coordinates client and team availability",
     "Assigns and monitors virtual-assistant tasks",
@@ -142,7 +146,7 @@ export const DEFAULT_TEAM: TeamProfile[] = [
     "Provides administrative support",
     "Handles escalations and schedule changes",
   ]),
-  member("karu", "Karu", "Strategy & Innovation Specialist", "strategy", "#af52de", ["Strategy", "Process Improvement"], "Finds new ways to grow and do better.", [
+  member("karu", "John Reigner Karunaratne", "Karu", "Strategy & Innovation Specialist", "strategy", "#af52de", ["Strategy", "Process Improvement"], "Finds new ways to grow and do better.", [
     "Leads ideation and strategy development",
     "Identifies new verticals and markets",
     "Researches market opportunities",
@@ -150,7 +154,7 @@ export const DEFAULT_TEAM: TeamProfile[] = [
     "Supports innovation and expansion",
     "Collaborates with leadership on special projects",
   ]),
-  member("david", "David", "Research & Data Operations Specialist", "data", "#1bdbdb", ["Research", "Data", "Insights"], "Turns data into actionable opportunities.", [
+  member("david", "David Briones", "David", "Research & Data Operations Specialist", "data", "#1bdbdb", ["Research", "Data", "Insights"], "Turns data into actionable opportunities.", [
     "Conducts market research and competitor analysis",
     "Builds and maintains lead lists",
     "Handles data entry and database management",
@@ -158,7 +162,7 @@ export const DEFAULT_TEAM: TeamProfile[] = [
     "Supports client research requests",
     "Maintains data accuracy and quality",
   ]),
-  member("ayie", "Ayie", "Client Support Specialist", "support", "#c58a4f", ["Client Care", "Resolution", "Satisfaction"], "Supports our clients and helps them succeed.", [
+  member("ayie", "Mariel Briones", "Ayie", "Client Support Specialist", "support", "#c58a4f", ["Client Care", "Resolution", "Satisfaction"], "Supports our clients and helps them succeed.", [
     "Provides research and data support",
     "Assists with lead-list building",
     "Supports client communication and follow-ups",
@@ -166,7 +170,7 @@ export const DEFAULT_TEAM: TeamProfile[] = [
     "Escalates and resolves client issues",
     "Ensures client satisfaction and retention",
   ]),
-  member("jb", "JB", "Project & People Coordinator", "projects", "#ff6b6b", ["Projects", "Team Coordination"], "Connects people, moves projects forward.", [
+  member("jb", "Jasper Briones", "JB", "Project & People Coordinator", "projects", "#ff6b6b", ["Projects", "Team Coordination"], "Connects people, moves projects forward.", [
     "Assists in project management",
     "Coordinates between teams and clients",
     "Tracks tasks, deadlines and deliverables",
@@ -175,6 +179,13 @@ export const DEFAULT_TEAM: TeamProfile[] = [
     "Ensures projects are delivered on time",
   ]),
 ].map((m, i) => ({ ...m, position: i }));
+
+/** The Founder's slug: the one tile with the seal. */
+export const FOUNDER_SLUG = "john";
+export const isFounderProfile = (m: Pick<TeamProfile, "slug" | "title">): boolean => m.slug === FOUNDER_SLUG || /^founder\b/i.test(m.title);
+
+/** What to call someone in a sentence: their nickname, else their first name. */
+export const shortName = (m: Pick<TeamProfile, "name" | "nickname">): string => m.nickname?.trim() || m.name.trim().split(/\s+/)[0] || m.name;
 
 /** The colour a tile wears: the person's own, else the department's. */
 export const hueOf = (m: TeamProfile): string => m.hue ?? DEPARTMENTS[m.department].hue;

@@ -363,7 +363,68 @@ body::before {
   animation-play-state: paused;
 }
 
+/* ---------------------------------------------- team: role motifs & seals */
+/* Small animated drawings per craft (src/components/marketing/team-motifs.tsx).
+   transform-box keeps every rotation and scale about the element itself. */
+.motif * { transform-box: fill-box; transform-origin: center; }
+.motif .motif-spin { animation: motif-spin 14s linear infinite; }
+.motif .motif-spin-reverse { animation: motif-spin 9s linear infinite reverse; }
+.motif .motif-orbit { animation: motif-spin 7s linear infinite; }
+.motif .motif-rise { transform-origin: bottom; animation: motif-rise 2.8s ease-in-out infinite; }
+.motif .motif-eq { animation: motif-eq 1.4s ease-in-out infinite; }
+.motif .motif-ripple { animation: motif-ripple 3.6s ease-out infinite; }
+.motif .motif-flow { stroke-dasharray: 5 9; animation: motif-flow 2s linear infinite; }
+.motif .motif-blink { animation: motif-blink 1.1s steps(2, start) infinite; }
+.motif .motif-flicker { animation: motif-flicker 3.6s ease-in-out infinite; }
+.motif .motif-slide { animation: motif-slide 4.5s ease-in-out infinite; }
+.motif .motif-draw { stroke-dasharray: 220; stroke-dashoffset: 220; animation: motif-draw 4.5s ease-in-out infinite; }
+.motif .motif-pulse { animation: motif-pulse 2.6s ease-in-out infinite; }
+
+/* A light passes over the Founder seal every few seconds. */
+.seal-shine::after {
+  content: "";
+  position: absolute;
+  inset: -40% auto -40% -60%;
+  width: 40%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  transform: translateX(0) skewX(-18deg);
+  animation: seal-shine 4.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* The ring around the Founder tile: a conic light circling a rounded frame. */
+.founder-ring { position: relative; border-radius: 18px; padding: 2px; }
+.founder-ring::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 2px;
+  background: conic-gradient(from var(--ring-angle, 0deg), transparent 0deg 200deg, color-mix(in oklab, var(--hue) 70%, transparent) 260deg, #fff 300deg, color-mix(in oklab, var(--hue) 70%, transparent) 330deg, transparent 360deg);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: ring-turn 6s linear infinite;
+  pointer-events: none;
+}
+@property --ring-angle { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+
 /* ------------------------------------------------------------- keyframes */
+
+@keyframes motif-spin { to { transform: rotate(360deg); } }
+@keyframes motif-rise { 0%, 100% { transform: scaleY(0.35); } 50% { transform: scaleY(1); } }
+@keyframes motif-eq { 0%, 100% { transform: scaleY(0.3); } 50% { transform: scaleY(1); } }
+@keyframes motif-ripple { 0% { transform: scale(0.35); opacity: 0.9; } 100% { transform: scale(1.5); opacity: 0; } }
+@keyframes motif-flow { to { stroke-dashoffset: -28; } }
+@keyframes motif-blink { to { opacity: 0.15; } }
+@keyframes motif-flicker { 0%, 100% { opacity: 0.55; transform: scale(0.96); } 50% { opacity: 1; transform: scale(1.05); } }
+@keyframes motif-slide { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-16px); } }
+@keyframes motif-draw { 0% { stroke-dashoffset: 220; } 55%, 100% { stroke-dashoffset: 0; } }
+@keyframes motif-pulse { 0%, 100% { transform: scale(1); opacity: 0.7; } 50% { transform: scale(1.1); opacity: 1; } }
+@keyframes seal-shine { 0%, 55% { transform: translateX(0) skewX(-18deg); } 100% { transform: translateX(420%) skewX(-18deg); } }
+@keyframes ring-turn { to { --ring-angle: 360deg; } }
+@keyframes intro-progress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 
 @keyframes shine {
   to { transform: translateX(420%) skewX(-18deg); }

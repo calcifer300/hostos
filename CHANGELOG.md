@@ -2,7 +2,38 @@
 
 All notable changes to HostOS. Dates are when the work landed on `unified`.
 
-## [Unreleased] — 2026-09-15 · Our Team page, back-to-site links
+## [Unreleased] — 2026-09-16 · The fingerprint mark, the roster introduced
+
+- **A new mark.** hostOS is now the fingerprint: a rounded square in the
+  brand gradient with three ridges over a core line — one identity, many
+  businesses. Drawn in `src/components/brand/logo-mark.tsx` (draw-in and
+  glow kept), `public/icon.svg`, the PWA icons (`scripts/build-pwa-icons.mjs`),
+  the Companion's toolbar icons (`scripts/build-icons.mjs`, simplified at
+  16px) and the OG/Twitter card.
+- **Full names on the roster** (migration 0031, `team_profiles.nickname`):
+  tiles read "Maribel Magbual"; open a tile and "Goes by Belle" appears.
+  The migration renames the built-in twelve by slug (only where the name
+  was still the nickname), restores the hierarchy order (Founder, CTO,
+  directors, specialists, coordinator) and shortens John's title to
+  "Founder & CEO". The editor gains a Nickname field.
+- **The Founder's seal**: a crown pill with a light passing over it on the
+  tile and in the hero's row of faces, and a ring of light circling the tile
+  and the spotlight portrait; the spotlight adds a line about founding the
+  collective.
+- **A signature per craft**: eleven small animated drawings (gears for
+  operations, rising bars for finance, ripples for marketing, a circuit for
+  technology…) in each person's colour — faint in the tile's corner,
+  brighter on hover, large behind the spotlight's words
+  (`src/components/marketing/team-motifs.tsx`).
+- **Meet everyone.** A button under the roster (and "Meet John and
+  everyone" in the hero, under a row of every face) runs the spotlight
+  through the whole collective, 4.5 s each with a progress line; resting
+  the pointer on the person pauses, Space toggles, any manual step ends the
+  run. Name plates slide up out of a mask as each tile arrives.
+- **JSON-LD** on /team: the organisation and its people (name, alternate
+  name, job title, photo) for search engines.
+
+## 2026-09-15 · Our Team page, back-to-site links
 
 - **Two views of the team.** hostoscollective.com/team (signed out) introduces people by photo, name and role only; **The Collective** (`/app/collective`, in the sidebar for every signed-in member) carries each person's focus, promise and responsibilities.
 - **/team shows the roster as tiles** in the vertical chooser's language: a

@@ -23,10 +23,15 @@ _Updated 2026-09-15. Known shortcuts, why they were taken, and what pays them of
 
 ## Open notes (2026-09-16)
 
-- **Team roster order lives in the database now** (the Founder reordered it
-  in Settings → Our Team page). `DEFAULT_TEAM` in `src/lib/team/profiles.ts`
-  is only the "restore defaults" roster and the tests pin *its* order, not
-  production's.
+- **Team roster order lives in the database.** Migration 0031 reset it to
+  the hierarchy (Founder, CTO, directors, specialists, coordinator); the
+  Founder can still reorder in Settings → Our Team page. `DEFAULT_TEAM` in
+  `src/lib/team/profiles.ts` is the "restore defaults" roster and the tests
+  pin *its* order, not production's.
+- **The Founder ring animates a registered custom property** (`@property
+  --ring-angle`). Browsers without it (Firefox < 128) show a static ring.
+- **Role motifs are decorative SVG with CSS keyframes**; under
+  `prefers-reduced-motion` the global rule stops them, as intended.
 - **Gerald's photo** points at `/team/2.jpg`, which does not exist; the tile
   shows his initials until the Founder uploads one (the editor's Photo
   field). Not a bug in code — leave it to him.

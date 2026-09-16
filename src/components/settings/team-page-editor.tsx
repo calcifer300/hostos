@@ -17,9 +17,9 @@ import { DEPARTMENTS, DEPARTMENT_IDS, hueOf, type Department, type TeamProfile }
 import { MemberPhoto, Portrait, TeamTile } from "@/components/marketing/team-tiles";
 import { cn } from "@/lib/utils";
 
-type Draft = { id: string | null; slug: string; name: string; title: string; department: Department; focus: string; quote: string; responsibilities: string; photoUrl: string; hue: string; email: string; active: boolean };
+type Draft = { id: string | null; slug: string; name: string; nickname: string; title: string; department: Department; focus: string; quote: string; responsibilities: string; photoUrl: string; hue: string; email: string; active: boolean };
 
-const toDraft = (p?: TeamProfile): Draft => ({ id: p?.id ?? null, slug: p?.slug ?? "", name: p?.name ?? "", title: p?.title ?? "", department: p?.department ?? "operations", focus: p?.focus.join(" · ") ?? "", quote: p?.quote ?? "", responsibilities: p?.responsibilities.join("\n") ?? "", photoUrl: p?.photoUrl ?? "", hue: p?.hue ?? (p ? DEPARTMENTS[p.department].hue : ""), email: p?.email ?? "", active: p?.active ?? true });
+const toDraft = (p?: TeamProfile): Draft => ({ id: p?.id ?? null, slug: p?.slug ?? "", name: p?.name ?? "", nickname: p?.nickname ?? "", title: p?.title ?? "", department: p?.department ?? "operations", focus: p?.focus.join(" · ") ?? "", quote: p?.quote ?? "", responsibilities: p?.responsibilities.join("\n") ?? "", photoUrl: p?.photoUrl ?? "", hue: p?.hue ?? (p ? DEPARTMENTS[p.department].hue : ""), email: p?.email ?? "", active: p?.active ?? true });
 
 /**
  * The Founder's editor for hostoscollective.com/team: every member as a
@@ -38,7 +38,7 @@ function PhotoField({ draft, onChange }: { draft: Draft; onChange: (photoUrl: st
   const [busy, setBusy] = React.useState<null | "preparing" | "uploading">(null);
   const [over, setOver] = React.useState(false);
   const [match, setMatch] = React.useState(true);
-  const preview: TeamProfile = { id: "preview", slug: draft.slug || "new", name: draft.name || "?", title: "", department: draft.department, focus: [], quote: "", responsibilities: [], photoUrl: draft.photoUrl || null, hue: /^#[0-9a-f]{6}$/i.test(draft.hue) ? draft.hue : null, email: null, position: 0, active: true };
+  const preview: TeamProfile = { id: "preview", slug: draft.slug || "new", name: draft.name || "?", nickname: draft.nickname || null, title: "", department: draft.department, focus: [], quote: "", responsibilities: [], photoUrl: draft.photoUrl || null, hue: /^#[0-9a-f]{6}$/i.test(draft.hue) ? draft.hue : null, email: null, position: 0, active: true };
 
   async function take(file: File | undefined) {
     if (!file || busy) return;
@@ -109,7 +109,7 @@ export function TeamPageEditor({ profiles, fromDatabase }: { profiles: TeamProfi
   }
 
   const preview: TeamProfile | null = draft
-    ? { id: draft.id ?? "new", slug: draft.slug || "new", name: draft.name || "Name", title: draft.title || "Title", department: draft.department, focus: draft.focus.split("·").map((s) => s.trim()).filter(Boolean), quote: draft.quote, responsibilities: draft.responsibilities.split("\n").map((s) => s.trim()).filter(Boolean), photoUrl: draft.photoUrl || null, hue: /^#[0-9a-f]{6}$/i.test(draft.hue) ? draft.hue : null, email: draft.email || null, position: 0, active: draft.active }
+    ? { id: draft.id ?? "new", slug: draft.slug || "new", name: draft.name || "Name", nickname: draft.nickname || null, title: draft.title || "Title", department: draft.department, focus: draft.focus.split("·").map((s) => s.trim()).filter(Boolean), quote: draft.quote, responsibilities: draft.responsibilities.split("\n").map((s) => s.trim()).filter(Boolean), photoUrl: draft.photoUrl || null, hue: /^#[0-9a-f]{6}$/i.test(draft.hue) ? draft.hue : null, email: draft.email || null, position: 0, active: draft.active }
     : null;
 
   return (
@@ -137,7 +137,8 @@ export function TeamPageEditor({ profiles, fromDatabase }: { profiles: TeamProfi
             <Card padding="md">
               <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_320px]">
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <div className="space-y-1.5"><Label htmlFor="t-name">Name</Label><Input id="t-name" value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} /></div>
+                  <div className="space-y-1.5"><Label htmlFor="t-name">Full name</Label><Input id="t-name" value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} placeholder="Maribel Magbual" /></div>
+                  <div className="space-y-1.5"><Label htmlFor="t-nick">Nickname (shown when the tile is opened)</Label><Input id="t-nick" value={draft.nickname} onChange={(e) => setDraft({ ...draft, nickname: e.target.value })} placeholder="Belle" /></div>
                   <div className="space-y-1.5"><Label htmlFor="t-title">Title</Label><Input id="t-title" value={draft.title} onChange={(e) => setDraft({ ...draft, title: e.target.value })} placeholder="Director of Operations" /></div>
                   <div className="space-y-1.5"><Label htmlFor="t-dept">Department (colour)</Label>
                     <NativeSelect id="t-dept" value={draft.department} onChange={(e) => setDraft({ ...draft, department: e.target.value as Department })}>{DEPARTMENT_IDS.map((d) => <option key={d} value={d}>{DEPARTMENTS[d].label}</option>)}</NativeSelect>
@@ -175,7 +176,7 @@ export function TeamPageEditor({ profiles, fromDatabase }: { profiles: TeamProfi
             <li key={p.id} className={`flex flex-wrap items-center gap-3 px-5 py-3 ${p.active ? "" : "opacity-60"}`}>
               <MemberPhoto member={p} size={40} />
               <div className="min-w-0 flex-1">
-                <p className="truncate text-[13.5px] font-medium">{p.name} <span className="font-normal text-muted-foreground">· {p.title}</span></p>
+                <p className="truncate text-[13.5px] font-medium">{p.name}{p.nickname && p.nickname !== p.name ? <span className="font-normal text-muted-foreground"> “{p.nickname}”</span> : null} <span className="font-normal text-muted-foreground">· {p.title}</span></p>
                 <p className="truncate text-[12px]" style={{ color: hueOf(p) }}>{[DEPARTMENTS[p.department].label, ...p.focus.filter((f) => f.toLowerCase() !== DEPARTMENTS[p.department].label.toLowerCase())].join(" · ")}{p.active ? "" : " · hidden"}</p>
               </div>
               <div className="flex items-center gap-1">

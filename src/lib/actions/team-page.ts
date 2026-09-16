@@ -28,7 +28,7 @@ async function founder(): Promise<true | string> {
 
 const str = (v: unknown, max: number) => (typeof v === "string" ? v.trim().slice(0, max) : "");
 const lines = (v: unknown, max: number) => (Array.isArray(v) ? v : typeof v === "string" ? v.split("\n") : []).map((x) => str(x, 200)).filter(Boolean).slice(0, max);
-const hint = (e: string) => (/relation|team_profiles|does not exist/i.test(e) ? "Run migration 0029 to enable the team page editor." : e);
+const hint = (e: string) => (/nickname/i.test(e) ? "Run migration 0031 (team_profiles.nickname) to save names." : /relation|team_profiles|does not exist/i.test(e) ? "Run migration 0029 to enable the team page editor." : e);
 
 function refresh() {
   revalidatePath("/team");
@@ -45,7 +45,7 @@ export async function saveDefaultTeam(): Promise<TeamPageResult> {
   return { ok: true };
 }
 
-export async function saveTeamProfile(input: { id?: string | null; slug?: string; name: string; title: string; department?: string; focus?: string | string[]; quote?: string; responsibilities?: string | string[]; photoUrl?: string; hue?: string; email?: string; active?: boolean }): Promise<TeamPageResult> {
+export async function saveTeamProfile(input: { id?: string | null; slug?: string; name: string; nickname?: string; title: string; department?: string; focus?: string | string[]; quote?: string; responsibilities?: string | string[]; photoUrl?: string; hue?: string; email?: string; active?: boolean }): Promise<TeamPageResult> {
   const gate = await founder();
   if (gate !== true) return { ok: false, error: gate };
   const name = str(input.name, 80);
@@ -61,6 +61,7 @@ export async function saveTeamProfile(input: { id?: string | null; slug?: string
     id,
     slug,
     name,
+    nickname: str(input.nickname, 40) || null,
     title,
     department: asDepartment(input.department),
     focus: lines(input.focus, 4).map((f) => f.replace(/\s*·\s*/g, " ").trim()),

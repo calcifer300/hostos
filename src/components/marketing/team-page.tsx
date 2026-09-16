@@ -2,17 +2,46 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Play } from "lucide-react";
 import { Reveal, Stagger, StaggerItem } from "@/components/motion/reveal";
 import { Button } from "@/components/ui/button";
 import { Bullets, IconBadge, SectionHeading } from "@/components/marketing/sections";
 import { CHANNELS, TEAM_POINTS, TEAM_PROMISES } from "@/components/marketing/data";
 import { TeamPulse } from "@/components/marketing/team-pulse";
-import { TeamTiles } from "@/components/marketing/team-tiles";
-import type { TeamProfile } from "@/lib/team/profiles";
+import { MemberPhoto } from "@/components/marketing/team-portrait";
+import { MEET_EVERYONE, TeamTiles } from "@/components/marketing/team-tiles";
+import { FounderSeal } from "@/components/marketing/team-motifs";
+import { isFounderProfile, shortName, type TeamProfile } from "@/lib/team/profiles";
 import { routes } from "@/lib/routes";
+import { cn } from "@/lib/utils";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
+
+/**
+ * The faces, stacked, under the hero — every member at a glance, the
+ * Founder first with the seal — and the one button that introduces them
+ * all: it asks the roster below to run the spotlight through everyone.
+ */
+function Faces({ members }: { members: TeamProfile[] }) {
+  return (
+    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: EASE, delay: 0.35 }} className="mx-auto mt-9 flex flex-wrap items-center justify-center gap-x-6 gap-y-4">
+      <ul className="flex items-center" aria-label="The collective">
+        {members.map((m, i) => (
+          <motion.li key={m.id} initial={{ opacity: 0, x: -10, scale: 0.8 }} animate={{ opacity: 1, x: 0, scale: 1 }} transition={{ duration: 0.5, ease: EASE, delay: 0.45 + i * 0.05 }} whileHover={{ y: -6, scale: 1.12, zIndex: 20 }} className={cn("relative -ml-2.5 first:ml-0", isFounderProfile(m) && "z-10")} title={`${m.name} — ${m.title}`}>
+            <MemberPhoto member={m} size={isFounderProfile(m) ? 48 : 40} className="ring-2 ring-background" />
+            {isFounderProfile(m) && <FounderSeal className="absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap !px-1.5 !py-px !text-[7.5px]" />}
+          </motion.li>
+        ))}
+      </ul>
+      <button type="button" onClick={() => window.dispatchEvent(new Event(MEET_EVERYONE))} className="btn-shine group inline-flex items-center gap-2.5 rounded-full border border-border bg-card py-1.5 pl-1.5 pr-4 text-[13px] font-medium shadow-[var(--shadow-card)] transition-[border-color,box-shadow,transform] duration-300 hover:-translate-y-0.5 hover:border-accent/50 hover:shadow-[var(--shadow-card-hover)]">
+        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[linear-gradient(135deg,var(--accent),var(--accent-2))] text-white transition-transform duration-300 ease-[var(--ease-out-expo)] group-hover:scale-110">
+          <Play className="ml-0.5 h-3.5 w-3.5" fill="currentColor" />
+        </span>
+        Meet {members[0] ? shortName(members[0]) : "the team"} and everyone
+      </button>
+    </motion.div>
+  );
+}
 
 /** /team — the virtual-assistance and support team, and the standards behind it. */
 export function TeamPage({ members }: { members: TeamProfile[] }) {
@@ -30,6 +59,7 @@ export function TeamPage({ members }: { members: TeamProfile[] }) {
             Every member of our team is hand-selected, continuously trained, and held to the same high standard. We operate with process, consistency, and
             professionalism — and we all work inside HostOS — so your business is always in good hands.
           </p>
+          <Faces members={members} />
         </motion.div>
       </section>
 

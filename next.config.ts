@@ -23,7 +23,17 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "*.googleusercontent.com",
       },
+      // Team portraits uploaded from the editor (public bucket "team").
+      {
+        protocol: "https",
+        hostname: "*.supabase.co",
+        pathname: "/storage/v1/object/public/**",
+      },
     ],
+  },
+  // The team-photo upload is a server action carrying one prepared JPEG (~150 KB); the default 1 MB cap leaves no room for a PNG export.
+  experimental: {
+    serverActions: { bodySizeLimit: "6mb" },
   },
 };
 

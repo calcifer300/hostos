@@ -27,6 +27,19 @@ All notable changes to HostOS. Dates are when the work landed on `unified`.
   The Collective now lead with the portrait itself — department mark on the
   corner, a slow zoom on hover, a fade into the card — with name and role
   below; local photos go through next/image at the column width.
+- **The roster, staged.** Tiles rise in together over a slow constellation
+  drawn in the members' colours; each tile tilts toward the pointer with a
+  sheen and a portrait that drifts the other way; an ambient glow glides to
+  whichever tile is under the cursor; a "Meet …" pill appears on hover.
+  Click anyone and their portrait flies out into a **spotlight** — the room
+  takes their colour, name and role arrive line by line, ← → walk the
+  collective, Esc closes, a strip of faces jumps to anyone. Above the grid,
+  the pulse: people · crafts · workspace counting up, and the crafts drifting
+  past. All of it still under reduced motion and on touch.
+- **Upload a photo from the editor.** Drop or choose a file; the browser
+  crops it to 4:5, matches it to the set's lighting (optional), and it goes
+  to the public `team` bucket in Supabase Storage; the link fills itself in.
+  A photo whose link is broken falls back to initials instead of a hole.
 - **The marketing nav knows you're signed in**: it shows "Open HostOS"
   instead of "Sign in" once a session exists, so going back to the website
   never looks like being signed out.

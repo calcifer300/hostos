@@ -3,8 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { isFounderEmail } from "@/lib/roles/constants";
+import { PHOTO_MAX_BYTES, PHOTO_TYPES } from "@/lib/team/photo-look";
 import { asDepartment } from "@/lib/team/profiles";
 import { deleteTeamProfile, getTeamProfiles, reorderTeamProfiles, seedTeamProfiles, upsertTeamProfile } from "@/lib/team/queries";
+import { putTeamPhoto } from "@/lib/team/storage";
 import { routes } from "@/lib/routes";
 
 /**
@@ -73,6 +75,23 @@ export async function saveTeamProfile(input: { id?: string | null; slug?: string
   if (!r.ok) return { ok: false, error: hint(r.error) };
   refresh();
   return { ok: true, id: r.id };
+}
+
+/**
+ * A portrait from the Founder's disk, already cropped and matched by the
+ * browser (src/lib/team/photo-look.ts), into the team bucket. Returns the
+ * public URL to put in the member's photo field.
+ */
+export async function uploadTeamPhoto(form: FormData): Promise<TeamPageResult & { url?: string }> {
+  const gate = await founder();
+  if (gate !== true) return { ok: false, error: gate };
+  const file = form.get("file");
+  if (!(file instanceof File)) return { ok: false, error: "Choose a photo first." };
+  if (!PHOTO_TYPES.includes(file.type)) return { ok: false, error: "Use a JPG, PNG or WebP photo." };
+  if (file.size > PHOTO_MAX_BYTES) return { ok: false, error: "That photo is over 12 MB." };
+  const slug = str(form.get("slug"), 40).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "member";
+  const r = await putTeamPhoto(await file.arrayBuffer(), file.type, slug, str(form.get("previous"), 500) || null);
+  return r.ok ? { ok: true, url: r.url } : { ok: false, error: r.error };
 }
 
 export async function removeTeamProfile(id: string): Promise<TeamPageResult> {

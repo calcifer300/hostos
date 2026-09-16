@@ -7,6 +7,7 @@ import { Reveal, Stagger, StaggerItem } from "@/components/motion/reveal";
 import { Button } from "@/components/ui/button";
 import { Bullets, IconBadge, SectionHeading } from "@/components/marketing/sections";
 import { CHANNELS, TEAM_POINTS, TEAM_PROMISES } from "@/components/marketing/data";
+import { TeamPulse } from "@/components/marketing/team-pulse";
 import { TeamTiles } from "@/components/marketing/team-tiles";
 import type { TeamProfile } from "@/lib/team/profiles";
 import { routes } from "@/lib/routes";
@@ -32,7 +33,7 @@ export function TeamPage({ members }: { members: TeamProfile[] }) {
         </motion.div>
       </section>
 
-      {/* The roster: one tile per person, in the same language as the vertical chooser. */}
+      {/* The roster: the pulse of the collective, then one tile per person — tilt, sheen, spotlight — in the same language as the vertical chooser. */}
       <section id="roles" className="scroll-mt-24 px-6 pb-16 md:pb-24">
         <div className="mx-auto max-w-7xl">
           <SectionHeading
@@ -46,6 +47,7 @@ export function TeamPage({ members }: { members: TeamProfile[] }) {
             align="center"
             className="max-w-3xl"
           />
+          <TeamPulse members={members} />
           <TeamTiles members={members} variant="public" />
           <Reveal delay={0.2} className="mx-auto mt-10 max-w-3xl text-center text-[14px] italic text-muted-foreground">
             &ldquo;Alone we can do so little. Together we can do so much.&rdquo; — Helen Keller

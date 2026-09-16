@@ -182,7 +182,7 @@ export const DEFAULT_TEAM: TeamProfile[] = [
 
 /** The Founder's slug: the one tile with the seal. */
 export const FOUNDER_SLUG = "john";
-export const isFounderProfile = (m: Pick<TeamProfile, "slug" | "title">): boolean => m.slug === FOUNDER_SLUG || /^founder\b/i.test(m.title);
+export const isFounderProfile = (m: Pick<TeamProfile, "slug" | "title">): boolean => m.slug === FOUNDER_SLUG || /^founder(\s*[&,]|\s+and\b|\s*$)/i.test(m.title);
 
 /** What to call someone in a sentence: their nickname, else their first name. */
 export const shortName = (m: Pick<TeamProfile, "name" | "nickname">): string => m.nickname?.trim() || m.name.trim().split(/\s+/)[0] || m.name;

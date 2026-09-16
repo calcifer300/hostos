@@ -56,7 +56,7 @@ export function TeamSpotlight({ members, openId, entryId, intro, variant, onClos
       if (e.key === "Escape") onClose();
       else if (e.key === "ArrowRight") step(next.id);
       else if (e.key === "ArrowLeft") step(prev.id);
-      else if (e.key === " " && intro) { e.preventDefault(); toggle(); }
+      else if (e.key === " " && intro && !(document.activeElement instanceof HTMLButtonElement)) { e.preventDefault(); toggle(); }
       else if (e.key === "Tab" && dialog.current) {
         // keep Tab inside the dialog
         const focusable = [...dialog.current.querySelectorAll<HTMLElement>("button, [href], [tabindex]:not([tabindex='-1'])")].filter((el) => !el.hasAttribute("disabled"));
@@ -119,9 +119,9 @@ export function TeamSpotlight({ members, openId, entryId, intro, variant, onClos
             <X className="h-5 w-5" />
           </button>
 
-          {/* moving the pointer over the person pauses the run; leaving resumes it */}
-          <div className="relative my-auto grid w-full max-w-5xl grid-cols-1 items-center gap-8 md:grid-cols-[minmax(0,400px)_1fr] md:gap-12" onClick={(e) => e.stopPropagation()} onPointerMove={(e) => { if (e.pointerType !== "touch" && !paused) pause(); }} onPointerLeave={() => paused && resume()}>
-            <div className="relative mx-auto w-full max-w-[400px]">
+          <div className="relative my-auto grid w-full max-w-5xl grid-cols-1 items-center gap-8 md:grid-cols-[minmax(0,400px)_1fr] md:gap-12" onClick={(e) => e.stopPropagation()}>
+            {/* resting the pointer on the portrait pauses the run; leaving it resumes */}
+            <div className="relative mx-auto w-full max-w-[400px]" onPointerMove={(e) => { if (e.pointerType !== "touch" && !paused) pause(); }} onPointerLeave={() => paused && resume()}>
               <div className={cn("relative aspect-[4/5] w-full", founder && "founder-ring")} style={{ ["--hue" as string]: hue }}>
                 <AnimatePresence initial={false}>
                   <motion.div
@@ -194,7 +194,7 @@ export function TeamSpotlight({ members, openId, entryId, intro, variant, onClos
                     {paused ? <Play className="h-4 w-4" /> : <Pause className="h-4 w-4" />} {paused ? "Resume" : "Pause"}
                   </button>
                 )}
-                <span className="ml-2 hidden text-[12px] text-white/45 sm:inline">{intro && !last ? (paused ? "Paused · move away or press Space to continue · " : "Introductions running · rest the pointer here to pause · ") : ""}← → to walk the collective · Esc to close</span>
+                <span className="ml-2 hidden text-[12px] text-white/45 sm:inline">{intro && !last ? (paused ? "Paused · move off the portrait or press Space · " : "Introductions running · rest on the portrait to pause · ") : ""}← → to walk the collective · Esc to close</span>
               </div>
 
               <nav aria-label="Everyone" className="mt-6 hidden flex-wrap gap-2 sm:flex">

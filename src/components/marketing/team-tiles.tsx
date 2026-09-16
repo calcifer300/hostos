@@ -202,7 +202,8 @@ export function TeamTiles({ members, compact = false, variant = "full" }: { memb
     return () => window.removeEventListener(MEET_EVERYONE, meetEveryone);
   }, [meetEveryone]);
 
-  const minutes = Math.round((members.length * INTRO_SECONDS) / 60 * 10) / 10;
+  const seconds = Math.round(members.length * INTRO_SECONDS);
+  const length = seconds < 60 ? "under a minute" : `about ${Math.round(seconds / 60)} min`;
 
   return (
     <div className="relative isolate">
@@ -213,7 +214,7 @@ export function TeamTiles({ members, compact = false, variant = "full" }: { memb
             <Play className="ml-0.5 h-4 w-4" fill="currentColor" />
           </span>
           Meet everyone
-          <span className="text-[12px] text-muted-foreground">{members.length} introductions · about {minutes} min</span>
+          <span className="text-[12px] text-muted-foreground">{members.length} introductions · {length}</span>
         </button>
       </motion.div>
       <div className={cn("grid gap-5", variant === "public" ? "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4" : compact ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4")}>

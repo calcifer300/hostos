@@ -104,7 +104,7 @@ export default async function OpenGraphImage() {
           </div>
         </div>
 
-        <div style={{ display: "flex", gap: 12 }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
           {VERTICALS.map((v) => (
             <div key={v} style={{ padding: "10px 18px", borderRadius: 9999, border: "1px solid rgba(255,255,255,0.14)", background: "rgba(255,255,255,0.05)", fontSize: 20, color: "#E4E4E7" }}>
               {v}

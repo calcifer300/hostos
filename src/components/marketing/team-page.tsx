@@ -25,7 +25,7 @@ const EASE = [0.16, 1, 0.3, 1] as const;
 function Faces({ members }: { members: TeamProfile[] }) {
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: EASE, delay: 0.35 }} className="mx-auto mt-9 flex flex-wrap items-center justify-center gap-x-6 gap-y-4">
-      <ul className="flex items-center" aria-label="The collective">
+      <ul className="flex flex-wrap items-center justify-center gap-y-3" aria-label="The collective">
         {members.map((m, i) => (
           <motion.li key={m.id} initial={{ opacity: 0, x: -10, scale: 0.8 }} animate={{ opacity: 1, x: 0, scale: 1 }} transition={{ duration: 0.5, ease: EASE, delay: 0.45 + i * 0.05 }} whileHover={{ y: -6, scale: 1.12, zIndex: 20 }} className={cn("relative -ml-2.5 first:ml-0", isFounderProfile(m) && "z-10")} title={`${m.name} — ${m.title}`}>
             <MemberPhoto member={m} size={isFounderProfile(m) ? 48 : 40} className="ring-2 ring-background" />

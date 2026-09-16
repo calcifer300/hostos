@@ -194,6 +194,9 @@ select option:disabled {
  * difference between a flat dashboard and one with depth, without competing
  * with data. Inert: pointer-events none, negative z-index.
  */
+/* A page can switch the two fixed ambient lights off by carrying .no-ambient (the team page does). */
+body:has(.no-ambient)::before { display: none; }
+
 body::before {
   content: "";
   position: fixed;

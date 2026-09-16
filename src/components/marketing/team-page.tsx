@@ -46,7 +46,7 @@ function Faces({ members }: { members: TeamProfile[] }) {
 /** /team — the virtual-assistance and support team, and the standards behind it. */
 export function TeamPage({ members }: { members: TeamProfile[] }) {
   return (
-    <>
+    <div className="no-ambient">
       <section className="relative overflow-hidden px-6 pt-36 pb-16 md:pt-44 md:pb-20">
         <div aria-hidden className="bg-grid absolute inset-0 -z-10" />
         <div aria-hidden className="absolute left-1/2 top-0 -z-10 h-[420px] w-[820px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,var(--accent-glow),transparent)] blur-3xl" />
@@ -154,6 +154,6 @@ export function TeamPage({ members }: { members: TeamProfile[] }) {
           </div>
         </Reveal>
       </section>
-    </>
+    </div>
   );
 }

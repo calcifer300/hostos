@@ -31,8 +31,9 @@ All notable changes to HostOS. Dates are when the work landed on `unified`.
   the glyph, paints it out with the wall's own colour and draws the
   fingerprint in its place (brushed silver, softened to the wall's depth of
   field). All twelve republished.
-- The Founder's seal and ring no longer carry white light sweeps (asked
-  for): the ring is the person's colour only, the seal is still.
+- The Founder's seal and ring no longer carry white light sweeps, and the
+  two fixed ambient lights behind every page (`body::before`) are off on
+  /team (`.no-ambient`) — the Founder asked for the white lights to go.
 
 ## 2026-09-16 · The fingerprint mark, the roster introduced
 

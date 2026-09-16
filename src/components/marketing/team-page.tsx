@@ -42,7 +42,7 @@ export function TeamPage({ members }: { members: TeamProfile[] }) {
                 Different strengths. <span className="text-gradient">One mission.</span>
               </>
             }
-            description="Delivering world-class solutions for Turo hosts, service businesses and modern companies — every person below works inside HostOS, so what we sell is what we use."
+            description="Not a company with departments — a collective of operators, engineers, marketers and specialists who each own a craft, work inside the same HostOS workspace, and answer to the same clients. What we sell is what we use."
             align="center"
             className="max-w-3xl"
           />

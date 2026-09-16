@@ -3,16 +3,40 @@
 import * as React from "react";
 import Link from "next/link";
 import { AnimatePresence, motion, useScroll, useMotionValueEvent, useSpring } from "framer-motion";
-import { ArrowRight, Menu, X } from "lucide-react";
+import { ArrowRight, LayoutGrid, Menu, X } from "lucide-react";
 import { Logo } from "@/components/brand/logo-mark";
 import { Button } from "@/components/ui/button";
 import { NAV_LINKS } from "@/components/marketing/data";
 import { routes } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 
+/**
+ * Whether a session exists, read after mount from Auth.js's session
+ * endpoint so the landing pages stay static. Null until known — the nav
+ * renders the signed-out buttons meanwhile, which is also the SSR output,
+ * so hydration matches.
+ */
+function useSignedIn(): { name: string | null; image: string | null } | null {
+  const [user, setUser] = React.useState<{ name: string | null; image: string | null } | null>(null);
+  React.useEffect(() => {
+    let cancelled = false;
+    fetch("/api/auth/session", { credentials: "same-origin" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((s) => {
+        if (!cancelled && s?.user) setUser({ name: s.user.name ?? null, image: s.user.image ?? null });
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+  return user;
+}
+
 export function MarketingNav() {
   const [scrolled, setScrolled] = React.useState(false);
   const [open, setOpen] = React.useState(false);
+  const user = useSignedIn();
   const { scrollY, scrollYProgress } = useScroll();
   // A hairline at the very top fills as the page is read.
   const progress = useSpring(scrollYProgress, { stiffness: 160, damping: 28, mass: 0.4 });
@@ -54,15 +78,31 @@ export function MarketingNav() {
         </nav>
 
         <div className="hidden items-center gap-2 lg:flex">
-          <Button asChild variant="ghost" size="sm" pill>
-            <Link href={routes.login}>Sign in</Link>
-          </Button>
-          <Button asChild variant="gradient" size="sm" pill>
-            <Link href="/#contact">
-              Book a consultation
-              <ArrowRight />
-            </Link>
-          </Button>
+          {user ? (
+            <Button asChild variant="gradient" size="sm" pill>
+              <Link href={routes.app}>
+                {user.image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={user.image} alt="" className="h-5 w-5 rounded-full" />
+                ) : (
+                  <LayoutGrid />
+                )}
+                Open HostOS
+              </Link>
+            </Button>
+          ) : (
+            <>
+              <Button asChild variant="ghost" size="sm" pill>
+                <Link href={routes.login}>Sign in</Link>
+              </Button>
+              <Button asChild variant="gradient" size="sm" pill>
+                <Link href="/#contact">
+                  Book a consultation
+                  <ArrowRight />
+                </Link>
+              </Button>
+            </>
+          )}
         </div>
 
         <button
@@ -98,7 +138,7 @@ export function MarketingNav() {
             </div>
             <div className="mt-2 flex gap-2 border-t border-border pt-3">
               <Button asChild variant="secondary" className="flex-1" pill>
-                <Link href={routes.login}>Sign in</Link>
+                <Link href={user ? routes.app : routes.login}>{user ? "Open HostOS" : "Sign in"}</Link>
               </Button>
               <Button asChild variant="gradient" className="flex-1" pill>
                 <Link href="/#contact" onClick={() => setOpen(false)}>

@@ -12,12 +12,12 @@ import { Input, Label, NativeSelect } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { moveTeamProfile, removeTeamProfile, saveDefaultTeam, saveTeamProfile } from "@/lib/actions/team-page";
-import { DEPARTMENTS, DEPARTMENT_IDS, type Department, type TeamProfile } from "@/lib/team/profiles";
+import { DEPARTMENTS, DEPARTMENT_IDS, hueOf, type Department, type TeamProfile } from "@/lib/team/profiles";
 import { MemberPhoto, TeamTile } from "@/components/marketing/team-tiles";
 
-type Draft = { id: string | null; slug: string; name: string; title: string; department: Department; focus: string; quote: string; responsibilities: string; photoUrl: string; email: string; active: boolean };
+type Draft = { id: string | null; slug: string; name: string; title: string; department: Department; focus: string; quote: string; responsibilities: string; photoUrl: string; hue: string; email: string; active: boolean };
 
-const toDraft = (p?: TeamProfile): Draft => ({ id: p?.id ?? null, slug: p?.slug ?? "", name: p?.name ?? "", title: p?.title ?? "", department: p?.department ?? "operations", focus: p?.focus.join(" · ") ?? "", quote: p?.quote ?? "", responsibilities: p?.responsibilities.join("\n") ?? "", photoUrl: p?.photoUrl ?? "", email: p?.email ?? "", active: p?.active ?? true });
+const toDraft = (p?: TeamProfile): Draft => ({ id: p?.id ?? null, slug: p?.slug ?? "", name: p?.name ?? "", title: p?.title ?? "", department: p?.department ?? "operations", focus: p?.focus.join(" · ") ?? "", quote: p?.quote ?? "", responsibilities: p?.responsibilities.join("\n") ?? "", photoUrl: p?.photoUrl ?? "", hue: p?.hue ?? (p ? DEPARTMENTS[p.department].hue : ""), email: p?.email ?? "", active: p?.active ?? true });
 
 /**
  * The Founder's editor for hostoscollective.com/team: every member as a
@@ -42,7 +42,7 @@ export function TeamPageEditor({ profiles, fromDatabase }: { profiles: TeamProfi
   }
 
   const preview: TeamProfile | null = draft
-    ? { id: draft.id ?? "new", slug: draft.slug || "new", name: draft.name || "Name", title: draft.title || "Title", department: draft.department, focus: draft.focus.split("·").map((s) => s.trim()).filter(Boolean), quote: draft.quote, responsibilities: draft.responsibilities.split("\n").map((s) => s.trim()).filter(Boolean), photoUrl: draft.photoUrl || null, email: draft.email || null, position: 0, active: draft.active }
+    ? { id: draft.id ?? "new", slug: draft.slug || "new", name: draft.name || "Name", title: draft.title || "Title", department: draft.department, focus: draft.focus.split("·").map((s) => s.trim()).filter(Boolean), quote: draft.quote, responsibilities: draft.responsibilities.split("\n").map((s) => s.trim()).filter(Boolean), photoUrl: draft.photoUrl || null, hue: /^#[0-9a-f]{6}$/i.test(draft.hue) ? draft.hue : null, email: draft.email || null, position: 0, active: draft.active }
     : null;
 
   return (
@@ -79,6 +79,12 @@ export function TeamPageEditor({ profiles, fromDatabase }: { profiles: TeamProfi
                   <div className="space-y-1.5 sm:col-span-2"><Label htmlFor="t-quote">One-line promise</Label><Input id="t-quote" value={draft.quote} onChange={(e) => setDraft({ ...draft, quote: e.target.value })} placeholder="Leads the company toward a bigger future." /></div>
                   <div className="space-y-1.5 sm:col-span-2"><Label htmlFor="t-resp">Responsibilities (one per line)</Label><Textarea id="t-resp" rows={6} value={draft.responsibilities} onChange={(e) => setDraft({ ...draft, responsibilities: e.target.value })} /></div>
                   <div className="space-y-1.5"><Label htmlFor="t-photo">Photo (link, or /team/name.jpg)</Label><Input id="t-photo" value={draft.photoUrl} onChange={(e) => setDraft({ ...draft, photoUrl: e.target.value })} placeholder="https://… or /team/john.jpg" /></div>
+                  <div className="space-y-1.5"><Label htmlFor="t-hue">Tile colour</Label>
+                    <div className="flex items-center gap-2">
+                      <input id="t-hue" type="color" value={/^#[0-9a-f]{6}$/i.test(draft.hue) ? draft.hue : DEPARTMENTS[draft.department].hue} onChange={(e) => setDraft({ ...draft, hue: e.target.value })} className="h-9 w-12 cursor-pointer rounded-lg border border-border bg-transparent p-0.5" aria-label="Tile colour" />
+                      <Input value={draft.hue} onChange={(e) => setDraft({ ...draft, hue: e.target.value })} placeholder={DEPARTMENTS[draft.department].hue} className="font-mono" />
+                    </div>
+                  </div>
                   <div className="space-y-1.5"><Label htmlFor="t-email">Sign-in email (optional)</Label><Input id="t-email" type="email" value={draft.email} onChange={(e) => setDraft({ ...draft, email: e.target.value })} /></div>
                   <label className="flex items-center gap-2 text-[13px] sm:col-span-2"><Switch checked={draft.active} onCheckedChange={(v) => setDraft({ ...draft, active: v })} /> Shown on the public page</label>
                   <div className="flex gap-2 sm:col-span-2">
@@ -103,7 +109,7 @@ export function TeamPageEditor({ profiles, fromDatabase }: { profiles: TeamProfi
               <MemberPhoto member={p} size={40} />
               <div className="min-w-0 flex-1">
                 <p className="truncate text-[13.5px] font-medium">{p.name} <span className="font-normal text-muted-foreground">· {p.title}</span></p>
-                <p className="truncate text-[12px]" style={{ color: DEPARTMENTS[p.department].hue }}>{[DEPARTMENTS[p.department].label, ...p.focus.filter((f) => f.toLowerCase() !== DEPARTMENTS[p.department].label.toLowerCase())].join(" · ")}{p.active ? "" : " · hidden"}</p>
+                <p className="truncate text-[12px]" style={{ color: hueOf(p) }}>{[DEPARTMENTS[p.department].label, ...p.focus.filter((f) => f.toLowerCase() !== DEPARTMENTS[p.department].label.toLowerCase())].join(" · ")}{p.active ? "" : " · hidden"}</p>
               </div>
               <div className="flex items-center gap-1">
                 {fromDatabase && (

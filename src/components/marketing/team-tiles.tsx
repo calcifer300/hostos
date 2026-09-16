@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { BarChart3, Cpu, Crown, FolderKanban, Handshake, Headset, Landmark, Lightbulb, Megaphone, PenLine, Settings2, type LucideIcon } from "lucide-react";
-import { DEPARTMENTS, initials, type DepartmentDefinition, type TeamProfile } from "@/lib/team/profiles";
+import { DEPARTMENTS, hueOf, initials, type DepartmentDefinition, type TeamProfile } from "@/lib/team/profiles";
 import { cn } from "@/lib/utils";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -11,7 +11,7 @@ export const DEPARTMENT_ICONS: Record<DepartmentDefinition["icon"], LucideIcon> 
 
 /** A member's photo, or their initials in the department's colour until the photo exists. */
 export function MemberPhoto({ member, size = 72 }: { member: TeamProfile; size?: number }) {
-  const dept = DEPARTMENTS[member.department];
+  const dept = { ...DEPARTMENTS[member.department], hue: hueOf(member) };
   return member.photoUrl ? (
     // eslint-disable-next-line @next/next/no-img-element
     <img src={member.photoUrl} alt={member.name} width={size} height={size} className="rounded-full border-2 object-cover shadow-[var(--shadow-card)]" style={{ width: size, height: size, borderColor: `color-mix(in oklab, ${dept.hue} 60%, transparent)` }} />
@@ -32,7 +32,7 @@ export function MemberPhoto({ member, size = 72 }: { member: TeamProfile; size?:
  * person is responsible for — the internal roles-and-responsibilities view.
  */
 export function TeamTile({ member, compact = false, variant = "full" }: { member: TeamProfile; compact?: boolean; variant?: "public" | "full" }) {
-  const dept = DEPARTMENTS[member.department];
+  const dept = { ...DEPARTMENTS[member.department], hue: hueOf(member) };
   const Icon = DEPARTMENT_ICONS[dept.icon];
   if (variant === "public") {
     return (

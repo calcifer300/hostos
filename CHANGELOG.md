@@ -16,6 +16,13 @@ All notable changes to HostOS. Dates are when the work landed on `unified`.
   and every action re-checks `isFounderEmail`.
 - **Back to hostoscollective.com** from the app: a "Website" item in the
   sidebar's System group and a link in the account menu.
+- **A colour per person** (migration 0030, `team_profiles.hue`): every tile
+  on /team and The Collective wears its own colour, editable in the Founder
+  editor; the department colour stays as the fallback. Roster ordered by
+  responsibility and the copy reads as a collective rather than an org chart.
+- **The marketing nav knows you're signed in**: it shows "Open HostOS"
+  instead of "Sign in" once a session exists, so going back to the website
+  never looks like being signed out.
 
 ## 2026-09-15 · Service Businesses — the eighth vertical (Phase 1)
 

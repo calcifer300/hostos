@@ -10,6 +10,8 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  const members = await getPublicTeam();
+  // Signed out, the page says photo, name and role — and sends nothing more:
+  // the responsibilities never leave the server for this route.
+  const members = (await getPublicTeam()).map((m) => ({ ...m, focus: [], quote: "", responsibilities: [], email: null }));
   return <TeamPage members={members} />;
 }

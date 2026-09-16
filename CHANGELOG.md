@@ -4,6 +4,7 @@ All notable changes to HostOS. Dates are when the work landed on `unified`.
 
 ## [Unreleased] — 2026-09-15 · Our Team page, back-to-site links
 
+- **Two views of the team.** hostoscollective.com/team (signed out) introduces people by photo, name and role only; **The Collective** (`/app/collective`, in the sidebar for every signed-in member) carries each person's focus, promise and responsibilities.
 - **/team shows the roster as tiles** in the vertical chooser's language: a
   colour per department, photo (or initials until the photo arrives), title,
   focus words, one-line promise and responsibilities; staggered in with the

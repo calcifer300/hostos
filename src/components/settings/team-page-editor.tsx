@@ -52,11 +52,12 @@ export function TeamPageEditor({ profiles, fromDatabase }: { profiles: TeamProfi
           <div>
             <p className="text-[13px] font-semibold">Our Team page</p>
             <p className="mt-0.5 text-[12.5px] text-muted-foreground">
-              {fromDatabase ? `${ordered.filter((p) => p.active).length} of ${ordered.length} members shown on the public page.` : "Showing the built-in roster. Save it to the database once to edit members, photos and order."}
+              {fromDatabase ? `${ordered.filter((p) => p.active).length} of ${ordered.length} members shown. The public page shows photo, name and role; The Collective (signed in) shows everything.` : "Showing the built-in roster. Save it to the database once to edit members, photos and order."}
             </p>
           </div>
           <div className="flex gap-2">
-            <Button asChild variant="ghost" size="sm"><Link href="/team" target="_blank">View page <ExternalLink /></Link></Button>
+            <Button asChild variant="ghost" size="sm"><Link href="/team" target="_blank">Public page <ExternalLink /></Link></Button>
+            <Button asChild variant="ghost" size="sm"><Link href="/app/collective">The Collective</Link></Button>
             {!fromDatabase && <Button variant="primary" size="sm" loading={pending} onClick={() => run(saveDefaultTeam, "Roster saved — every member is now editable")}>Save roster to database</Button>}
             {fromDatabase && <Button variant="primary" size="sm" onClick={() => setDraft(toDraft())}><Plus /> Add member</Button>}
           </div>

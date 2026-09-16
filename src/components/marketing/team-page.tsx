@@ -36,17 +36,17 @@ export function TeamPage({ members }: { members: TeamProfile[] }) {
       <section id="roles" className="scroll-mt-24 px-6 pb-16 md:pb-24">
         <div className="mx-auto max-w-7xl">
           <SectionHeading
-            eyebrow="Roles & responsibilities"
+            eyebrow="Meet the team"
             title={
               <>
                 Different strengths. <span className="text-gradient">One mission.</span>
               </>
             }
-            description="Delivering world-class solutions for Turo hosts, service businesses and modern companies — every role below works inside HostOS, so what we sell is what we use."
+            description="Delivering world-class solutions for Turo hosts, service businesses and modern companies — every person below works inside HostOS, so what we sell is what we use."
             align="center"
             className="max-w-3xl"
           />
-          <TeamTiles members={members} />
+          <TeamTiles members={members} variant="public" />
           <Reveal delay={0.2} className="mx-auto mt-10 max-w-3xl text-center text-[14px] italic text-muted-foreground">
             &ldquo;Alone we can do so little. Together we can do so much.&rdquo; — Helen Keller
           </Reveal>

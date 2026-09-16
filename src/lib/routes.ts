@@ -29,6 +29,8 @@ export const routes = {
   overview: app("overview"),
   /** The vertical chooser people land on after signing in. */
   start: app("start"),
+  /** The Collective: everyone's role and responsibilities, for signed-in members. */
+  collective: app("collective"),
   operations: app("operations"),
   board: app("board"),
   messages: app("messages"),

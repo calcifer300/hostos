@@ -24,13 +24,37 @@ export function MemberPhoto({ member, size = 72 }: { member: TeamProfile; size?:
 
 /**
  * One person, in the same tile language as the vertical chooser: the
- * department's colour on the icon, the glow, the bullets and the pulse;
- * photo (or initials), name, title, focus words, the one-line promise,
- * and what they are responsible for.
+ * department's colour on the icon, the glow, the bullets and the pulse.
+ *
+ * Two views. "public" (hostoscollective.com/team, signed out) is the
+ * introduction: photo, name and role, nothing else. "full" (The Collective,
+ * inside the app) adds focus words, the one-line promise and what each
+ * person is responsible for — the internal roles-and-responsibilities view.
  */
-export function TeamTile({ member, compact = false }: { member: TeamProfile; compact?: boolean }) {
+export function TeamTile({ member, compact = false, variant = "full" }: { member: TeamProfile; compact?: boolean; variant?: "public" | "full" }) {
   const dept = DEPARTMENTS[member.department];
   const Icon = DEPARTMENT_ICONS[dept.icon];
+  if (variant === "public") {
+    return (
+      <motion.article
+        variants={{ hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: EASE } } }}
+        whileHover={{ y: -4 }}
+        whileTap={{ scale: 0.99 }}
+        style={{ ["--hue" as string]: dept.hue, ["--spot" as string]: dept.hue }}
+        className="spot group relative flex flex-col items-center overflow-hidden rounded-2xl border border-border bg-card p-5 text-center shadow-[var(--shadow-card)] transition-[border-color,box-shadow] duration-300 hover:border-[color-mix(in_oklab,var(--hue)_55%,var(--border))] hover:shadow-[var(--shadow-card-hover)]"
+      >
+        <div aria-hidden className="pointer-events-none absolute -top-16 left-1/2 h-40 w-40 -translate-x-1/2 rounded-full opacity-25 blur-3xl transition-opacity duration-500 group-hover:opacity-55" style={{ background: dept.hue }} />
+        <div className="transition-transform duration-500 ease-[var(--ease-out-expo)] group-hover:scale-105">
+          <MemberPhoto member={member} size={96} />
+        </div>
+        <h3 className="mt-4 text-[17px] font-semibold tracking-tight">{member.name}</h3>
+        <p className="mt-0.5 text-[12.5px] font-medium leading-snug" style={{ color: dept.hue }}>{member.title}</p>
+        <span className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-border px-2 py-0.5 text-[10.5px] font-medium text-muted-foreground">
+          <Icon className="h-3 w-3" style={{ color: dept.hue }} strokeWidth={2} /> {dept.label}
+        </span>
+      </motion.article>
+    );
+  }
   return (
     <motion.article
       variants={{ hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: EASE } } }}
@@ -69,11 +93,11 @@ export function TeamTile({ member, compact = false }: { member: TeamProfile; com
 }
 
 /** The roster grid, staggered in like the chooser's cards. */
-export function TeamTiles({ members, compact = false }: { members: TeamProfile[]; compact?: boolean }) {
+export function TeamTiles({ members, compact = false, variant = "full" }: { members: TeamProfile[]; compact?: boolean; variant?: "public" | "full" }) {
   return (
-    <motion.div initial="hidden" whileInView="show" viewport={{ once: true, margin: "-10% 0px" }} variants={{ hidden: {}, show: { transition: { staggerChildren: 0.06, delayChildren: 0.1 } } }} className={cn("grid grid-cols-1 gap-4 sm:grid-cols-2", compact ? "lg:grid-cols-3" : "lg:grid-cols-3 xl:grid-cols-4")}>
+    <motion.div initial="hidden" whileInView="show" viewport={{ once: true, margin: "-10% 0px" }} variants={{ hidden: {}, show: { transition: { staggerChildren: 0.06, delayChildren: 0.1 } } }} className={cn("grid gap-4", variant === "public" ? "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6" : compact ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4")}>
       {members.map((m) => (
-        <TeamTile key={m.id} member={m} compact={compact} />
+        <TeamTile key={m.id} member={m} compact={compact} variant={variant} />
       ))}
     </motion.div>
   );

@@ -67,6 +67,7 @@ export const NAV_SECTIONS: NavSection[] = [
       { href: routes.tasks, label: "Tasks", icon: CheckSquare, countKey: "tasks" },
       { href: routes.notifications, label: "Notifications", icon: Bell, countKey: "notifications" },
       { href: routes.butler, label: "AI Butler", icon: Sparkles, countKey: "butler" },
+      { href: routes.collective, label: "The Collective", icon: Users },
     ],
   },
   {

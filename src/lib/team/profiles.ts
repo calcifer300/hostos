@@ -7,6 +7,9 @@
  * what the page shows until the Founder saves the roster to the database (migration 0029, team_profiles); after that the database
  * is the source and this list is only the "restore defaults" option.
  *
+ * Photos live at /public/team/<slug>.jpg (a face-centred 800px square,
+ * produced by scripts/team-photos.mjs); the editor can point elsewhere.
+ *
  * Client-safe: no imports.
  */
 
@@ -67,7 +70,7 @@ const member = (slug: string, name: string, title: string, department: Departmen
   focus,
   quote,
   responsibilities,
-  photoUrl: null,
+  photoUrl: `/team/${slug}.jpg`,
   hue,
   email: null,
   position: 0,

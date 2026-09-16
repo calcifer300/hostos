@@ -20,6 +20,11 @@ All notable changes to HostOS. Dates are when the work landed on `unified`.
   on /team and The Collective wears its own colour, editable in the Founder
   editor; the department colour stays as the fallback. Roster ordered by
   responsibility and the copy reads as a collective rather than an org chart.
+- **Twelve portraits** in `public/team/<slug>.jpg`: face-centred 800px
+  squares from the studio set, lighting and colour matched to one reference
+  frame with a touch of grain so they read as a single shoot
+  (`scripts/team-photos.mjs <source-dir> public/team`). Local photos go
+  through next/image, so the 96px circle downloads a 96–192px file.
 - **The marketing nav knows you're signed in**: it shows "Open HostOS"
   instead of "Sign in" once a session exists, so going back to the website
   never looks like being signed out.

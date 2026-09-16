@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { BarChart3, Cpu, Crown, FolderKanban, Handshake, Headset, Landmark, Lightbulb, Megaphone, PenLine, Settings2, type LucideIcon } from "lucide-react";
 import { DEPARTMENTS, hueOf, initials, type DepartmentDefinition, type TeamProfile } from "@/lib/team/profiles";
@@ -9,12 +10,20 @@ const EASE = [0.16, 1, 0.3, 1] as const;
 
 export const DEPARTMENT_ICONS: Record<DepartmentDefinition["icon"], LucideIcon> = { Crown, Cpu, Settings2, Megaphone, Handshake, PenLine, Headset, Landmark, Lightbulb, FolderKanban, BarChart3 };
 
-/** A member's photo, or their initials in the department's colour until the photo exists. */
+/**
+ * A member's photo, or their initials in their colour until the photo exists.
+ * Photos on this site go through next/image (the circle is 72–96px, the file
+ * is 800px); a photo linked from elsewhere is shown as-is.
+ */
 export function MemberPhoto({ member, size = 72 }: { member: TeamProfile; size?: number }) {
   const dept = { ...DEPARTMENTS[member.department], hue: hueOf(member) };
-  return member.photoUrl ? (
+  const frame = { width: size, height: size, borderColor: `color-mix(in oklab, ${dept.hue} 60%, transparent)` };
+  const cls = "rounded-full border-2 object-cover shadow-[var(--shadow-card)]";
+  return member.photoUrl?.startsWith("/") ? (
+    <Image src={member.photoUrl} alt={member.name} width={size * 2} height={size * 2} sizes={`${size}px`} className={cls} style={frame} />
+  ) : member.photoUrl ? (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src={member.photoUrl} alt={member.name} width={size} height={size} className="rounded-full border-2 object-cover shadow-[var(--shadow-card)]" style={{ width: size, height: size, borderColor: `color-mix(in oklab, ${dept.hue} 60%, transparent)` }} />
+    <img src={member.photoUrl} alt={member.name} width={size} height={size} className={cls} style={frame} />
   ) : (
     <span className="flex items-center justify-center rounded-full border-2 text-[20px] font-semibold" style={{ width: size, height: size, background: `color-mix(in oklab, ${dept.hue} 18%, var(--card))`, borderColor: `color-mix(in oklab, ${dept.hue} 60%, transparent)`, color: dept.hue }} aria-hidden>
       {initials(member.name)}

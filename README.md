@@ -126,6 +126,7 @@ src/components/        ui (primitives) · shell · dashboard · marketing · fle
 src/lib/               one folder per domain; queries.ts (reads), actions/*.ts (writes), pure engines beside them
 src/middleware.ts      the auth gate + legacy redirects (must stay middleware — see the file)
 extension/             HostOS Companion (MV3); scripts/build-extension.mjs zips it
+public/team/           team portraits; scripts/team-photos.mjs crops and colour-matches a new set
 supabase/migrations/   0001 … 0030, additive; supabase/bundles/ for one-paste bundles
 tests/                 node --experimental-strip-types, no framework
 vendor/                originals that were merged in (reference only, excluded from lint/tsc)

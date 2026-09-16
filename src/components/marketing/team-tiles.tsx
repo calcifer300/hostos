@@ -13,11 +13,11 @@ export { DEPARTMENT_ICONS, MemberPhoto, Portrait } from "@/components/marketing/
 
 type Variant = "public" | "full";
 
-/** Twelve tiles rising together; no filter here, so the cards stay cheap to composite under the spotlight later. */
-const reveal = {
+/** Each tile rises as it scrolls into view, a beat after its neighbour to the left; no filter here, so the cards stay cheap to composite under the spotlight later. */
+const reveal = (column: number) => ({
   hidden: { opacity: 0, y: 40, scale: 0.93 },
-  show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.8, ease: EASE } },
-};
+  show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.8, ease: EASE, delay: column * 0.08 } },
+});
 
 /**
  * One person, in the same tile language as the vertical chooser — their
@@ -32,7 +32,7 @@ const reveal = {
  * Collective, inside the app) adds focus words, the one-line promise and
  * what each person is responsible for.
  */
-export function TeamTile({ member, compact = false, variant = "full", onOpen, onHover }: { member: TeamProfile; compact?: boolean; variant?: Variant; onOpen?: (id: string) => void; onHover?: (id: string | null) => void }) {
+export function TeamTile({ member, compact = false, variant = "full", index = 0, onOpen, onHover }: { member: TeamProfile; compact?: boolean; variant?: Variant; index?: number; onOpen?: (id: string) => void; onHover?: (id: string | null) => void }) {
   const reduced = useReducedMotion();
   const dept = DEPARTMENTS[member.department];
   const hue = hueOf(member);
@@ -70,21 +70,25 @@ export function TeamTile({ member, compact = false, variant = "full", onOpen, on
 
   return (
     <motion.article
-      variants={reveal}
+      variants={reveal(index % 4)}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, margin: "-8% 0px" }}
       whileHover={{ y: -6 }}
       whileTap={{ scale: 0.985 }}
       style={{ rotateX, rotateY, transformPerspective: 1100, ["--hue" as string]: hue, ["--spot" as string]: hue }}
       onPointerMove={follow}
       onPointerEnter={enter}
       onPointerLeave={rest}
-      onClick={open}
-      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(); } }}
-      role="button"
-      tabIndex={0}
-      aria-label={`${member.name}, ${member.title}`}
+      onClick={onOpen ? open : undefined}
+      onKeyDown={onOpen ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(); } } : undefined}
+      role={onOpen ? "button" : undefined}
+      tabIndex={onOpen ? 0 : undefined}
+      aria-label={onOpen ? `${member.name}, ${member.title}` : undefined}
       className={cn(
-        "spot group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)] outline-none transition-[border-color,box-shadow] duration-300 hover:border-[color-mix(in_oklab,var(--hue)_55%,var(--border))] hover:shadow-[var(--shadow-card-hover)] focus-visible:ring-2 focus-visible:ring-[var(--hue)] focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        "spot group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-[var(--shadow-card)] outline-none transition-[border-color,box-shadow] duration-300 hover:border-[color-mix(in_oklab,var(--hue)_55%,var(--border))] hover:shadow-[var(--shadow-card-hover)] focus-visible:ring-2 focus-visible:ring-[var(--hue)] focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         variant === "public" ? "text-center" : "text-left",
+        onOpen && "cursor-pointer",
         !member.active && "opacity-60"
       )}
     >
@@ -146,23 +150,31 @@ export function TeamTile({ member, compact = false, variant = "full", onOpen, on
  */
 export function TeamTiles({ members, compact = false, variant = "full" }: { members: TeamProfile[]; compact?: boolean; variant?: Variant }) {
   const [hovered, setHovered] = React.useState<string | null>(null);
-  const [open, setOpen] = React.useState<string | null>(null);
+  const [open, setOpen] = React.useState<{ id: string; entry: string } | null>(null);
+  const returnTo = React.useRef<HTMLElement | null>(null);
   const hues = React.useMemo(() => members.map(hueOf), [members]);
-  const close = React.useCallback(() => setOpen(null), []);
-  const select = React.useCallback((id: string) => setOpen(id), []);
+  const openFrom = React.useCallback((id: string) => {
+    returnTo.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    setOpen({ id, entry: id });
+  }, []);
+  const close = React.useCallback(() => {
+    setOpen(null);
+    returnTo.current?.focus();
+  }, []);
+  const select = React.useCallback((id: string) => setOpen((o) => (o ? { ...o, id } : { id, entry: id })), []);
 
   return (
     <div className="relative isolate">
-      <Constellation hues={hues} className="pointer-events-none absolute -inset-x-8 -inset-y-12 -z-20 h-[calc(100%+6rem)] w-[calc(100%+4rem)] [mask-image:radial-gradient(ellipse_at_center,#000_55%,transparent_95%)]" />
-      <motion.div initial="hidden" whileInView="show" viewport={{ once: true, margin: "-10% 0px" }} variants={{ hidden: {}, show: { transition: { staggerChildren: 0.07, delayChildren: 0.1 } } }} className={cn("grid gap-5", variant === "public" ? "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4" : compact ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4")}>
-        {members.map((m) => (
+      <Constellation hues={hues} className="pointer-events-none absolute -inset-x-8 -inset-y-12 -z-20 [mask-image:radial-gradient(ellipse_at_center,#000_55%,transparent_95%)]" />
+      <div className={cn("grid gap-5", variant === "public" ? "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4" : compact ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4")}>
+        {members.map((m, i) => (
           <div key={m.id} className="relative">
             {hovered === m.id && <motion.div layoutId="team-ambient" aria-hidden transition={{ type: "spring", stiffness: 260, damping: 32 }} className="pointer-events-none absolute -inset-5 -z-10 rounded-[32px] opacity-35 blur-2xl" style={{ background: hueOf(m) }} />}
-            <TeamTile member={m} compact={compact} variant={variant} onOpen={setOpen} onHover={setHovered} />
+            <TeamTile member={m} compact={compact} variant={variant} index={i} onOpen={openFrom} onHover={setHovered} />
           </div>
         ))}
-      </motion.div>
-      <TeamSpotlight members={members} openId={open} variant={variant} onClose={close} onSelect={select} />
+      </div>
+      <TeamSpotlight members={members} openId={open?.id ?? null} entryId={open?.entry ?? null} variant={variant} onClose={close} onSelect={select} />
     </div>
   );
 }

@@ -40,6 +40,15 @@ All notable changes to HostOS. Dates are when the work landed on `unified`.
   crops it to 4:5, matches it to the set's lighting (optional), and it goes
   to the public `team` bucket in Supabase Storage; the link fills itself in.
   A photo whose link is broken falls back to initials instead of a hole.
+- **Review pass on the roster.** Walking the spotlight with ← → now
+  crossfades (only the tile that was clicked flies out and back); focus
+  moves to the dialog, Tab stays inside it and returns to the tile on
+  close; locking the page no longer shifts it by a scrollbar. Tiles rise as
+  they scroll into view (rows two and three used to animate off-screen). A
+  replaced or removed member's upload is deleted only once the row is
+  written, so cancelling an edit never breaks a live photo. New
+  `tests/team.test.mts` pins the roster's invariants (order, unique slugs
+  and colours, photo paths) and which photo URLs go through next/image.
 - **The marketing nav knows you're signed in**: it shows "Open HostOS"
   instead of "Sign in" once a session exists, so going back to the website
   never looks like being signed out.

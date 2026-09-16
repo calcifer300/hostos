@@ -1,6 +1,15 @@
 # HostOS — Next Tasks
 
-_Updated 2026-09-14. Ordered by what unblocks the most._
+_Updated 2026-09-16. Ordered by what unblocks the most._
+
+## Team page (2026-09-16)
+
+- [ ] Gerald's portrait — upload via Settings → Our Team page → Edit → Photo.
+- [ ] Sitemap entry and an OG image for `/team` (the roster is now a real
+      page worth sharing).
+- [ ] If more people will edit the roster: move the founder gate to a role
+      check and add per-member photo history (the bucket keeps one object
+      per upload; replaced ones are deleted on save).
 
 ## Now (before / at deploy)
 

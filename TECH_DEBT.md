@@ -21,6 +21,24 @@ _Updated 2026-09-15. Known shortcuts, why they were taken, and what pays them of
 | 15 | **Crons run daily, not every 15 min / hourly** | `vercel.json` | The Vercel project is on the Hobby plan, which rejects any cron more frequent than daily (deploy failed on `*/15 * * * *`). Butler rules run daily at 13:00 UTC + on demand (Butler → Run now); Shopify syncs daily at 13:30 UTC + on demand (store → Sync now / Companion badge) | Upgrade the Vercel project to Pro and restore `*/15 * * * *` for the Butler and `0 * * * *` for commerce. |
 | 16 | **`vendor/` weight in the repo** | `vendor/cc-extension`, bundles | Kept as the audit's evidence and for reference | Move to a separate archive repo once Karl has reviewed the audit. |
 
+## Open notes (2026-09-16)
+
+- **Team roster order lives in the database now** (the Founder reordered it
+  in Settings → Our Team page). `DEFAULT_TEAM` in `src/lib/team/profiles.ts`
+  is only the "restore defaults" roster and the tests pin *its* order, not
+  production's.
+- **Gerald's photo** points at `/team/2.jpg`, which does not exist; the tile
+  shows his initials until the Founder uploads one (the editor's Photo
+  field). Not a bug in code — leave it to him.
+- **Uploaded portraits are not re-processed on the server.** The browser
+  does the crop and lighting match (`src/lib/team/photo-look.ts`); a very
+  old browser without canvas `toBlob` gets an error toast and can still
+  paste a link. Fine for one Founder; revisit if uploads open to admins.
+- **Spotlight and the tilt use `layoutId` shared layout.** If a tile is
+  transformed (mid-tilt) when clicked, the fly-out starts from its untilted
+  box (the tilt is reset on open) — correct, but the first frame can look
+  like a small snap on a slow machine.
+
 ## Open notes (2026-09-15)
 
 - **Dev-only "unique key" warning attributed to `OuterLayoutRouter`** on

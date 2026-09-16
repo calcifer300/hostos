@@ -49,7 +49,6 @@ function PhotoField({ draft, onChange }: { draft: Draft; onChange: (photoUrl: st
       const form = new FormData();
       form.set("file", new File([blob], `${draft.slug || "member"}.jpg`, { type: "image/jpeg" }));
       form.set("slug", draft.slug || draft.name);
-      form.set("previous", draft.photoUrl);
       const r = await uploadTeamPhoto(form);
       if (!r.ok || !r.url) throw new Error(r.error ?? "The upload failed.");
       onChange(r.url);

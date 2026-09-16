@@ -6,7 +6,7 @@ import { isFounderEmail } from "@/lib/roles/constants";
 import { PHOTO_MAX_BYTES, PHOTO_TYPES } from "@/lib/team/photo-look";
 import { asDepartment } from "@/lib/team/profiles";
 import { deleteTeamProfile, getTeamProfiles, reorderTeamProfiles, seedTeamProfiles, upsertTeamProfile } from "@/lib/team/queries";
-import { putTeamPhoto } from "@/lib/team/storage";
+import { putTeamPhoto, removeTeamPhoto } from "@/lib/team/storage";
 import { routes } from "@/lib/routes";
 
 /**
@@ -73,6 +73,8 @@ export async function saveTeamProfile(input: { id?: string | null; slug?: string
     active: input.active ?? true,
   });
   if (!r.ok) return { ok: false, error: hint(r.error) };
+  // The photo this save replaced, if it was one of ours, is no longer referenced.
+  if (existing?.photoUrl && existing.photoUrl !== (photo || null)) await removeTeamPhoto(existing.photoUrl);
   refresh();
   return { ok: true, id: r.id };
 }
@@ -90,7 +92,7 @@ export async function uploadTeamPhoto(form: FormData): Promise<TeamPageResult & 
   if (!PHOTO_TYPES.includes(file.type)) return { ok: false, error: "Use a JPG, PNG or WebP photo." };
   if (file.size > PHOTO_MAX_BYTES) return { ok: false, error: "That photo is over 12 MB." };
   const slug = str(form.get("slug"), 40).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "member";
-  const r = await putTeamPhoto(await file.arrayBuffer(), file.type, slug, str(form.get("previous"), 500) || null);
+  const r = await putTeamPhoto(await file.arrayBuffer(), file.type, slug);
   return r.ok ? { ok: true, url: r.url } : { ok: false, error: r.error };
 }
 
@@ -98,8 +100,11 @@ export async function removeTeamProfile(id: string): Promise<TeamPageResult> {
   const gate = await founder();
   if (gate !== true) return { ok: false, error: gate };
   if (String(id).startsWith("default-")) return { ok: false, error: "Save the roster to the database first, then remove members." };
+  const { profiles } = await getTeamProfiles();
+  const gone = profiles.find((p) => p.id === String(id));
   const r = await deleteTeamProfile(str(id, 40));
   if (!r.ok) return { ok: false, error: hint(r.error) };
+  await removeTeamPhoto(gone?.photoUrl);
   refresh();
   return { ok: true };
 }

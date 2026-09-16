@@ -1,0 +1,241 @@
+/*
+ * The in-page floating card, ported from the CC build's content/widget.css.
+ *
+ * Two things changed in the port. The palette is the app's own
+ * (src/app/globals.css dark tokens) rather than CC's blue-grey, so the card,
+ * the side panel and the dashboard read as one product. And every selector is
+ * scoped under #hostos-widget with an !important-free but highly specific
+ * chain, because this renders inside SOMEONE ELSE'S page — Turo's own CSS is
+ * free to define .card, .icon or .badge, and a bare class name here is a
+ * collision waiting to happen.
+ */
+
+#hostos-widget,
+#hostos-widget * {
+  box-sizing: border-box;
+}
+
+#hostos-widget {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 2147483646; /* One below the assist panel, which is transient. */
+  font: 12px -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  color: #F5F5F7;
+  text-align: left;
+}
+
+/* ------------------------------------------------------------- collapsed */
+
+#hostos-widget .hw-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #38383A;
+  border-radius: 14px;
+  background: #1C1C1E;
+  color: #F5F5F7;
+  padding: 11px 14px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  font: inherit;
+}
+#hostos-widget .hw-pill:hover { border-color: #48484A; }
+#hostos-widget .hw-pill-mark { flex: none; width: 20px; height: 20px; border-radius: 6px; }
+#hostos-widget .hw-pill-text { display: block; min-width: 0; }
+#hostos-widget .hw-pill b { display: block; font-size: 13.5px; letter-spacing: -0.01em; }
+#hostos-widget .hw-pill span { display: block; color: #98989D; font-size: 11px; }
+
+/* The count only earns colour when it is non-zero. */
+#hostos-widget .hw-pill-count {
+  flex: none;
+  min-width: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: #FF453A;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 20px;
+  text-align: center;
+}
+#hostos-widget .hw-pill-count[hidden] { display: none; }
+
+#hostos-widget.hw-open .hw-pill { display: none; }
+
+/* -------------------------------------------------------------- expanded */
+
+#hostos-widget .hw-panel {
+  width: 320px;
+  max-height: 86vh;
+  overflow: auto;
+  padding: 16px;
+  border: 1px solid #38383A;
+  border-radius: 16px;
+  background: #000000;
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.65);
+}
+
+/* Sticky so the close button stays reachable however far the queue scrolls. */
+#hostos-widget .hw-header {
+  position: sticky;
+  top: -16px;
+  z-index: 6;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin: -16px -16px 14px;
+  padding: 16px 16px 12px;
+  background: #000000;
+}
+#hostos-widget .hw-brand { display: flex; align-items: flex-start; gap: 9px; min-width: 0; }
+#hostos-widget .hw-mark { flex: none; width: 22px; height: 22px; border-radius: 6px; margin-top: 1px; }
+#hostos-widget .hw-eyebrow {
+  margin: 0 0 3px;
+  color: #98989D;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  /* A fleet name can be long; it must not push the close button off. */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 160px;
+}
+#hostos-widget .hw-header h2 { margin: 0; font-size: 19px; letter-spacing: -0.03em; font-weight: 600; }
+
+#hostos-widget .hw-status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  color: #C7C7CC;
+  font: inherit;
+  font-size: 10px;
+  white-space: nowrap;
+  margin-left: auto;
+}
+#hostos-widget .hw-status i { width: 6px; height: 6px; border-radius: 50%; background: #30D158; box-shadow: 0 0 8px #30D158; }
+#hostos-widget .hw-status.hw-offline { color: #FF9F0A; border-color: rgba(255, 159, 10, 0.35); background: rgba(255, 159, 10, 0.08); }
+#hostos-widget .hw-status.hw-offline i { background: #FF9F0A; box-shadow: none; }
+
+#hostos-widget .hw-collapse {
+  flex: none;
+  border: 0;
+  border-radius: 7px;
+  background: #2C2C2E;
+  color: #F5F5F7;
+  width: 22px;
+  height: 22px;
+  font: 15px inherit;
+  line-height: 1;
+  cursor: pointer;
+}
+#hostos-widget .hw-collapse:hover { background: #38383A; }
+
+/* ------------------------------------------------------------------ hero */
+
+#hostos-widget .hw-hero {
+  padding: 14px;
+  border: 1px solid rgba(10, 132, 255, 0.25);
+  border-radius: 14px;
+  background: linear-gradient(135deg, #16243A, #1C1C1E);
+}
+#hostos-widget .hw-hero strong {
+  display: block;
+  color: #0A84FF;
+  font-size: 28px;
+  line-height: 1;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+}
+#hostos-widget .hw-hero span { color: #C7C7CC; font-size: 11px; }
+
+/* Nothing outstanding is a state worth looking calm, not alarming. */
+#hostos-widget .hw-hero.hw-clear { border-color: rgba(48, 209, 88, 0.25); background: linear-gradient(135deg, #12251A, #1C1C1E); }
+#hostos-widget .hw-hero.hw-clear strong { color: #30D158; }
+
+/* ----------------------------------------------------------------- cards */
+
+#hostos-widget .hw-cards { display: grid; gap: 7px; margin-top: 10px; }
+#hostos-widget .hw-card {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: #1C1C1E;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+#hostos-widget .hw-card:hover { background: #2C2C2E; }
+#hostos-widget .hw-card:focus-visible { outline: 2px solid #0A84FF; outline-offset: 2px; }
+#hostos-widget .hw-icon {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border-radius: 8px;
+  background: #2C2C2E;
+  color: #0A84FF;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+#hostos-widget .hw-danger .hw-icon { color: #FF453A; background: rgba(255, 69, 58, 0.12); }
+#hostos-widget .hw-profit .hw-icon { color: #BF5AF2; background: rgba(191, 90, 242, 0.12); }
+#hostos-widget .hw-earn .hw-icon { color: #30D158; background: rgba(48, 209, 88, 0.12); }
+#hostos-widget .hw-card b,
+#hostos-widget .hw-card small { display: block; }
+#hostos-widget .hw-card b { font-size: 12px; font-weight: 600; }
+#hostos-widget .hw-card small { margin-top: 1px; color: #98989D; font-size: 10px; }
+
+/* --------------------------------------------------------------- actions */
+
+#hostos-widget .hw-scan {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  border: 0;
+  border-radius: 10px;
+  background: #0A84FF;
+  color: #fff;
+  font: 600 12px inherit;
+  cursor: pointer;
+}
+#hostos-widget .hw-scan:hover { opacity: 0.9; }
+#hostos-widget .hw-scan:disabled { background: #2C2C2E; color: #98989D; cursor: default; opacity: 1; }
+
+#hostos-widget .hw-scan-status {
+  margin: 7px 2px 0;
+  min-height: 12px;
+  color: #98989D;
+  font-size: 10px;
+  text-align: center;
+  line-height: 1.4;
+}
+#hostos-widget .hw-scan-status.hw-ok { color: #30D158; }
+#hostos-widget .hw-scan-status.hw-err { color: #FF9F0A; }
+
+#hostos-widget .hw-footer {
+  margin: 12px 2px 0;
+  color: #98989D;
+  font-size: 10px;
+  text-align: center;
+  line-height: 1.5;
+}
+#hostos-widget .hw-footer a { color: #0A84FF; text-decoration: none; }
+#hostos-widget .hw-footer a:hover { text-decoration: underline; }
+
+@media (prefers-reduced-motion: reduce) {
+  #hostos-widget * { transition: none !important; }
+}

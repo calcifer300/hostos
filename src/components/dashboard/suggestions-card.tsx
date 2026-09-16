@@ -1,35 +1,41 @@
-import { Wand2 } from "lucide-react";
+import Link from "next/link";
+import { Sparkles } from "lucide-react";
 import { DashboardCard } from "@/components/dashboard/dashboard-card";
-import { Badge } from "@/components/ui/badge";
-import { aiSuggestions, type SuggestionPriority } from "@/lib/mock/dashboard";
+import { ButlerTaskList } from "@/components/dashboard/butler-task-list";
+import type { Suggestion } from "@/lib/dashboard/queries";
 
-const priorityVariant: Record<SuggestionPriority, "danger" | "warning" | "neutral"> = {
-  high: "danger",
-  medium: "warning",
-  low: "neutral",
-};
+const OVERVIEW_PREVIEW_COUNT = 4;
 
-export function SuggestionsCard() {
+/**
+ * This is Butler's Overview preview — same rule-based Suggestion logic as
+ * the full /butler page (now dominated by src/lib/butler/priority.ts's
+ * message-driven tasks), not model-generated, so it still renders with no
+ * AI provider configured. Capped and ungrouped here since it's a preview,
+ * not the full triage view — see /butler for the grouped version.
+ */
+export function SuggestionsCard({ suggestions }: { suggestions: Suggestion[] }) {
+  const remaining = suggestions.length - OVERVIEW_PREVIEW_COUNT;
+
   return (
-    <DashboardCard icon={Wand2} title="iHost suggests" className="h-full">
-      <div className="space-y-4">
-        {aiSuggestions.map((s) => (
-          <div key={s.id} className="rounded-lg border border-border p-3.5">
-            <div className="flex items-start justify-between gap-2">
-              <p className="text-[13.5px] font-medium leading-snug">{s.title}</p>
-              <Badge variant={priorityVariant[s.priority]} className="shrink-0">
-                {s.priority}
-              </Badge>
-            </div>
-            <p className="mt-1 text-[12.5px] leading-relaxed text-muted-foreground">
-              {s.description}
-            </p>
-            <button className="mt-2.5 text-[12.5px] font-medium text-accent">
-              {s.actionLabel} &rarr;
-            </button>
-          </div>
-        ))}
-      </div>
+    <DashboardCard
+      icon={Sparkles}
+      title="Butler"
+      action={
+        <Link href="/app/butler" className="text-[12px] font-medium text-accent hover:opacity-80">
+          Open Butler &rarr;
+        </Link>
+      }
+      className="h-full"
+    >
+      <ButlerTaskList suggestions={suggestions.slice(0, OVERVIEW_PREVIEW_COUNT)} compact groupByPriority={false} />
+      {remaining > 0 && (
+        <Link
+          href="/app/butler"
+          className="mt-3 block rounded-lg border border-dashed border-border py-2 text-center text-[12px] font-medium text-muted-foreground transition-colors hover:border-accent/40 hover:text-accent"
+        >
+          +{remaining} more in Butler
+        </Link>
+      )}
     </DashboardCard>
   );
 }

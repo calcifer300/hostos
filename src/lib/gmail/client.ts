@@ -1,4 +1,5 @@
 import "server-only";
+import { UpstreamResponseError, fetchWithTimeout } from "@/lib/http";
 import type { SyncedEmail } from "@/types/gmail";
 
 const GMAIL_API = "https://gmail.googleapis.com/gmail/v1/users/me";
@@ -23,33 +24,50 @@ interface GmailMessage {
   };
 }
 
+/**
+ * Bounded so a hung Gmail request can't hold a sync open indefinitely — Node's
+ * `fetch` applies no timeout of its own, and this runs inside a request
+ * handler. A transport failure surfaces as UpstreamUnavailableError (named and
+ * retryable) rather than a bare `TypeError: fetch failed`.
+ */
 async function gmailFetch(accessToken: string, path: string): Promise<unknown> {
-  const res = await fetch(`${GMAIL_API}${path}`, {
+  const res = await fetchWithTimeout("Gmail API", `${GMAIL_API}${path}`, {
     headers: { Authorization: `Bearer ${accessToken}` },
     cache: "no-store",
+    timeoutMs: 15_000,
   });
 
   if (!res.ok) {
-    const body = await res.text();
     if (res.status === 403) {
-      throw new Error(
-        "Gmail API returned 403. Make sure the Gmail API is enabled for this project in Google Cloud Console."
+      throw new UpstreamResponseError(
+        "Gmail API",
+        403,
+        "Make sure the Gmail API is enabled for this project in Google Cloud Console."
       );
     }
-    throw new Error(`Gmail API request failed (${res.status}): ${body}`);
+    const body = (await res.text().catch(() => "")).replace(/\s+/g, " ").slice(0, 200);
+    throw new UpstreamResponseError("Gmail API", res.status, body || res.statusText);
   }
 
   return res.json();
 }
 
 /** IDs of the most recent inbox messages, newest first. */
+/**
+ * Restricted to Turo's own sending domains via Gmail's search syntax —
+ * without this, "most recent 15 inbox messages" pulls in whatever else
+ * the host's personal inbox happens to receive, none of which belongs in
+ * a Turo-operations feed.
+ */
+const TURO_SENDER_QUERY = "from:(turo.com OR mail.turo.com)";
+
 export async function listRecentMessageIds(
   accessToken: string,
   maxResults = 15
 ): Promise<string[]> {
   const data = (await gmailFetch(
     accessToken,
-    `/messages?maxResults=${maxResults}&labelIds=INBOX`
+    `/messages?maxResults=${maxResults}&labelIds=INBOX&q=${encodeURIComponent(TURO_SENDER_QUERY)}`
   )) as { messages?: { id: string }[] };
 
   return (data.messages ?? []).map((m) => m.id);

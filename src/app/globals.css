@@ -1,55 +1,112 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 
+/*
+ * HostOS design system
+ * --------------------
+ * Dark-first, grayscale chrome with one accent — a single restrained blue,
+ * matching Apple's system colours so status reads as native rather than
+ * decorative. The second hue (violet) exists only inside gradients: it gives
+ * the brand mark, the landing page and the AI surfaces a signature without
+ * competing with data.
+ *
+ * Every token has a light and a dark value; components never spell a colour.
+ * Motion tokens live here too so the same easing appears in CSS transitions
+ * and in Framer Motion (see components/motion/presets.ts).
+ */
+
 :root {
-  --background: #FAFAF9;
-  --foreground: #171716;
+  color-scheme: light;
+  --background: #F5F5F7;
+  --surface: #FFFFFF;
+  --foreground: #1D1D1F;
   --card: #FFFFFF;
-  --card-foreground: #171716;
-  --muted: #F1F0ED;
-  --muted-foreground: #6B6A66;
-  --border: #E5E4E0;
-  --accent: #0071E3;
+  --card-foreground: #1D1D1F;
+  --muted: #EEEEF0;
+  --muted-foreground: #6E6E73;
+  --border: #D8D8DC;
+  --border-strong: #C4C4C9;
+  --accent: #007AFF;
+  --accent-2: #7C5CFF;
   --accent-foreground: #FFFFFF;
-  --success: #3B6D11;
-  --success-bg: #EAF3DE;
-  --danger: #A32D2D;
-  --danger-bg: #FCEBEB;
-  --warning: #9A6700;
-  --warning-bg: #FBF0DC;
+  --accent-glow: rgba(0, 122, 255, 0.16);
+  --success: #248A3D;
+  --success-bg: #E7F6EA;
+  --danger: #D70015;
+  --danger-bg: #FCE8E8;
+  --warning: #C25A00;
+  --warning-bg: #FCEEDD;
+  --info: #0071E3;
+  --info-bg: #E5F1FF;
   --radius: 0.75rem;
   --radius-xl: 1.25rem;
-  --shadow-card: 0 1px 2px rgba(23, 23, 22, 0.04), 0 8px 24px -12px rgba(23, 23, 22, 0.08);
+  --radius-2xl: 1.75rem;
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px -12px rgba(0, 0, 0, 0.08);
+  --shadow-card-hover: 0 2px 6px rgba(0, 0, 0, 0.05), 0 20px 40px -16px rgba(0, 0, 0, 0.14);
+  --shadow-elevated: 0 4px 16px rgba(0, 0, 0, 0.06), 0 24px 48px -16px rgba(0, 0, 0, 0.16);
+  --shadow-glow: 0 0 0 1px rgba(0, 122, 255, 0.18), 0 12px 40px -12px rgba(0, 122, 255, 0.35);
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(0, 0, 0, 0.06);
+  --chart-1: #007AFF;
+  --chart-2: #7C5CFF;
+  --chart-3: #30B0C7;
+  --chart-4: #FF9F0A;
+  --chart-5: #FF375F;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+  --duration-fast: 160ms;
+  --duration-base: 260ms;
+  --duration-slow: 520ms;
 }
 
 .dark {
-  --background: #0A0A0C;
-  --foreground: #F2F1EE;
-  --card: #17171A;
-  --card-foreground: #F2F1EE;
-  --muted: #1A1A1D;
-  --muted-foreground: #8F8E8A;
-  --border: #26262A;
+  color-scheme: dark;
+  --background: #09090B;
+  --surface: #0F0F12;
+  --foreground: #F5F5F7;
+  --card: #131316;
+  --card-foreground: #F5F5F7;
+  --muted: #1C1C21;
+  --muted-foreground: #A6A6AF;
+  --border: #232329;
+  --border-strong: #2E2E36;
   --accent: #0A84FF;
+  --accent-2: #8B7CFF;
   --accent-foreground: #FFFFFF;
-  --success: #7BC48F;
-  --success-bg: #16241A;
-  --danger: #E5A5A0;
-  --danger-bg: #2A1D1D;
-  --warning: #F0C060;
-  --warning-bg: #2A2213;
-  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.2), 0 12px 32px -14px rgba(0, 0, 0, 0.55);
+  --accent-glow: rgba(10, 132, 255, 0.22);
+  --success: #30D158;
+  --success-bg: #12261A;
+  --danger: #FF453A;
+  --danger-bg: #2C1618;
+  --warning: #FF9F0A;
+  --warning-bg: #2B1F0E;
+  --info: #64B5FF;
+  --info-bg: #0F2238;
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 32px -14px rgba(0, 0, 0, 0.7);
+  --shadow-card-hover: 0 2px 8px rgba(0, 0, 0, 0.5), 0 28px 56px -18px rgba(0, 0, 0, 0.85);
+  --shadow-elevated: 0 4px 20px rgba(0, 0, 0, 0.55), 0 32px 64px -20px rgba(0, 0, 0, 0.9);
+  --shadow-glow: 0 0 0 1px rgba(10, 132, 255, 0.25), 0 16px 48px -12px rgba(10, 132, 255, 0.45);
+  --glass-bg: rgba(15, 15, 18, 0.66);
+  --glass-border: rgba(255, 255, 255, 0.07);
+  --chart-1: #0A84FF;
+  --chart-2: #8B7CFF;
+  --chart-3: #40C8E0;
+  --chart-4: #FF9F0A;
+  --chart-5: #FF375F;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
   --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
   --color-accent-foreground: var(--accent-foreground);
   --color-success: var(--success);
   --color-success-bg: var(--success-bg);
@@ -57,14 +114,42 @@
   --color-danger-bg: var(--danger-bg);
   --color-warning: var(--warning);
   --color-warning-bg: var(--warning-bg);
+  --color-info: var(--info);
+  --color-info-bg: var(--info-bg);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 4px);
   --radius-sm: calc(var(--radius) - 6px);
-  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+  --radius-xl: var(--radius-xl);
+  --radius-2xl: var(--radius-2xl);
+  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  --ease-out-expo: var(--ease-out-expo);
+  --animate-shimmer: shimmer 1.8s linear infinite;
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-pulse-soft: pulse-soft 2.4s ease-in-out infinite;
+  --animate-marquee: marquee 40s linear infinite;
+  --animate-spin-slow: spin 14s linear infinite;
+  --animate-gradient: gradient-shift 9s ease infinite;
+  --animate-marquee-reverse: marquee-reverse 46s linear infinite;
+  --animate-drift: drift 18s ease-in-out infinite;
+  --animate-drift-slow: drift 26s ease-in-out infinite reverse;
+  --animate-dialog-in: dialog-in 0.36s var(--ease-out-expo) both;
+  --animate-dialog-out: dialog-out 0.22s var(--ease-out-expo) both;
+  --animate-overlay-in: overlay-in 0.28s ease-out both;
+  --animate-overlay-out: overlay-out 0.22s ease-in both;
 }
 
 * {
   border-color: var(--color-border);
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
@@ -72,9 +157,273 @@ body {
   color: var(--color-foreground);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11", "ss01";
+  transition: background-color 0.35s ease, color 0.35s ease;
 }
 
 ::selection {
   background: var(--color-accent);
   color: var(--color-accent-foreground);
+}
+
+/*
+ * Native select popups paint their own list; give it the theme's colours so
+ * an option is never dark text on a dark popup (or the reverse in light mode).
+ */
+select option,
+select optgroup {
+  background-color: var(--card);
+  color: var(--foreground);
+}
+select option:disabled {
+  color: var(--muted-foreground);
+}
+
+/* Thin, quiet scrollbars — the default Windows bar is the loudest element on a dark UI. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+*::-webkit-scrollbar { width: 8px; height: 8px; }
+*::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 999px; }
+*::-webkit-scrollbar-track { background: transparent; }
+
+/*
+ * Ambient backdrop — two low-opacity accent blobs behind all content. The
+ * difference between a flat dashboard and one with depth, without competing
+ * with data. Inert: pointer-events none, negative z-index.
+ */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(700px circle at 8% -10%, var(--accent-glow), transparent 60%),
+    radial-gradient(600px circle at 100% 10%, color-mix(in oklab, var(--accent-2) 18%, transparent), transparent 55%);
+  opacity: 0.55;
+}
+
+/* ------------------------------------------------------------- surfaces */
+
+.glass-surface {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border-color: var(--glass-border);
+}
+
+.glass-panel {
+  background: color-mix(in oklab, var(--card) 82%, transparent);
+  backdrop-filter: blur(24px) saturate(1.3);
+  -webkit-backdrop-filter: blur(24px) saturate(1.3);
+  border: 1px solid var(--glass-border);
+}
+
+/* A 1px gradient border via mask, for hero cards and the AI surfaces. */
+.gradient-border {
+  position: relative;
+}
+.gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, color-mix(in oklab, var(--accent) 55%, transparent), color-mix(in oklab, var(--accent-2) 45%, transparent), transparent 70%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.text-gradient {
+  background: linear-gradient(120deg, var(--accent) 0%, var(--accent-2) 60%, var(--accent) 120%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: var(--animate-gradient);
+}
+
+/* Card lift on hover — used by the shared Card primitive's `interactive` variant. */
+.card-interactive {
+  transition:
+    transform var(--duration-base) var(--ease-out-expo),
+    box-shadow var(--duration-base) var(--ease-out-expo),
+    border-color var(--duration-base) var(--ease-out-expo);
+}
+.card-interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
+  border-color: color-mix(in oklab, var(--accent) 35%, var(--border));
+}
+
+/* The press pulse — one per pointerdown on anything pressable (components/motion/tap-feedback.tsx). */
+.tap-pulse {
+  position: fixed;
+  z-index: 2147483000;
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  border-radius: 999px;
+  /* --pulse is the pressed element's own --hue when it has one (the vertical chooser), the accent otherwise. */
+  background: radial-gradient(circle, color-mix(in oklab, var(--pulse, var(--accent)) 55%, transparent) 0%, color-mix(in oklab, var(--pulse, var(--accent)) 25%, transparent) 45%, transparent 72%);
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0.4);
+  animation: tap-pulse 520ms var(--ease-out-expo) forwards;
+}
+.card-interactive:active {
+  transform: translateY(0) scale(0.99);
+}
+
+/* Skeleton shimmer for loading states. */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--muted);
+  border-radius: 8px;
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--foreground) 6%, transparent), transparent);
+  animation: var(--animate-shimmer);
+}
+
+/* Grid paper for the landing page hero. */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, color-mix(in oklab, var(--foreground) 5%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--foreground) 5%, transparent) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 20%, #000 40%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 20%, #000 40%, transparent 100%);
+}
+
+/* ------------------------------------------------------------- spotlight */
+
+/*
+ * A glow that follows the pointer across a card. One document listener
+ * (components/motion/spotlight.tsx) writes --mx/--my on the card under the
+ * pointer; everything else is CSS, so a page of forty cards costs nothing
+ * until one is hovered. Opt in with the `spot` class; set --spot to tint the
+ * glow in the card's own colour (the vertical chooser does). Uses ::after so
+ * it composes with .gradient-border's ::before.
+ */
+.spot {
+  position: relative;
+  isolation: isolate;
+}
+.spot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    420px circle at var(--mx, 50%) var(--my, 50%),
+    color-mix(in oklab, var(--spot, var(--accent)) 16%, transparent),
+    transparent 62%
+  );
+  transition: opacity 0.45s var(--ease-out-expo);
+}
+.spot:hover::after {
+  opacity: 1;
+}
+
+/* A light sweep across filled buttons on hover — restarts on every hover. */
+.btn-shine {
+  overflow: hidden;
+}
+.btn-shine::after {
+  content: "";
+  position: absolute;
+  top: -20%;
+  bottom: -20%;
+  left: 0;
+  width: 38%;
+  transform: translateX(-160%) skewX(-18deg);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.32), transparent);
+  pointer-events: none;
+}
+.btn-shine:hover::after {
+  animation: shine 0.85s var(--ease-out-expo) forwards;
+}
+
+/* Marquee rows pause while the pointer is over them, so a chip can be read. */
+.marquee-pause:hover > * {
+  animation-play-state: paused;
+}
+
+/* ------------------------------------------------------------- keyframes */
+
+@keyframes shine {
+  to { transform: translateX(420%) skewX(-18deg); }
+}
+@keyframes marquee-reverse {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+@keyframes drift {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  33% { transform: translate3d(36px, -28px, 0) scale(1.08); }
+  66% { transform: translate3d(-24px, 22px, 0) scale(0.96); }
+}
+@keyframes dialog-in {
+  from { opacity: 0; transform: scale(0.95) translateY(12px); filter: blur(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+}
+@keyframes dialog-out {
+  from { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+  to { opacity: 0; transform: scale(0.97) translateY(8px); filter: blur(6px); }
+}
+@keyframes overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes overlay-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes tap-pulse {
+  0% { transform: translate(-50%, -50%) scale(0.4); opacity: 0.9; }
+  100% { transform: translate(-50%, -50%) scale(3.4); opacity: 0; }
+}
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

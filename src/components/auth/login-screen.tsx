@@ -1,23 +1,25 @@
 "use client";
 
-import { motion } from "framer-motion";
+import * as React from "react";
+import Link from "next/link";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowLeft, ShieldCheck, Sparkles, Zap } from "lucide-react";
 import { googleSignIn } from "@/lib/actions/auth";
+import { Logo, LogoMark } from "@/components/brand/logo-mark";
+import { IntroSequence, useIntroSeen } from "@/components/auth/intro-sequence";
+import { routes } from "@/lib/routes";
+import { SITE } from "@/lib/site";
+
+const EASE = [0.16, 1, 0.3, 1] as const;
 
 const container = {
   hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: { staggerChildren: 0.09, delayChildren: 0.1 },
-  },
+  show: { opacity: 1, transition: { staggerChildren: 0.09, delayChildren: 0.1 } },
 };
 
 const item = {
   hidden: { opacity: 0, y: 16 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as const },
-  },
+  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } },
 };
 
 function GoogleIcon() {
@@ -43,48 +45,98 @@ function GoogleIcon() {
   );
 }
 
-export function LoginScreen() {
+const POINTS = [
+  { icon: Zap, text: "Your fleet and restaurants sync on their own, every minute." },
+  { icon: Sparkles, text: "The AI Butler drafts, briefs and files the work before you sit down." },
+  { icon: ShieldCheck, text: "Pairing keys, not passwords. Every workspace stays private to its members." },
+];
+
+export function LoginScreen({ callbackUrl, error }: { callbackUrl?: string | null; error?: string | null }) {
+  const [introSeen, markSeen] = useIntroSeen();
+  const [pending, setPending] = React.useState(false);
+
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#FAFAF9] px-6">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -left-40 -top-40 h-96 w-96 rounded-full bg-[#0071E3]/10 blur-3xl"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -bottom-40 -right-40 h-96 w-96 rounded-full bg-[#0071E3]/10 blur-3xl"
-      />
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-6 py-12">
+      <AnimatePresence>{!introSeen && <IntroSequence onDone={markSeen} />}</AnimatePresence>
+
+      <div aria-hidden className="bg-grid absolute inset-0 -z-10" />
+      <div aria-hidden className="pointer-events-none absolute -left-40 -top-40 h-[480px] w-[480px] rounded-full bg-accent/10 blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute -bottom-40 -right-40 h-[480px] w-[480px] rounded-full bg-accent-2/10 blur-3xl" />
+
+      <Link
+        href={routes.home}
+        className="absolute left-6 top-6 inline-flex items-center gap-1.5 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
+      >
+        <ArrowLeft className="h-3.5 w-3.5" /> Back to HostOS
+      </Link>
 
       <motion.div
         variants={container}
         initial="hidden"
-        animate="show"
-        className="relative flex w-full max-w-sm flex-col items-center text-center"
+        animate={introSeen ? "show" : "hidden"}
+        className="grid w-full max-w-4xl grid-cols-1 items-center gap-10 lg:grid-cols-[1fr_420px]"
       >
-        <motion.div variants={item} className="mb-8 flex items-center gap-3">
-          <span className="h-3.5 w-3.5 shrink-0 rounded-full bg-[#0071E3]" />
-          <h1 className="text-[42px] font-semibold tracking-tight text-[#171716]">HostOS</h1>
-        </motion.div>
+        <div className="hidden lg:block">
+          <motion.div variants={item}>
+            <LogoMark size={56} glow />
+          </motion.div>
+          <motion.h1 variants={item} className="mt-6 text-[40px] font-semibold leading-[1.05] tracking-[-0.03em]">
+            Welcome back to <span className="text-gradient">your command center.</span>
+          </motion.h1>
+          <motion.p variants={item} className="mt-4 max-w-md text-[15px] leading-relaxed text-muted-foreground">
+            {SITE.tagline} Sign in to open your workspaces.
+          </motion.p>
+          <motion.ul variants={item} className="mt-8 space-y-3">
+            {POINTS.map((p) => (
+              <li key={p.text} className="flex items-start gap-3 text-[13.5px] text-foreground/85">
+                <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent/10 text-accent">
+                  <p.icon className="h-3.5 w-3.5" />
+                </span>
+                {p.text}
+              </li>
+            ))}
+          </motion.ul>
+        </div>
 
-        <motion.p variants={item} className="text-[16px] font-medium text-[#6B6A66]">
-          AI Operating System for Turo Hosts
-        </motion.p>
+        <motion.div
+          variants={item}
+          className="spot gradient-border relative rounded-[1.75rem] border border-border bg-card p-8 shadow-[var(--shadow-elevated)]"
+        >
+          <div className="mb-8 flex flex-col items-center text-center lg:items-start lg:text-left">
+            <Logo size="md" />
+            <p className="mt-3 text-[13px] text-muted-foreground">Sign in to continue to HostOS.</p>
+          </div>
 
-        <motion.div variants={item} className="mt-12 w-full">
-          <form action={googleSignIn}>
+          <form
+            action={googleSignIn}
+            onSubmit={() => setPending(true)}
+            className="space-y-3"
+          >
+            {callbackUrl && <input type="hidden" name="callbackUrl" value={callbackUrl} />}
             <button
               type="submit"
-              className="flex w-full items-center justify-center gap-3 rounded-full border border-[#E5E4E0] bg-white px-6 py-3.5 text-[15px] font-medium text-[#171716] shadow-[0_1px_2px_rgba(23,23,22,0.04),0_8px_24px_-12px_rgba(23,23,22,0.12)] transition-transform hover:scale-[1.01] active:scale-[0.99]"
+              disabled={pending}
+              className="flex w-full items-center justify-center gap-3 rounded-full border border-border bg-background px-6 py-3.5 text-[15px] font-medium text-foreground shadow-[var(--shadow-card)] transition-[transform,border-color] duration-200 ease-[var(--ease-out-expo)] hover:border-accent/50 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-60"
             >
               <GoogleIcon />
-              Continue with Google
+              {pending ? "Redirecting to Google…" : "Continue with Google"}
             </button>
           </form>
-        </motion.div>
 
-        <motion.p variants={item} className="mt-8 text-[12.5px] leading-relaxed text-[#9b9a96]">
-          By continuing, you agree to let iHost act on your behalf per the permissions you grant.
-        </motion.p>
+          {error && (
+            <p className="mt-4 rounded-xl border border-danger/30 bg-danger-bg px-3 py-2 text-[12.5px] text-danger">
+              Sign-in didn&rsquo;t complete ({error}). Try again, or contact {SITE.contactEmail}.
+            </p>
+          )}
+
+          <p className="mt-6 text-center text-[12px] leading-relaxed text-muted-foreground/85 lg:text-left">
+            By continuing you agree to let HostOS act on your behalf within the permissions you grant. New accounts get
+            their own workspace automatically.
+          </p>
+          <p className="mt-6 text-center text-[11px] uppercase tracking-[0.16em] text-muted-foreground/80 lg:text-left">
+            Built by {SITE.company}
+          </p>
+        </motion.div>
       </motion.div>
     </div>
   );

@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>HostOS — Alert settings</title>
+    <link rel="stylesheet" href="options.css">
+  </head>
+  <body>
+    <main class="wrap">
+      <header>
+        <p class="eyebrow">TURO OPS ASSISTANT</p>
+        <h1>Alert settings</h1>
+        <p class="lede">
+          Emails Colorado Cruisers the moment a guest books the Premier
+          protection plan on an <b>upcoming</b> trip ($0 out-of-pocket, so
+          damage can't be billed to them), plus a nightly turnover report at
+          9&nbsp;PM Colorado time covering every other flagged trip.
+        </p>
+      </header>
+
+      <label class="row">
+        <input type="checkbox" id="enabled">
+        <span>Send alerts</span>
+      </label>
+
+      <label class="row">
+        <input type="checkbox" id="reportLogo">
+        <span>Show the Colorado Cruisers logo in the report header</span>
+      </label>
+      <p class="hint">Gmail lists an inline logo as an attachment on the message
+        &mdash; that is how inline images work and it cannot be avoided. Turn this
+        off for a plain typographic header and no attachment. Takes effect on the
+        next alert; nothing needs redeploying.</p>
+
+      <label class="field">
+        <span>Standing delivery fee</span>
+        <input type="number" id="standingDeliveryFee" min="0" step="1" placeholder="120">
+        <small>Matt charges this on every trip to cover parking and cleaning.
+          Used only where Turo exposes no delivery fee of its own &mdash; Turo's
+          real per-location fee always wins. Cards label anything sourced here
+          as your standing rate, never as a figure read from Turo. Set 0 if you
+          stop charging it.</small>
+      </label>
+
+      <label class="field">
+        <span>Apps Script web app URL</span>
+        <input type="url" id="webhookUrl" placeholder="https://script.google.com/macros/s/…/exec" spellcheck="false">
+        <small>Deploy the script below, then paste its web app URL here.</small>
+      </label>
+
+      <label class="field">
+        <span>Urgent recipients — Premier plan</span>
+        <input type="text" id="urgentRecipients" placeholder="coloradocruisersllc@gmail.com, johnbriones774@gmail.com" spellcheck="false">
+        <small>Comma-separated. Emailed immediately when a guest books the
+          Premier plan on an upcoming trip. Also used by the test button.</small>
+      </label>
+
+      <label class="field">
+        <span>Nightly report recipients</span>
+        <input type="text" id="recipients" placeholder="coloradocruisersllc@gmail.com, johnbriones774@gmail.com" spellcheck="false">
+        <small>Comma-separated. Gets the 9&nbsp;PM Colorado turnover report —
+          every trip below $0.20/mile plus unverified licenses picking up
+          within 24 hours, batched into one email. <b>Send tonight&rsquo;s report
+          now</b> sends that email to this list immediately, marked PREVIEW, built
+          from the trips flagged so far today. It is the only way to check the
+          profit-risk and license sections without waiting for 9&nbsp;PM, and it
+          does not replace tonight&rsquo;s real report.</small>
+      </label>
+
+      <div class="actions">
+        <button id="save" type="button">Save</button>
+        <button id="test" type="button" class="secondary">Send test alert</button>
+        <button id="testDigest" type="button" class="secondary">Send tonight&rsquo;s report now</button>
+      </div>
+      <p class="status" id="status" aria-live="polite"></p>
+
+      <section class="help">
+        <h2>Setup</h2>
+        <ol>
+          <li>Go to <b>script.google.com</b> and create a new project.</li>
+          <li>Replace the contents of <code>Code.gs</code> with the script below.</li>
+          <li>Set <code>SHEET_ID</code> if you want a log, or leave it blank.</li>
+          <li><b>Deploy → New deployment → Web app.</b> Set <i>Execute as</i> to
+            <b>Me</b>, and <i>Who has access</i> to <b>Anyone</b>.</li>
+          <li>Authorize it, copy the <b>/exec</b> URL, paste it above, and hit
+            <b>Send test alert</b>.</li>
+        </ol>
+        <p class="note">
+          <b>Updating the script later:</b> paste the new code, then
+          <b>Deploy → Manage deployments → pencil icon → Version: New version
+          → Deploy</b>. Saving the code alone does <b>not</b> change what the
+          /exec URL runs — that's why an edit can look like it did nothing.
+          The URL stays the same, so you never re-paste it here.
+        </p>
+        <p class="note">
+          "Anyone" means anyone holding the URL can post to it — it can send
+          email but can't read your Google account. Treat the URL as a
+          password, and redeploy to rotate it if it ever leaks.
+        </p>
+        <button id="copyScript" type="button" class="secondary">Copy the script</button>
+        <pre id="script"></pre>
+      </section>
+    </main>
+    <!-- constants first: options.js reads HostOS.constants for the standing
+         delivery fee, so loading it second would leave that undefined. -->
+    <script src="../utils/constants.js"></script>
+    <script src="options.js"></script>
+  </body>
+</html>

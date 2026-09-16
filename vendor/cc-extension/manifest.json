@@ -1,0 +1,90 @@
+{
+  "manifest_version": 3,
+  "name": "HostOS — Turo Ops Assistant",
+  "version": "1.0.0",
+  "description": "Surfaces upcoming Turo trips that need attention.",
+  "permissions": [
+    "storage",
+    "notifications",
+    "alarms",
+    "tabs",
+    "sidePanel"
+  ],
+  "host_permissions": [
+    "https://turo.com/*",
+    "https://www.turo.com/*",
+    "https://script.google.com/*",
+    "https://script.googleusercontent.com/*"
+  ],
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": true
+  },
+  "icons": {
+    "16": "assets/icon-16.png",
+    "32": "assets/icon-32.png",
+    "48": "assets/icon-48.png",
+    "128": "assets/icon-128.png"
+  },
+  "action": {
+    "default_title": "HostOS — click to open the sidebar",
+    "default_icon": {
+      "16": "assets/icon-16.png",
+      "32": "assets/icon-32.png",
+      "48": "assets/icon-48.png",
+      "128": "assets/icon-128.png"
+    }
+  },
+  "side_panel": {
+    "default_path": "popup/popup.html"
+  },
+  "background": {
+    "service_worker": "background/service-worker.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://turo.com/*",
+        "https://www.turo.com/*"
+      ],
+      "js": [
+        "utils/constants.js",
+        "utils/logger.js",
+        "utils/dates.js",
+        "utils/parser.js",
+        "utils/reviews.js",
+        "utils/outlook.js",
+        "utils/storage.js",
+        "modules/licenseMonitor.js",
+        "modules/riskEngine.js",
+        "modules/queueView.js",
+        "content/selectors.js",
+        "content/scanner.js",
+        "content/fleetScanner.js",
+        "content/protectionScanner.js",
+        "content/activityScanner.js",
+        "content/reviewScanner.js",
+        "content/observer.js",
+        "content/widget.js",
+        "content/content.js"
+      ],
+      "css": [
+        "content/widget.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "assets/fleet-logo.svg",
+        "assets/hostos-wordmark.svg",
+        "assets/colorado-cruisers.png"
+      ],
+      "matches": [
+        "https://turo.com/*",
+        "https://www.turo.com/*"
+      ]
+    }
+  ]
+}

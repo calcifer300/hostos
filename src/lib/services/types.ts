@@ -122,6 +122,8 @@ export const asCustomerStage = (v: unknown): CustomerStage => ((STAGES as string
 /** Everything the services dashboard and its pages read, assembled once per request. */
 export interface ServicesData {
   settings: ServiceSettings | null;
+  /** The workspace's IANA zone, for bucketing days; settings.timezone or the default. */
+  zone: string;
   customers: ServiceCustomer[];
   staff: ServiceStaff[];
   jobs: ServiceJob[];
@@ -129,4 +131,4 @@ export interface ServicesData {
   docs: ServiceDoc[];
 }
 
-export const EMPTY_SERVICES: ServicesData = { settings: null, customers: [], staff: [], jobs: [], estimates: [], docs: [] };
+export const EMPTY_SERVICES: ServicesData = { settings: null, zone: "America/Denver", customers: [], staff: [], jobs: [], estimates: [], docs: [] };

@@ -46,7 +46,7 @@ function daysAgoIso(days: number): string {
 /** The Service Businesses vertical, read once for its dashboard and Home's card. */
 export async function loadServices(hostId: string): Promise<ServicesData> {
   const [settings, customers, staff, jobs, estimates, docs] = await Promise.all([getServiceSettings(hostId), getCustomers(hostId), getStaff(hostId), getJobs(hostId), getEstimates(hostId), getDocs(hostId)]);
-  return { settings, customers, staff, jobs, estimates, docs };
+  return { settings, zone: settings?.timezone ?? "America/Denver", customers, staff, jobs, estimates, docs };
 }
 
 /**

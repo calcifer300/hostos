@@ -8,8 +8,9 @@ import { createTask } from "@/lib/tasks/queries";
 import { notify } from "@/lib/notifications/queries";
 import { getDashboardData } from "@/lib/dashboard/queries";
 import { getHostModules } from "@/lib/host/queries";
-import { getEstimates, getJobs, getStaff } from "@/lib/services/queries";
-import { isOpen as jobIsOpen, isOverdue, missingPhotos, needsFollowUp, sameDay } from "@/lib/services/analytics";
+import { getEstimates, getJobs, getServiceSettings, getStaff } from "@/lib/services/queries";
+import { isOpen as jobIsOpen, isOverdue, missingPhotos, needsFollowUp, onDay } from "@/lib/services/analytics";
+import { todayInZone } from "@/lib/timezones";
 import { daysUntil, getProperties } from "@/lib/web/queries";
 import { clientsDueForRebooking, getClients, getLocations, getStock } from "@/lib/local/queries";
 import { getMetrics } from "@/lib/custom/queries";
@@ -240,10 +241,12 @@ export async function runButlerRules(hostId: string, options: { userEmail?: stri
   if (modules.includes("services")) {
     // The operations manager's morning: what is unassigned, what is late,
     // which estimates went quiet, which finished jobs have no proof.
-    const [jobs, estimates, staff] = await Promise.all([getJobs(hostId), getEstimates(hostId), getStaff(hostId)]);
-    const day = new Date().toISOString().slice(0, 10);
+    const [jobs, estimates, staff, settings] = await Promise.all([getJobs(hostId), getEstimates(hostId), getStaff(hostId), getServiceSettings(hostId)]);
+    // "Today" is the business's day, not the server's.
+    const zone = settings?.timezone ?? "America/Denver";
+    const day = todayInZone(zone);
     const nameOf = (id: string | null) => staff.find((s) => s.id === id)?.name ?? "unassigned";
-    const unassignedToday = jobs.filter((j) => jobIsOpen(j.status) && !j.staffId && sameDay(j.scheduledStart, day));
+    const unassignedToday = jobs.filter((j) => jobIsOpen(j.status) && !j.staffId && onDay(j.scheduledStart, day, zone));
     if (unassignedToday.length > 0) {
       summary.signals.push(`${unassignedToday.length} job(s) today have no technician`);
       await track({ hostId, title: `Assign ${unassignedToday.length} job${unassignedToday.length === 1 ? "" : "s"} scheduled today`, description: unassignedToday.slice(0, 10).map((j) => `#${j.number} ${j.title}`).join(", "), priority: "critical", source: "butler", relatedKind: "service_job", relatedId: null, href: routes.servicesDispatch, dedupeKey: `services:unassigned:${day}` });

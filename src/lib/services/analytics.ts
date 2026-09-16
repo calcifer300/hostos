@@ -1,7 +1,25 @@
+import { todayInZone } from "@/lib/timezones";
+
 /**
  * Pure helpers for the Service Businesses vertical — shared by server
- * queries, the dashboard widgets and the Butler. No imports, no I/O.
+ * queries, the dashboard widgets and the Butler. No I/O.
+ *
+ * Days are bucketed in the WORKSPACE's timezone, never the server's (UTC)
+ * or the reader's: a 6 pm job in Denver is today's job on the dashboard, in
+ * the Butler's morning list and in the day's revenue, whoever is looking.
  */
+
+export const DEFAULT_ZONE = "America/Denver";
+
+/** The YYYY-MM-DD an instant falls on in a zone. */
+export function dayIn(iso: string | null, zone: string): string | null {
+  if (!iso) return null;
+  const t = Date.parse(iso);
+  return Number.isFinite(t) ? todayInZone(zone, new Date(t)) : null;
+}
+
+/** Whether an instant falls on a given day in a zone. */
+export const onDay = (iso: string | null, day: string, zone: string): boolean => dayIn(iso, zone) === day;
 
 export type JobStatus = "pending" | "assigned" | "in_progress" | "completed" | "cancelled";
 export type JobKind = "job" | "estimate" | "inspection" | "follow_up" | "installation" | "maintenance";
@@ -67,6 +85,7 @@ export function isOverdue(job: { status: JobStatus; scheduledEnd: string | null 
   return Number.isFinite(end) && end < now;
 }
 
+/** UTC-day comparison — only for tests and callers that already hold a UTC key; prefer onDay(). */
 export const sameDay = (iso: string | null, day: string): boolean => Boolean(iso && iso.slice(0, 10) === day);
 
 /** Two scheduled windows for the same technician overlap. */
@@ -123,8 +142,8 @@ export interface RevenueSummary {
   cancellationRate: number | null;
 }
 
-export function revenueSummary(jobs: { status: JobStatus; price: number | null; completedAt: string | null; createdAt: string }[], now = new Date()): RevenueSummary {
-  const day = now.toISOString().slice(0, 10);
+export function revenueSummary(jobs: { status: JobStatus; price: number | null; completedAt: string | null; createdAt: string }[], now = new Date(), zone = "UTC"): RevenueSummary {
+  const day = todayInZone(zone, now);
   const month = day.slice(0, 7);
   let today = 0;
   let monthTotal = 0;
@@ -135,11 +154,12 @@ export function revenueSummary(jobs: { status: JobStatus; price: number | null; 
   for (const j of jobs) {
     if (j.status === "completed" && j.completedAt) {
       const price = Number(j.price) || 0;
-      if (j.completedAt.slice(0, 10) === day) {
+      const completedDay = todayInZone(zone, new Date(j.completedAt));
+      if (completedDay === day) {
         today += price;
         completedToday += 1;
       }
-      if (j.completedAt.slice(0, 7) === month) {
+      if (completedDay.slice(0, 7) === month) {
         monthTotal += price;
         completedMonth += 1;
       }

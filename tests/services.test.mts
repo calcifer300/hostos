@@ -11,7 +11,7 @@ const ok = (label: string, got: boolean) => eq(label, got, true);
 const section = (title: string) => console.log(`
 === ${title} ===`);
 
-import { conflicts, estimateTotals, isOverdue, leadConversion, missingPhotos, needsFollowUp, revenueSummary, staffStats } from "../src/lib/services/analytics.ts";
+import { conflicts, dayIn, estimateTotals, isOverdue, leadConversion, missingPhotos, needsFollowUp, onDay, revenueSummary, staffStats } from "../src/lib/services/analytics.ts";
 
 section("industry templates: every business in the brief, each complete");
 eq("29 industries", INDUSTRIES.length, 29);
@@ -44,6 +44,12 @@ ok("back-to-back does not conflict", !conflicts(a, { staffId: "t1", scheduledSta
 ok("different tech does not conflict", !conflicts(a, { staffId: "t2", scheduledStart: "2026-09-15T10:00:00Z", scheduledEnd: "2026-09-15T12:00:00Z" }));
 ok("completed without an after photo is missing proof", missingPhotos({ status: "completed", photos: [{ url: "https://x/1.jpg", caption: null, phase: "before" }] }));
 ok("completed with an after photo is fine", !missingPhotos({ status: "completed", photos: [{ url: "https://x/2.jpg", caption: null, phase: "after" }] }));
+
+section("days in the workspace's zone");
+eq("6 pm in Denver is still that day, not the next UTC day", dayIn("2026-09-16T00:00:00Z", "America/Denver"), "2026-09-15");
+ok("onDay uses the zone", onDay("2026-09-16T00:00:00Z", "2026-09-15", "America/Denver"));
+eq("null stays null", dayIn(null, "America/Denver"), null);
+eq("revenue today follows the zone", revenueSummary([{ staffId: "t1", status: "completed", price: 50, completedAt: "2026-09-16T01:00:00Z", createdAt: "" }], new Date("2026-09-15T23:00:00Z"), "America/Denver").today, 50);
 
 section("reporting");
 const jobs = [

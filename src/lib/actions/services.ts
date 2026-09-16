@@ -10,7 +10,7 @@ import { insertChecklist } from "@/lib/local/queries";
 import { industryById, SHARED_SOPS } from "@/lib/services/industries";
 import { asCustomerStage } from "@/lib/services/types";
 import { asEstimateStatus, asEventKind, asJobKind, asJobPriority, asJobStatus, asStaffRole, estimateTotals, JOB_STATUS_LABEL, type JobPhoto, type LineItem, type Material } from "@/lib/services/analytics";
-import { getCustomer, getEstimate, getJob, getStaff, insertCustomer, insertDocs, insertEstimate, insertEvent, insertJob, insertProperty, insertStaff, updateCustomer, updateDoc, deleteDoc, updateEstimate, updateJob, updateStaff, upsertServiceSettings, type JobPatch } from "@/lib/services/queries";
+import { getCustomer, getEstimate, getJob, getJobs, getProperties, getStaff, insertCustomer, insertDocs, insertEstimate, insertEvent, insertJob, insertProperty, insertStaff, updateCustomer, updateDoc, deleteDoc, updateEstimate, updateJob, updateStaff, upsertServiceSettings, type JobPatch } from "@/lib/services/queries";
 import { routes } from "@/lib/routes";
 
 /**
@@ -279,10 +279,12 @@ export async function editJob(id: string, patch: { staffId?: string | null; stat
     // The review request is the last step of every job loop — file it so it isn't forgotten.
     await createTask({ hostId: g.hostId, title: `Request a review — ${job.title}`, description: "Text or email the customer a review link within 24 hours of completion.", priority: "low", dueAt: new Date(Date.now() + 86_400_000).toISOString(), source: "butler", relatedKind: "service_job", relatedId: jobId, href: routes.serviceJob(jobId), dedupeKey: `services:review:${jobId}` });
     if (job.recurrence) {
-      // Recurring service: book the next visit on the same terms.
+      // Recurring service: book the next visit on the same terms — once. A job
+      // reopened and completed again must not book a second follow-on visit.
       const step = { weekly: 7, biweekly: 14, monthly: 30, quarterly: 91 }[job.recurrence] ?? 0;
-      if (step && job.scheduledStart) {
-        const nextStart = new Date(Date.parse(job.scheduledStart) + step * 86_400_000).toISOString();
+      const nextStart = step && job.scheduledStart ? new Date(Date.parse(job.scheduledStart) + step * 86_400_000).toISOString() : null;
+      const alreadyBooked = nextStart ? (await getJobs(g.hostId)).some((j) => j.customerId === job.customerId && j.title === job.title && j.scheduledStart === nextStart) : true;
+      if (step && job.scheduledStart && nextStart && !alreadyBooked) {
         const nextEnd = job.scheduledEnd ? new Date(Date.parse(job.scheduledEnd) + step * 86_400_000).toISOString() : null;
         await insertJob(g.hostId, { customerId: job.customerId, propertyId: job.propertyId, staffId: job.staffId, kind: job.kind, title: job.title, description: job.description, status: job.staffId ? "assigned" : "pending", priority: job.priority, scheduledStart: nextStart, scheduledEnd: nextEnd, address: job.address, price: job.price, recurrence: job.recurrence, notes: job.notes, createdBy: g.email });
       }
@@ -338,7 +340,11 @@ export async function setEstimateStatus(id: string, status: string): Promise<Ser
 
   let jobId: string | undefined;
   if (next === "accepted" && !estimate.jobId) {
-    const job = await insertJob(g.hostId, { customerId: estimate.customerId, propertyId: estimate.propertyId, staffId: null, estimateId, kind: "job", title: estimate.title, description: estimate.lineItems.map((i) => `${i.quantity} × ${i.name}`).join("\n"), status: "pending", priority: "normal", scheduledStart: null, scheduledEnd: null, address: null, price: estimate.total, recurrence: null, notes: estimate.notes, createdBy: g.email });
+    // The work order goes where the customer is: the estimate's property, else the customer's address.
+    const customer = estimate.customerId ? await getCustomer(g.hostId, estimate.customerId) : null;
+    const property = estimate.propertyId ? (await getProperties(g.hostId, estimate.customerId ?? undefined)).find((p) => p.id === estimate.propertyId) : null;
+    const address = property?.address ?? customer?.address ?? null;
+    const job = await insertJob(g.hostId, { customerId: estimate.customerId, propertyId: estimate.propertyId, staffId: null, estimateId, kind: "job", title: estimate.title, description: estimate.lineItems.map((i) => `${i.quantity} × ${i.name}`).join("\n"), status: "pending", priority: "normal", scheduledStart: null, scheduledEnd: null, address, price: estimate.total, recurrence: null, notes: estimate.notes, createdBy: g.email });
     if (!job.ok) return { ok: false, error: hint(job.error) };
     jobId = job.id;
     patch.jobId = job.id;

@@ -13,7 +13,8 @@ import { Input, Label, NativeSelect } from "@/components/ui/input";
 import { Dialog, DialogBody, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { addStaff, createCustomer, editJob, setEstimateStatus, setupServices } from "@/lib/actions/services";
 import { INDUSTRIES, INDUSTRY_GROUPS, industryById, type IndustryGroup } from "@/lib/services/industries";
-import { ESTIMATE_STATUS_LABEL, JOB_STATUS_LABEL, STAFF_ROLES, STAFF_ROLE_LABEL, isOpen, isOverdue, needsFollowUp, revenueSummary, sameDay, staffStats, type JobStatus } from "@/lib/services/analytics";
+import { ESTIMATE_STATUS_LABEL, JOB_STATUS_LABEL, STAFF_ROLES, STAFF_ROLE_LABEL, isOpen, isOverdue, needsFollowUp, onDay, revenueSummary, staffStats, type JobStatus } from "@/lib/services/analytics";
+import { todayInZone } from "@/lib/timezones";
 import type { ServiceJob, ServiceStaff, ServicesData } from "@/lib/services/types";
 import { routes } from "@/lib/routes";
 import { cn, formatRelativeTime } from "@/lib/utils";
@@ -89,8 +90,8 @@ export function NextStepButton({ job, disabled }: { job: ServiceJob; disabled?: 
 
 export function TodayJobsWidget({ d, canEdit }: { d: ServicesData; canEdit: boolean }) {
   const now = useNow();
-  const day = new Date(now).toISOString().slice(0, 10);
-  const jobs = d.jobs.filter((j) => sameDay(j.scheduledStart, day) && j.status !== "cancelled").sort((a, b) => (a.scheduledStart ?? "").localeCompare(b.scheduledStart ?? ""));
+  const day = todayInZone(d.zone, new Date(now));
+  const jobs = d.jobs.filter((j) => onDay(j.scheduledStart, day, d.zone) && j.status !== "cancelled").sort((a, b) => (a.scheduledStart ?? "").localeCompare(b.scheduledStart ?? ""));
   const unscheduledOpen = d.jobs.filter((j) => isOpen(j.status) && !j.scheduledStart).length;
   return (
     <DashboardCard icon={Clock} title="Today's jobs" action={<Link href={routes.servicesSchedule} className="text-[12px] font-medium text-accent">Full schedule →</Link>}>
@@ -352,7 +353,7 @@ export function SetupWidget({ d, canEdit }: { d: ServicesData; canEdit: boolean 
   const [industry, setIndustry] = React.useState<string>(INDUSTRIES.find((i) => i.group === "automotive")?.id ?? "");
   const [name, setName] = React.useState("");
   const current = industryById(d.settings?.industry);
-  const rev = revenueSummary(d.jobs);
+  const rev = revenueSummary(d.jobs, new Date(), d.zone);
 
   function apply() {
     startTransition(async () => {

@@ -54,7 +54,8 @@ import { ChecklistsWidget, LocationsWidget, RebookingWidget, RevenueByStaffWidge
 import { BuildRequestsWidget, MetricsWidget } from "@/components/custom/custom-widgets";
 import { DispatchSnapshotWidget, EstimatesPipelineWidget, LeadsWidget, SetupWidget, TeamWidget, TodayJobsWidget } from "@/components/services/service-widgets";
 import type { ServicesData } from "@/lib/services/types";
-import { isOpen as jobIsOpen, isOverdue, needsFollowUp, revenueSummary, sameDay } from "@/lib/services/analytics";
+import { isOpen as jobIsOpen, isOverdue, needsFollowUp, onDay, revenueSummary } from "@/lib/services/analytics";
+import { todayInZone } from "@/lib/timezones";
 import { industryById } from "@/lib/services/industries";
 import { FileText as FileTextIcon, Wrench } from "lucide-react";
 import type { WebProperty } from "@/lib/web/queries";
@@ -226,13 +227,13 @@ function StatsWidget({ d }: { d: WidgetData }) {
     );
   } else if (d.scope === "services") {
     const s = d.services;
-    const today = dayKey();
-    const todays = s.jobs.filter((j) => sameDay(j.scheduledStart, today) && j.status !== "cancelled");
+    const today = todayInZone(s.zone);
+    const todays = s.jobs.filter((j) => onDay(j.scheduledStart, today, s.zone) && j.status !== "cancelled");
     const unassigned = s.jobs.filter((j) => jobIsOpen(j.status) && !j.staffId).length;
     const overdue = s.jobs.filter((j) => isOverdue(j)).length;
     const waiting = s.estimates.filter((e) => e.status === "sent").length;
     const followUps = s.estimates.filter((e) => needsFollowUp(e)).length;
-    const rev = revenueSummary(s.jobs);
+    const rev = revenueSummary(s.jobs, new Date(), s.zone);
     tiles.push(
       <StatCard key="today" icon={CalendarCheck} label="Jobs today" value={todays.length} breakdown={`${todays.filter((j) => j.status === "completed").length} done · ${todays.filter((j) => j.status === "in_progress").length} in progress`} href={routes.servicesSchedule} tone="accent" />,
       <StatCard key="unassigned" icon={Wrench} label="Unassigned" value={unassigned} breakdown={overdue > 0 ? `${overdue} overdue` : "Nothing overdue"} href={routes.servicesDispatch} tone={overdue > 0 ? "danger" : unassigned > 0 ? "warning" : "success"} />,
@@ -324,8 +325,8 @@ function BusinessesWidget({ d }: { d: WidgetData }) {
     }
     if (m.id === "services") {
       const s = d.services;
-      const today = dayKey();
-      const todays = s.jobs.filter((j) => sameDay(j.scheduledStart, today) && j.status !== "cancelled").length;
+      const today = todayInZone(s.zone);
+      const todays = s.jobs.filter((j) => onDay(j.scheduledStart, today, s.zone) && j.status !== "cancelled").length;
       const unassigned = s.jobs.filter((j) => jobIsOpen(j.status) && !j.staffId).length;
       const followUps = s.estimates.filter((e) => needsFollowUp(e)).length;
       return {
@@ -336,7 +337,7 @@ function BusinessesWidget({ d }: { d: WidgetData }) {
         stats: [
           { label: "Jobs today", value: String(todays) },
           { label: "Unassigned", value: String(unassigned) },
-          { label: "Revenue · month", value: formatMoney(revenueSummary(s.jobs).month) },
+          { label: "Revenue · month", value: formatMoney(revenueSummary(s.jobs, new Date(), s.zone).month) },
         ],
         alert: unassigned > 0 ? `${unassigned} job${unassigned === 1 ? "" : "s"} without a technician` : followUps > 0 ? `${followUps} estimate${followUps === 1 ? "" : "s"} need a follow-up` : null,
       };

@@ -54,6 +54,8 @@
 		<div class="grid lg:grid-cols-[1.35fr_1fr]">
 			<!-- footage -->
 			<div class="relative aspect-[16/10] bg-bg lg:aspect-auto lg:min-h-[520px]">
+				<!-- before the footage arrives (or where it never does): the room in the chapter's light -->
+				<div aria-hidden="true" class="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_40%,color-mix(in_oklab,var(--color-accent)_22%,transparent),transparent_60%),radial-gradient(ellipse_at_80%_80%,color-mix(in_oklab,var(--color-platform)_18%,transparent),transparent_55%)]"></div>
 				{#each FILM.chapters as c, i (c.id)}
 					<div class={`absolute inset-0 transition-opacity duration-1000 ease-[var(--ease-standard)] ${i === chapter ? 'opacity-100' : 'pointer-events-none opacity-0'}`} aria-hidden={i !== chapter}>
 						{#if Math.abs(i - chapter) <= 1 || (chapter === 0 && i === FILM.chapters.length - 1)}

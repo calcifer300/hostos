@@ -1,42 +1,45 @@
-# sv
+# hostoscollective.com — the marketing site (SvelteKit)
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+The public front door of HostOS Collective: SvelteKit 2 · Svelte 5 (runes) ·
+TypeScript · Tailwind v4 · adapter-vercel. Prerendered; ~110 KB of JS; no
+runtime dependencies beyond Svelte and lucide icons. Its own Vercel project
+(`hostos-site`); the product stays on the Next.js app in the repo root.
 
-## Creating a project
+    npm install
+    npm run dev          # http://localhost:5173
+    npm run check        # svelte-check
+    npm run build
+    bash lh.sh           # build + Lighthouse (mobile, simulated) via Brave headless
 
-If you're seeing this, you've probably already done this step. Congrats!
+## Where things are
 
-```sh
-# create a new project
-npx sv create my-app
-```
+    src/app.css                       design tokens (@theme), base, motion utilities
+    src/lib/components/ui/            Logo · Button · Section (the section grammar) · Accordion
+    src/lib/components/marketing/     Nav (session-aware) · Footer · the landing sections
+    src/lib/components/motion/        actions: reveal · stagger · tilt · countUp
+    src/lib/content/site.ts           every word on the page, typed
+    src/lib/content/team.ts           roster fallback + normaliser
+    src/lib/seo/jsonld.ts             Organization + Person + FAQPage
+    src/routes/+page.ts               fetches the roster from the app at build (falls back)
+    src/routes/{robots.txt,sitemap.xml}
 
-To recreate this project with the same configuration:
+## Rules of the house
 
-```sh
-# recreate this project
-npx sv@0.17.1 create --template minimal --types ts --no-install site
-```
+- One accent colour means "act". Violet means "the platform". Nothing else on chrome is saturated.
+- Label → statement → lede → content, in every section (`Section.svelte`).
+- Arrive once, respond always, never idle (the live board's 9-second loop is the one exception).
+- Above the fold nothing waits for JavaScript (`.arrive`); without JS everything is visible (`.no-js`).
+- Contrast is checked per token; hue-coloured text is lightened with `color-mix` on dark surfaces.
 
-## Developing
+## Cutover (when the Founder says so)
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+The app stays at the same domain. Two options, both reversible in one Vercel setting:
 
-```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```sh
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+1. Subdomain split (recommended long-term): `hostoscollective.com` → this site,
+   `app.hostoscollective.com` → the Next.js app. Needs `AUTH_URL` / cookie domain on the
+   app, Google OAuth redirect URIs updated by the Founder, and redirects from
+   `/app/*`, `/login`, `/api/*` on the site to the app host.
+2. Same domain, proxied: attach the domain to this project and add rewrites in
+   `vercel.json` for `/app/:path*`, `/login`, `/api/:path*`, `/_next/:path*`,
+   `/team`, `/install`, `/about` to the app's deployment URL. No auth changes;
+   the session-aware nav works immediately. One extra hop per app request.

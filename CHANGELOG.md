@@ -2,7 +2,22 @@
 
 All notable changes to HostOS. Dates are when the work landed on `unified`.
 
-## [Unreleased] — 2026-09-16 · The landing intro (console), the mark on every wall
+## [Unreleased] — 2026-09-20 · The SvelteKit front door
+
+- **A new marketing site in `site/`** (SvelteKit 2, Svelte 5 runes, Tailwind
+  v4, adapter-vercel), live at https://hostos-site-one.vercel.app on its own
+  Vercel project; production hostoscollective.com is untouched until the
+  Founder cuts over (plan in `site/README.md`). Design tokens, a four-action
+  motion library, the section grammar, a session-aware nav, and the landing
+  story: a hero with a live operations board, the problems we're hired for,
+  people → systems → software, before/after, 13 solutions in four families,
+  industries, numbers-first proof, an interactive platform demo, the
+  Collective (roster from the app's new `GET /api/public/team`), the first
+  thirty days, FAQ with JSON-LD, and a working-session form. Lighthouse
+  (mobile, simulated, live): performance 96–97, accessibility 100, best
+  practices 100, SEO 100; ~110 KB of JS.
+
+## 2026-09-16 · The landing intro (console), the mark on every wall
 
 - **The landing intro.** Ahead of the classic landing page: four
   full-screen "systems", one per line of business — car rental fleets,

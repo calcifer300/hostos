@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { reveal } from '$lib/components/motion/actions';
+	import { reveal, words } from '$lib/components/motion/actions';
 	/**
 	 * The universal section grammar: label → statement → lede → content.
 	 * Every section on the site uses it, so the eye learns the rhythm once.
@@ -33,7 +33,7 @@
 		{#if eyebrow || title}
 			<header use:reveal class={`mb-10 max-w-3xl md:mb-14 ${align === 'center' ? 'mx-auto text-center' : ''}`}>
 				{#if eyebrow}<p class="label-mono mb-4 text-accent">{eyebrow}</p>{/if}
-				{#if title}<h2 class="display-2 text-ink">{title}</h2>{/if}
+				{#if title}<h2 use:words class="display-2 text-ink">{title}</h2>{/if}
 				{#if lede}<p class="mt-5 max-w-2xl text-[17px] leading-relaxed text-ink-2 {align === 'center' ? 'mx-auto' : ''}">{lede}</p>{/if}
 			</header>
 		{/if}

@@ -20,6 +20,9 @@
 			</nav>
 		{/each}
 	</div>
+	<div aria-hidden="true" class="container-wide overflow-hidden pb-2 pt-6">
+		<p class="wordmark-giant translate-y-[0.18em]">hostOS</p>
+	</div>
 	<div class="border-t border-line">
 		<div class="container-x flex flex-col gap-2 py-5 text-[12.5px] text-ink-3 sm:flex-row sm:items-center sm:justify-between">
 			<span>© {year} {SITE.company}. All rights reserved.</span>

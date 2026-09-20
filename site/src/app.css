@@ -254,3 +254,51 @@
 		scroll-behavior: auto !important;
 	}
 }
+
+/* ------------------------------------------------------------- footage */
+video.lazy {
+	opacity: 0;
+	transition: opacity 1.2s var(--ease-standard);
+}
+video.lazy.is-playing {
+	opacity: 1;
+}
+/* the hero board breathes; the primary button is magnetic (JS), the ring on proof cards follows the pointer */
+.float {
+	animation: float 8s ease-in-out infinite;
+}
+@keyframes float {
+	0%, 100% { transform: translateY(0); }
+	50% { transform: translateY(-8px); }
+}
+.ring-hover {
+	position: relative;
+}
+.ring-hover::before {
+	content: '';
+	position: absolute;
+	inset: -1px;
+	border-radius: inherit;
+	padding: 1px;
+	background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%), var(--spot, var(--color-accent)), transparent 70%);
+	-webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+	mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+	-webkit-mask-composite: xor;
+	mask-composite: exclude;
+	opacity: 0;
+	transition: opacity 0.4s var(--ease-standard);
+	pointer-events: none;
+}
+.ring-hover:hover::before {
+	opacity: 1;
+}
+/* the giant wordmark at the foot of the page */
+.wordmark-giant {
+	font-size: clamp(96px, 22vw, 360px);
+	line-height: 0.8;
+	letter-spacing: -0.05em;
+	font-weight: 700;
+	color: transparent;
+	-webkit-text-stroke: 1px rgba(230, 235, 245, 0.12);
+	user-select: none;
+}

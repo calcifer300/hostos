@@ -3,6 +3,7 @@
 	import Problems from '$lib/components/marketing/Problems.svelte';
 	import HowItWorks from '$lib/components/marketing/HowItWorks.svelte';
 	import BeforeAfter from '$lib/components/marketing/BeforeAfter.svelte';
+	import Film from '$lib/components/marketing/Film.svelte';
 	import Solutions from '$lib/components/marketing/Solutions.svelte';
 	import Industries from '$lib/components/marketing/Industries.svelte';
 	import Proof from '$lib/components/marketing/Proof.svelte';
@@ -40,6 +41,7 @@
 <Hero />
 <Problems />
 <HowItWorks />
+<Film />
 <BeforeAfter />
 <Solutions />
 <Industries />

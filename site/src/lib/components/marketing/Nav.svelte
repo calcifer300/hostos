@@ -12,10 +12,15 @@
 	 */
 	let user = $state<{ name?: string | null; image?: string | null } | null>(null);
 	let scrolled = $state(false);
+	let read = $state(0);
 	let open = $state(false);
 
 	onMount(() => {
-		const onScroll = () => (scrolled = window.scrollY > 24);
+		const onScroll = () => {
+			scrolled = window.scrollY > 24;
+			const max = document.documentElement.scrollHeight - window.innerHeight;
+			read = max > 0 ? Math.min(1, window.scrollY / max) : 0;
+		};
 		onScroll();
 		window.addEventListener('scroll', onScroll, { passive: true });
 		// only where the app answers on this origin (the site fronting hostoscollective.com, or the app's dev server)
@@ -30,6 +35,7 @@
 </script>
 
 <header class="fixed inset-x-0 top-0 z-50 px-4 pt-4" style="padding-top: max(16px, env(safe-area-inset-top))">
+	<div aria-hidden="true" class="pointer-events-none absolute inset-x-0 top-0 h-[2px] origin-left bg-[linear-gradient(90deg,var(--color-accent),var(--color-platform))]" style={`transform:scaleX(${read})`}></div>
 	<div class={`container-wide flex h-14 items-center justify-between rounded-full border px-4 backdrop-blur-xl transition-[background-color,border-color,box-shadow] duration-300 ${scrolled ? 'border-line bg-bg/70 shadow-2' : 'border-transparent bg-transparent'}`}>
 		<a href="/" class="rounded-full" aria-label="HostOS Collective — home"><Logo /></a>
 		<nav aria-label="Primary" class="hidden items-center gap-1 lg:flex">

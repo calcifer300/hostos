@@ -26,7 +26,7 @@ export const NAV = [
 	{ href: '/#platform', label: 'Platform' },
 	{ href: '/#proof', label: 'Work' },
 	{ href: `${SITE.url}/team`, label: 'Team' },
-	{ href: '/#how', label: 'How it works' }
+	{ href: '/#film', label: 'Watch it run' }
 ];
 
 export const CTA = { label: 'Book a working session', href: '/#contact', under: '45 minutes · bring one operation · leave with a plan' };
@@ -66,14 +66,14 @@ export const HOW = {
 export const BEFORE_AFTER = {
 	eyebrow: 'Before and after',
 	title: 'One operation, two ways of running it.',
-	lede: 'A six-car Turo fleet, the month before and the month after it moved onto HostOS.',
+	lede: 'A 146-car Turo fleet, the month before and the month after it moved onto HostOS.',
 	rows: [
-		{ label: 'Tools', before: '3 spreadsheets, 2 group chats, the Turo app', after: 'One board' },
-		{ label: 'People', before: 'The owner, at night', after: '2 operators, 7 days, the owner reads it' },
+		{ label: 'Tools', before: '4 spreadsheets, 3 group chats, the Turo app', after: 'One board' },
+		{ label: 'People', before: 'The owner and two admins, at night', after: '6 operators around the clock; the owner reads it' },
 		{ label: 'Guest messages', before: 'Answered when seen', after: 'Answered in minutes, every hour of the day' },
-		{ label: 'Damage claims', before: '2 missed the window', after: '0 missed; photos at every return' },
+		{ label: 'Damage claims', before: '5 missed the window', after: '0 missed; photos at every return' },
 		{ label: 'Turnarounds', before: 'Found out when the next guest called', after: 'Scheduled at booking, checked off on the phone' },
-		{ label: 'Owner’s hours on operations', before: '~25 a week', after: '~2 a week, mostly reading' }
+		{ label: 'Owner’s hours on operations', before: '~60 a week', after: '~4 a week, mostly reading' }
 	]
 };
 
@@ -136,8 +136,8 @@ export const PROOF = {
 	eyebrow: 'Proof',
 	title: 'Numbers first. Names where we’re allowed.',
 	cases: [
-		{ figure: 0, suffix: '', label: 'damage claims missed', line: 'A six-car Turo fleet in the Philippines, six months on HostOS: every return photographed, every claim inside the window.', who: 'Founder-operated fleet', when: '2026', hue: '#0a84ff' },
-		{ figure: 4, suffix: ' min', label: 'median guest reply time', line: 'Night and weekend messages answered by operators working from the same board the owner reads at 8 a.m.', who: 'Same fleet', when: 'Q2 2026', hue: '#30d158' },
+		{ figure: 0, suffix: '', label: 'damage claims missed', line: 'A 146-car Turo fleet in the Philippines, six months on HostOS: every return photographed, every claim inside the window.', who: '146-car fleet · Founder-operated', when: '2026', hue: '#0a84ff' },
+		{ figure: 4, suffix: ' min', label: 'median guest reply time', line: 'Night and weekend messages for 146 cars, answered by operators working from the same board the owner reads at 8 a.m.', who: 'Same fleet', when: 'Q2 2026', hue: '#30d158' },
 		{ figure: 8, suffix: '', label: 'verticals, one workspace', line: 'Car rental, delivery, commerce, field service, websites, cafés, barbershops and custom — one login, one team.', who: 'HostOS platform', when: 'Today', hue: '#8b7cff' }
 	]
 };
@@ -165,6 +165,28 @@ export const PLATFORM = {
 			{ kind: 'kpi', label: 'Follow-ups sent', value: '5', note: 'estimates · quotes' },
 			{ kind: 'list', label: 'Raised', rows: [['08:02', 'Store paused on Uber Eats — reopened'], ['08:15', 'Estimate #1042 quiet 5 days — chased'], ['09:00', 'Licence renewal due in 14 days'], ['09:30', '86’d: garlic rice, pulled from 3 apps']] }
 		] }
+	]
+};
+
+/**
+ * Footage. Pexels clips (free licence, no attribution required), hotlinked
+ * for now; self-host under /static/video before the domain cutover. Each
+ * plays muted, only while on screen, never on reduced motion or data saver.
+ */
+const clip = (id: number, fps: number) => `https://videos.pexels.com/video-files/${id}/${id}-sd_960_540_${fps}fps.mp4`;
+export const VIDEO = {
+	hero: { src: clip(5834188, 24), poster: 'https://images.pexels.com/videos/5834188/pexels-photo-5834188.jpeg?auto=compress&cs=tinysrgb&w=1280' }
+};
+
+export const FILM = {
+	eyebrow: 'Watch it run',
+	title: 'One day, four businesses, one board.',
+	lede: 'The same team, the same software, a different operation every few hours. Sit back — it plays itself.',
+	chapters: [
+		{ id: 'fleet', time: '07:40', name: 'Fleet', src: clip(4208203, 24), line: '146 cars. Eleven going out before nine.', events: [['07:41', 'Guest asks for an early pickup — answered in 1 m'], ['07:52', 'Model 3 · keys out · lockbox code sent'], ['08:10', 'Civic back · 12 photos · no damage']] },
+		{ id: 'kitchen', time: '11:30', name: 'Kitchen', src: clip(8094279, 25), line: 'Lunch rush on three delivery apps.', events: [['11:32', 'Uber Eats store paused — reopened in 40 s'], ['11:48', '86 garlic rice · pulled from 3 apps'], ['12:05', 'Refund dispute filed with photos']] },
+		{ id: 'field', time: '14:00', name: 'Field', src: clip(20693196, 25), line: 'A windshield job from call to signature.', events: [['14:02', 'Lead → customer → estimate · one screen'], ['14:15', 'Ramon dispatched · customer texted the ETA'], ['15:40', 'Work order signed on the phone · invoice sent']] },
+		{ id: 'shop', time: '17:30', name: 'Shop', src: clip(4177954, 30), line: 'A barbershop’s site goes live.', events: [['17:31', 'Domain in the owner’s name · DNS set'], ['17:45', 'Bookings page connected to the calendar'], ['18:02', 'First online booking · Saturday 10:00']] }
 	]
 };
 

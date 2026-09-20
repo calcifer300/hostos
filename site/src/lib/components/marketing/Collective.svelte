@@ -20,7 +20,7 @@
 				</div>
 				<div class="px-3 pb-3.5 pt-1">
 					<p class="text-[13.5px] font-semibold leading-tight text-ink">{m.name}</p>
-					<p class="mt-0.5 text-[11.5px] leading-snug" style={`color:${m.hue}`}>{m.title}</p>
+					<p class="mt-0.5 text-[11.5px] leading-snug" style={`color:color-mix(in oklab, ${m.hue} 55%, white)`}>{m.title}</p>
 				</div>
 			</li>
 		{/each}

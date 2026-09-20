@@ -30,3 +30,4 @@ vendor/karl/archives/
 /site/.svelte-kit
 /site/.vercel
 /site/build
+/site/lh*.json

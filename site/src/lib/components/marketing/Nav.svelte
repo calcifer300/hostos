@@ -18,7 +18,9 @@
 		const onScroll = () => (scrolled = window.scrollY > 24);
 		onScroll();
 		window.addEventListener('scroll', onScroll, { passive: true });
-		fetch('/api/auth/session', { credentials: 'same-origin' })
+		// only where the app answers on this origin (the site fronting hostoscollective.com, or the app's dev server)
+		const appOrigin = /(^|.)hostoscollective.com$/.test(location.hostname) || location.port === '3000';
+		if (appOrigin) fetch('/api/auth/session', { credentials: 'same-origin' })
 			.then((r) => (r.ok ? r.json() : null))
 			.then((s) => { if (s?.user) user = s.user; })
 			.catch(() => {});

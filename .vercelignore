@@ -14,3 +14,6 @@
 /.env.*
 !/.env.local.example
 /*.md
+
+# The SvelteKit marketing site is its own Vercel project (site/); not part of the app bundle.
+/site

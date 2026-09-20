@@ -24,3 +24,9 @@ vendor/**/node_modules/
 vendor/**/.next/
 vendor/legacy/
 vendor/karl/archives/
+
+# SvelteKit site build output
+/site/node_modules
+/site/.svelte-kit
+/site/.vercel
+/site/build

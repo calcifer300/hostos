@@ -18,7 +18,7 @@ export interface Landing {
 	extras: { team: string; delivery: string; closing: string };
 	tiles: Record<string, string>;
 	sections: Record<string, { clip: string; tint: string }>;
-	testimonials: { quote: string; name: string; role: string }[];
+	testimonials: { quote: string; name: string; role: string; photo: string }[];
 	laurels: { value: string; label: string }[];
 }
 /** The built-in landing, for the sections that render without a page load behind them. */
@@ -61,7 +61,7 @@ export async function loadLanding(fetchFn: typeof fetch): Promise<Landing> {
 			}));
 		})(),
 		testimonials: Array.isArray(film?.testimonials)
-			? (film!.testimonials as unknown[]).map((t) => { const x = (t && typeof t === 'object' ? t : {}) as Record<string, unknown>; return { quote: str(x.quote, ''), name: str(x.name, ''), role: str(x.role, '') }; }).filter((t) => t.quote && t.name).slice(0, 8)
+			? (film!.testimonials as unknown[]).map((t) => { const x = (t && typeof t === 'object' ? t : {}) as Record<string, unknown>; const photo = typeof x.photo === 'string' && /^(\/|https:\/\/[a-z0-9-]+\.supabase\.co\/storage\/v1\/object\/public\/|https:\/\/images\.pexels\.com\/)/i.test(x.photo) ? x.photo : ''; return { quote: str(x.quote, ''), name: str(x.name, ''), role: str(x.role, ''), photo }; }).filter((t) => t.quote && t.name).slice(0, 8)
 			: TESTIMONIALS,
 		laurels: Array.isArray(film?.laurels)
 			? (film!.laurels as unknown[]).map((l) => { const x = (l && typeof l === 'object' ? l : {}) as Record<string, unknown>; return { value: str(x.value, ''), label: str(x.label, '') }; }).filter((l) => l.value && l.label).slice(0, 6)

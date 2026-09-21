@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { TeamPage } from "@/components/marketing/team-page";
 import { getPublicTeam } from "@/lib/team/queries";
+import { getLandingFilm } from "@/lib/site/queries";
 import { getPublicAppUrl, SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -12,7 +13,10 @@ export const metadata: Metadata = {
 export default async function Page() {
   // Signed out, the page says photo, name and role — and sends nothing more:
   // the responsibilities never leave the server for this route.
-  const members = (await getPublicTeam()).map((m) => ({ ...m, focus: [], quote: "", responsibilities: [], email: null }));
+  const [team, { film }] = await Promise.all([getPublicTeam(), getLandingFilm()]);
+  const members = team.map((m) => ({ ...m, focus: [], quote: "", responsibilities: [], email: null }));
+  // the team at work plays behind the introduction; the closing shot behind the ask — the same clips the front page uses
+  const footage = { team: film.extras.team, closing: film.extras.closing, pillars: [film.tiles["pillar:people"] ?? "", film.tiles["pillar:systems"] ?? "", film.tiles["pillar:software"] ?? ""] };
   const base = getPublicAppUrl();
   const jsonLd = {
     "@context": "https://schema.org",
@@ -31,7 +35,7 @@ export default async function Page() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
-      <TeamPage members={members} />
+      <TeamPage members={members} footage={footage} />
     </>
   );
 }

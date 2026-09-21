@@ -15,6 +15,7 @@
 	import FinalCta from '$lib/components/marketing/FinalCta.svelte';
 	import Testimonials from '$lib/components/marketing/Testimonials.svelte';
 	import Ticker from '$lib/components/marketing/Ticker.svelte';
+	import WhyUs from '$lib/components/marketing/WhyUs.svelte';
 	import { FAQ, SITE } from '$lib/content/site';
 	import { jsonLd } from '$lib/seo/jsonld';
 	import { setContext } from 'svelte';
@@ -54,6 +55,7 @@
 <Industries />
 <Proof />
 <Testimonials />
+<WhyUs />
 <PlatformDemo />
 <Collective members={data.members} teamSrc={data.extras.team} />
 <ThirtyDays />

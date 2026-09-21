@@ -128,7 +128,7 @@ export function TeamTile({ member, compact = false, variant = "full", index = 0,
       <motion.div aria-hidden className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100" style={{ background: sheen }} />
 
       <div className={cn("relative flex flex-1 flex-col", variant === "public" ? "px-4 pb-5" : "px-5 pb-5")}>
-        <div aria-hidden className="pointer-events-none absolute -bottom-20 left-1/2 h-44 w-44 -translate-x-1/2 rounded-full opacity-20 blur-3xl transition-opacity duration-500 group-hover:opacity-50" style={{ background: hue }} />
+        <div aria-hidden className="pointer-events-none absolute -bottom-24 left-1/2 h-56 w-56 -translate-x-1/2 rounded-full opacity-25 transition-opacity duration-500 group-hover:opacity-60" style={{ background: `radial-gradient(closest-side, ${hue}, transparent 70%)` }} />
         {/* the craft's motif, faint in the corner, brighter on hover */}
         <RoleMotif department={member.department} className={cn("pointer-events-none absolute -bottom-3 -right-3 h-24 w-24 opacity-[0.14] transition-opacity duration-500 group-hover:opacity-40", variant === "public" && "h-20 w-20")} />
         <Plate>

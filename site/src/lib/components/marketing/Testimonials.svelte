@@ -30,7 +30,7 @@
 				<span aria-hidden="true" class="voice-serif absolute right-6 top-2 text-[96px] leading-none text-accent/20">“</span>
 				<blockquote class="voice-serif relative text-[21px] leading-snug text-ink">{t.quote}</blockquote>
 				<figcaption class="relative mt-auto flex items-center gap-3 pt-7">
-					<span class="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-line bg-bg font-mono text-[13px] font-bold text-accent">{t.name.split(' ').map((w) => w[0]).join('').slice(0, 2)}</span>
+					{#if t.photo}<img src={t.photo} alt="" width="44" height="44" loading="lazy" class="h-11 w-11 shrink-0 rounded-full border border-line object-cover" />{:else}<span class="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-line bg-bg font-mono text-[13px] font-bold text-accent">{t.name.split(' ').map((w) => w[0]).join('').slice(0, 2)}</span>{/if}
 					<span><span class="block text-[14.5px] font-semibold text-ink">{t.name}</span><span class="label-mono mt-0.5 block text-ink-3">{t.role}</span></span>
 				</figcaption>
 			</figure>

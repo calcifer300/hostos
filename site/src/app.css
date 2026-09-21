@@ -277,6 +277,8 @@
 	.section-bg::before,
 	.section-bg::after,
 	.scroll-in,
+	[class*="title-"],
+	.ticker,
 	.hero-stage,
 	.section-bg video,
 	.ticker-track,
@@ -352,18 +354,49 @@ main > .ticker {
 		from { transform: scale(1.18) translateY(-7%); }
 		to { transform: scale(1.18) translateY(7%); }
 	}
-	.ticker-track {
+	/* the band slides on its own; the scroll pulls it a little further */
+	.ticker {
 		animation: ticker-drag linear both;
 		animation-timeline: view();
 	}
 	@keyframes ticker-drag {
-		from { transform: translateX(0); }
-		to { transform: translateX(-28%); }
+		from { transform: translateX(4%); }
+		to { transform: translateX(-4%); }
 	}
+	/* one entrance per section title, re-run on every pass because the scroll drives it */
+	.title-rise, .title-left, .title-right, .title-zoom, .title-unclip, .title-focus, .title-flip, .title-track, .title-drop, .title-skew, .title-swing, .title-tilt {
+		animation-timing-function: linear;
+		animation-fill-mode: both;
+		animation-timeline: view();
+		animation-range: entry 0% entry 75%;
+	}
+	.title-rise { animation-name: title-rise; }
+	.title-left { animation-name: title-left; }
+	.title-right { animation-name: title-right; }
+	.title-zoom { animation-name: title-zoom; }
+	.title-unclip { animation-name: title-unclip; }
+	.title-focus { animation-name: title-focus; }
+	.title-flip { animation-name: title-flip; transform-origin: 50% 100%; }
+	.title-track { animation-name: title-track; }
+	.title-drop { animation-name: title-drop; }
+	.title-skew { animation-name: title-skew; }
+	.title-swing { animation-name: title-swing; transform-origin: 0 50%; }
+	.title-tilt { animation-name: title-tilt; transform-origin: 50% 100%; }
+	@keyframes title-rise { from { opacity: 0; transform: translateY(60px); } to { opacity: 1; transform: none; } }
+	@keyframes title-left { from { opacity: 0; transform: translateX(-80px); } to { opacity: 1; transform: none; } }
+	@keyframes title-right { from { opacity: 0; transform: translateX(80px); } to { opacity: 1; transform: none; } }
+	@keyframes title-zoom { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: none; } }
+	@keyframes title-unclip { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+	@keyframes title-focus { from { opacity: 0; filter: blur(14px); transform: scale(1.06); } to { opacity: 1; filter: blur(0); transform: none; } }
+	@keyframes title-flip { from { opacity: 0; transform: perspective(900px) rotateX(70deg); } to { opacity: 1; transform: none; } }
+	@keyframes title-track { from { opacity: 0; letter-spacing: 0.12em; } to { opacity: 1; letter-spacing: -0.03em; } }
+	@keyframes title-drop { from { opacity: 0; transform: translateY(-50px); } to { opacity: 1; transform: none; } }
+	@keyframes title-skew { from { opacity: 0; transform: skewY(6deg) translateY(40px); } to { opacity: 1; transform: none; } }
+	@keyframes title-tilt { from { opacity: 0; transform: rotate(-3deg) scale(0.94) translateY(30px); } to { opacity: 1; transform: none; } }
+	@keyframes title-swing { from { opacity: 0; transform: perspective(900px) rotateY(-40deg); } to { opacity: 1; transform: none; } }
 }
-@supports not (animation-timeline: view()) {
-	.ticker-track { animation: marquee 40s linear infinite; }
-}
+.ticker-track { animation: marquee 36s linear infinite; }
+.ticker:hover .ticker-track { animation-play-state: paused; }
 /* the laurels breathe once as they arrive */
 .laurel svg { transition: transform 0.6s var(--ease-out-expo); }
 .laurel:hover svg:first-child { transform: rotate(-8deg); }
@@ -463,10 +496,14 @@ video.lazy.dim.is-playing {
 }
 .headline em,
 .display-1 em {
-	font-family: var(--font-serif);
-	font-style: italic;
-	font-weight: 400;
-	letter-spacing: -0.01em;
+	font-family: var(--font-display);
+	font-style: normal;
+	font-weight: 800;
+	letter-spacing: -0.02em;
+	background: linear-gradient(92deg, var(--color-accent), var(--color-platform));
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
 }
 .plate > span > em {
 	display: inline;

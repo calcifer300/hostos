@@ -10,6 +10,7 @@ import { CHANNELS, TEAM_POINTS, TEAM_PROMISES } from "@/components/marketing/dat
 import { TeamPulse } from "@/components/marketing/team-pulse";
 import { MemberPhoto } from "@/components/marketing/team-portrait";
 import { MEET_EVERYONE, TeamTiles } from "@/components/marketing/team-tiles";
+import { Footage } from "@/components/marketing/footage";
 import { FounderSeal } from "@/components/marketing/team-motifs";
 import { isFounderProfile, shortName, type TeamProfile } from "@/lib/team/profiles";
 import { routes } from "@/lib/routes";
@@ -44,12 +45,14 @@ function Faces({ members }: { members: TeamProfile[] }) {
 }
 
 /** /team — the virtual-assistance and support team, and the standards behind it. */
-export function TeamPage({ members }: { members: TeamProfile[] }) {
+export function TeamPage({ members, footage }: { members: TeamProfile[]; footage?: { team: string; closing: string; pillars: string[] } }) {
   return (
     <div className="no-ambient">
       <section className="relative overflow-hidden px-6 pt-36 pb-16 md:pt-44 md:pb-20">
+        {/* the team at work, far behind the words; a soft light, drawn without a blur filter (blurred layers ghost on some GPUs) */}
+        {footage?.team && <div aria-hidden className="absolute inset-0 -z-20 [mask-image:radial-gradient(ellipse_75%_70%_at_50%_40%,#000_25%,transparent_100%)]"><Footage src={footage.team} dim={0.3} /></div>}
         <div aria-hidden className="bg-grid absolute inset-0 -z-10" />
-        <div aria-hidden className="absolute left-1/2 top-0 -z-10 h-[420px] w-[820px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,var(--accent-glow),transparent)] blur-3xl" />
+        <div aria-hidden className="absolute left-1/2 top-0 -z-10 h-[520px] w-[1100px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,var(--accent-glow),transparent_70%)]" />
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: EASE }} className="mx-auto max-w-3xl text-center">
           <p className="mb-4 text-[11.5px] font-semibold uppercase tracking-[0.14em] text-accent">Our team</p>
           <h1 className="text-balance text-[38px] font-semibold leading-[1.05] tracking-[-0.03em] md:text-[56px]">
@@ -64,7 +67,8 @@ export function TeamPage({ members }: { members: TeamProfile[] }) {
       </section>
 
       {/* The roster: the pulse of the collective, then one tile per person — tilt, sheen, spotlight — in the same language as the vertical chooser. */}
-      <section id="roles" className="scroll-mt-24 px-6 pb-16 md:pb-24">
+      <section id="roles" className="relative scroll-mt-24 px-6 pb-16 md:pb-24">
+        {footage?.pillars?.[1] && <div aria-hidden className="absolute inset-0 -z-20 [mask-image:radial-gradient(ellipse_70%_60%_at_50%_30%,#000_20%,transparent_100%)]"><Footage src={footage.pillars[1]} dim={0.22} /></div>}
         <div className="mx-auto max-w-7xl">
           <SectionHeading
             eyebrow="Meet the team"
@@ -139,6 +143,7 @@ export function TeamPage({ members }: { members: TeamProfile[] }) {
 
       <section className="px-6 pb-20 md:pb-28">
         <Reveal className="gradient-border relative mx-auto max-w-5xl overflow-hidden rounded-[2rem] border border-border bg-card p-10 text-center shadow-[var(--shadow-elevated)] md:p-14">
+          {footage?.closing && <Footage src={footage.closing} dim={0.26} className="-z-10 [mask-image:radial-gradient(ellipse_at_center,#000_20%,transparent_80%)]" />}
           <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(60%_80%_at_50%_0%,var(--accent-glow),transparent_70%)]" />
           <h2 className="text-balance text-[28px] font-semibold tracking-[-0.025em] md:text-[38px]">Ready to work with a real team?</h2>
           <p className="mx-auto mt-4 max-w-xl text-[15.5px] leading-relaxed text-muted-foreground">Let&rsquo;s talk about how our trained professionals can support your business.</p>

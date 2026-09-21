@@ -7,7 +7,7 @@ import { Clapperboard, Loader2, RotateCcw, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input, Label } from "@/components/ui/input";
-import { saveLandingFilm, signFilmUpload } from "@/lib/actions/site";
+import { saveLandingFilm, signFilmUpload, uploadSiteImage } from "@/lib/actions/site";
 import { DEFAULT_FILM, isFilmSrc, SECTION_SLOTS, TILE_SLOTS, type FilmChapter, type LandingFilm } from "@/lib/site/film";
 import { cn } from "@/lib/utils";
 
@@ -117,14 +117,19 @@ export function FilmEditor({ film: initial, fromDatabase }: { film: LandingFilm;
           <p className="mt-1 text-[12px] text-muted-foreground">What owners said, in their words, and the figures on the laurels above them. Keep it true — this is the page people check.</p>
           <div className="mt-4 space-y-3">
             {film.testimonials.map((t, i) => (
-              <div key={i} className="grid grid-cols-1 gap-2 rounded-xl border border-border p-3 md:grid-cols-[1fr_180px_180px_auto]">
+              <div key={i} className="grid grid-cols-1 gap-2 rounded-xl border border-border p-3 md:grid-cols-[auto_1fr_160px_160px_auto]">
+                <label className="relative block h-11 w-11 shrink-0 cursor-pointer overflow-hidden rounded-full border border-border bg-surface" title="Their photo (paste a link below or drop a file)">
+                  {t.photo && <img src={t.photo} alt="" className="h-full w-full object-cover" />}
+                  <input type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" onChange={async (e) => { const file = e.target.files?.[0]; if (!file) return; const fd = new FormData(); fd.append("file", file); fd.append("slug", `face-${i}`); const r = await uploadSiteImage(fd); if (!r.ok || !r.url) return void toast.error(r.error ?? "Upload failed."); setFilm((f) => ({ ...f, testimonials: f.testimonials.map((x, k) => (k === i ? { ...x, photo: r.url! } : x)) })); setDirty(true); }} />
+                </label>
                 <Input aria-label="Quote" value={t.quote} onChange={(e) => { setFilm((f) => ({ ...f, testimonials: f.testimonials.map((x, k) => (k === i ? { ...x, quote: e.target.value } : x)) })); setDirty(true); }} placeholder="What they said" />
                 <Input aria-label="Name" value={t.name} onChange={(e) => { setFilm((f) => ({ ...f, testimonials: f.testimonials.map((x, k) => (k === i ? { ...x, name: e.target.value } : x)) })); setDirty(true); }} placeholder="Name" />
                 <Input aria-label="Role" value={t.role} onChange={(e) => { setFilm((f) => ({ ...f, testimonials: f.testimonials.map((x, k) => (k === i ? { ...x, role: e.target.value } : x)) })); setDirty(true); }} placeholder="Role · business" />
                 <Button variant="ghost" size="sm" onClick={() => { setFilm((f) => ({ ...f, testimonials: f.testimonials.filter((_, k) => k !== i) })); setDirty(true); }}>Remove</Button>
+                <Input aria-label="Photo link" value={t.photo} onChange={(e) => { setFilm((f) => ({ ...f, testimonials: f.testimonials.map((x, k) => (k === i ? { ...x, photo: e.target.value } : x)) })); setDirty(true); }} placeholder="Photo link (an upload, a file on the site, or images.pexels.com)" className="font-mono text-[12px] md:col-span-5" />
               </div>
             ))}
-            {film.testimonials.length < 8 && <Button variant="ghost" size="sm" onClick={() => { setFilm((f) => ({ ...f, testimonials: [...f.testimonials, { quote: "", name: "", role: "" }] })); setDirty(true); }}>Add a testimonial</Button>}
+            {film.testimonials.length < 8 && <Button variant="ghost" size="sm" onClick={() => { setFilm((f) => ({ ...f, testimonials: [...f.testimonials, { quote: "", name: "", role: "", photo: "" }] })); setDirty(true); }}>Add a testimonial</Button>}
           </div>
           <div className="mt-5 grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
             {film.laurels.map((l, i) => (
@@ -145,14 +150,19 @@ export function FilmEditor({ film: initial, fromDatabase }: { film: LandingFilm;
           <p className="mt-1 text-[12px] text-muted-foreground">What owners said, in their words, and the figures on the laurels above them. Keep it true — this is the page people check.</p>
           <div className="mt-4 space-y-3">
             {film.testimonials.map((t, i) => (
-              <div key={i} className="grid grid-cols-1 gap-2 rounded-xl border border-border p-3 md:grid-cols-[1fr_180px_180px_auto]">
+              <div key={i} className="grid grid-cols-1 gap-2 rounded-xl border border-border p-3 md:grid-cols-[auto_1fr_160px_160px_auto]">
+                <label className="relative block h-11 w-11 shrink-0 cursor-pointer overflow-hidden rounded-full border border-border bg-surface" title="Their photo (paste a link below or drop a file)">
+                  {t.photo && <img src={t.photo} alt="" className="h-full w-full object-cover" />}
+                  <input type="file" accept="image/png,image/jpeg,image/webp" className="sr-only" onChange={async (e) => { const file = e.target.files?.[0]; if (!file) return; const fd = new FormData(); fd.append("file", file); fd.append("slug", `face-${i}`); const r = await uploadSiteImage(fd); if (!r.ok || !r.url) return void toast.error(r.error ?? "Upload failed."); setFilm((f) => ({ ...f, testimonials: f.testimonials.map((x, k) => (k === i ? { ...x, photo: r.url! } : x)) })); setDirty(true); }} />
+                </label>
                 <Input aria-label="Quote" value={t.quote} onChange={(e) => { setFilm((f) => ({ ...f, testimonials: f.testimonials.map((x, k) => (k === i ? { ...x, quote: e.target.value } : x)) })); setDirty(true); }} placeholder="What they said" />
                 <Input aria-label="Name" value={t.name} onChange={(e) => { setFilm((f) => ({ ...f, testimonials: f.testimonials.map((x, k) => (k === i ? { ...x, name: e.target.value } : x)) })); setDirty(true); }} placeholder="Name" />
                 <Input aria-label="Role" value={t.role} onChange={(e) => { setFilm((f) => ({ ...f, testimonials: f.testimonials.map((x, k) => (k === i ? { ...x, role: e.target.value } : x)) })); setDirty(true); }} placeholder="Role · business" />
                 <Button variant="ghost" size="sm" onClick={() => { setFilm((f) => ({ ...f, testimonials: f.testimonials.filter((_, k) => k !== i) })); setDirty(true); }}>Remove</Button>
+                <Input aria-label="Photo link" value={t.photo} onChange={(e) => { setFilm((f) => ({ ...f, testimonials: f.testimonials.map((x, k) => (k === i ? { ...x, photo: e.target.value } : x)) })); setDirty(true); }} placeholder="Photo link (an upload, a file on the site, or images.pexels.com)" className="font-mono text-[12px] md:col-span-5" />
               </div>
             ))}
-            {film.testimonials.length < 8 && <Button variant="ghost" size="sm" onClick={() => { setFilm((f) => ({ ...f, testimonials: [...f.testimonials, { quote: "", name: "", role: "" }] })); setDirty(true); }}>Add a testimonial</Button>}
+            {film.testimonials.length < 8 && <Button variant="ghost" size="sm" onClick={() => { setFilm((f) => ({ ...f, testimonials: [...f.testimonials, { quote: "", name: "", role: "", photo: "" }] })); setDirty(true); }}>Add a testimonial</Button>}
           </div>
           <div className="mt-5 grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
             {film.laurels.map((l, i) => (

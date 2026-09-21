@@ -29,5 +29,5 @@
 </Section>
 
 <style>
-	.card { --dim: 0.2; }
+	.card { --dim: 0.32; }
 </style>

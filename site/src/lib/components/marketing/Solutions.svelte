@@ -63,6 +63,6 @@
 </Section>
 
 <style>
-	.card { --dim: 0.28; }
+	.card { --dim: 0.38; }
 	.card:hover :global(video.is-playing) { opacity: 0.42; }
 </style>

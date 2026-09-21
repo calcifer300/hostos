@@ -417,7 +417,7 @@ video.lazy.dim {
 	mix-blend-mode: luminosity;
 }
 video.lazy.dim.is-playing {
-	opacity: var(--dim, 0.22);
+	opacity: var(--dim, 0.34);
 }
 /* every section's light: two slow blooms in the section's colour. Each is a small disc scaled up on the GPU
    (rasterised at a quarter of the section, never at full size), lit only while the section is near the screen. */
@@ -449,8 +449,8 @@ video.lazy.dim.is-playing {
 	content: '';
 }
 .section-bg video {
-	--dim: 0.1;
-	mask-image: radial-gradient(ellipse 75% 70% at 50% 45%, #000 20%, transparent 100%);
+	--dim: 0.26;
+	mask-image: radial-gradient(ellipse 80% 75% at 50% 45%, #000 30%, transparent 100%);
 }
 @keyframes bloom-a {
 	from { transform: translate3d(-10%, -6%, 0) scale(2.2); }

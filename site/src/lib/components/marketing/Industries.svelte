@@ -42,7 +42,7 @@
 		border-color: color-mix(in oklab, var(--hue) 55%, var(--color-line));
 	}
 	.industry {
-		--dim: 0.32;
+		--dim: 0.45;
 	}
 	.industry:hover :global(video.is-playing) {
 		opacity: 0.5;

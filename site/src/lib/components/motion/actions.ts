@@ -162,9 +162,9 @@ export function lazyVideo(video: HTMLVideoElement, opts: { src: string; always?:
 	return { destroy() { io.disconnect(); video.removeEventListener('playing', onPlay); } };
 }
 
-/** Marks an element `is-near` once it comes within a screen of the viewport, and keeps it: what is lit stays lit. */
+/** Marks an element `is-near` while it is within half a screen of the viewport: its light, its footage and its motifs run only then. */
 export function near(el: HTMLElement, margin = '40% 0px') {
-	const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { el.classList.add('is-near'); io.disconnect(); } }, { rootMargin: margin });
+	const io = new IntersectionObserver(([e]) => el.classList.toggle('is-near', e.isIntersecting), { rootMargin: margin });
 	io.observe(el);
 	return { destroy() { io.disconnect(); } };
 }

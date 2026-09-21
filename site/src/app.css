@@ -344,7 +344,7 @@ video.lazy.dim.is-playing {
 	opacity: var(--dim, 0.22);
 }
 /* every section's light: two slow blooms in the section's colour. Each is a small disc scaled up on the GPU
-   (rasterised at a quarter of the section, never at full size), lit only once the section is near the screen. */
+   (rasterised at a quarter of the section, never at full size), lit only while the section is near the screen. */
 .section-bg::before,
 .section-bg::after {
 	content: none;
@@ -456,6 +456,15 @@ video.lazy.dim.is-playing {
 @keyframes aurora {
 	from { background-position: 0% 0%; }
 	to { background-position: 100% 100%; }
+}
+/* nothing animates in a section until it is near the screen: an SVG transform or stroke animating off screen still costs a
+   style pass and a layout every frame, and a dozen of them held the first paint back on slow phones */
+section:not(.is-near) .motif *,
+section:not(.is-near) .draw *,
+section:not(.is-near) .spark *,
+section:not(.is-near) .cell,
+section:not(.is-near) .intro-scan {
+	animation-play-state: paused !important;
 }
 /* motifs: small animated drawings; transform-box keeps every rotation about the element itself */
 .motif * { transform-box: fill-box; transform-origin: center; }

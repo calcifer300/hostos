@@ -97,7 +97,7 @@ export default async function OpenGraphImage() {
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
-          <div style={{ display: "flex", fontSize: 72, fontWeight: 700, lineHeight: 1.02, letterSpacing: -3, maxWidth: 1040 }}>Run the business. <span style={{ color: "#2c3ef3", marginLeft: 16 }}>We’ll run the operations.</span></div>
+          <div style={{ display: "flex", flexDirection: "column", fontSize: 66, fontWeight: 700, lineHeight: 1.04, letterSpacing: -2.5 }}><span>Run the business.</span><span style={{ color: "#2c3ef3" }}>We’ll run the operations.</span></div>
           <div style={{ fontSize: 27, color: "#3a4460", lineHeight: 1.4, maxWidth: 980 }}>
             A trained team, written procedures and one live board — answering your guests, watching your tablets, filing your claims, chasing your estimates.
           </div>

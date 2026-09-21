@@ -271,7 +271,7 @@ export const LAURELS = [
 	},
 	{
 		value: "5+ yrs",
-		label: "BPO experience per operator"
+		label: "VA & BPO experience per operator · trained by the Founder"
 	}
 ];
 export const VOICES = { eyebrow: 'What owners say', title: 'In their *own words*.' };
@@ -282,7 +282,7 @@ export const RECOGNITION = {
 	marks: [
 		{ name: 'Web & app development', note: 'Full-stack, shipped and owned by you' },
 		{ name: 'Product & UI design', note: 'Interfaces owners read at 8 a.m.' },
-		{ name: 'World-class customer service', note: '5+ years BPO experience per operator' },
+		{ name: 'World-class customer service', note: '5+ yrs VA & BPO per operator · Founder-trained' },
 		{ name: 'B2B operations', note: 'Fleets, kitchens, field service, shops' },
 		{ name: 'Automation & AI', note: 'In the background, supervised, never the pitch' }
 	]
@@ -313,7 +313,7 @@ export const WHY = {
 	lede: 'Based in the Philippines, working US hours, for businesses in the US and wherever else the owner is.',
 	reasons: [
 		{ id: 'hours', name: 'Awake when your customers are', body: 'Manila is 13 hours ahead of Austin. Your night is our working day, so a guest message at 2 a.m. your time is answered live, not queued for the morning.' },
-		{ id: 'people', name: 'Senior operators, not a marketplace', body: 'Every operator has five or more years in customer operations, is on our payroll, trained on your procedures, and covered when they’re off. You get a team, not a freelancer.' },
+		{ id: 'people', name: 'Senior operators, not a marketplace', body: 'Every operator is a virtual assistant with five or more years in BPO and customer operations, personally trained by the Founder from day one, on our payroll, trained on your procedures, and covered when they’re off. You get a team, not a freelancer.' },
 		{ id: 'one', name: 'One team for people, systems and software', body: 'Most vendors sell one of the three. We run the operation, write it down, and build the board it runs on — so nothing falls between an agency, a SaaS and a VA firm.' },
 		{ id: 'value', name: 'US-grade service at Philippine cost', body: 'The Philippines is the customer-operations capital of the world: English-fluent, US-aligned, and trained for it. The savings buy the round-the-clock coverage most owners can’t afford locally.' },
 		{ id: 'own', name: 'You own everything', body: 'Your domain, workspace, data and code stay in your name. If we part ways, you keep all of it — including the map.' },

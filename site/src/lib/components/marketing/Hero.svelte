@@ -64,10 +64,10 @@
 		<!-- the laurels, in gold, under the paragraph -->
 		<ul class="arrive mx-auto mt-7 flex max-w-4xl flex-wrap items-stretch justify-center gap-2.5" style="--reveal-delay:440ms" aria-label="Figures">
 			{#each laurels as l, i}
-				<li class="laurel-gold flex items-center gap-1.5 rounded-full border border-[#d9b64a]/50 bg-[linear-gradient(180deg,#fff8e1,#f6e7b5)] px-3.5 py-2 shadow-[0_6px_18px_-10px_rgba(180,140,20,0.6)]" style={`--d:${i * 70}ms`}>
-					<svg viewBox="0 0 24 40" class="h-7 w-4 text-[#b8860b]" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M20 38C10 34 4 26 4 14M4 14c4 0 7 2 8 6M4 14c-1-4 0-8 2-12M6 22c3 0 6 2 7 6M9 30c3 0 5 1 7 4" /></svg>
-					<span class="text-center"><span class="crown block"><svg viewBox="0 0 24 24" class="mx-auto -mb-0.5 h-3 w-3 text-[#c9971c]" fill="currentColor" aria-hidden="true"><path d="M3 18h18l1-10-5.5 4L12 5l-4.5 7L2 8z" /></svg></span><span class="block font-mono text-[15px] font-bold leading-none text-[#5a4300]">{l.value}</span><span class="label-mono mt-0.5 block !text-[9.5px] text-[#8a6a10]">{l.label}</span></span>
-					<svg viewBox="0 0 24 40" class="h-7 w-4 -scale-x-100 text-[#b8860b]" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M20 38C10 34 4 26 4 14M4 14c4 0 7 2 8 6M4 14c-1-4 0-8 2-12M6 22c3 0 6 2 7 6M9 30c3 0 5 1 7 4" /></svg>
+				<li class={`laurel-gold shine ${i % 2 ? 'delay-1' : ''} flex items-center gap-1.5 rounded-full border border-[#d9b64a]/60 bg-[linear-gradient(135deg,#fff6d6_0%,#f3dc8a_45%,#e4bd45_100%)] px-3.5 py-2 shadow-[0_8px_22px_-10px_rgba(180,140,20,0.7)]`} style={`--d:${i * 70}ms`}>
+					<svg viewBox="0 0 24 40" class="h-7 w-4 text-[#9a6d00]" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M20 38C10 34 4 26 4 14M4 14c4 0 7 2 8 6M4 14c-1-4 0-8 2-12M6 22c3 0 6 2 7 6M9 30c3 0 5 1 7 4" /></svg>
+					<span class="text-center"><span class="crown block"><svg viewBox="0 0 24 24" class="mx-auto -mb-0.5 h-3.5 w-3.5 drop-shadow-[0_1px_1px_rgba(120,80,0,0.35)]" aria-hidden="true"><path class="gold-fill" d="M3 18h18l1-10-5.5 4L12 5l-4.5 7L2 8z" /></svg></span><span class="block font-mono text-[15px] font-bold leading-none text-[#5a4300]">{l.value}</span><span class="label-mono mt-0.5 block !text-[9.5px] text-[#8a6a10]">{l.label}</span></span>
+					<svg viewBox="0 0 24 40" class="h-7 w-4 -scale-x-100 text-[#9a6d00]" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M20 38C10 34 4 26 4 14M4 14c4 0 7 2 8 6M4 14c-1-4 0-8 2-12M6 22c3 0 6 2 7 6M9 30c3 0 5 1 7 4" /></svg>
 				</li>
 			{/each}
 		</ul>
@@ -79,7 +79,10 @@
 		<!-- the trust line: the faces of owners who said so, five stars, the count -->
 		<div class="arrive mx-auto mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-3 rounded-full border border-line bg-surface-2/80 px-5 py-3 backdrop-blur-sm" style="--reveal-delay:680ms" aria-label="Rated {copy.rating.value} {copy.rating.note}">
 			{#if faces.length}<span class="flex -space-x-2.5">{#each faces as f, i}<img src={f} alt="" width="32" height="32" loading="lazy" class="face h-8 w-8 rounded-full border-2 border-surface-2 object-cover" style={`--d:${i * 60}ms`} />{/each}</span>{/if}
-			<span class="flex items-center gap-1.5" aria-hidden="true">{#each [1, 2, 3, 4, 5] as s}<svg viewBox="0 0 20 20" class="star h-4 w-4" style={`--d:${s * 90}ms`} fill="#f5b301"><path d="M10 1.6l2.5 5.3 5.8.7-4.3 4 1.1 5.8L10 14.6l-5.1 2.8 1.1-5.8-4.3-4 5.8-.7z" /></svg>{/each}</span>
+			<span class="shine flex items-center gap-1.5 rounded-full px-1" aria-hidden="true">
+				<svg width="0" height="0" class="absolute"><defs><linearGradient id="gold-grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3b0" /><stop offset="0.35" stop-color="#f4c542" /><stop offset="0.65" stop-color="#d69e12" /><stop offset="1" stop-color="#fbe58a" /></linearGradient></defs></svg>
+				{#each [1, 2, 3, 4, 5] as s}<svg viewBox="0 0 20 20" class="star h-[18px] w-[18px] drop-shadow-[0_1px_1px_rgba(120,80,0,0.35)]" style={`--d:${s * 90}ms`}><path class="gold-fill" d="M10 1.6l2.5 5.3 5.8.7-4.3 4 1.1 5.8L10 14.6l-5.1 2.8 1.1-5.8-4.3-4 5.8-.7z" /></svg>{/each}
+			</span>
 			<span class="text-[14px] text-ink-2"><span class="font-mono font-bold text-ink">{copy.rating.value}</span> {copy.rating.note}<span class="mx-2 text-ink-3">·</span>{copy.rating.count}</span>
 		</div>
 		<!-- what is in it for them, in four figures -->

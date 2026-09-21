@@ -19,8 +19,8 @@
 	<div class="scroll-in relative mx-auto grid max-w-6xl grid-cols-1 items-end gap-6 md:grid-cols-[1fr_minmax(0,1.6fr)_1fr] md:gap-4">
 		<!-- iPhone -->
 		<div use:tilt={6} class="device phone mx-auto w-[210px] md:mx-0 md:justify-self-end">
-			<div class="tone-dark relative aspect-[9/19.5] w-full overflow-hidden rounded-[38px] border-[6px] border-[#1a1d27] bg-bg shadow-2">
-				<div class="absolute left-1/2 top-2 z-10 h-6 w-24 -translate-x-1/2 rounded-full bg-[#0b0d14]"></div>
+			<div class="relative aspect-[9/19.5] w-full overflow-hidden rounded-[38px] border-[6px] border-[#1a1d27] bg-surface-3 shadow-2">
+				<div class="absolute left-1/2 top-2 z-10 h-6 w-24 -translate-x-1/2 rounded-full bg-[#1a1d27]"></div>
 				<div class="px-4 pb-4 pt-10 text-[10px]">
 					<p class="label-mono text-ink-3">app.hostos · Today</p>
 					<p class="mt-2 text-[15px] font-semibold text-ink">Good morning, John</p>
@@ -39,16 +39,16 @@
 		</div>
 		<!-- MacBook -->
 		<div use:tilt={4} class="device mac w-full">
-			<div class="tone-dark relative aspect-[16/10] w-full overflow-hidden rounded-t-2xl border-[8px] border-b-0 border-[#1a1d27] bg-bg shadow-2">
+			<div class="relative aspect-[16/10] w-full overflow-hidden rounded-t-2xl border-[8px] border-b-0 border-[#1a1d27] bg-surface-3 shadow-2">
 				<div class="absolute inset-0 p-3 sm:p-4"><LiveBoard /></div>
 			</div>
 			<div class="mx-auto h-3 w-[104%] -translate-x-[2%] rounded-b-xl bg-[linear-gradient(180deg,#2a2e3b,#12141c)]"></div>
 		</div>
 		<!-- Windows laptop -->
 		<div use:tilt={6} class="device win mx-auto w-[260px] md:mx-0 md:justify-self-start">
-			<div class="tone-dark relative aspect-[16/10] w-full overflow-hidden rounded-t-xl border-[6px] border-b-0 border-[#1a1d27] bg-bg shadow-2">
-				{#if tiles['pillar:software']}<video class="lazy dim absolute inset-0 h-full w-full object-cover" style="--dim:0.7" muted loop playsinline preload="none" use:lazyVideo={{ src: tiles['pillar:software'], always: true }} aria-hidden="true"></video>{/if}
-				<div class="absolute inset-x-0 bottom-0 p-3 text-[10px]"><p class="label-mono text-ink-3">Butler · this morning</p><p class="mt-1 text-[12px] font-semibold text-ink">7 tasks raised · 5 follow-ups sent</p></div>
+			<div class="relative aspect-[16/10] w-full overflow-hidden rounded-t-xl border-[6px] border-b-0 border-[#1a1d27] bg-surface-3 shadow-2">
+				{#if tiles['pillar:software']}<video class="lazy dim absolute inset-0 h-full w-full object-cover" style="--dim:0.55" muted loop playsinline preload="none" use:lazyVideo={{ src: tiles['pillar:software'], always: true }} aria-hidden="true"></video>{/if}
+				<div class="absolute inset-x-0 bottom-0 bg-[linear-gradient(180deg,transparent,var(--color-surface-3))] p-3 text-[10px]"><p class="label-mono text-ink-3">Butler · this morning</p><p class="mt-1 text-[12px] font-semibold text-ink">7 tasks raised · 5 follow-ups sent</p></div>
 			</div>
 			<div class="h-2.5 w-[106%] -translate-x-[3%] rounded-b-lg bg-[linear-gradient(180deg,#2a2e3b,#12141c)]"></div>
 		</div>

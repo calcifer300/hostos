@@ -51,7 +51,7 @@
 </script>
 
 <Section id="film" eyebrow={FILM.eyebrow} title={FILM.title} lede={FILM.lede} wide voice="grotesk" align="center">
-	<div bind:this={root} use:reveal class="tone-dark overflow-hidden rounded-3xl border border-line shadow-2">
+	<div bind:this={root} use:reveal class="overflow-hidden rounded-3xl border border-line bg-surface-2 shadow-2">
 		<div class="grid lg:grid-cols-[1.35fr_1fr]">
 			<!-- footage -->
 			<div class="relative aspect-[16/10] bg-bg lg:aspect-auto lg:min-h-[520px]">

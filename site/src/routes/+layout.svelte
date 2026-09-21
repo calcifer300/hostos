@@ -18,10 +18,10 @@
 	<div class="flex flex-col items-center gap-4">
 		<svg class="mark" width="72" height="72" viewBox="0 0 64 64" fill="none">
 			<rect x="6" y="6" width="52" height="52" rx="15" stroke="#3B9CFF" stroke-width="3.25" pathLength="1" />
-			<path d="M18 46V36a14 14 0 0 1 28 0v5" stroke="#E6EBF5" stroke-width="3" stroke-linecap="round" pathLength="1" />
-			<path d="M23 50V36a9 9 0 0 1 18 0v8" stroke="#E6EBF5" stroke-width="3" stroke-linecap="round" pathLength="1" />
-			<path d="M27.5 47.5V36.5a4.5 4.5 0 0 1 9 0v9" stroke="#E6EBF5" stroke-width="3" stroke-linecap="round" pathLength="1" />
-			<path d="M32 40v13" stroke="#E6EBF5" stroke-width="3" stroke-linecap="round" pathLength="1" />
+			<path d="M14 44V30a18 18 0 0 1 36 0v8" stroke="#E6EBF5" stroke-width="3" stroke-linecap="round" pathLength="1" />
+			<path d="M20.5 50V30a11.5 11.5 0 0 1 23 0v12" stroke="#E6EBF5" stroke-width="3" stroke-linecap="round" pathLength="1" />
+			<path d="M26.5 46V30.5a5.5 5.5 0 0 1 11 0v13" stroke="#E6EBF5" stroke-width="3" stroke-linecap="round" pathLength="1" />
+			<path d="M32 36v17" stroke="#E6EBF5" stroke-width="3" stroke-linecap="round" pathLength="1" />
 		</svg>
 		<span class="word text-[22px] font-semibold tracking-tight text-ink">host<span class="text-gradient">OS</span></span>
 	</div>

@@ -24,10 +24,10 @@
 		<rect class="halo" x="6" y="6" width="52" height="52" rx="15" stroke="url(#{uid}-g)" stroke-width="3.25" opacity="0.35" />
 		<rect class="frame" x="6" y="6" width="52" height="52" rx="15" stroke="url(#{uid}-g)" stroke-width="3.25" pathLength="1" />
 		<g class="print" stroke="url(#{uid}-g)" stroke-width="3" stroke-linecap="round">
-			<path d="M18 46V36a14 14 0 0 1 28 0v5" pathLength="1" />
-			<path d="M23 50V36a9 9 0 0 1 18 0v8" pathLength="1" />
-			<path d="M27.5 47.5V36.5a4.5 4.5 0 0 1 9 0v9" pathLength="1" />
-			<path d="M32 40v13" pathLength="1" />
+			<path d="M14 44V30a18 18 0 0 1 36 0v8" pathLength="1" />
+			<path d="M20.5 50V30a11.5 11.5 0 0 1 23 0v12" pathLength="1" />
+			<path d="M26.5 46V30.5a5.5 5.5 0 0 1 11 0v13" pathLength="1" />
+			<path d="M32 36v17" pathLength="1" />
 		</g>
 		<g clip-path="url(#{uid}-c)"><rect class="sheen" x="-30" y="0" width="26" height="64" fill="url(#{uid}-s)" transform="skewX(-20)" /></g>
 	</svg>

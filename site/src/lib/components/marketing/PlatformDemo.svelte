@@ -30,7 +30,8 @@
 </script>
 
 <Section id="platform" eyebrow={PLATFORM.eyebrow} title={PLATFORM.title} lede={PLATFORM.lede} voice="grotesk" align="split">
-	<div use:reveal class="tone-dark relative overflow-hidden rounded-3xl border border-line shadow-2">
+	<div use:reveal class="relative overflow-hidden rounded-3xl border border-line bg-surface-2 shadow-2">
+		<div aria-hidden="true" class="macbar flex items-center gap-1.5 border-b border-line bg-surface-3/80 px-3 py-2"><span class="h-2.5 w-2.5 rounded-full bg-[#ff5f57]"></span><span class="h-2.5 w-2.5 rounded-full bg-[#febc2e]"></span><span class="h-2.5 w-2.5 rounded-full bg-[#28c840]"></span><span class="label-mono ml-3 !text-[9.5px] text-ink-3">app.hostos</span></div>
 		<div aria-hidden="true" class="intro-scan pointer-events-none absolute inset-x-0 z-10 h-px bg-[linear-gradient(90deg,transparent,var(--color-accent),transparent)] opacity-40"></div>
 		<div class="flex flex-wrap items-center justify-between gap-3 border-b border-line px-4 py-3">
 			<div class="flex items-center gap-2">

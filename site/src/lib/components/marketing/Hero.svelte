@@ -52,7 +52,10 @@
 	<div class="container-x text-center">
 		<!-- the mark, large: the brand greets before the words do -->
 		<div class="arrive hero-mark mx-auto mb-6 flex justify-center">
-			<Logo size={64} wordSize={38} class="gap-3.5" />
+			<div class="flex flex-col items-center">
+				<Logo size={64} wordSize={38} class="gap-3.5" />
+				<span class="collective-word mt-1.5 text-[11px] font-semibold uppercase tracking-[0.42em] text-ink-3" aria-hidden="true">Collective</span>
+			</div>
 		</div>
 		<p class="arrive label-mono mb-6 text-accent" style="--reveal-delay:60ms">{copy.hero.eyebrow}</p>
 		<h1 class="display-1 headline mx-auto max-w-5xl" aria-label={lines.map(plain).join(' ')}>

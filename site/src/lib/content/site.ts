@@ -24,6 +24,7 @@ export const NAV = [
 	{ href: '/#solutions', label: 'Solutions' },
 	{ href: '/#industries', label: 'Industries' },
 	{ href: '/#platform', label: 'Platform' },
+	{ href: '/#pricing', label: 'Pricing' },
 	{ href: '/#proof', label: 'Work' },
 	{ href: `${SITE.url}/team`, label: 'Team' },
 	{ href: '/#film', label: 'Watch it run' }
@@ -370,7 +371,8 @@ export const SECTIONS: Record<string, { clip: string; tint: string }> = {
 	},
 	devices: { clip: "", tint: "#3b9cff" },
 	collective: { clip: "", tint: "#8b7cff" },
-	voices: { clip: "", tint: "#3b9cff" }
+	voices: { clip: "", tint: "#3b9cff" },
+	pricing: { clip: "", tint: "#2c3ef3" }
 };
 
 export const FILM = {
@@ -422,7 +424,7 @@ export const FINAL = {
 
 export const FOOTER = {
 	columns: [
-		{ title: 'Solutions', links: [['Run', '/#solutions'], ['Build', '/#solutions'], ['Connect', '/#solutions'], ['Understand', '/#solutions']] },
+		{ title: 'Solutions', links: [['Run', '/#solutions'], ['Build', '/#solutions'], ['Connect', '/#solutions'], ['Understand', '/#solutions'], ['Pricing', '/#pricing']] },
 		{ title: 'Company', links: [['The Collective', `${SITE.url}/team`], ['About', `${SITE.url}/about`], ['Contact', '/#contact']] },
 		{ title: 'Platform', links: [['Open HostOS', SITE.app], ['Sign in', SITE.login], ['Install the app', `${SITE.url}/install`]] }
 	]

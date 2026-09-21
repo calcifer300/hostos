@@ -17,6 +17,7 @@
 	import Ticker from '$lib/components/marketing/Ticker.svelte';
 	import WhyUs from '$lib/components/marketing/WhyUs.svelte';
 	import Devices from '$lib/components/marketing/Devices.svelte';
+	import Pricing from '$lib/components/marketing/Pricing.svelte';
 	import { FAQ, SITE } from '$lib/content/site';
 	import { jsonLd } from '$lib/seo/jsonld';
 	import { setContext } from 'svelte';
@@ -70,6 +71,7 @@
 <Devices />
 <Collective members={data.members} teamSrc={data.extras.team} />
 <ThirtyDays />
+<Pricing />
 <Section id="faq" eyebrow={FAQ.eyebrow} title={FAQ.title} align="center" voice="serif">
 	<div class="mx-auto max-w-3xl"><Accordion items={faq} /></div>
 </Section>

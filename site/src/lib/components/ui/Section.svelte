@@ -44,7 +44,7 @@
 	const ledeText = $derived(over.lede || lede);
 	const look = $derived((id && (landing?.sections ?? LANDING_DEFAULTS.sections)[id]) || { clip: '', tint: '#3b9cff' });
 	// one entrance per section, so no two titles arrive the same way
-	const TITLE_MOTION: Record<string, string> = { problems: 'title-rise', how: 'title-left', film: 'title-zoom', 'before-after': 'title-unclip', solutions: 'title-right', industries: 'title-focus', proof: 'title-flip', voices: 'title-track', platform: 'title-swing', start: 'title-drop', faq: 'title-skew', why: 'title-tilt', devices: 'title-zoom', collective: 'title-rise' };
+	const TITLE_MOTION: Record<string, string> = { problems: 'title-rise', how: 'title-left', film: 'title-zoom', 'before-after': 'title-unclip', solutions: 'title-right', industries: 'title-focus', proof: 'title-flip', voices: 'title-track', platform: 'title-swing', start: 'title-drop', faq: 'title-skew', why: 'title-tilt', devices: 'title-zoom', collective: 'title-rise', pricing: 'title-focus' };
 	const titleMotion = $derived((id && TITLE_MOTION[id]) || 'title-rise');
 </script>
 

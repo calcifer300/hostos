@@ -24,6 +24,8 @@ export interface LandingFilm {
 	laurels: Laurel[];
 	copy: LandingCopy;
 	lists: LandingLists;
+	/** Empty = the site's built-in eight. */
+	services: ServiceRow[];
 }
 export interface Testimonial { quote: string; name: string; role: string; photo: string }
 /** The words the Founder can change without a deploy: the hero, every section's header, the trust line, how to reach him. */
@@ -45,6 +47,9 @@ export const LIST_SLOTS: { key: ListKey; label: string; cols: [string, string?, 
 	{ key: "steps", label: "The first thirty days · four steps", cols: ["Week", "Name", "Body"], max: 6 },
 	{ key: "beforeAfter", label: "Before and after · rows", cols: ["Label", "Before", "After"], max: 8 },
 ];
+/** A service on the pricing table. Custom work carries a quote, never a number. */
+export interface ServiceTier { name: string; price: string; period: string; note: string }
+export interface ServiceRow { id: string; name: string; blurb: string; stack: string[]; included: string[]; deliverables: string[]; ideal: string; timeline: string; model: "monthly" | "one-time" | "hourly" | "custom"; tiers: ServiceTier[]; support: string; why: string }
 export interface LandingCopy {
 	hero: { eyebrow: string; line1: string; line2: string; body: string };
 	sections: Record<string, { eyebrow: string; title: string; lede: string }>;
@@ -58,7 +63,7 @@ export interface SectionLook { clip: string; tint: string }
 
 /** The tiles and sections the site has, with the labels the editor shows. */
 export const TILE_SLOTS: { id: string; label: string }[] = [{"id":"industry:turo","label":"Turo & car rental"},{"id":"industry:doordash","label":"DoorDash & delivery"},{"id":"industry:hospitality","label":"Hospitality"},{"id":"industry:fleet","label":"Fleet operations"},{"id":"industry:property","label":"Property management"},{"id":"industry:services","label":"Professional & field services"},{"id":"industry:small","label":"Small businesses"},{"id":"industry:startups","label":"Growing startups"},{"id":"solution:va","label":"Virtual assistant solutions"},{"id":"solution:turo-ops","label":"Turo operations"},{"id":"solution:doordash-ops","label":"DoorDash operations"},{"id":"solution:consulting","label":"Business operations consulting"},{"id":"solution:webapps","label":"Custom web applications"},{"id":"solution:websites","label":"Website design & development"},{"id":"solution:crm","label":"CRM & internal tools"},{"id":"solution:dashboards","label":"Dashboard development"},{"id":"solution:automation","label":"Business process automation"},{"id":"solution:integrations","label":"API integrations"},{"id":"solution:workflow","label":"Workflow optimisation"},{"id":"solution:analytics","label":"Operational analytics"},{"id":"solution:bi","label":"Business intelligence"},{"id":"problem:1","label":"Problem 01 · the paused tablet"},{"id":"problem:2","label":"Problem 02 · the damaged car"},{"id":"problem:3","label":"Problem 03 · the unchased estimate"},{"id":"problem:4","label":"Problem 04 · the coming-soon site"},{"id":"problem:5","label":"Problem 05 · the process in one head"},{"id":"problem:6","label":"Problem 06 · the bank balance"},{"id":"pillar:people","label":"Pillar · People"},{"id":"pillar:systems","label":"Pillar · Systems"},{"id":"pillar:software","label":"Pillar · Software"},{"id":"week:1","label":"Week 1 · Map"},{"id":"week:2","label":"Week 2 · Set up"},{"id":"week:3","label":"Week 3 · Run alongside"},{"id":"week:4","label":"Week 4 · Hand you the board"},{"id":"proof:1","label":"Proof · claims"},{"id":"proof:2","label":"Proof · reply time"},{"id":"proof:3","label":"Proof · verticals"}];
-export const SECTION_SLOTS: { id: string; label: string }[] = [{"id":"problems","label":"The problems"},{"id":"how","label":"How HostOS works"},{"id":"film","label":"Watch it run"},{"id":"before-after","label":"Before and after"},{"id":"solutions","label":"Solutions"},{"id":"industries","label":"Industries"},{"id":"proof","label":"Proof"},{"id":"platform","label":"The platform"},{"id":"start","label":"The first thirty days"},{"id":"faq","label":"FAQ"},{"id":"why","label":"Why HostOS Collective"},{"id":"devices","label":"HostOS on every screen"},{"id":"collective","label":"The Collective"},{"id":"voices","label":"What owners say"}];
+export const SECTION_SLOTS: { id: string; label: string }[] = [{"id":"problems","label":"The problems"},{"id":"how","label":"How HostOS works"},{"id":"film","label":"Watch it run"},{"id":"before-after","label":"Before and after"},{"id":"solutions","label":"Solutions"},{"id":"industries","label":"Industries"},{"id":"proof","label":"Proof"},{"id":"platform","label":"The platform"},{"id":"start","label":"The first thirty days"},{"id":"faq","label":"FAQ"},{"id":"why","label":"Why HostOS Collective"},{"id":"devices","label":"HostOS on every screen"},{"id":"collective","label":"The Collective"},{"id":"voices","label":"What owners say"},{"id":"pricing","label":"Services & pricing"}];
 
 export const FILM_KEY = "landing_film";
 
@@ -77,8 +82,9 @@ export const DEFAULT_FILM: LandingFilm = {
 		contact: { facebookHandle: "@bimbeez96", facebookUrl: "https://www.facebook.com/bimbeez96", founderEmail: "johnbriones774@gmail.com" },
 	},
 	lists: { outcomes: [], problems: [], pillars: [], why: [], gains: [], recognition: [], faq: [], faces: [], industries: [], steps: [], beforeAfter: [] },
+	services: [],
 	laurels: [{"value":"98%","label":"client satisfaction"},{"value":"50+","label":"clients served"},{"value":"120+","label":"projects delivered"},{"value":"10+","label":"years in operations"},{"value":"5+ yrs","label":"VA & BPO experience per operator · trained by the Founder"}],
-	sections: { "problems": { clip: clip(8094279, 25), tint: "#ff375f" }, "how": { clip: clip(7413764, 24), tint: "#3b9cff" }, "film": { clip: "", tint: "#8b7cff" }, "before-after": { clip: clip(8064422, 30), tint: "#30d158" }, "solutions": { clip: "", tint: "#3b9cff" }, "industries": { clip: "", tint: "#ff9f0a" }, "proof": { clip: clip(6868699, 30), tint: "#40c8e0" }, "platform": { clip: clip(3986119, 25), tint: "#af52de" }, "start": { clip: clip(8266178, 25), tint: "#3b9cff" }, "faq": { clip: "", tint: "#8b7cff" }, "why": { clip: clip(8865706, 25), tint: "#ff9f0a" }, "devices": { clip: "", tint: "#3b9cff" }, "collective": { clip: "", tint: "#8b7cff" }, "voices": { clip: "", tint: "#3b9cff" } },
+	sections: { "problems": { clip: clip(8094279, 25), tint: "#ff375f" }, "how": { clip: clip(7413764, 24), tint: "#3b9cff" }, "film": { clip: "", tint: "#8b7cff" }, "before-after": { clip: clip(8064422, 30), tint: "#30d158" }, "solutions": { clip: "", tint: "#3b9cff" }, "industries": { clip: "", tint: "#ff9f0a" }, "proof": { clip: clip(6868699, 30), tint: "#40c8e0" }, "platform": { clip: clip(3986119, 25), tint: "#af52de" }, "start": { clip: clip(8266178, 25), tint: "#3b9cff" }, "faq": { clip: "", tint: "#8b7cff" }, "why": { clip: clip(8865706, 25), tint: "#ff9f0a" }, "devices": { clip: "", tint: "#3b9cff" }, "collective": { clip: "", tint: "#8b7cff" }, "voices": { clip: "", tint: "#3b9cff" }, "pricing": { clip: "", tint: "#2c3ef3" } },
 	chapters: [
 		{ id: "fleet", time: "07:40", name: "Fleet", line: "146 cars. Eleven going out before nine.", src: clip(4208203, 24), events: [{ t: "07:41", text: "Guest asks for an early pickup — answered in 1 min" }, { t: "07:52", text: "Model 3 · keys out · lockbox code sent" }, { t: "08:10", text: "Civic back · 12 photos · no damage" }] },
 		{ id: "kitchen", time: "11:30", name: "Kitchen", line: "Lunch rush on three delivery apps.", src: clip(8094279, 25), events: [{ t: "11:32", text: "Uber Eats store paused — reopened in 40 sec" }, { t: "11:48", text: "86 garlic rice · pulled from 3 apps" }, { t: "12:05", text: "Refund dispute filed with photos" }] },
@@ -150,5 +156,10 @@ export function normalizeFilm(raw: unknown): LandingFilm {
 		const rows = arr.slice(0, max).map((x) => { const o = obj(x); return { a: str(o.a, "", 600), b: str(o.b, "", 900), c: str(o.c, "", 900) }; }).filter((x) => x.a);
 		return [key, key === "faces" ? rows.filter((x) => isFaceSrc(x.a)) : rows];
 	})) as LandingLists;
-	return { hero: { src: isFilmSrc(heroSrc) ? heroSrc : DEFAULT_FILM.hero.src }, chapters, extras: { team: extra("team"), delivery: extra("delivery"), closing: extra("closing") }, tiles, sections, testimonials, laurels, copy, lists };
+	const strs = (v: unknown, n = 12) => (Array.isArray(v) ? v.filter((x): x is string => typeof x === "string" && x.trim() !== "").map((x) => x.slice(0, 160)).slice(0, n) : []);
+	const services: ServiceRow[] = (Array.isArray(r.services) ? (r.services as unknown[]) : []).slice(0, 12).map((x) => { const s = obj(x); const model = (["monthly", "one-time", "hourly", "custom"] as const).find((m) => m === s.model) ?? "custom"; return {
+		id: str(s.id, "", 32).replace(/[^a-z0-9-]/gi, "").toLowerCase(), name: str(s.name, "", 60), blurb: str(s.blurb, "", 240), stack: strs(s.stack), included: strs(s.included), deliverables: strs(s.deliverables, 8), ideal: str(s.ideal, "", 160), timeline: str(s.timeline, "", 60), model,
+		tiers: (Array.isArray(s.tiers) ? s.tiers : []).slice(0, 4).map((t) => { const q = obj(t); return { name: str(q.name, "", 40), price: str(q.price, "", 24), period: str(q.period, "", 16), note: str(q.note, "", 200) }; }).filter((t) => t.name && t.price),
+		support: str(s.support, "", 160), why: str(s.why, "", 300) }; }).filter((s) => s.id && s.name);
+	return { hero: { src: isFilmSrc(heroSrc) ? heroSrc : DEFAULT_FILM.hero.src }, chapters, extras: { team: extra("team"), delivery: extra("delivery"), closing: extra("closing") }, tiles, sections, testimonials, laurels, copy, lists, services };
 }

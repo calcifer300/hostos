@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input, Label } from "@/components/ui/input";
 import { saveLandingFilm, signFilmUpload, uploadSiteImage } from "@/lib/actions/site";
-import { DEFAULT_FILM, isFilmSrc, LIST_SLOTS, SECTION_SLOTS, TILE_SLOTS, type FilmChapter, type LandingFilm, type ListKey } from "@/lib/site/film";
+import { DEFAULT_FILM, isFilmSrc, LIST_SLOTS, SECTION_SLOTS, TILE_SLOTS, type FilmChapter, type LandingFilm, type ListKey, type ServiceRow } from "@/lib/site/film";
+import { SITE_SERVICES } from "@/lib/site/services-default";
 import { cn } from "@/lib/utils";
 
 /**
@@ -169,6 +170,56 @@ export function FilmEditor({ film: initial, fromDatabase }: { film: LandingFilm;
                 </div>
               );
             })}
+          </div>
+        </details>
+      </Card>
+
+      <Card padding="md">
+        <details>
+          <summary className="cursor-pointer text-[12.5px] font-semibold uppercase tracking-wide text-muted-foreground">Services & pricing · {(film.services.length || SITE_SERVICES.length)} services</summary>
+          <p className="mt-1 text-[12px] text-muted-foreground">Prices in USD. Write “Custom quote” as a price for anything scoped per project. Lists are one item per line. Empty = the site’s built-in eight; “Start from the built-in set” copies them here to edit.</p>
+          {film.services.length === 0 && <Button variant="ghost" size="sm" className="mt-3" onClick={() => { setFilm((f) => ({ ...f, services: SITE_SERVICES })); setDirty(true); }}>Start from the built-in set</Button>}
+          <div className="mt-4 space-y-4">
+            {film.services.map((s, i) => {
+              const set = (patch: Partial<ServiceRow>) => { setFilm((f) => ({ ...f, services: f.services.map((x, k) => (k === i ? { ...x, ...patch } : x)) })); setDirty(true); };
+              const lines = (v: string[]) => v.join("\n");
+              const fromLines = (v: string) => v.split("\n").map((l) => l.trim()).filter(Boolean);
+              return (
+                <div key={i} className="rounded-xl border border-border p-3">
+                  <div className="grid grid-cols-1 gap-2 md:grid-cols-[120px_1fr_140px_auto]">
+                    <Input aria-label="Id" value={s.id} onChange={(e) => set({ id: e.target.value })} placeholder="id" className="font-mono text-[12px]" />
+                    <Input aria-label="Name" value={s.name} onChange={(e) => set({ name: e.target.value })} placeholder="Service name" />
+                    <select aria-label="Pricing model" value={s.model} onChange={(e) => set({ model: e.target.value as ServiceRow["model"] })} className="rounded-md border border-border bg-background px-2 text-[13px]"><option value="monthly">Monthly</option><option value="one-time">One-time</option><option value="hourly">Hourly</option><option value="custom">Custom quote</option></select>
+                    <Button variant="ghost" size="sm" onClick={() => { setFilm((f) => ({ ...f, services: f.services.filter((_, k) => k !== i) })); setDirty(true); }}>Remove</Button>
+                  </div>
+                  <Input aria-label="Short description" value={s.blurb} onChange={(e) => set({ blurb: e.target.value })} placeholder="One or two sentences" className="mt-2" />
+                  <div className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-3">
+                    <textarea aria-label="Technologies, one per line" value={lines(s.stack)} onChange={(e) => set({ stack: fromLines(e.target.value) })} rows={4} placeholder={"Technologies\none per line"} className="rounded-md border border-border bg-background px-2 py-1.5 font-mono text-[12px]" />
+                    <textarea aria-label="What is included, one per line" value={lines(s.included)} onChange={(e) => set({ included: fromLines(e.target.value) })} rows={4} placeholder={"What’s included\none per line"} className="rounded-md border border-border bg-background px-2 py-1.5 text-[12.5px]" />
+                    <textarea aria-label="Deliverables, one per line" value={lines(s.deliverables)} onChange={(e) => set({ deliverables: fromLines(e.target.value) })} rows={4} placeholder={"Deliverables\none per line"} className="rounded-md border border-border bg-background px-2 py-1.5 text-[12.5px]" />
+                  </div>
+                  <div className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-2">
+                    <Input aria-label="Ideal client" value={s.ideal} onChange={(e) => set({ ideal: e.target.value })} placeholder="Ideal client" />
+                    <Input aria-label="Timeline" value={s.timeline} onChange={(e) => set({ timeline: e.target.value })} placeholder="Timeline" />
+                    <Input aria-label="Support" value={s.support} onChange={(e) => set({ support: e.target.value })} placeholder="Optional monthly support" />
+                    <Input aria-label="Why this price" value={s.why} onChange={(e) => set({ why: e.target.value })} placeholder="Why this price" />
+                  </div>
+                  <div className="mt-2 space-y-1.5">
+                    {s.tiers.map((t, j) => (
+                      <div key={j} className="grid grid-cols-1 gap-1.5 md:grid-cols-[140px_110px_80px_1fr_auto]">
+                        <Input aria-label="Tier name" value={t.name} onChange={(e) => set({ tiers: s.tiers.map((q, k) => (k === j ? { ...q, name: e.target.value } : q)) })} placeholder="Tier" />
+                        <Input aria-label="Price" value={t.price} onChange={(e) => set({ tiers: s.tiers.map((q, k) => (k === j ? { ...q, price: e.target.value } : q)) })} placeholder="$1,490 or Custom quote" className="font-mono" />
+                        <Input aria-label="Period" value={t.period} onChange={(e) => set({ tiers: s.tiers.map((q, k) => (k === j ? { ...q, period: e.target.value } : q)) })} placeholder="/mo" className="font-mono" />
+                        <Input aria-label="Tier note" value={t.note} onChange={(e) => set({ tiers: s.tiers.map((q, k) => (k === j ? { ...q, note: e.target.value } : q)) })} placeholder="What the tier includes" />
+                        <Button variant="ghost" size="sm" onClick={() => set({ tiers: s.tiers.filter((_, k) => k !== j) })}>×</Button>
+                      </div>
+                    ))}
+                    {s.tiers.length < 4 && <Button variant="ghost" size="sm" onClick={() => set({ tiers: [...s.tiers, { name: "", price: "", period: "", note: "" }] })}>Add a tier</Button>}
+                  </div>
+                </div>
+              );
+            })}
+            {film.services.length > 0 && film.services.length < 12 && <Button variant="ghost" size="sm" onClick={() => { setFilm((f) => ({ ...f, services: [...f.services, { id: "", name: "", blurb: "", stack: [], included: [], deliverables: [], ideal: "", timeline: "", model: "custom", tiers: [{ name: "Custom quote", price: "Custom quote", period: "", note: "" }], support: "", why: "" }] })); setDirty(true); }}>Add a service</Button>}
           </div>
         </details>
       </Card>

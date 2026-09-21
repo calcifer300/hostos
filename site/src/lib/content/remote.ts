@@ -6,6 +6,7 @@
  * the front door.
  */
 import { CONTACT, FILM, HERO, LAURELS, RATING, SECTIONS, TESTIMONIALS, TILES, VIDEO } from '$lib/content/site';
+import { SERVICES, type Service } from '$lib/content/pricing';
 import { normalizeTeam, TEAM, type Member } from '$lib/content/team';
 
 export const APP_ORIGIN = 'https://hostos-ten.vercel.app';
@@ -22,6 +23,8 @@ export interface Landing {
 	laurels: { value: string; label: string }[];
 	copy: LandingCopy;
 	lists: LandingLists;
+	/** Services and prices; empty = the built-in set. */
+	services: Service[];
 }
 export interface ListRow { a: string; b: string; c: string }
 export type ListKey = 'outcomes' | 'problems' | 'pillars' | 'why' | 'gains' | 'recognition' | 'faq' | 'faces' | 'industries' | 'steps' | 'beforeAfter';
@@ -42,7 +45,7 @@ export const COPY_DEFAULTS: LandingCopy = {
 	contact: { facebookHandle: CONTACT.facebook.handle, facebookUrl: CONTACT.facebook.url, founderEmail: CONTACT.founderEmail }
 };
 /** The built-in landing, for the sections that render without a page load behind them. */
-export const LANDING_DEFAULTS: Pick<Landing, 'tiles' | 'sections' | 'extras' | 'testimonials' | 'laurels' | 'copy' | 'lists'> = { tiles: TILES, sections: SECTIONS, extras: { team: VIDEO.team, delivery: VIDEO.delivery, closing: VIDEO.closing }, testimonials: TESTIMONIALS, laurels: LAURELS, copy: COPY_DEFAULTS, lists: EMPTY_LISTS };
+export const LANDING_DEFAULTS: Pick<Landing, 'tiles' | 'sections' | 'extras' | 'testimonials' | 'laurels' | 'copy' | 'lists' | 'services'> = { tiles: TILES, sections: SECTIONS, extras: { team: VIDEO.team, delivery: VIDEO.delivery, closing: VIDEO.closing }, testimonials: TESTIMONIALS, laurels: LAURELS, copy: COPY_DEFAULTS, lists: EMPTY_LISTS, services: SERVICES };
 
 const str = (v: unknown, fb: string) => (typeof v === 'string' && v.trim() ? v : fb);
 const src = (v: unknown, fb: string) => (typeof v === 'string' && /^(\/|https:\/\/[a-z0-9-]+\.supabase\.co\/storage\/v1\/object\/public\/|https:\/\/videos\.pexels\.com\/)/i.test(v) ? v : fb);
@@ -86,6 +89,16 @@ export async function loadLanding(fetchFn: typeof fetch): Promise<Landing> {
 		laurels: Array.isArray(film?.laurels)
 			? (film!.laurels as unknown[]).map((l) => { const x = (l && typeof l === 'object' ? l : {}) as Record<string, unknown>; return { value: str(x.value, ''), label: str(x.label, '') }; }).filter((l) => l.value && l.label).slice(0, 6)
 			: LAURELS,
+		services: (() => {
+			const arr = Array.isArray(film?.services) ? (film!.services as unknown[]) : [];
+			const o = (v: unknown) => (v && typeof v === 'object' ? v : {}) as Record<string, unknown>;
+			const strs = (v: unknown) => (Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string' && x.trim() !== '').slice(0, 12) : []);
+			const out: Service[] = arr.slice(0, 12).map((x) => { const s = o(x); const model = ['monthly', 'one-time', 'hourly', 'custom'].includes(String(s.model)) ? (s.model as Service['model']) : 'custom'; return {
+				id: str(s.id, '').replace(/[^a-z0-9-]/gi, '').toLowerCase(), name: str(s.name, ''), blurb: str(s.blurb, ''), stack: strs(s.stack), included: strs(s.included), deliverables: strs(s.deliverables), ideal: str(s.ideal, ''), timeline: str(s.timeline, ''), model,
+				tiers: (Array.isArray(s.tiers) ? s.tiers : []).slice(0, 4).map((t) => { const q = o(t); return { name: str(q.name, ''), price: str(q.price, ''), period: str(q.period, ''), note: str(q.note, '') }; }).filter((t) => t.name && t.price),
+				support: str(s.support, ''), why: str(s.why, '') }; }).filter((s) => s.id && s.name);
+			return out.length ? out : SERVICES;
+		})(),
 		lists: (() => {
 			const l = (film?.lists && typeof film.lists === 'object' ? film.lists : {}) as Record<string, unknown>;
 			const out = { ...EMPTY_LISTS };

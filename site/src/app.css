@@ -410,6 +410,14 @@ main > div[aria-hidden] {
 .shine.delay-1::after { animation-delay: 1.2s; }
 @keyframes shine { 0%, 60%, 100% { left: -60%; } 30% { left: 120%; } }
 @media (prefers-reduced-motion: reduce) { .shine::after { animation: none; } }
+/* the word under the mark: set wide, the ink falling into the accent */
+.collective-word {
+	background: linear-gradient(90deg, #36425d, #2c3ef3 70%, #6a5cf5);
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+	padding-left: 0.42em; /* balances the tracking after the last letter */
+}
 /* the laurels breathe once as they arrive */
 .laurel svg { transition: transform 0.6s var(--ease-out-expo); }
 .laurel:hover svg:first-child { transform: rotate(-8deg); }

@@ -14,7 +14,7 @@
 	const laurels = $derived(landing?.laurels ?? LANDING_DEFAULTS.laurels);
 </script>
 
-<Section id="voices" eyebrow={VOICES.eyebrow} title={VOICES.title} align="center" tone="light">
+<Section id="voices" eyebrow={VOICES.eyebrow} title={VOICES.title} align="center">
 	<ul use:stagger={60} class="scroll-in mb-12 flex flex-wrap items-stretch justify-center gap-3 md:mb-16" aria-label="Figures">
 		{#each laurels as l}
 			<li class="laurel flex items-center gap-2 rounded-full border border-line bg-surface-2 px-4 py-2.5">

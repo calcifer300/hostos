@@ -34,7 +34,7 @@
 	});
 </script>
 
-<div class="relative rounded-3xl border border-line bg-surface-1 p-3 shadow-2 sm:p-4" aria-label="A live HostOS operations board (demo)" role="img">
+<div class="tone-dark relative rounded-3xl border border-line p-3 shadow-2 sm:p-4" aria-label="A live HostOS operations board (demo)" role="img">
 	<div class="mb-3 flex items-center justify-between px-1">
 		<span class="label-mono text-ink-3">app.hostos · Dispatch · Today</span>
 		<span class="flex items-center gap-1.5 label-mono text-ok"><span class="h-1.5 w-1.5 rounded-full bg-ok animate-blink"></span>Live</span>

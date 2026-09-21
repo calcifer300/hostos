@@ -45,7 +45,7 @@
 				{@const clip = tiles[`solution:${s.id}`]}
 				<article use:tilt={4} class="card spot ring-hover reveal is-in relative flex flex-col overflow-hidden rounded-2xl border border-line bg-surface-2 p-5 transition-[border-color] duration-300 hover:border-accent/50" style={`--reveal-delay:${i * 60}ms`}>
 					{#if clip}{#key clip}<video class="lazy dim absolute inset-0 h-full w-full object-cover" muted loop playsinline preload="none" use:lazyVideo={{ src: clip }} aria-hidden="true"></video>{/key}{/if}
-					<div aria-hidden="true" class="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(22,26,38,0.55),var(--color-surface-2)_70%)]"></div>
+					<div aria-hidden="true" class="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,color-mix(in_oklab,var(--color-surface-2)_35%,transparent),var(--color-surface-2)_70%)]"></div>
 					<div class="relative flex flex-1 flex-col">
 						<Motif kind={motifs[family.id as keyof typeof motifs]} class="mb-3 h-9 w-9 text-accent opacity-70" />
 						<h3 class="text-[17px] font-semibold tracking-tight text-ink">{s.name}</h3>

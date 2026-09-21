@@ -22,7 +22,7 @@
 			{@const clip = tiles[`week:${i + 1}`]}
 			<li class="card relative overflow-hidden rounded-2xl border border-line bg-surface-2 p-6">
 				{#if clip}{#key clip}<video class="lazy dim absolute inset-0 h-full w-full object-cover" muted loop playsinline preload="none" use:lazyVideo={{ src: clip }} aria-hidden="true"></video>{/key}{/if}
-				<div aria-hidden="true" class="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(22,26,38,0.5),var(--color-surface-2)_65%)]"></div>
+				<div aria-hidden="true" class="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,color-mix(in_oklab,var(--color-surface-2)_35%,transparent),var(--color-surface-2)_65%)]"></div>
 				<div class="relative flex items-center justify-between">
 					<span class="label-mono text-accent">{s.week}</span>
 					<span class="font-mono text-[28px] font-bold leading-none text-ink-3">0{i + 1}</span>

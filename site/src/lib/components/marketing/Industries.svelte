@@ -23,11 +23,11 @@
 			{@const clip = tiles[`industry:${ind.id}`]}
 			<a href={ind.href} use:tilt={5} class="industry spot ring-hover group relative block overflow-hidden rounded-2xl border border-line bg-surface-2 p-5 transition-[border-color,box-shadow] duration-300 hover:shadow-1" style={`--spot:${ind.hue}; --hue:${ind.hue}`}>
 				{#if clip}{#key clip}<video class="lazy dim absolute inset-0 h-full w-full object-cover" muted loop playsinline preload="none" use:lazyVideo={{ src: clip, always: always.has(ind.id) }} aria-hidden="true"></video>{/key}{/if}
-				<div aria-hidden="true" class="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(22,26,38,0.25),var(--color-surface-2)_88%)]"></div>
+				<div aria-hidden="true" class="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,color-mix(in_oklab,var(--color-surface-2)_35%,transparent),var(--color-surface-2)_88%)]"></div>
 				<div class="relative">
 					<div class="flex items-start justify-between">
 						<span class="block h-1.5 w-8 rounded-full transition-[width] duration-500 group-hover:w-14" style={`background:${ind.hue}`}></span>
-						{#if Icon}<span class="mark grid h-9 w-9 place-items-center rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm transition-transform duration-500 group-hover:-translate-y-0.5" style={`color:${ind.hue}`}><Icon class="h-[18px] w-[18px]" strokeWidth={1.75} /></span>{/if}
+						{#if Icon}<span class="mark grid h-9 w-9 place-items-center rounded-xl border border-line bg-surface-3 transition-transform duration-500 group-hover:-translate-y-0.5" style={`color:${ind.hue}`}><Icon class="h-[18px] w-[18px]" strokeWidth={1.75} /></span>{/if}
 					</div>
 					<h3 class="mt-5 text-[16px] font-semibold tracking-tight text-ink">{ind.name}</h3>
 					<p class="mt-1 text-[13px] text-ink-3">{ind.line}</p>

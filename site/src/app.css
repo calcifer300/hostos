@@ -11,21 +11,22 @@
   only inside product visuals.
 */
 @theme {
-	--color-bg: #0b0d14;
-	--color-surface-1: #10131c;
-	--color-surface-2: #161a26;
-	--color-surface-3: #1d2230;
-	--color-line: rgba(230, 235, 245, 0.1);
-	--color-line-strong: rgba(230, 235, 245, 0.18);
-	--color-ink: #e6ebf5;
-	--color-ink-2: rgba(230, 235, 245, 0.72);
-	--color-ink-3: rgba(230, 235, 245, 0.52);
-	--color-accent: #3b9cff;
-	--color-accent-ink: #0a1020;
-	--color-platform: #8b7cff;
-	--color-ok: #30d158;
-	--color-warn: #ffb020;
-	--color-danger: #ff375f;
+	/* paper: the page is light, blue-grey, with dark ink — the dark is an island, not the room */
+	--color-bg: #d5dde2;
+	--color-surface-1: #dee5e9;
+	--color-surface-2: #eef2f4;
+	--color-surface-3: #f8fafb;
+	--color-line: rgba(23, 27, 39, 0.12);
+	--color-line-strong: rgba(23, 27, 39, 0.24);
+	--color-ink: #171b27;
+	--color-ink-2: rgba(23, 27, 39, 0.76);
+	--color-ink-3: rgba(23, 27, 39, 0.56);
+	--color-accent: #2c3ef3;
+	--color-accent-ink: #ffffff;
+	--color-platform: #6a5cf5;
+	--color-ok: #1f9d55;
+	--color-warn: #c27400;
+	--color-danger: #d92d4c;
 
 	--font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 	--font-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -50,7 +51,7 @@
 }
 
 :root {
-	color-scheme: dark;
+	color-scheme: light;
 	--container: 1200px;
 	--container-wide: 1400px;
 	--section-y: clamp(64px, 10vw, 128px);
@@ -157,7 +158,7 @@
 /* headlines: white falling into the section's light; the *aside* in the serif italic */
 @utility headline {
 	color: transparent;
-	background: linear-gradient(180deg, #ffffff 0%, #c9d0e6 100%);
+	background: linear-gradient(180deg, #171b27, #36425d);
 	-webkit-background-clip: text;
 	background-clip: text;
 }
@@ -303,7 +304,7 @@
 	border-top-left-radius: 36px;
 	border-top-right-radius: 36px;
 	border-top: 1px solid var(--color-line);
-	box-shadow: 0 -30px 60px rgb(0 0 0 / 0.45);
+	box-shadow: 0 -30px 60px rgb(23 27 39 / 0.18);
 }
 main > section,
 main > .ticker {
@@ -406,7 +407,7 @@ main > .ticker {
 	/* 97% and not 100%: an opaque curtain lets the compositor cull everything under it, and Chrome then records the
 	   page's first paint only when the curtain lifts (~2 s). At 97% the hero is painted beneath it at ~0.5 s and the
 	   curtain is, to the eye, the same. */
-	background: rgb(11 13 20 / 0.97);
+	background: rgb(213 221 226 / 0.97);
 	animation: curtain 0.45s var(--ease-out-expo) 0.8s forwards;
 	pointer-events: none;
 }
@@ -441,7 +442,12 @@ video.lazy.is-playing {
 }
 /* footage that sits behind words is kept dim and colourless so the words stay first */
 video.lazy.dim {
+	mix-blend-mode: multiply;
+	filter: grayscale(1) contrast(1.05);
+}
+.tone-dark video.lazy.dim {
 	mix-blend-mode: luminosity;
+	filter: none;
 }
 video.lazy.dim.is-playing {
 	opacity: var(--dim, 0.34);
@@ -462,7 +468,7 @@ video.lazy.dim.is-playing {
 .section-bg::before {
 	left: 4%;
 	top: 6%;
-	background: radial-gradient(circle at center, color-mix(in oklab, var(--tint, var(--color-accent)) 15%, transparent), transparent 68%);
+	background: radial-gradient(circle at center, color-mix(in oklab, var(--tint, var(--color-accent)) 18%, transparent), transparent 68%);
 	animation: bloom-a 26s ease-in-out infinite alternate;
 }
 .section-bg::after {
@@ -476,7 +482,7 @@ video.lazy.dim.is-playing {
 	content: '';
 }
 .section-bg video {
-	--dim: 0.26;
+	--dim: 0.16;
 	mask-image: radial-gradient(ellipse 80% 75% at 50% 45%, #000 30%, transparent 100%);
 }
 @keyframes bloom-a {
@@ -496,42 +502,44 @@ video.lazy.dim.is-playing {
 	font-size: 1.14em;
 	line-height: 0.9;
 	letter-spacing: -0.01em;
-	background: linear-gradient(90deg, #d5dbf0, #8d9bcf 80%);
+	background: linear-gradient(90deg, #53628d, #2c3ef3 85%);
 	-webkit-background-clip: text;
 	background-clip: text;
 	color: transparent;
 	padding-right: 0.04em;
 }
-/* a light section: paper-blue, dark ink — the page breathes between the dark rooms */
-.tone-light {
-	--color-bg: #cfd8dd;
-	--color-surface-1: #d9e1e5;
-	--color-surface-2: #e6ecef;
-	--color-surface-3: #f1f4f6;
-	--color-line: rgb(23 27 39 / 0.14);
-	--color-line-strong: rgb(23 27 39 / 0.26);
-	--color-ink: #171b27;
-	--color-ink-2: rgb(23 27 39 / 0.76);
-	--color-ink-3: rgb(23 27 39 / 0.56);
-	--color-accent: #2c3ef3;
+/* a dark island: the nav pill, the boards, the film, the footer, the final ask keep the night */
+.tone-dark {
+	--color-bg: #0b0d14;
+	--color-surface-1: #10131c;
+	--color-surface-2: #161a26;
+	--color-surface-3: #1d2230;
+	--color-line: rgba(230, 235, 245, 0.1);
+	--color-line-strong: rgba(230, 235, 245, 0.18);
+	--color-ink: #e6ebf5;
+	--color-ink-2: rgba(230, 235, 245, 0.72);
+	--color-ink-3: rgba(230, 235, 245, 0.52);
+	--color-accent: #3b9cff;
+	--color-accent-ink: #0a1020;
+	--color-platform: #8b7cff;
+	--color-ok: #30d158;
+	--color-warn: #ffb020;
+	--color-danger: #ff375f;
 	background: var(--color-bg);
 	color: var(--color-ink);
+	color-scheme: dark;
 }
-.tone-light .headline {
-	background: linear-gradient(180deg, #171b27, #36425d);
+.tone-dark .headline {
+	background: linear-gradient(180deg, #ffffff 0%, #c9d0e6 100%);
 	-webkit-background-clip: text;
 	background-clip: text;
 }
-.tone-light .headline em {
-	background: linear-gradient(90deg, #53628d, #2c3ef3 85%);
+.tone-dark .headline em {
+	background: linear-gradient(90deg, #d5dbf0, #8d9bcf 80%);
 	-webkit-background-clip: text;
 	background-clip: text;
 }
-.tone-light .section-bg::before,
-.tone-light .section-bg::after {
-	opacity: 0.35;
-}
-.tone-light .label-mono { color: #2c3ef3; }
+.tone-light { background: var(--color-bg); color: var(--color-ink); }
 .plate > span > em {
 	display: inline;
 }

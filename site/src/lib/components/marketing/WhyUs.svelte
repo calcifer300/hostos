@@ -8,7 +8,7 @@
 	const hues = ['#3b9cff', '#30d158', '#8b7cff', '#ff9f0a', '#40c8e0', '#ff375f'];
 </script>
 
-<Section id="why" eyebrow={WHY.eyebrow} title={WHY.title} lede={WHY.lede} align="center" tone="light">
+<Section id="why" eyebrow={WHY.eyebrow} title={WHY.title} lede={WHY.lede} align="center" tone="surface">
 	<div use:stagger={70} class="scroll-in grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
 		{#each WHY.reasons as r, i}
 			{@const Icon = icons[r.id as keyof typeof icons]}

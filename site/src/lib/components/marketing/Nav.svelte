@@ -36,7 +36,7 @@
 
 <header class="fixed inset-x-0 top-0 z-50 px-4 pt-4" style="padding-top: max(16px, env(safe-area-inset-top))">
 	<div aria-hidden="true" class="pointer-events-none absolute inset-x-0 top-0 h-[2px] origin-left bg-[linear-gradient(90deg,var(--color-accent),var(--color-platform))]" style={`transform:scaleX(${read})`}></div>
-	<div class={`container-wide flex h-14 items-center justify-between rounded-full border px-4 backdrop-blur-xl transition-[background-color,border-color,box-shadow] duration-300 ${scrolled ? 'border-line bg-bg/70 shadow-2' : 'border-transparent bg-transparent'}`}>
+	<div class={`container-wide flex h-14 items-center justify-between tone-dark rounded-full border px-4 backdrop-blur-xl transition-[background-color,border-color,box-shadow] duration-300 ${scrolled ? 'border-line !bg-bg/85 shadow-2' : 'border-line/60 !bg-bg/70'}`}>
 		<a href="/" class="rounded-full" aria-label="HostOS Collective — home"><Logo /></a>
 		<nav aria-label="Primary" class="hidden items-center gap-1 lg:flex">
 			{#each NAV as l}

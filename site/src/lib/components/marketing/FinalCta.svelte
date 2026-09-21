@@ -31,7 +31,7 @@
 	}
 </script>
 
-<section id="contact" class="aurora section-y relative overflow-hidden bg-bg">
+<section id="contact" class="tone-dark aurora section-y relative overflow-hidden">
 	<div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-20">
 		<video class="lazy dim h-full w-full object-cover [mask-image:radial-gradient(ellipse_at_center,#000_20%,transparent_75%)]" style="--dim:0.36" muted loop playsinline preload="none" use:lazyVideo={{ src: closingSrc }}></video>
 	</div>

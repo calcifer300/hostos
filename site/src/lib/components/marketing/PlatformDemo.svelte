@@ -30,7 +30,7 @@
 </script>
 
 <Section id="platform" eyebrow={PLATFORM.eyebrow} title={PLATFORM.title} lede={PLATFORM.lede} voice="grotesk" align="split">
-	<div use:reveal class="relative overflow-hidden rounded-3xl border border-line bg-surface-1 shadow-2">
+	<div use:reveal class="tone-dark relative overflow-hidden rounded-3xl border border-line shadow-2">
 		<div aria-hidden="true" class="intro-scan pointer-events-none absolute inset-x-0 z-10 h-px bg-[linear-gradient(90deg,transparent,var(--color-accent),transparent)] opacity-40"></div>
 		<div class="flex flex-wrap items-center justify-between gap-3 border-b border-line px-4 py-3">
 			<div class="flex items-center gap-2">

@@ -29,7 +29,7 @@
 			{@const clip = tiles[`pillar:${p.id}`]}
 			<article class="card relative overflow-hidden rounded-2xl border border-line bg-surface-2 p-6">
 				{#if clip}{#key clip}<video class="lazy dim absolute inset-0 h-full w-full object-cover" muted loop playsinline preload="none" use:lazyVideo={{ src: clip }} aria-hidden="true"></video>{/key}{/if}
-				<div aria-hidden="true" class="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(22,26,38,0.5),var(--color-surface-2)_60%)]"></div>
+				<div aria-hidden="true" class="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,color-mix(in_oklab,var(--color-surface-2)_35%,transparent),var(--color-surface-2)_60%)]"></div>
 				<div class="relative flex items-center justify-between">
 					<span class={`flex h-11 w-11 items-center justify-center rounded-xl ${i === 2 ? 'bg-platform/15 text-platform' : 'bg-accent/15 text-accent'}`}><Icon class="h-5 w-5" /></span>
 					<span class="label-mono text-ink-3">0{i + 1}</span>

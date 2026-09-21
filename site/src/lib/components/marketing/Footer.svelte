@@ -4,7 +4,7 @@
 	const year = new Date().getFullYear();
 </script>
 
-<footer class="border-t border-line bg-surface-1">
+<footer class="tone-dark border-t border-line">
 	<div class="container-x grid grid-cols-1 gap-10 py-14 md:grid-cols-[1.4fr_repeat(3,1fr)]">
 		<div>
 			<Logo />

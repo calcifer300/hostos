@@ -31,7 +31,7 @@
 		lede?: string;
 		align?: 'left' | 'center' | 'right' | 'split';
 		wide?: boolean;
-		tone?: 'bg' | 'surface' | 'light';
+		tone?: 'bg' | 'surface' | 'light' | 'dark';
 		class?: string;
 		children: Snippet;
 	} = $props();
@@ -43,9 +43,9 @@
 	const voiceClass = $derived(voice === 'grotesk' ? 'voice-grotesk' : voice === 'serif' ? 'voice-serif' : voice === 'display' ? 'voice-display' : '');
 </script>
 
-<section {id} use:near class={`section-y relative isolate scroll-mt-20 ${tone === 'surface' ? 'border-y border-line bg-surface-1' : tone === 'light' ? 'tone-light' : 'bg-bg'} ${cls}`} style={`--tint:${look.tint}`}>
+<section {id} use:near class={`section-y relative isolate scroll-mt-20 ${tone === 'surface' ? 'border-y border-line bg-surface-1' : tone === 'dark' ? 'tone-dark' : 'bg-bg'} ${cls}`} style={`--tint:${look.tint}`}>
 	<div aria-hidden="true" class="section-bg pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-		{#if look.clip && tone !== 'light'}{#key look.clip}<video class="lazy dim h-full w-full object-cover" muted loop playsinline preload="none" use:lazyVideo={{ src: look.clip }}></video>{/key}{/if}
+		{#if look.clip}{#key look.clip}<video class="lazy dim h-full w-full object-cover" muted loop playsinline preload="none" use:lazyVideo={{ src: look.clip }}></video>{/key}{/if}
 	</div>
 	<div class={wide ? 'container-wide' : 'container-x'}>
 		{#if eyebrow || title}

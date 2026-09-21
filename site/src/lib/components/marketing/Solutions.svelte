@@ -3,6 +3,8 @@
 	import Section from '$lib/components/ui/Section.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import { tilt } from '$lib/components/motion/actions';
+	import Motif from '$lib/components/ui/Motif.svelte';
+	const motifs = { run: 'schedule', build: 'blocks', connect: 'nodes', understand: 'chart' } as const;
 	import { CTA, SOLUTIONS } from '$lib/content/site';
 	let active = $state(0);
 	const family = $derived(SOLUTIONS.families[active]);
@@ -16,11 +18,15 @@
 			</button>
 		{/each}
 	</div>
-	<p class="mb-6 text-[16px] text-ink-2">{family.line}</p>
+	<div class="mb-6 flex items-center justify-between gap-6">
+		<p class="text-[16px] text-ink-2">{family.line}</p>
+		{#key active}<Motif kind={motifs[family.id as keyof typeof motifs]} class="arrive h-16 w-16 shrink-0 text-accent" />{/key}
+	</div>
 	{#key active}
 		<div id={`panel-${family.id}`} role="tabpanel" aria-labelledby={`fam-${family.id}`} class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
 			{#each family.items as s, i}
-				<article use:tilt={4} class="spot reveal is-in flex flex-col rounded-2xl border border-line bg-surface-2 p-5 transition-[border-color] duration-300 hover:border-accent/50" style={`--reveal-delay:${i * 60}ms`}>
+				<article use:tilt={4} class="spot ring-hover reveal is-in flex flex-col rounded-2xl border border-line bg-surface-2 p-5 transition-[border-color] duration-300 hover:border-accent/50" style={`--reveal-delay:${i * 60}ms`}>
+					<Motif kind={motifs[family.id as keyof typeof motifs]} class="mb-3 h-9 w-9 text-accent opacity-70" />
 					<h3 class="text-[17px] font-semibold tracking-tight text-ink">{s.name}</h3>
 					<p class="mt-1.5 text-[14px] font-medium text-accent">{s.outcome}</p>
 					<ul class="mt-4 space-y-1.5">

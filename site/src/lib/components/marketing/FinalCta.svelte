@@ -29,7 +29,7 @@
 	}
 </script>
 
-<section id="contact" class="section-y relative overflow-hidden">
+<section id="contact" class="aurora section-y relative overflow-hidden">
 	<div aria-hidden="true" class="pointer-events-none absolute left-1/2 top-1/2 h-[600px] w-[1000px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--color-accent)_16%,transparent),transparent)] blur-3xl"></div>
 	<div class="container-x grid items-start gap-12 lg:grid-cols-[1fr_1fr]">
 		<div use:reveal>

@@ -302,3 +302,68 @@ video.lazy.is-playing {
 	-webkit-text-stroke: 1px rgba(230, 235, 245, 0.12);
 	user-select: none;
 }
+
+/* ------------------------------------------------------ living sections */
+/* slow auroras behind sections so nothing sits on flat black */
+.aurora {
+	position: relative;
+	isolation: isolate;
+}
+.aurora::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	pointer-events: none;
+	background:
+		radial-gradient(60% 50% at 15% 20%, color-mix(in oklab, var(--color-accent) 14%, transparent), transparent 70%),
+		radial-gradient(50% 45% at 85% 80%, color-mix(in oklab, var(--color-platform) 12%, transparent), transparent 70%);
+	background-size: 200% 200%;
+	animation: aurora 26s ease-in-out infinite alternate;
+	opacity: 0.9;
+}
+@keyframes aurora {
+	from { background-position: 0% 0%; }
+	to { background-position: 100% 100%; }
+}
+/* motifs: small animated drawings; transform-box keeps every rotation about the element itself */
+.motif * { transform-box: fill-box; transform-origin: center; }
+.motif .m-spin { animation: m-spin 14s linear infinite; }
+.motif .m-spin-rev { animation: m-spin 9s linear infinite reverse; }
+.motif .m-orbit { animation: m-spin 7s linear infinite; }
+.motif .m-rise { transform-origin: bottom; animation: m-rise 2.8s ease-in-out infinite; }
+.motif .m-eq { animation: m-eq 1.4s ease-in-out infinite; }
+.motif .m-ripple { animation: m-ripple 3.6s ease-out infinite; }
+.motif .m-flow { stroke-dasharray: 5 9; animation: m-flow 2s linear infinite; }
+.motif .m-blink { animation: m-blink 1.1s steps(2, start) infinite; }
+.motif .m-flicker { animation: m-flicker 3.6s ease-in-out infinite; }
+.motif .m-slide { animation: m-slide 4.5s ease-in-out infinite; }
+.motif .m-draw { stroke-dasharray: 220; stroke-dashoffset: 220; animation: m-draw 4.5s ease-in-out infinite; }
+.motif .m-pulse { animation: m-pulse 2.6s ease-in-out infinite; }
+.motif .m-tick { animation: m-tick 3s steps(1, end) infinite; }
+.motif .m-flash { animation: m-flash 4s ease-out infinite; }
+.motif .m-scan { animation: m-scan 3s linear infinite; }
+.motif .m-stack { animation: m-stack 5s ease-in-out infinite; }
+@keyframes m-spin { to { transform: rotate(360deg); } }
+@keyframes m-rise { 0%, 100% { transform: scaleY(0.35); } 50% { transform: scaleY(1); } }
+@keyframes m-eq { 0%, 100% { transform: scaleY(0.3); } 50% { transform: scaleY(1); } }
+@keyframes m-ripple { 0% { transform: scale(0.35); opacity: 0.9; } 100% { transform: scale(1.5); opacity: 0; } }
+@keyframes m-flow { to { stroke-dashoffset: -28; } }
+@keyframes m-blink { to { opacity: 0.15; } }
+@keyframes m-flicker { 0%, 100% { opacity: 0.55; transform: scale(0.96); } 50% { opacity: 1; transform: scale(1.05); } }
+@keyframes m-slide { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-16px); } }
+@keyframes m-draw { 0% { stroke-dashoffset: 220; } 55%, 100% { stroke-dashoffset: 0; } }
+@keyframes m-pulse { 0%, 100% { transform: scale(1); opacity: 0.7; } 50% { transform: scale(1.1); opacity: 1; } }
+@keyframes m-tick { 0% { opacity: 0.25; } 33% { opacity: 1; } 100% { opacity: 1; } }
+@keyframes m-flash { 0%, 100% { opacity: 0; } 5% { opacity: 1; } 12% { opacity: 0; } }
+@keyframes m-scan { from { transform: translateY(-40px); } to { transform: translateY(80px); } }
+@keyframes m-stack { 0%, 100% { transform: translateY(0); opacity: 1; } 50% { transform: translateY(-6px); opacity: 0.7; } }
+/* the week heatmap's cells cross-fade between states */
+.cell { transition: fill 0.7s var(--ease-standard), opacity 0.7s var(--ease-standard); }
+/* sparklines draw themselves on arrival */
+.spark path { stroke-dasharray: 1; stroke-dashoffset: 1; }
+.spark.is-in path { animation: spark 1.6s var(--ease-out-expo) forwards; animation-delay: 0.3s; }
+@keyframes spark { to { stroke-dashoffset: 0; } }
+/* a value that just changed */
+.tick { animation: tick 0.5s var(--ease-out-expo); }
+@keyframes tick { from { opacity: 0.2; transform: translateY(4px); } to { opacity: 1; transform: none; } }

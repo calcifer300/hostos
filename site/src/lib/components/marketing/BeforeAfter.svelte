@@ -2,6 +2,7 @@
 	import Section from '$lib/components/ui/Section.svelte';
 	import { reveal } from '$lib/components/motion/actions';
 	import { BEFORE_AFTER } from '$lib/content/site';
+	import WeekMap from './WeekMap.svelte';
 	let after = $state(true);
 	const options = [
 		{ label: 'Before', value: false },
@@ -10,7 +11,8 @@
 </script>
 
 <Section id="before-after" eyebrow={BEFORE_AFTER.eyebrow} title={BEFORE_AFTER.title} lede={BEFORE_AFTER.lede}>
-	<div use:reveal class="overflow-hidden rounded-3xl border border-line bg-surface-2">
+	<div use:reveal class="grid gap-4 lg:grid-cols-[1.2fr_1fr] lg:items-start">
+	<div class="overflow-hidden rounded-3xl border border-line bg-surface-2">
 		<div class="flex items-center justify-between gap-4 border-b border-line px-5 py-4">
 			<p class="label-mono text-ink-3">Same fleet · same month of the year</p>
 			<div class="flex rounded-full border border-line bg-bg p-1" role="group" aria-label="Before or after">
@@ -30,5 +32,10 @@
 				</div>
 			{/each}
 		</dl>
+	</div>
+	<div class="lg:sticky lg:top-28">
+		<p class="label-mono mb-3 text-ink-3">The owner’s week · who covers each hour</p>
+		<WeekMap {after} />
+	</div>
 	</div>
 </Section>

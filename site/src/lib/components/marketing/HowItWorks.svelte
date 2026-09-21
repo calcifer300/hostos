@@ -3,7 +3,9 @@
 	import Section from '$lib/components/ui/Section.svelte';
 	import { reveal, stagger } from '$lib/components/motion/actions';
 	import { HOW } from '$lib/content/site';
+	import Motif from '$lib/components/ui/Motif.svelte';
 	const icons = { people: Users, systems: ListChecks, software: LayoutDashboard } as const;
+	const scenes = { people: 'people', systems: 'checklist', software: 'board' } as const;
 </script>
 
 <Section id="how" eyebrow={HOW.eyebrow} title={HOW.title} tone="surface">
@@ -28,6 +30,7 @@
 				<h3 class="mt-5 text-[22px] font-semibold tracking-tight text-ink">{p.name}</h3>
 				<p class={`mt-1 text-[14px] font-medium ${i === 2 ? 'text-platform' : 'text-accent'}`}>{p.line}</p>
 				<p class="mt-4 text-[14.5px] leading-relaxed text-ink-2">{p.body}</p>
+				<Motif kind={scenes[p.id as keyof typeof scenes]} class={`mt-5 h-24 w-full ${i === 2 ? 'text-platform' : 'text-accent'} opacity-80`} />
 			</article>
 		{/each}
 	</div>

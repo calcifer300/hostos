@@ -28,7 +28,7 @@
 	} = $props();
 </script>
 
-<section {id} class={`section-y scroll-mt-20 ${tone === 'surface' ? 'border-y border-line bg-surface-1' : ''} ${cls}`}>
+<section {id} class={`section-y scroll-mt-20 ${tone === 'surface' ? 'aurora border-y border-line bg-surface-1' : ''} ${cls}`}>
 	<div class={wide ? 'container-wide' : 'container-x'}>
 		{#if eyebrow || title}
 			<header use:reveal class={`mb-10 max-w-3xl md:mb-14 ${align === 'center' ? 'mx-auto text-center' : ''}`}>

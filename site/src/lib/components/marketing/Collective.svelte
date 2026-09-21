@@ -6,10 +6,13 @@
 	import { SITE } from '$lib/content/site';
 	import type { Member } from '$lib/content/team';
 	/** The people, as faces. The full roster and the spotlight live on /team in the app. */
+	import Constellation from './Constellation.svelte';
 	let { members }: { members: Member[] } = $props();
 </script>
 
 <Section id="collective" eyebrow="The Collective" title="A collective, not a hierarchy chart." lede="Twelve people who each own a craft, work inside the same HostOS workspace, and answer to the same clients. What we sell is what we use.">
+	<div class="relative isolate">
+	<Constellation hues={members.map((m) => m.hue)} class="pointer-events-none absolute -inset-x-8 -inset-y-12 -z-10 h-[calc(100%+6rem)] w-[calc(100%+4rem)] [mask-image:radial-gradient(ellipse_at_center,#000_55%,transparent_95%)]" />
 	<ul use:stagger={45} class="grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-6" aria-label="Members">
 		{#each members as m}
 			<li class="group relative overflow-hidden rounded-2xl border border-line bg-surface-2" style={`--hue:${m.hue}`}>
@@ -25,5 +28,6 @@
 			</li>
 		{/each}
 	</ul>
+	</div>
 	<div class="mt-8"><Button href={`${SITE.url}/team`} variant="secondary">Meet everyone <ArrowUpRight class="h-4 w-4" /></Button></div>
 </Section>

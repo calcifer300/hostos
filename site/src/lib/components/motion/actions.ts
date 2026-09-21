@@ -28,9 +28,9 @@ function onceInView(el: Element, cb: () => void, margin = '-10% 0px') {
 	return () => io.disconnect();
 }
 
-export function reveal(el: HTMLElement, delay = 0) {
+export function reveal(el: HTMLElement | SVGElement, delay = 0) {
 	el.classList.add('reveal');
-	if (delay) el.style.setProperty('--reveal-delay', `${delay}ms`);
+	if (delay) (el as HTMLElement).style.setProperty('--reveal-delay', `${delay}ms`);
 	const stop = onceInView(el, () => el.classList.add('is-in'));
 	return { destroy: stop };
 }

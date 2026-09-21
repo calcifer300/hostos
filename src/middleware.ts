@@ -124,6 +124,11 @@ export function middleware(req: NextRequest) {
   const canonical = canonicalRedirect(req);
   if (canonical) return canonical;
 
+  // The landing page lives on the site project. The app's bare root (hostos-ten.vercel.app/) sends visitors there instead of
+  // showing an older marketing page; localhost keeps its own root for development.
+  const host = req.headers.get("host")?.toLowerCase() ?? "";
+  if (req.nextUrl.pathname === "/" && host.endsWith(".vercel.app")) return NextResponse.redirect(new URL("https://hostoscollective.com/"), 308);
+
   if (doesOwnAuth(req.nextUrl.pathname)) return NextResponse.next();
 
   const legacy = legacyRedirect(req);

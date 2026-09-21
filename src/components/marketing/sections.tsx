@@ -41,7 +41,7 @@ export function SectionHeading({
   return (
     <Reveal className={cn("mb-10 max-w-2xl", align === "center" && "mx-auto text-center", className)}>
       <p className="mb-3 text-[11.5px] font-semibold uppercase tracking-[0.14em] text-accent">{eyebrow}</p>
-      <h2 className="text-balance text-[30px] font-semibold leading-[1.1] tracking-[-0.025em] md:text-[40px]">{title}</h2>
+      <h2 className="headline text-balance text-[30px] md:text-[40px]">{title}</h2>
       {description && <p className="mt-4 text-pretty text-[15.5px] leading-relaxed text-muted-foreground">{description}</p>}
     </Reveal>
   );

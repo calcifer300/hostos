@@ -20,8 +20,8 @@ export function AboutPage() {
         <div aria-hidden className="absolute left-1/2 top-0 -z-10 h-[420px] w-[820px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,var(--accent-glow),transparent)] blur-3xl" />
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: EASE }} className="mx-auto max-w-3xl text-center">
           <p className="mb-4 text-[11.5px] font-semibold uppercase tracking-[0.14em] text-accent">About {SITE.company}</p>
-          <h1 className="text-balance text-[38px] font-semibold leading-[1.05] tracking-[-0.03em] md:text-[56px]">
-            Founder-led. <span className="text-gradient">Operator-built.</span>
+          <h1 className="headline text-balance text-[38px] md:text-[56px]">
+            Founder-led. <em>Operator-built.</em>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-pretty text-[16px] leading-relaxed text-muted-foreground md:text-[17px]">
             HostOS Collective is built on its founder&rsquo;s ten-plus years across operations, customer service, full-stack development and leadership — and
@@ -114,12 +114,12 @@ export function AboutPage() {
       <section className="px-6 py-20 md:py-28">
         <Reveal className="gradient-border relative mx-auto max-w-5xl overflow-hidden rounded-[2rem] border border-border bg-card p-10 text-center shadow-[var(--shadow-elevated)] md:p-14">
           <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(60%_80%_at_50%_0%,var(--accent-glow),transparent_70%)]" />
-          <h2 className="text-balance text-[28px] font-semibold tracking-[-0.025em] md:text-[38px]">Let&rsquo;s build something together.</h2>
-          <p className="mx-auto mt-4 max-w-xl text-[15.5px] leading-relaxed text-muted-foreground">Whether you need development, automation, or a trained support team — we have the experience and the team to make it happen.</p>
+          <h2 className="headline text-balance text-[28px] md:text-[38px]">Start with <em>one operation</em>.</h2>
+          <p className="mx-auto mt-4 max-w-xl text-[15.5px] leading-relaxed text-muted-foreground">A free 45-minute call: bring one operation and leave with a practical plan.</p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <Button asChild variant="gradient" size="xl">
               <Link href="/#contact">
-                Get in touch <ArrowRight />
+                Book a Free Strategy Call <ArrowRight />
               </Link>
             </Button>
             <Button asChild variant="secondary" size="xl">

@@ -90,7 +90,7 @@ export const DEFAULT_TEAM: TeamProfile[] = [
     "Makes executive decisions and guides the leadership team",
     "Represents the company to clients, partners and the industry",
   ]),
-  member("karl", "Karl Rodriguez", "Karl", "Technology", "technology", "#8b7cff", ["Technology", "Innovation", "AI"], "Builds the systems that power our success.", [
+  member("karl", "Karl Rodriguez", "Karl", "Platform Development", "technology", "#8b7cff", ["Technology", "Innovation", "AI"], "Builds the systems that power our success.", [
     "Leads technology strategy and infrastructure",
     "Oversees product development and architecture",
     "Manages integrations, automation and AI initiatives",
@@ -98,7 +98,7 @@ export const DEFAULT_TEAM: TeamProfile[] = [
     "Evaluates and implements new technologies",
     "Leads and mentors the engineering team",
   ]),
-  member("gerald", "Gerald Ramirez", "Gerald", "Operations", "operations", "#30d158", ["Operations", "Client Success"], "Turns strategy into smooth daily operations.", [
+  member("gerald", "Gerald Ramirez", "Gerald", "Fleet Operations", "operations", "#30d158", ["Operations", "Client Success"], "Turns strategy into smooth daily operations.", [
     "Oversees day-to-day operations across all client accounts",
     "Ensures service quality and client satisfaction",
     "Manages onboarding, training and standard operating procedures",
@@ -106,7 +106,7 @@ export const DEFAULT_TEAM: TeamProfile[] = [
     "Tracks performance and key metrics",
     "Leads and develops the operations team",
   ]),
-  member("belle", "Maribel Magbual", "Belle", "Finance", "finance", "#f5b301", ["Finance", "Compliance", "Planning"], "Keeps our business strong and sustainable.", [
+  member("belle", "Maribel Magbual", "Belle", "Finance & Admin", "finance", "#f5b301", ["Finance", "Compliance", "Planning"], "Keeps our business strong and sustainable.", [
     "Manages invoicing and payments",
     "Tracks expenses and budgets",
     "Maintains financial records and reporting",
@@ -114,7 +114,7 @@ export const DEFAULT_TEAM: TeamProfile[] = [
     "Ensures tax compliance and documentation",
     "Supports financial forecasting, payroll and planning with the CEO",
   ]),
-  member("devie", "John Devie Ulanday", "Devie", "Marketing & growth", "marketing", "#ff9f0a", ["Marketing", "Brand", "Demand"], "Drives awareness and brings in opportunities.", [
+  member("devie", "John Devie Ulanday", "Devie", "Growth", "marketing", "#ff9f0a", ["Marketing", "Brand", "Demand"], "Drives awareness and brings in opportunities.", [
     "Leads marketing strategy and campaigns",
     "Manages email, social media and content marketing",
     "Builds brand awareness and positioning",
@@ -122,7 +122,7 @@ export const DEFAULT_TEAM: TeamProfile[] = [
     "Develops marketing materials and sales enablement",
     "Analyses market trends and campaign performance",
   ]),
-  member("red", "Givhine Leosala", "Red", "Sales & partnerships", "sales", "#ff375f", ["Sales", "Partnerships", "Revenue"], "Builds relationships that create long-term value.", [
+  member("red", "Givhine Leosala", "Red", "Partnerships", "sales", "#ff375f", ["Sales", "Partnerships", "Revenue"], "Builds relationships that create long-term value.", [
     "Identifies and reaches out to prospective clients",
     "Presents HostOS services and solutions",
     "Prepares proposals and contracts",
@@ -130,7 +130,7 @@ export const DEFAULT_TEAM: TeamProfile[] = [
     "Manages client onboarding handover",
     "Maintains and grows partner relationships",
   ]),
-  member("loisa", "Loisa Celetaria", "Loisa", "Content & communications", "content", "#40c8e0", ["Content", "Brand", "Community"], "Tells our story and keeps everyone connected.", [
+  member("loisa", "Loisa Celetaria", "Loisa", "Brand & Content", "content", "#40c8e0", ["Content", "Brand", "Community"], "Tells our story and keeps everyone connected.", [
     "Leads content creation and editorial standards",
     "Manages email templates and client communication",
     "Maintains the knowledge base and articles",
@@ -138,7 +138,7 @@ export const DEFAULT_TEAM: TeamProfile[] = [
     "Supports marketing content and branding",
     "Ensures consistent messaging across every channel",
   ]),
-  member("princess", "Princess Vergara", "Princess", "Scheduling & support", "operations", "#5ac8fa", ["Scheduling", "Team Support"], "Keeps operations organised and on track.", [
+  member("princess", "Princess Vergara", "Princess", "Customer Experience", "operations", "#5ac8fa", ["Scheduling", "Team Support"], "Keeps operations organised and on track.", [
     "Manages team schedules and calendars",
     "Coordinates client and team availability",
     "Assigns and monitors virtual-assistant tasks",
@@ -146,7 +146,7 @@ export const DEFAULT_TEAM: TeamProfile[] = [
     "Provides administrative support",
     "Handles escalations and schedule changes",
   ]),
-  member("karu", "John Reigner Karunaratne", "Karu", "Strategy & process", "strategy", "#af52de", ["Strategy", "Process Improvement"], "Finds new ways to grow and do better.", [
+  member("karu", "John Reigner Karunaratne", "Karu", "Product Strategy", "strategy", "#af52de", ["Strategy", "Process Improvement"], "Finds new ways to grow and do better.", [
     "Leads ideation and strategy development",
     "Identifies new verticals and markets",
     "Researches market opportunities",
@@ -154,7 +154,7 @@ export const DEFAULT_TEAM: TeamProfile[] = [
     "Supports innovation and expansion",
     "Collaborates with leadership on special projects",
   ]),
-  member("david", "David Briones", "David", "Research & data", "data", "#1bdbdb", ["Research", "Data", "Insights"], "Turns data into actionable opportunities.", [
+  member("david", "David Briones", "David", "Research & Analytics", "data", "#1bdbdb", ["Research", "Data", "Insights"], "Turns data into actionable opportunities.", [
     "Conducts market research and competitor analysis",
     "Builds and maintains lead lists",
     "Handles data entry and database management",
@@ -162,7 +162,7 @@ export const DEFAULT_TEAM: TeamProfile[] = [
     "Supports client research requests",
     "Maintains data accuracy and quality",
   ]),
-  member("ayie", "Mariel Briones", "Ayie", "Client support", "support", "#c58a4f", ["Client Care", "Resolution", "Satisfaction"], "Supports our clients and helps them succeed.", [
+  member("ayie", "Mariel Briones", "Ayie", "Client Experience", "support", "#c58a4f", ["Client Care", "Resolution", "Satisfaction"], "Supports our clients and helps them succeed.", [
     "Provides research and data support",
     "Assists with lead-list building",
     "Supports client communication and follow-ups",
@@ -170,7 +170,7 @@ export const DEFAULT_TEAM: TeamProfile[] = [
     "Escalates and resolves client issues",
     "Ensures client satisfaction and retention",
   ]),
-  member("jb", "Jasper Briones", "JB", "Projects & people", "projects", "#ff6b6b", ["Projects", "Team Coordination"], "Connects people, moves projects forward.", [
+  member("jb", "Jasper Briones", "JB", "Project Operations", "projects", "#ff6b6b", ["Projects", "Team Coordination"], "Connects people, moves projects forward.", [
     "Assists in project management",
     "Coordinates between teams and clients",
     "Tracks tasks, deadlines and deliverables",

@@ -50,7 +50,7 @@ export function TeamPage({ members, footage }: { members: TeamProfile[]; footage
     <div className="no-ambient">
       <section className="relative overflow-hidden px-6 pt-36 pb-16 md:pt-44 md:pb-20">
         {/* the team at work, far behind the words; a soft light, drawn without a blur filter (blurred layers ghost on some GPUs) */}
-        {footage?.team && <div aria-hidden className="absolute inset-0 -z-20 [mask-image:radial-gradient(ellipse_75%_70%_at_50%_40%,#000_25%,transparent_100%)]"><Footage src={footage.team} dim={0.3} /></div>}
+        {footage?.team && <div aria-hidden className="absolute inset-0 -z-20 [mask-image:radial-gradient(ellipse_75%_70%_at_50%_40%,#000_25%,transparent_100%)]"><Footage src={footage.team} dim={0.22} /></div>}
         <div aria-hidden className="bg-grid absolute inset-0 -z-10" />
         <div aria-hidden className="absolute left-1/2 top-0 -z-10 h-[520px] w-[1100px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,var(--accent-glow),transparent_70%)]" />
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: EASE }} className="mx-auto max-w-3xl text-center">
@@ -68,7 +68,6 @@ export function TeamPage({ members, footage }: { members: TeamProfile[]; footage
 
       {/* The roster: the pulse of the collective, then one tile per person — tilt, sheen, spotlight — in the same language as the vertical chooser. */}
       <section id="roles" className="relative scroll-mt-24 px-6 pb-16 md:pb-24">
-        {footage?.pillars?.[1] && <div aria-hidden className="absolute inset-0 -z-20 [mask-image:radial-gradient(ellipse_70%_60%_at_50%_30%,#000_20%,transparent_100%)]"><Footage src={footage.pillars[1]} dim={0.22} /></div>}
         <div className="mx-auto max-w-7xl">
           <SectionHeading
             eyebrow="Meet the team"

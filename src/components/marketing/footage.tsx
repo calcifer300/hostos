@@ -23,5 +23,5 @@ export function Footage({ src, dim = 0.28, className }: { src: string; dim?: num
     v.addEventListener("playing", on);
     return () => { io.disconnect(); v.removeEventListener("playing", on); };
   }, [src, dim]);
-  return <video ref={ref} muted loop playsInline preload="none" aria-hidden className={cn("pointer-events-none absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-[1200ms] mix-blend-luminosity", className)} />;
+  return <video ref={ref} muted loop playsInline preload="none" aria-hidden className={cn("pointer-events-none absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-[1200ms] mix-blend-multiply grayscale", className)} />;
 }

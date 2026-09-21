@@ -58,7 +58,7 @@ export function LoginScreen({ callbackUrl, error, deniedEmail }: { callbackUrl?:
   const [pending, setPending] = React.useState(false);
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-6 py-12">
+    <div className="light relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-6 py-12 text-foreground">
       <AnimatePresence>{!introSeen && <IntroSequence onDone={markSeen} />}</AnimatePresence>
 
       <div aria-hidden className="bg-grid absolute inset-0 -z-10" />

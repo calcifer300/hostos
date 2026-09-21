@@ -18,17 +18,17 @@ const photo = (slug: string) => `/team/${slug}.jpg`;
 
 export const TEAM: Member[] = [
 	{ slug: 'john', name: 'John Briones', nickname: 'John', title: 'Founder', hue: '#0a84ff', photo: photo('john'), founder: true },
-	{ slug: 'karl', name: 'Karl Rodriguez', nickname: 'Karl', title: 'Technology', hue: '#8b7cff', photo: photo('karl'), founder: false },
-	{ slug: 'gerald', name: 'Gerald Ramirez', nickname: 'Gerald', title: 'Operations', hue: '#30d158', photo: photo('gerald'), founder: false },
-	{ slug: 'belle', name: 'Maribel Magbual', nickname: 'Belle', title: 'Finance', hue: '#f5b301', photo: photo('belle'), founder: false },
-	{ slug: 'devie', name: 'John Devie Ulanday', nickname: 'Devie', title: 'Marketing & growth', hue: '#ff9f0a', photo: photo('devie'), founder: false },
-	{ slug: 'red', name: 'Givhine Leosala', nickname: 'Red', title: 'Sales & partnerships', hue: '#ff375f', photo: photo('red'), founder: false },
-	{ slug: 'loisa', name: 'Loisa Celetaria', nickname: 'Loisa', title: 'Content & communications', hue: '#40c8e0', photo: photo('loisa'), founder: false },
-	{ slug: 'princess', name: 'Princess Vergara', nickname: 'Princess', title: 'Scheduling & support', hue: '#5ac8fa', photo: photo('princess'), founder: false },
-	{ slug: 'karu', name: 'John Reigner Karunaratne', nickname: 'Karu', title: 'Strategy & process', hue: '#af52de', photo: photo('karu'), founder: false },
-	{ slug: 'david', name: 'David Briones', nickname: 'David', title: 'Research & data', hue: '#1bdbdb', photo: photo('david'), founder: false },
-	{ slug: 'ayie', name: 'Mariel Briones', nickname: 'Ayie', title: 'Client support', hue: '#c58a4f', photo: photo('ayie'), founder: false },
-	{ slug: 'jb', name: 'Jasper Briones', nickname: 'JB', title: 'Projects & people', hue: '#ff6b6b', photo: photo('jb'), founder: false }
+	{ slug: 'karl', name: 'Karl Rodriguez', nickname: 'Karl', title: 'Platform Development', hue: '#8b7cff', photo: photo('karl'), founder: false },
+	{ slug: 'gerald', name: 'Gerald Ramirez', nickname: 'Gerald', title: 'Fleet Operations', hue: '#30d158', photo: photo('gerald'), founder: false },
+	{ slug: 'belle', name: 'Maribel Magbual', nickname: 'Belle', title: 'Finance & Admin', hue: '#f5b301', photo: photo('belle'), founder: false },
+	{ slug: 'devie', name: 'John Devie Ulanday', nickname: 'Devie', title: 'Growth', hue: '#ff9f0a', photo: photo('devie'), founder: false },
+	{ slug: 'red', name: 'Givhine Leosala', nickname: 'Red', title: 'Partnerships', hue: '#ff375f', photo: photo('red'), founder: false },
+	{ slug: 'loisa', name: 'Loisa Celetaria', nickname: 'Loisa', title: 'Brand & Content', hue: '#40c8e0', photo: photo('loisa'), founder: false },
+	{ slug: 'princess', name: 'Princess Vergara', nickname: 'Princess', title: 'Customer Experience', hue: '#5ac8fa', photo: photo('princess'), founder: false },
+	{ slug: 'karu', name: 'John Reigner Karunaratne', nickname: 'Karu', title: 'Product Strategy', hue: '#af52de', photo: photo('karu'), founder: false },
+	{ slug: 'david', name: 'David Briones', nickname: 'David', title: 'Research & Analytics', hue: '#1bdbdb', photo: photo('david'), founder: false },
+	{ slug: 'ayie', name: 'Mariel Briones', nickname: 'Ayie', title: 'Client Experience', hue: '#c58a4f', photo: photo('ayie'), founder: false },
+	{ slug: 'jb', name: 'Jasper Briones', nickname: 'JB', title: 'Project Operations', hue: '#ff6b6b', photo: photo('jb'), founder: false }
 ];
 
 /** Whatever the app answers, made whole against the fallback. */

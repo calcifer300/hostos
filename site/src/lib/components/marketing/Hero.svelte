@@ -12,6 +12,7 @@
 	const copy = $derived(landing?.copy ?? LANDING_DEFAULTS.copy);
 	const lines = $derived([copy.hero.line1, copy.hero.line2]);
 	const faces = CLIENT_FACES;
+	const laurels = $derived(landing?.laurels ?? LANDING_DEFAULTS.laurels);
 	import { onMount } from 'svelte';
 	let { heroSrc = VIDEO.hero.src }: { heroSrc?: string } = $props();
 	let video: HTMLVideoElement;
@@ -46,20 +47,30 @@
 	<div aria-hidden="true" class="pointer-events-none absolute left-1/2 top-0 h-[520px] w-[900px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--color-accent)_22%,transparent),transparent)] blur-3xl"></div>
 
 	<div class="container-x text-center">
-		<p class="arrive label-mono mb-6 text-accent">{copy.hero.eyebrow}</p>
 		<!-- the mark, large: the brand greets before the words do -->
-		<div class="arrive hero-mark mx-auto mb-7 flex justify-center" style="--reveal-delay:60ms">
+		<div class="arrive hero-mark mx-auto mb-7 flex justify-center">
 			<span class="relative inline-flex items-center rounded-full border border-line bg-surface-2/70 py-3 pl-4 pr-6 shadow-1 backdrop-blur-sm">
 				<span aria-hidden="true" class="halo-ring absolute inset-0 rounded-full"></span>
 				<Logo size={56} wordSize={34} class="relative gap-3" />
 			</span>
 		</div>
+		<p class="arrive label-mono mb-6 text-accent" style="--reveal-delay:60ms">{copy.hero.eyebrow}</p>
 		<h1 class="display-1 headline mx-auto max-w-5xl" aria-label={lines.map(plain).join(' ')}>
 			{#each lines as line, i}
 				<span class="plate is-in" aria-hidden="true"><span style={`--reveal-delay:${120 + i * 110}ms`}>{@html emph(line)}</span></span>
 			{/each}
 		</h1>
 		<p class="arrive mx-auto mt-7 max-w-[64ch] text-[17px] leading-relaxed text-ink-2 md:text-[20px]" style="--reveal-delay:380ms">{copy.hero.body}</p>
+		<!-- the laurels, in gold, under the paragraph -->
+		<ul class="arrive mx-auto mt-7 flex max-w-4xl flex-wrap items-stretch justify-center gap-2.5" style="--reveal-delay:440ms" aria-label="Figures">
+			{#each laurels as l, i}
+				<li class="laurel-gold flex items-center gap-1.5 rounded-full border border-[#d9b64a]/50 bg-[linear-gradient(180deg,#fff8e1,#f6e7b5)] px-3.5 py-2 shadow-[0_6px_18px_-10px_rgba(180,140,20,0.6)]" style={`--d:${i * 70}ms`}>
+					<svg viewBox="0 0 24 40" class="h-7 w-4 text-[#b8860b]" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M20 38C10 34 4 26 4 14M4 14c4 0 7 2 8 6M4 14c-1-4 0-8 2-12M6 22c3 0 6 2 7 6M9 30c3 0 5 1 7 4" /></svg>
+					<span class="text-center"><span class="crown block"><svg viewBox="0 0 24 24" class="mx-auto -mb-0.5 h-3 w-3 text-[#c9971c]" fill="currentColor" aria-hidden="true"><path d="M3 18h18l1-10-5.5 4L12 5l-4.5 7L2 8z" /></svg></span><span class="block font-mono text-[15px] font-bold leading-none text-[#5a4300]">{l.value}</span><span class="label-mono mt-0.5 block !text-[9.5px] text-[#8a6a10]">{l.label}</span></span>
+					<svg viewBox="0 0 24 40" class="h-7 w-4 -scale-x-100 text-[#b8860b]" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M20 38C10 34 4 26 4 14M4 14c4 0 7 2 8 6M4 14c-1-4 0-8 2-12M6 22c3 0 6 2 7 6M9 30c3 0 5 1 7 4" /></svg>
+				</li>
+			{/each}
+		</ul>
 		<div class="arrive mt-9 flex flex-wrap items-center justify-center gap-3" style="--reveal-delay:520ms">
 			<span use:magnetic class="inline-block"><Button href={CTA.href} size="lg">{CTA.label} <ArrowRight class="h-4 w-4 transition-transform group-hover:translate-x-0.5" /></Button></span>
 			<Button href={HERO.secondary.href} variant="ghost" size="lg">{HERO.secondary.label} <ArrowDown class="h-4 w-4" /></Button>
@@ -105,6 +116,8 @@
 	.halo-ring { box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-accent) 35%, transparent); animation: ring 3.2s ease-out infinite; }
 	@keyframes ring { 0% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-accent) 35%, transparent); } 100% { box-shadow: 0 0 0 22px transparent; } }
 	@media (prefers-reduced-motion: reduce) { .halo-ring, .face { animation: none; } }
+	.laurel-gold { animation: laurel-in 0.6s var(--ease-out-expo) both; animation-delay: calc(0.5s + var(--d)); }
+	@keyframes laurel-in { from { opacity: 0; transform: translateY(10px) scale(0.92); } to { opacity: 1; transform: none; } }
 	.star { animation: star-in 0.6s var(--ease-out-expo) both; animation-delay: calc(0.9s + var(--d)); filter: drop-shadow(0 1px 2px rgb(245 179 1 / 0.35)); }
 	@keyframes star-in { from { opacity: 0; transform: scale(0.4) rotate(-30deg); } to { opacity: 1; transform: none; } }
 </style>

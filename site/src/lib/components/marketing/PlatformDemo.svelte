@@ -17,7 +17,7 @@
 		const bump = ((beat + i) % 3 === 0 ? 1 : 0);
 		return value.replace(String(n), String(n + bump));
 	};
-	const arriving = $derived([['now', 'Guest reply · 47 s'], ['now', 'Tablet check · all stores open'], ['now', 'Estimate #1051 chased']][beat % 3]);
+	const arriving = $derived([['now', 'Guest reply · 47 sec'], ['now', 'Tablet check · all stores open'], ['now', 'Estimate #1051 chased']][beat % 3]);
 	onMount(() => {
 		if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 		const t = window.setInterval(() => { beat += 1; if (!touched && beat % 4 === 0) tab = (tab + 1) % PLATFORM.tabs.length; }, 3500);

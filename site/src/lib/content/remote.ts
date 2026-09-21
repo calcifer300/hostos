@@ -103,7 +103,7 @@ export async function loadLanding(fetchFn: typeof fetch): Promise<Landing> {
 			return {
 				hero: { eyebrow: str(h.eyebrow, d.hero.eyebrow), line1: str(h.line1, d.hero.line1), line2: str(h.line2, d.hero.line2), body: str(h.body, d.hero.body) },
 				sections: Object.fromEntries(Object.entries(secs).map(([k, v]) => { const x = o(v); return [k, { eyebrow: str(x.eyebrow, ''), title: str(x.title, ''), lede: str(x.lede, '') }]; })),
-				rating: { value: str(rt.value, d.rating.value), note: str(rt.note, d.rating.note), count: str(rt.count, d.rating.count) },
+				rating: { value: typeof rt.value === 'string' ? rt.value : d.rating.value, note: str(rt.note, d.rating.note), count: str(rt.count, d.rating.count) },
 				contact: { facebookHandle: str(ct.facebookHandle, d.contact.facebookHandle), facebookUrl: typeof ct.facebookUrl === 'string' && /^https:\/\/(www\.)?facebook\.com\//i.test(ct.facebookUrl) ? ct.facebookUrl : d.contact.facebookUrl, founderEmail: str(ct.founderEmail, d.contact.founderEmail) }
 			};
 		})()

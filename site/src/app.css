@@ -1,7 +1,6 @@
 @import 'tailwindcss';
 @import '@fontsource-variable/inter';
 @import '@fontsource-variable/jetbrains-mono';
-@import '@fontsource/instrument-serif/400.css';
 @import '@fontsource/instrument-serif/400-italic.css';
 
 /*
@@ -20,11 +19,11 @@
 	--color-line-strong: rgba(23, 27, 39, 0.24);
 	--color-ink: #171b27;
 	--color-ink-2: rgba(23, 27, 39, 0.76);
-	--color-ink-3: rgba(23, 27, 39, 0.56);
+	--color-ink-3: rgba(23, 27, 39, 0.68);
 	--color-accent: #2c3ef3;
 	--color-accent-ink: #ffffff;
 	--color-platform: #6a5cf5;
-	--color-ok: #1f9d55;
+	--color-ok: #146e40;
 	--color-warn: #c27400;
 	--color-danger: #d92d4c;
 

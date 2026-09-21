@@ -28,7 +28,7 @@
 	<!-- the four families at once: a collage of landscape clips, each a little off the line; the chosen one steps forward -->
 	<div class="collage mb-8 grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4" aria-hidden="true">
 		{#each SOLUTIONS.families as f, i (f.id)}
-			<button type="button" tabindex="-1" onclick={() => (active = i)} class={`tile relative aspect-video overflow-hidden rounded-2xl border bg-surface-2 text-left transition-[transform,box-shadow,border-color,opacity] duration-700 ease-[var(--ease-out-expo)] ${i === active ? 'z-10 scale-[1.04] border-accent/60 shadow-2 opacity-100' : 'border-line opacity-80 hover:opacity-100'}`} style={`--i:${i}`}>
+			<button type="button" tabindex="-1" aria-label={`Show ${f.name}`} onclick={() => (active = i)} class={`tile relative aspect-video overflow-hidden rounded-2xl border bg-surface-2 text-left transition-[transform,box-shadow,border-color,opacity] duration-700 ease-[var(--ease-out-expo)] ${i === active ? 'z-10 scale-[1.04] border-accent/60 shadow-2 opacity-100' : 'border-line opacity-80 hover:opacity-100'}`} style={`--i:${i}`}>
 				{#key banner[i]}<video class="lazy dim absolute inset-0 h-full w-full object-cover" style={`--dim:${i === active ? 0.9 : 0.55}`} muted loop playsinline preload="none" use:lazyVideo={{ src: banner[i], always: true }}></video>{/key}
 				<div class="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_45%,color-mix(in_oklab,var(--color-surface-2)_85%,transparent)_100%)]"></div>
 				<p class="absolute bottom-3 left-4 flex items-center gap-2 text-[13px] font-semibold text-ink"><span class="label-mono text-accent">0{i + 1}</span>{f.name}</p>

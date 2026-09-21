@@ -29,19 +29,19 @@ export const NAV = [
 	{ href: '/#film', label: 'Watch it run' }
 ];
 
-export const CTA = { label: 'Book a working session', href: '/#contact', under: '45 minutes · bring one operation · leave with a plan' };
+export const CTA = { label: 'Book a working session', href: '/#contact', under: '45 minutes · Bring one operation · Leave with a plan' };
 
 export const HERO = {
-	eyebrow: 'For car rental fleets · restaurants · field services · shops',
+	eyebrow: 'For Car Rental Fleets · Restaurants · Field Services · Shops',
 	lines: ['Run the business.', 'We’ll run the *operations*.'],
 	body: 'We handle the rest behind the scenes so you can focus on what matters. AI where it helps, humans where it matters — from customer support to daily operations, AI and experienced operators work together so you don’t have to.',
 	secondary: { label: 'See how it works', href: '#how' },
 	/** What is in it for them, in four figures. */
 	outcomes: [
-		['Minutes', 'to every reply, day and night'],
+		['Minutes', 'to every reply, day or night'],
 		['0', 'missed orders, claims or estimates'],
-		['~4 h', 'a week of your time on operations'],
-		['1', 'board you read at 8 a.m.']
+		['~4 hrs', 'of your week spent on operations'],
+		['1', 'board to read at 8 AM']
 	]
 };
 
@@ -60,7 +60,7 @@ export const PROBLEMS = {
 		{ scene: 'The estimate went out Monday. Nobody chased it.', answer: 'Quiet estimates chased on day two and day five; you see the pipeline, not the inbox.' },
 		{ scene: 'Your website says “coming soon” on the page clients check first.', answer: 'A site that books, quotes and answers — built and kept by the same team that runs your inbox.' },
 		{ scene: 'Every process lives in one person’s head.', answer: 'Written down, one page each, and the repetitive parts automated so nobody has to remember.' },
-		{ scene: 'You learn something’s wrong from the bank balance, not from a dashboard.', answer: 'One board, updated as the work happens, on your phone at 8 a.m.' }
+		{ scene: 'You learn something’s wrong from the bank balance, not from a dashboard.', answer: 'One board, updated as the work happens, on your phone at 8 AM' }
 	]
 };
 
@@ -148,7 +148,7 @@ export const PROOF = {
 	title: 'Numbers first. *Names* where we’re allowed.',
 	cases: [
 		{ figure: 0, suffix: '', label: 'damage claims missed', line: 'A 146-car Turo fleet in Texas, six months on HostOS: every return photographed, every claim inside the window.', who: '146-car fleet · Founder-operated', when: '2026', hue: '#0a84ff' },
-		{ figure: 4, suffix: ' min', label: 'median guest reply time', line: 'Night and weekend messages for 146 cars, answered by operators working from the same board the owner reads at 8 a.m.', who: 'Same fleet', when: 'Q2 2026', hue: '#30d158' },
+		{ figure: 4, suffix: ' min', label: 'median guest reply time', line: 'Night and weekend messages for 146 cars, answered by operators working from the same board the owner reads at 8 AM', who: 'Same fleet', when: 'Q2 2026', hue: '#30d158' },
 		{ figure: 8, suffix: '', label: 'verticals, one workspace', line: 'Car rental, delivery, commerce, field service, websites, cafés, barbershops and custom — one login, one team.', who: 'HostOS platform', when: 'Today', hue: '#8b7cff' }
 	]
 };
@@ -156,11 +156,11 @@ export const PROOF = {
 export const PLATFORM = {
 	eyebrow: 'The platform',
 	title: 'The board your team and ours *work from*.',
-	lede: 'HostOS is the software behind every engagement — a separate dashboard for each line of business, one login. This is a live look at the kind of screens an owner reads.',
+	lede: 'HostOS is the software behind every engagement: one login, a dashboard per line of business. This is what an owner reads.',
 	tabs: [
 		{ id: 'board', name: 'Today', widgets: [
 			{ kind: 'kpi', label: 'Pickups today', value: '14', note: '8 out · 6 back' },
-			{ kind: 'kpi', label: 'Guest replies', value: '4 min', note: 'median, last 24 h' },
+			{ kind: 'kpi', label: 'Guest replies', value: '4 min', note: 'median, last 24 hrs' },
 			{ kind: 'kpi', label: 'Needs attention', value: '3', note: '1 license · 2 messages' },
 			{ kind: 'list', label: 'Next up', rows: [['09:40', 'Tesla Model 3 · keys out'], ['11:00', 'Civic · return + photos'], ['13:30', 'RAV4 · wash before 15:00'], ['16:15', 'Model Y · airport handoff']] }
 		] },
@@ -278,30 +278,31 @@ export const VOICES = { eyebrow: 'What owners say', title: 'In their *own words*
 /** What the work is trusted for — stated, not claimed as prizes we have not won. */
 export const RECOGNITION = {
 	title: 'Trusted for the *whole* of it.',
-	body: 'Operations, design and engineering under one roof: the same team that answers your customers at 2 a.m. builds the software it runs on. These are the disciplines clients hire us for, and the standard each is held to.',
+	body: 'Operations, design and engineering under one roof: the team that answers your customers at 2 AM also builds the software it runs on. These are the disciplines clients hire us for.',
 	marks: [
 		{ name: 'Web & app development', note: 'Full-stack, shipped and owned by you' },
-		{ name: 'Product & UI design', note: 'Interfaces owners read at 8 a.m.' },
+		{ name: 'Product & UI design', note: 'Interfaces owners read at 8 AM' },
 		{ name: 'World-class customer service', note: '5+ yrs VA & BPO per operator · Founder-trained' },
 		{ name: 'B2B operations', note: 'Fleets, kitchens, field service, shops' },
-		{ name: 'Automation & AI', note: 'In the background, supervised, never the pitch' }
+		{ name: 'Automation & AI', note: 'In the background, supervised — never the pitch' }
 	]
 };
 /** The trust line under the hero's ask. */
 /** Ten of the owners we work with (stock portraits until real ones are in), for the trust line. */
 export const CLIENT_FACES = ['/faces/3760046.jpg', '/faces/2530364.jpg', '/faces/2379004.jpg', '/faces/3974017.jpg', '/faces/6333501.jpg', '/faces/2112714.jpg', '/faces/8217534.jpg', '/faces/1195111.jpg', '/faces/12871465.jpg', '/faces/6345373.jpg'];
-export const RATING = { value: '5.0', stars: 5, note: 'from the owners we work with', count: '50+ clients served' };
+/** No number we cannot verify: five stars and a plain line that does not repeat the laurels above. */
+export const RATING = { value: '', stars: 5, note: 'Supporting growing businesses every day', count: '' };
 /** Where to reach the Founder directly. */
 export const CONTACT = { facebook: { handle: '@bimbeez96', url: 'https://www.facebook.com/bimbeez96', name: 'John Briones' }, founderEmail: 'johnbriones774@gmail.com', founder: 'John Jenrique Briones' };
 /** HostOS on every screen, and what it does for the numbers. */
 export const DEVICES = {
 	eyebrow: 'HostOS on every screen',
-	title: 'The board in your pocket, on your desk, *everywhere* the work is.',
-	lede: 'One login on iPhone, Android, Mac and Windows. The same board your operators run from is the one you read over coffee — nothing installs, nothing syncs, nothing is missed.',
+	title: 'The board in your pocket, on your desk — *everywhere* the work is.',
+	lede: 'One login on iPhone, Android, Mac and Windows. The board your operators work from is the one you read over coffee. Nothing to install, nothing to sync.',
 	gains: [
 		{ figure: '+18%', name: 'More bookings from faster replies', body: 'A guest answered in minutes books; one answered tomorrow booked elsewhere. Reply time is the single biggest lever on occupancy, and it is the first number we move.' },
 		{ figure: '0', name: 'Missed orders, claims and estimates', body: 'Paused tablets are reopened in a minute, damage is photographed at return and filed inside the window, quiet estimates are chased on day two and day five.' },
-		{ figure: '4–8 h', name: 'Of your week, back', body: 'The inbox, the calendar, the tablets and the follow-ups run without you. You read one board at 8 a.m. and decide; you stop being the software.' },
+		{ figure: '4–8 hrs', name: 'Of your week, back', body: 'The inbox, the calendar, the tablets and the follow-ups run without you. You read one board at 8 AM and decide; you stop being the software.' },
 		{ figure: '+12%', name: 'Utilization and pricing', body: 'Calendars priced by demand, turnarounds scheduled at booking, cars and tables that stop sitting empty because someone forgot to open them.' },
 		{ figure: '2×', name: 'Reviews and rankings', body: 'Every review answered the same day, every dispute filed with evidence — the ratings that decide where you appear on Turo, DoorDash and Google.' },
 		{ figure: '1', name: 'Board for the whole business', body: 'Fleet, kitchen, field and shop on one screen with the same team behind it. Add a vertical without adding a vendor.' }
@@ -310,9 +311,9 @@ export const DEVICES = {
 export const WHY = {
 	eyebrow: 'Why HostOS Collective',
 	title: 'Why a team *from the Philippines* — and why this one.',
-	lede: 'Based in the Philippines, working US hours, for businesses in the US and wherever else the owner is.',
+	lede: 'Based in the Philippines, working US hours, for owners in the US and anywhere else.',
 	reasons: [
-		{ id: 'hours', name: 'Awake when your customers are', body: 'Manila is 13 hours ahead of Austin. Your night is our working day, so a guest message at 2 a.m. your time is answered live, not queued for the morning.' },
+		{ id: 'hours', name: 'Awake when your customers are', body: 'Manila is 13 hours ahead of Austin. Your night is our working day, so a guest message at 2 AM your time is answered live, not queued for the morning.' },
 		{ id: 'people', name: 'Senior operators, not a marketplace', body: 'Every operator is a virtual assistant with five or more years in BPO and customer operations, personally trained by the Founder from day one, on our payroll, trained on your procedures, and covered when they’re off. You get a team, not a freelancer.' },
 		{ id: 'one', name: 'One team for people, systems and software', body: 'Most vendors sell one of the three. We run the operation, write it down, and build the board it runs on — so nothing falls between an agency, a SaaS and a VA firm.' },
 		{ id: 'value', name: 'US-grade service at Philippine cost', body: 'The Philippines is the customer-operations capital of the world: English-fluent, US-aligned, and trained for it. The savings buy the round-the-clock coverage most owners can’t afford locally.' },
@@ -375,10 +376,10 @@ export const SECTIONS: Record<string, { clip: string; tint: string }> = {
 export const FILM = {
 	eyebrow: 'Watch it run',
 	title: 'One day, four businesses, *one board*.',
-	lede: 'The same team, the same software, a different operation every few hours. Sit back — it plays itself.',
+	lede: 'Same team, same software, a different business every few hours. It plays itself.',
 	chapters: [
-		{ id: 'fleet', time: '07:40', name: 'Fleet', src: clip(4208203, 24), line: '146 cars. Eleven going out before nine.', events: [['07:41', 'Guest asks for an early pickup — answered in 1 m'], ['07:52', 'Model 3 · keys out · lockbox code sent'], ['08:10', 'Civic back · 12 photos · no damage']] },
-		{ id: 'kitchen', time: '11:30', name: 'Kitchen', src: clip(8094279, 25), line: 'Lunch rush on three delivery apps.', events: [['11:32', 'Uber Eats store paused — reopened in 40 s'], ['11:48', '86 garlic rice · pulled from 3 apps'], ['12:05', 'Refund dispute filed with photos']] },
+		{ id: 'fleet', time: '07:40', name: 'Fleet', src: clip(4208203, 24), line: '146 cars. Eleven going out before nine.', events: [['07:41', 'Guest asks for an early pickup — answered in 1 min'], ['07:52', 'Model 3 · keys out · lockbox code sent'], ['08:10', 'Civic back · 12 photos · no damage']] },
+		{ id: 'kitchen', time: '11:30', name: 'Kitchen', src: clip(8094279, 25), line: 'Lunch rush on three delivery apps.', events: [['11:32', 'Uber Eats store paused — reopened in 40 sec'], ['11:48', '86 garlic rice · pulled from 3 apps'], ['12:05', 'Refund dispute filed with photos']] },
 		{ id: 'field', time: '14:00', name: 'Field', src: clip(20693196, 25), line: 'A windshield job from call to signature.', events: [['14:02', 'Lead → customer → estimate · one screen'], ['14:15', 'Ramon dispatched · customer texted the ETA'], ['15:40', 'Work order signed on the phone · invoice sent']] },
 		{ id: 'shop', time: '17:30', name: 'Shop', src: clip(4177954, 30), line: 'A barbershop’s site goes live.', events: [['17:31', 'Domain in the owner’s name · DNS set'], ['17:45', 'Bookings page connected to the calendar'], ['18:02', 'First online booking · Saturday 10:00']] }
 	]
@@ -404,15 +405,15 @@ export const FAQ = {
 		{ q: 'What happens when an operator leaves?', a: 'Nothing you notice. Every procedure is written down, every conversation is on the board, and coverage is a team, not a person. Replacement operators train on your procedures before they touch your inbox.' },
 		{ q: 'Is this an agency, a SaaS, or a VA company?', a: 'It’s the three together, which is the point. The people run the operation, the systems make it repeatable, the software is where both happen. You pay for an outcome, not for seats.' },
 		{ q: 'How do you use AI?', a: 'As a tool, in the background: drafting replies an operator approves, spotting a paused store or a quiet estimate, summarizing a week. It never talks to your customers unsupervised, and it is never the reason to hire us.' },
-		{ q: 'Where is the team?', a: 'The Philippines, working on US hours (and yours, wherever you are). Every operator is on our payroll, trained on your procedures, and covered when they’re off.' },
-		{ q: 'What does it cost?', a: 'Operations retainers start with the hours of coverage you need; builds are quoted from the map we make in week one. The working session is free and you keep the map either way.' },
+		{ q: 'Where is the team?', a: 'The Philippines, working US hours — or yours, wherever you are. Every operator is on our payroll, trained on your procedures, and covered when they’re off.' },
+		{ q: 'What does it cost?', a: 'Operations are a monthly retainer sized to the hours of coverage you need. Builds are quoted from the map we make in week one. The working session is free, and you keep the map either way.' },
 		{ q: 'How fast can we start?', a: 'The working session this week; the map the week after; operators on your channels by the end of the month.' }
 	]
 };
 
 export const FINAL = {
 	title: 'Bring *one* operation.',
-	body: 'In 45 minutes we’ll map how it runs today, where it leaks, and what it looks like on HostOS. If it’s not a fit, you keep the map.',
+	body: 'In 45 minutes we map how it runs today, where it leaks, and how it would run on HostOS. Not a fit? You keep the map.',
 	channels: [
 		{ label: 'Email', value: SITE.email, href: `mailto:${SITE.email}` },
 		{ label: 'WhatsApp', value: SITE.phone, href: SITE.whatsapp }

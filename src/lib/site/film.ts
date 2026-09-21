@@ -73,15 +73,15 @@ export const DEFAULT_FILM: LandingFilm = {
 	copy: {
 		hero: { eyebrow: "For car rental fleets · restaurants · field services · shops", line1: "Run the business.", line2: "We’ll run the *operations*.", body: "We handle the rest behind the scenes so you can focus on what matters. AI where it helps, humans where it matters — from customer support to daily operations, AI and experienced operators work together so you don’t have to." },
 		sections: {},
-		rating: { value: "5.0", note: "from the owners we work with", count: "50+ clients served" },
+		rating: { value: "", note: "Supporting growing businesses every day", count: "" },
 		contact: { facebookHandle: "@bimbeez96", facebookUrl: "https://www.facebook.com/bimbeez96", founderEmail: "johnbriones774@gmail.com" },
 	},
 	lists: { outcomes: [], problems: [], pillars: [], why: [], gains: [], recognition: [], faq: [], faces: [], industries: [], steps: [], beforeAfter: [] },
 	laurels: [{"value":"98%","label":"client satisfaction"},{"value":"50+","label":"clients served"},{"value":"120+","label":"projects delivered"},{"value":"10+","label":"years in operations"},{"value":"5+ yrs","label":"VA & BPO experience per operator · trained by the Founder"}],
 	sections: { "problems": { clip: clip(8094279, 25), tint: "#ff375f" }, "how": { clip: clip(7413764, 24), tint: "#3b9cff" }, "film": { clip: "", tint: "#8b7cff" }, "before-after": { clip: clip(8064422, 30), tint: "#30d158" }, "solutions": { clip: "", tint: "#3b9cff" }, "industries": { clip: "", tint: "#ff9f0a" }, "proof": { clip: clip(6868699, 30), tint: "#40c8e0" }, "platform": { clip: clip(3986119, 25), tint: "#af52de" }, "start": { clip: clip(8266178, 25), tint: "#3b9cff" }, "faq": { clip: "", tint: "#8b7cff" }, "why": { clip: clip(8865706, 25), tint: "#ff9f0a" }, "devices": { clip: "", tint: "#3b9cff" }, "collective": { clip: "", tint: "#8b7cff" }, "voices": { clip: "", tint: "#3b9cff" } },
 	chapters: [
-		{ id: "fleet", time: "07:40", name: "Fleet", line: "146 cars. Eleven going out before nine.", src: clip(4208203, 24), events: [{ t: "07:41", text: "Guest asks for an early pickup — answered in 1 m" }, { t: "07:52", text: "Model 3 · keys out · lockbox code sent" }, { t: "08:10", text: "Civic back · 12 photos · no damage" }] },
-		{ id: "kitchen", time: "11:30", name: "Kitchen", line: "Lunch rush on three delivery apps.", src: clip(8094279, 25), events: [{ t: "11:32", text: "Uber Eats store paused — reopened in 40 s" }, { t: "11:48", text: "86 garlic rice · pulled from 3 apps" }, { t: "12:05", text: "Refund dispute filed with photos" }] },
+		{ id: "fleet", time: "07:40", name: "Fleet", line: "146 cars. Eleven going out before nine.", src: clip(4208203, 24), events: [{ t: "07:41", text: "Guest asks for an early pickup — answered in 1 min" }, { t: "07:52", text: "Model 3 · keys out · lockbox code sent" }, { t: "08:10", text: "Civic back · 12 photos · no damage" }] },
+		{ id: "kitchen", time: "11:30", name: "Kitchen", line: "Lunch rush on three delivery apps.", src: clip(8094279, 25), events: [{ t: "11:32", text: "Uber Eats store paused — reopened in 40 sec" }, { t: "11:48", text: "86 garlic rice · pulled from 3 apps" }, { t: "12:05", text: "Refund dispute filed with photos" }] },
 		{ id: "field", time: "14:00", name: "Field", line: "A windshield job from call to signature.", src: clip(20693196, 25), events: [{ t: "14:02", text: "Lead → customer → estimate · one screen" }, { t: "14:15", text: "Ramon dispatched · customer texted the ETA" }, { t: "15:40", text: "Work order signed on the phone · invoice sent" }] },
 		{ id: "shop", time: "17:30", name: "Shop", line: "A barbershop’s site goes live.", src: clip(4177954, 30), events: [{ t: "17:31", text: "Domain in the owner’s name · DNS set" }, { t: "17:45", text: "Bookings page connected to the calendar" }, { t: "18:02", text: "First online booking · Saturday 10:00" }] },
 	],
@@ -141,7 +141,7 @@ export function normalizeFilm(raw: unknown): LandingFilm {
 	const copy: LandingCopy = {
 		hero: { eyebrow: str(h.eyebrow, dc.hero.eyebrow, 120), line1: str(h.line1, dc.hero.line1, 80), line2: str(h.line2, dc.hero.line2, 80), body: str(h.body, dc.hero.body, 400) },
 		sections: Object.fromEntries(Object.entries(secs).map(([k, v]) => { const o = obj(v); return [k.slice(0, 32), { eyebrow: str(o.eyebrow, "", 80), title: str(o.title, "", 140), lede: str(o.lede, "", 300) }]; }).filter(([k]) => k)),
-		rating: { value: str(rt.value, dc.rating.value, 8), note: str(rt.note, dc.rating.note, 80), count: str(rt.count, dc.rating.count, 40) },
+		rating: { value: typeof rt.value === "string" ? rt.value.slice(0, 8) : dc.rating.value, note: str(rt.note, dc.rating.note, 80), count: str(rt.count, dc.rating.count, 40) },
 		contact: { facebookHandle: str(ct.facebookHandle, dc.contact.facebookHandle, 40), facebookUrl: (() => { const u = str(ct.facebookUrl, dc.contact.facebookUrl, 200); return /^https:\/\/(www\.)?facebook\.com\//i.test(u) ? u : dc.contact.facebookUrl; })(), founderEmail: (() => { const e = str(ct.founderEmail, dc.contact.founderEmail, 120); return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e) ? e : dc.contact.founderEmail; })() },
 	};
 	const lRaw2 = obj(r.lists);

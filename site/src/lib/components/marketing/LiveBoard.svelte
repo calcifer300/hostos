@@ -59,7 +59,7 @@
 	<div class="mt-2.5 grid grid-cols-2 gap-2.5">
 		<div class={`rounded-2xl border p-3 transition-colors duration-500 ${carBack ? 'border-ok/60 bg-ok/10' : 'border-line bg-bg/60'}`}>
 			<p class="label-mono text-ink-3">Fleet · Civic 4821</p>
-			<p class="mt-1.5 flex items-center gap-2 text-[13px] font-medium text-ink"><Car class={`h-4 w-4 ${carBack ? 'text-ok' : 'text-accent'}`} /> {carBack ? 'Back · photos taken · claim window 5 d' : 'Out · due 11:00'}</p>
+			<p class="mt-1.5 flex items-center gap-2 text-[13px] font-medium text-ink"><Car class={`h-4 w-4 ${carBack ? 'text-ok' : 'text-accent'}`} /> {carBack ? 'Back · photos taken · claim window 5 days' : 'Out · due 11:00'}</p>
 		</div>
 		<div class={`rounded-2xl border p-3 transition-colors duration-500 ${message !== 'none' ? 'border-accent/60 bg-accent/10' : 'border-line bg-bg/60'}`}>
 			<p class="label-mono text-ink-3">Guest · Turo</p>
@@ -68,7 +68,7 @@
 			{:else if message === 'in'}
 				<p class="mt-1.5 flex items-center gap-2 text-[13px] text-ink"><MessageSquare class="h-4 w-4 text-accent" /> “Can I pick up an hour early?”</p>
 			{:else}
-				<p class="mt-1.5 text-[13px] text-ink">“Yes — 8:40 works. Keys in the lockbox, code sent.” <span class="label-mono text-ok">· answered in 1 m</span></p>
+				<p class="mt-1.5 text-[13px] text-ink">“Yes — 8:40 works. Keys in the lockbox, code sent.” <span class="label-mono text-ok">· answered in 1 min</span></p>
 			{/if}
 		</div>
 	</div>

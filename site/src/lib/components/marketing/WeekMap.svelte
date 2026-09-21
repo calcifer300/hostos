@@ -18,7 +18,7 @@
 </script>
 
 <figure class="rounded-2xl border border-line bg-bg/60 p-4">
-	<svg viewBox="0 0 300 130" class="h-auto w-full" role="img" aria-label={after ? 'After: operators cover every hour; the owner reads at 8 a.m.' : 'Before: the owner covers nights and weekends, with gaps'}>
+	<svg viewBox="0 0 300 130" class="h-auto w-full" role="img" aria-label={after ? 'After: operators cover every hour; the owner reads at 8 AM' : 'Before: the owner covers nights and weekends, with gaps'}>
 		{#each Array.from({ length: 24 }, (_, h) => h) as h}
 			{#if h % 6 === 0}<text x={34 + h * 11 + 4} y="8" class="fill-ink-3 font-mono" font-size="6" text-anchor="middle">{String(h).padStart(2, '0')}</text>{/if}
 		{/each}

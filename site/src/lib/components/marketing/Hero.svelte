@@ -77,13 +77,13 @@
 		</div>
 		<p class="arrive label-mono mt-5 text-ink-3" style="--reveal-delay:640ms">{CTA.under}</p>
 		<!-- the trust line: the faces of owners who said so, five stars, the count -->
-		<div class="arrive mx-auto mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-3" style="--reveal-delay:680ms" aria-label="Rated {copy.rating.value} {copy.rating.note}">
+		<div class="arrive mx-auto mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-3" style="--reveal-delay:680ms" aria-label="{copy.rating.value ? `Rated ${copy.rating.value} — ` : ''}{copy.rating.note}">
 			{#if faces.length}<span class="flex -space-x-2.5">{#each faces as f, i}<img src={f} alt="" width="32" height="32" loading="lazy" class="face h-8 w-8 rounded-full border-2 border-bg object-cover" style={`--d:${i * 60}ms`} />{/each}</span>{/if}
 			<span class="shine flex items-center gap-1.5 rounded-full px-1" aria-hidden="true">
 				<svg width="0" height="0" class="absolute"><defs><linearGradient id="gold-grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3b0" /><stop offset="0.35" stop-color="#f4c542" /><stop offset="0.65" stop-color="#d69e12" /><stop offset="1" stop-color="#fbe58a" /></linearGradient></defs></svg>
 				{#each [1, 2, 3, 4, 5] as s}<svg viewBox="0 0 20 20" class="star h-[18px] w-[18px] drop-shadow-[0_1px_1px_rgba(120,80,0,0.35)]" style={`--d:${s * 90}ms`}><path class="gold-fill" d="M10 1.6l2.5 5.3 5.8.7-4.3 4 1.1 5.8L10 14.6l-5.1 2.8 1.1-5.8-4.3-4 5.8-.7z" /></svg>{/each}
 			</span>
-			<span class="text-[14px] text-ink-2"><span class="font-mono font-bold text-ink">{copy.rating.value}</span> {copy.rating.note}<span class="mx-2 text-ink-3">·</span>{copy.rating.count}</span>
+			<span class="text-[14.5px] font-medium text-ink">{#if copy.rating.value}<span class="font-mono font-bold">{copy.rating.value}</span> {/if}{copy.rating.note}{#if copy.rating.count}<span class="mx-2 text-ink-3">·</span><span class="font-normal text-ink-2">{copy.rating.count}</span>{/if}</span>
 		</div>
 		<!-- what is in it for them, in four figures -->
 		<ul class="arrive mx-auto mt-8 flex max-w-4xl flex-wrap items-baseline justify-center gap-x-6 gap-y-2 text-[13.5px] text-ink-2" style="--reveal-delay:720ms" aria-label="What you get">

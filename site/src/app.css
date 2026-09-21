@@ -321,6 +321,7 @@ main > .ticker {
 		/* pinned by its bottom edge when it is taller than the screen, by its top when it is not (set by the hero) */
 		top: var(--hero-top, 0px);
 		z-index: 0;
+		overflow-anchor: none; /* a change of pin must never move the reader's scroll */
 		animation: hero-exit linear both;
 		animation-timeline: view();
 		animation-range: exit 0% exit 100%;

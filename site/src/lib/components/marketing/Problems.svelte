@@ -7,7 +7,7 @@
 	/** Six Tuesdays. The visitor finds theirs; the answer is under the card. */
 </script>
 
-<Section id="problems" eyebrow={PROBLEMS.eyebrow} title={PROBLEMS.title}>
+<Section id="problems" eyebrow={PROBLEMS.eyebrow} title={PROBLEMS.title} voice="display">
 	<div use:stagger={70} class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
 		{#each PROBLEMS.items as p, i}
 			<article use:tilt={5} class="spot ring-hover group flex min-h-[220px] flex-col justify-between rounded-2xl border border-line bg-surface-2 p-6 transition-[border-color,box-shadow] duration-300 hover:border-accent/50 hover:shadow-1">

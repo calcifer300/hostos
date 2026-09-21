@@ -13,9 +13,11 @@
 		align = 'left',
 		wide = false,
 		tone = 'bg',
+		voice = 'sans',
 		class: cls = '',
 		children
 	}: {
+		voice?: 'sans' | 'grotesk' | 'serif' | 'display';
 		id?: string;
 		eyebrow?: string;
 		title?: string;
@@ -33,7 +35,7 @@
 		{#if eyebrow || title}
 			<header use:reveal class={`mb-10 max-w-3xl md:mb-14 ${align === 'center' ? 'mx-auto text-center' : ''}`}>
 				{#if eyebrow}<p class="label-mono mb-4 text-accent">{eyebrow}</p>{/if}
-				{#if title}<h2 use:words class="display-2 text-ink">{title}</h2>{/if}
+				{#if title}<h2 use:words class={`display-2 text-ink ${voice === 'grotesk' ? 'voice-grotesk' : voice === 'serif' ? 'voice-serif' : voice === 'display' ? 'voice-display' : ''}`}>{title}</h2>{/if}
 				{#if lede}<p class="mt-5 max-w-2xl text-[17px] leading-relaxed text-ink-2 {align === 'center' ? 'mx-auto' : ''}">{lede}</p>{/if}
 			</header>
 		{/if}

@@ -6,7 +6,7 @@
 	/** Numbers first, dated, named where allowed. A quote without a number is wallpaper; none here. */
 </script>
 
-<Section id="proof" eyebrow={PROOF.eyebrow} title={PROOF.title} tone="surface">
+<Section id="proof" eyebrow={PROOF.eyebrow} title={PROOF.title} tone="surface" voice="serif">
 	<div use:stagger={90} class="grid grid-cols-1 gap-4 md:grid-cols-3">
 		{#each PROOF.cases as c, i}
 			<article use:tilt={4} class="ring-hover relative overflow-hidden rounded-2xl border border-line bg-surface-2 p-6" style={`--spot:${c.hue}`}>

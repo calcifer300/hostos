@@ -8,7 +8,7 @@
 	const scenes = { people: 'people', systems: 'checklist', software: 'board' } as const;
 </script>
 
-<Section id="how" eyebrow={HOW.eyebrow} title={HOW.title} tone="surface">
+<Section id="how" eyebrow={HOW.eyebrow} title={HOW.title} tone="surface" voice="grotesk">
 	<!-- the connector: people → systems → software, drawn on arrival -->
 	<div use:reveal class="draw relative mb-8 hidden h-14 md:block" aria-hidden="true">
 		<svg viewBox="0 0 1200 56" class="h-full w-full" fill="none" preserveAspectRatio="none">

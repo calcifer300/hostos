@@ -59,6 +59,18 @@ export function FilmEditor({ film: initial, fromDatabase }: { film: LandingFilm;
         <ClipField slug="hero" value={film.hero.src} onChange={(src) => { setFilm((f) => ({ ...f, hero: { src } })); setDirty(true); }} hint="Plays at 30% behind the headline on desktop only. A slow, wide shot works best." />
       </Card>
 
+      <Card padding="md">
+        <p className="mb-3 text-[12.5px] font-semibold uppercase tracking-wide text-muted-foreground">Three more places footage plays</p>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          {([["team", "Behind the Collective", "The team at work — plays dimmed behind the faces."], ["delivery", "Delivery tile", "Plays on the DoorDash & delivery tile under Industries."], ["closing", "Behind the final ask", "A slow city or road shot behind “Bring one operation”."]] as const).map(([k, label, hint]) => (
+            <div key={k}>
+              <Label className="mb-2 block">{label}</Label>
+              <ClipField slug={k} value={film.extras[k]} onChange={(src) => { setFilm((f) => ({ ...f, extras: { ...f.extras, [k]: src } })); setDirty(true); }} hint={hint} />
+            </div>
+          ))}
+        </div>
+      </Card>
+
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {film.chapters.map((c, i) => (
           <Card key={c.id} padding="md">

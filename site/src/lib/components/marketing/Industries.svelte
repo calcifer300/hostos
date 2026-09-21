@@ -1,12 +1,14 @@
 <script lang="ts">
 	import Section from '$lib/components/ui/Section.svelte';
-	import { stagger, tilt } from '$lib/components/motion/actions';
+	import { lazyVideo, stagger, tilt } from '$lib/components/motion/actions';
 	import { INDUSTRIES, FILM, VIDEO } from '$lib/content/site';
+	let { chapters = FILM.chapters, extras = { team: VIDEO.team, delivery: VIDEO.delivery, closing: VIDEO.closing }, heroSrc = VIDEO.hero.src }: { chapters?: typeof FILM.chapters; extras?: { team: string; delivery: string; closing: string }; heroSrc?: string } = $props();
 	/**
 	 * Eight tiles; the ones we have footage for play it under the words
 	 * while the pointer rests on them (loaded on first hover, never before).
 	 */
-	const clips: Record<string, string> = { turo: FILM.chapters[0].src, doordash: FILM.chapters[1].src, hospitality: FILM.chapters[1].src, services: FILM.chapters[2].src, small: FILM.chapters[3].src, fleet: VIDEO.hero.src };
+	const clips = $derived<Record<string, string>>({ turo: chapters[0].src, doordash: extras.delivery, hospitality: chapters[1].src, services: chapters[2].src, small: chapters[3].src, fleet: heroSrc, startups: extras.team });
+	const always = new Set(['turo', 'doordash']); // these two play as soon as they are on screen
 	function hoverVideo(el: HTMLElement, src: string | undefined) {
 		if (!src || window.matchMedia('(hover: none)').matches || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return {};
 		let video: HTMLVideoElement | null = null;
@@ -28,11 +30,12 @@
 	}
 </script>
 
-<Section id="industries" eyebrow={INDUSTRIES.eyebrow} title={INDUSTRIES.title}>
+<Section id="industries" eyebrow={INDUSTRIES.eyebrow} title={INDUSTRIES.title} voice="display">
 	<div use:stagger={50} class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
 		{#each INDUSTRIES.items as ind}
-			<a href={ind.href} use:tilt={5} use:hoverVideo={clips[ind.id]} class="industry spot ring-hover group relative block overflow-hidden rounded-2xl border border-line bg-surface-2 p-5 transition-[border-color,box-shadow] duration-300 hover:shadow-1" style={`--spot:${ind.hue}; --hue:${ind.hue}`}>
-				<div aria-hidden="true" class="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(22,26,38,0.35),var(--color-surface-2)_85%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100"></div>
+			<a href={ind.href} use:tilt={5} use:hoverVideo={always.has(ind.id) ? undefined : clips[ind.id]} class="industry spot ring-hover group relative block overflow-hidden rounded-2xl border border-line bg-surface-2 p-5 transition-[border-color,box-shadow] duration-300 hover:shadow-1" style={`--spot:${ind.hue}; --hue:${ind.hue}`}>
+				{#if always.has(ind.id)}<video class="lazy absolute inset-0 h-full w-full object-cover" muted loop playsinline preload="none" use:lazyVideo={{ src: clips[ind.id], always: true }} aria-hidden="true"></video>{/if}
+				<div aria-hidden="true" class={`pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(22,26,38,0.35),var(--color-surface-2)_85%)] transition-opacity duration-500 ${always.has(ind.id) ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}></div>
 				<div class="relative">
 					<span class="block h-1.5 w-8 rounded-full transition-[width] duration-500 group-hover:w-14" style={`background:${ind.hue}`}></span>
 					<h3 class="mt-5 text-[16px] font-semibold tracking-tight text-ink">{ind.name}</h3>

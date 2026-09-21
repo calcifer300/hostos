@@ -12,6 +12,8 @@ export interface FilmChapter { id: string; time: string; name: string; line: str
 export interface LandingFilm {
 	hero: { src: string };
 	chapters: FilmChapter[];
+	/** Three more places the site plays footage: behind the Collective, on the delivery tile, behind the final ask. */
+	extras: { team: string; delivery: string; closing: string };
 }
 
 export const FILM_KEY = "landing_film";
@@ -21,6 +23,7 @@ const clip = (id: number, fps: number) => `https://videos.pexels.com/video-files
 
 export const DEFAULT_FILM: LandingFilm = {
 	hero: { src: clip(5834188, 24) },
+	extras: { team: clip(8865706, 25), delivery: clip(4168426, 25), closing: clip(8064422, 30) },
 	chapters: [
 		{ id: "fleet", time: "07:40", name: "Fleet", line: "146 cars. Eleven going out before nine.", src: clip(4208203, 24), events: [{ t: "07:41", text: "Guest asks for an early pickup — answered in 1 m" }, { t: "07:52", text: "Model 3 · keys out · lockbox code sent" }, { t: "08:10", text: "Civic back · 12 photos · no damage" }] },
 		{ id: "kitchen", time: "11:30", name: "Kitchen", line: "Lunch rush on three delivery apps.", src: clip(8094279, 25), events: [{ t: "11:32", text: "Uber Eats store paused — reopened in 40 s" }, { t: "11:48", text: "86 garlic rice · pulled from 3 apps" }, { t: "12:05", text: "Refund dispute filed with photos" }] },
@@ -54,5 +57,7 @@ export function normalizeFilm(raw: unknown): LandingFilm {
 		};
 	});
 	const heroSrc = str(hero.src, DEFAULT_FILM.hero.src, 600);
-	return { hero: { src: isFilmSrc(heroSrc) ? heroSrc : DEFAULT_FILM.hero.src }, chapters };
+	const ex = (r.extras && typeof r.extras === "object" ? r.extras : {}) as Record<string, unknown>;
+	const extra = (k: keyof LandingFilm["extras"]) => { const s = str(ex[k], DEFAULT_FILM.extras[k], 600); return isFilmSrc(s) ? s : DEFAULT_FILM.extras[k]; };
+	return { hero: { src: isFilmSrc(heroSrc) ? heroSrc : DEFAULT_FILM.hero.src }, chapters, extras: { team: extra("team"), delivery: extra("delivery"), closing: extra("closing") } };
 }

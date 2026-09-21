@@ -5,7 +5,7 @@
 	import { THIRTY_DAYS } from '$lib/content/site';
 </script>
 
-<Section id="start" eyebrow={THIRTY_DAYS.eyebrow} title={THIRTY_DAYS.title} tone="surface">
+<Section id="start" eyebrow={THIRTY_DAYS.eyebrow} title={THIRTY_DAYS.title} tone="surface" voice="grotesk">
 	<div use:reveal class="draw relative mb-6 hidden h-10 md:block" aria-hidden="true">
 		<svg viewBox="0 0 1200 40" class="h-full w-full" fill="none" preserveAspectRatio="none">
 			<path d="M150 20 H1050" stroke="var(--color-line-strong)" stroke-width="1.5" pathLength="1" />

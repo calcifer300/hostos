@@ -10,7 +10,7 @@
 	];
 </script>
 
-<Section id="before-after" eyebrow={BEFORE_AFTER.eyebrow} title={BEFORE_AFTER.title} lede={BEFORE_AFTER.lede}>
+<Section id="before-after" eyebrow={BEFORE_AFTER.eyebrow} title={BEFORE_AFTER.title} lede={BEFORE_AFTER.lede} voice="serif">
 	<div use:reveal class="grid gap-4 lg:grid-cols-[1.2fr_1fr] lg:items-start">
 	<div class="overflow-hidden rounded-3xl border border-line bg-surface-2">
 		<div class="flex items-center justify-between gap-4 border-b border-line px-5 py-4">

@@ -175,7 +175,10 @@ export const PLATFORM = {
  */
 const clip = (id: number, fps: number) => `https://videos.pexels.com/video-files/${id}/${id}-sd_960_540_${fps}fps.mp4`;
 export const VIDEO = {
-	hero: { src: clip(5834188, 24), poster: 'https://images.pexels.com/videos/5834188/pexels-photo-5834188.jpeg?auto=compress&cs=tinysrgb&w=1280' }
+	hero: { src: clip(5834188, 24), poster: 'https://images.pexels.com/videos/5834188/pexels-photo-5834188.jpeg?auto=compress&cs=tinysrgb&w=1280' },
+	team: clip(8865706, 25),
+	delivery: clip(4168426, 25),
+	closing: clip(8064422, 30)
 };
 
 export const FILM = {

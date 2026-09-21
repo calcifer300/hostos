@@ -43,13 +43,13 @@
 <HowItWorks />
 <Film chapters={data.chapters} />
 <BeforeAfter />
-<Solutions />
-<Industries />
+<Solutions chapters={data.chapters} extras={data.extras} />
+<Industries chapters={data.chapters} extras={data.extras} heroSrc={data.heroSrc} />
 <Proof />
 <PlatformDemo />
-<Collective members={data.members} />
+<Collective members={data.members} teamSrc={data.extras.team} />
 <ThirtyDays />
-<Section id="faq" eyebrow={FAQ.eyebrow} title={FAQ.title} align="center">
+<Section id="faq" eyebrow={FAQ.eyebrow} title={FAQ.title} align="center" voice="serif">
 	<div class="mx-auto max-w-3xl"><Accordion items={FAQ.items} /></div>
 </Section>
-<FinalCta />
+<FinalCta closingSrc={data.extras.closing} />

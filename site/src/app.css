@@ -1,6 +1,10 @@
 @import 'tailwindcss';
 @import '@fontsource-variable/inter';
 @import '@fontsource-variable/jetbrains-mono';
+@import '@fontsource-variable/space-grotesk';
+@import '@fontsource/instrument-serif/400.css';
+@import '@fontsource/instrument-serif/400-italic.css';
+@import '@fontsource-variable/syne';
 
 /*
   HostOS Collective — design tokens.
@@ -27,6 +31,10 @@
 
 	--font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 	--font-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, monospace;
+	/* the voices: Inter says it plainly; Space Grotesk is the system talking; Instrument Serif is the editorial aside; Syne is the loud one */
+	--font-grotesk: 'Space Grotesk Variable', var(--font-sans);
+	--font-serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+	--font-display: 'Syne Variable', var(--font-sans);
 
 	--radius-sm: 8px;
 	--radius-md: 12px;
@@ -129,6 +137,29 @@
 	letter-spacing: -0.025em;
 	font-weight: 600;
 	text-wrap: balance;
+}
+/* per-section voices */
+@utility voice-grotesk {
+	font-family: var(--font-grotesk);
+	letter-spacing: -0.02em;
+}
+@utility voice-serif {
+	font-family: var(--font-serif);
+	font-weight: 400;
+	letter-spacing: -0.01em;
+	font-size: 1.12em;
+}
+@utility voice-display {
+	font-family: var(--font-display);
+	font-weight: 700;
+	letter-spacing: -0.02em;
+	text-transform: none;
+}
+@utility italic-serif {
+	font-family: var(--font-serif);
+	font-style: italic;
+	font-weight: 400;
+	letter-spacing: -0.01em;
 }
 @utility text-gradient {
 	background: linear-gradient(92deg, var(--color-accent), var(--color-platform));
@@ -254,6 +285,39 @@
 		scroll-behavior: auto !important;
 	}
 }
+
+/* ------------------------------------------------------------ preloader */
+/* The mark draws itself, the wordmark rises, the curtain lifts — 1.4 s, CSS only, gone for reduced motion. */
+.preloader {
+	position: fixed;
+	inset: 0;
+	z-index: 200;
+	display: grid;
+	place-items: center;
+	background: var(--color-bg);
+	animation: curtain 0.6s var(--ease-out-expo) 1.25s forwards;
+	pointer-events: none;
+}
+.preloader .mark path,
+.preloader .mark rect {
+	stroke-dasharray: 1;
+	stroke-dashoffset: 1;
+	animation: preload-draw 0.9s var(--ease-out-expo) forwards;
+}
+.preloader .mark rect { animation-delay: 0s; }
+.preloader .mark path:nth-of-type(1) { animation-delay: 0.15s; }
+.preloader .mark path:nth-of-type(2) { animation-delay: 0.3s; }
+.preloader .mark path:nth-of-type(3) { animation-delay: 0.45s; }
+.preloader .mark path:nth-of-type(4) { animation-delay: 0.6s; }
+.preloader .word {
+	opacity: 0;
+	transform: translateY(10px);
+	animation: preload-word 0.6s var(--ease-out-expo) 0.55s forwards;
+}
+@keyframes preload-draw { to { stroke-dashoffset: 0; } }
+@keyframes preload-word { to { opacity: 1; transform: none; } }
+@keyframes curtain { to { opacity: 0; visibility: hidden; } }
+@media (prefers-reduced-motion: reduce) { .preloader { display: none; } }
 
 /* ------------------------------------------------------------- footage */
 video.lazy {

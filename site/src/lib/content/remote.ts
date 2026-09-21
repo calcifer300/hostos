@@ -11,7 +11,7 @@ import { normalizeTeam, TEAM, type Member } from '$lib/content/team';
 export const APP_ORIGIN = 'https://hostos-ten.vercel.app';
 
 export type Chapter = (typeof FILM.chapters)[number];
-export interface Landing { members: Member[]; chapters: Chapter[]; heroSrc: string }
+export interface Landing { members: Member[]; chapters: Chapter[]; heroSrc: string; extras: { team: string; delivery: string; closing: string } }
 
 const str = (v: unknown, fb: string) => (typeof v === 'string' && v.trim() ? v : fb);
 const src = (v: unknown, fb: string) => (typeof v === 'string' && /^(\/|https:\/\/[a-z0-9-]+\.supabase\.co\/storage\/v1\/object\/public\/|https:\/\/videos\.pexels\.com\/)/i.test(v) ? v : fb);
@@ -39,6 +39,7 @@ export async function loadLanding(fetchFn: typeof fetch): Promise<Landing> {
 	return {
 		members: team ? normalizeTeam(team) : TEAM,
 		chapters: chaptersFrom(film?.chapters),
-		heroSrc: src((film?.hero as Record<string, unknown> | undefined)?.src, VIDEO.hero.src)
+		heroSrc: src((film?.hero as Record<string, unknown> | undefined)?.src, VIDEO.hero.src),
+		extras: (() => { const ex = (film?.extras && typeof film.extras === 'object' ? film.extras : {}) as Record<string, unknown>; return { team: src(ex.team, VIDEO.team), delivery: src(ex.delivery, VIDEO.delivery), closing: src(ex.closing, VIDEO.closing) }; })()
 	};
 }

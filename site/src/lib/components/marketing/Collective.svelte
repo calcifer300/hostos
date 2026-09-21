@@ -2,16 +2,19 @@
 	import { ArrowUpRight, Crown } from 'lucide-svelte';
 	import Section from '$lib/components/ui/Section.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
-	import { stagger } from '$lib/components/motion/actions';
-	import { SITE } from '$lib/content/site';
+	import { lazyVideo, stagger } from '$lib/components/motion/actions';
+	import { SITE, VIDEO } from '$lib/content/site';
 	import type { Member } from '$lib/content/team';
 	/** The people, as faces. The full roster and the spotlight live on /team in the app. */
 	import Constellation from './Constellation.svelte';
-	let { members }: { members: Member[] } = $props();
+	let { members, teamSrc = VIDEO.team }: { members: Member[]; teamSrc?: string } = $props();
 </script>
 
 <Section id="collective" eyebrow="The Collective" title="A collective, not a hierarchy chart." lede="Twelve people who each own a craft, work inside the same HostOS workspace, and answer to the same clients. What we sell is what we use.">
 	<div class="relative isolate">
+	<div aria-hidden="true" class="pointer-events-none absolute -inset-x-8 -inset-y-12 -z-20 overflow-hidden rounded-[40px] [mask-image:radial-gradient(ellipse_at_center,#000_30%,transparent_80%)]">
+		<video class="lazy h-full w-full object-cover opacity-25 mix-blend-luminosity" muted loop playsinline preload="none" use:lazyVideo={{ src: teamSrc }}></video>
+	</div>
 	<Constellation hues={members.map((m) => m.hue)} class="pointer-events-none absolute -inset-x-8 -inset-y-12 -z-10 h-[calc(100%+6rem)] w-[calc(100%+4rem)] [mask-image:radial-gradient(ellipse_at_center,#000_55%,transparent_95%)]" />
 	<ul use:stagger={45} class="grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-6" aria-label="Members">
 		{#each members as m}

@@ -2,7 +2,10 @@
 	import { ArrowRight } from 'lucide-svelte';
 	import Section from '$lib/components/ui/Section.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
-	import { tilt } from '$lib/components/motion/actions';
+	import { lazyVideo, tilt } from '$lib/components/motion/actions';
+	import { FILM, VIDEO } from '$lib/content/site';
+	let { chapters = FILM.chapters, extras = { team: VIDEO.team, delivery: VIDEO.delivery, closing: VIDEO.closing } }: { chapters?: typeof FILM.chapters; extras?: { team: string; delivery: string; closing: string } } = $props();
+	const banner = $derived([extras.team, chapters[3].src, extras.delivery, extras.closing]);
 	import Motif from '$lib/components/ui/Motif.svelte';
 	const motifs = { run: 'schedule', build: 'blocks', connect: 'nodes', understand: 'chart' } as const;
 	import { CTA, SOLUTIONS } from '$lib/content/site';
@@ -17,6 +20,16 @@
 				<span class="label-mono mr-2 text-accent">0{i + 1}</span>{f.name}
 			</button>
 		{/each}
+	</div>
+	<div class="relative mb-6 h-40 overflow-hidden rounded-2xl border border-line bg-bg sm:h-52" aria-hidden="true">
+		{#each SOLUTIONS.families as f, i (f.id)}
+			<div class={`absolute inset-0 transition-opacity duration-1000 ${i === active ? 'opacity-100' : 'opacity-0'}`}>
+				{#if Math.abs(i - active) <= 1}{#key banner[i]}<video class="lazy h-full w-full object-cover" muted loop playsinline preload="none" use:lazyVideo={{ src: banner[i], always: true }}></video>{/key}{/if}
+			</div>
+		{/each}
+		<div class="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,var(--color-surface-1)_0%,transparent_45%,transparent_70%,var(--color-surface-1)_100%)]"></div>
+		<div class="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_50%,var(--color-surface-1)_100%)]"></div>
+		<p class="label-mono absolute bottom-4 left-5 text-accent">0{active + 1} · {family.name}</p>
 	</div>
 	<div class="mb-6 flex items-center justify-between gap-6">
 		<p class="text-[16px] text-ink-2">{family.line}</p>

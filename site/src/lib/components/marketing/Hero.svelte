@@ -21,7 +21,7 @@
 			<p class="arrive label-mono mb-6 text-accent">{HERO.eyebrow}</p>
 			<h1 class="display-1 text-ink">
 				{#each HERO.lines as line, i}
-					<span class="plate is-in"><span style={`--reveal-delay:${120 + i * 110}ms`} class={i === HERO.lines.length - 1 ? 'text-gradient' : ''}>{line}</span></span>
+					<span class="plate is-in"><span style={`--reveal-delay:${120 + i * 110}ms`} class={i === HERO.lines.length - 1 ? 'italic-serif text-gradient' : ''}>{line}</span></span>
 				{/each}
 			</h1>
 			<p class="arrive mt-7 max-w-[52ch] text-[17px] leading-relaxed text-ink-2 md:text-[19px]" style="--reveal-delay:380ms">{HERO.body}</p>

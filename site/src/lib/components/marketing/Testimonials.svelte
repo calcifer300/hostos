@@ -17,9 +17,9 @@
 <Section id="voices" eyebrow={VOICES.eyebrow} title={VOICES.title} align="center">
 	<ul use:stagger={60} class="scroll-in mb-12 flex flex-wrap items-stretch justify-center gap-3 md:mb-16" aria-label="Figures">
 		{#each laurels as l}
-			<li class="laurel shine flex items-center gap-2 rounded-full border border-[#d9b64a]/60 bg-[linear-gradient(135deg,#fff6d6_0%,#f3dc8a_45%,#e4bd45_100%)] px-4 py-2.5 shadow-[0_8px_22px_-10px_rgba(180,140,20,0.7)]">
+			<li class="laurel flex items-center gap-2 px-3 py-2">
 				<svg viewBox="0 0 24 40" class="h-8 w-5 text-[#9a6d00]" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M20 38C10 34 4 26 4 14M4 14c4 0 7 2 8 6M4 14c-1-4 0-8 2-12M6 22c3 0 6 2 7 6M9 30c3 0 5 1 7 4" /></svg>
-				<span class="text-center"><svg viewBox="0 0 24 24" class="mx-auto -mb-0.5 h-3.5 w-3.5" aria-hidden="true"><path class="gold-fill" d="M3 18h18l1-10-5.5 4L12 5l-4.5 7L2 8z" /></svg><span class="block font-mono text-[18px] font-bold leading-none text-[#5a4300]">{l.value}</span><span class="label-mono mt-1 block text-[#8a6a10]">{l.label}</span></span>
+				<span class="text-center"><svg viewBox="0 0 24 24" class="mx-auto -mb-0.5 h-3.5 w-3.5" aria-hidden="true"><path class="gold-fill" d="M3 18h18l1-10-5.5 4L12 5l-4.5 7L2 8z" /></svg><span class="gold-text block font-mono text-[18px] font-bold leading-none">{l.value}</span><span class="label-mono mt-1 block text-ink-3">{l.label}</span></span>
 				<svg viewBox="0 0 24 40" class="h-8 w-5 -scale-x-100 text-[#9a6d00]" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M20 38C10 34 4 26 4 14M4 14c4 0 7 2 8 6M4 14c-1-4 0-8 2-12M6 22c3 0 6 2 7 6M9 30c3 0 5 1 7 4" /></svg>
 			</li>
 		{/each}

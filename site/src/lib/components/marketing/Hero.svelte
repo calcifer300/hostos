@@ -37,7 +37,7 @@
 	});
 </script>
 
-<section id="hero" bind:this={stage} class="hero-stage relative overflow-hidden pt-36 pb-16 md:pt-44 md:pb-24" style={`--hero-top:${top}px`}>
+<section id="hero" bind:this={stage} class="hero-stage relative overflow-hidden pt-28 pb-16 md:pt-32 md:pb-24" style={`--hero-top:${top}px`}>
 	<!-- footage: a road at dusk, far behind the copy, only on wide screens and only when allowed -->
 	<div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-20">
 		<video bind:this={video} class="lazy dim h-full w-full object-cover [mask-image:radial-gradient(ellipse_at_center,#000_30%,transparent_75%)]" style="--dim:0.2" muted loop playsinline preload="none" use:lazyVideo={{ src: heroSrc }}></video>
@@ -48,11 +48,8 @@
 
 	<div class="container-x text-center">
 		<!-- the mark, large: the brand greets before the words do -->
-		<div class="arrive hero-mark mx-auto mb-7 flex justify-center">
-			<span class="relative inline-flex items-center rounded-full border border-line bg-surface-2/70 py-3 pl-4 pr-6 shadow-1 backdrop-blur-sm">
-				<span aria-hidden="true" class="halo-ring absolute inset-0 rounded-full"></span>
-				<Logo size={56} wordSize={34} class="relative gap-3" />
-			</span>
+		<div class="arrive hero-mark mx-auto mb-6 flex justify-center">
+			<Logo size={64} wordSize={38} class="gap-3.5" />
 		</div>
 		<p class="arrive label-mono mb-6 text-accent" style="--reveal-delay:60ms">{copy.hero.eyebrow}</p>
 		<h1 class="display-1 headline mx-auto max-w-5xl" aria-label={lines.map(plain).join(' ')}>
@@ -64,9 +61,9 @@
 		<!-- the laurels, in gold, under the paragraph -->
 		<ul class="arrive mx-auto mt-7 flex max-w-4xl flex-wrap items-stretch justify-center gap-2.5" style="--reveal-delay:440ms" aria-label="Figures">
 			{#each laurels as l, i}
-				<li class={`laurel-gold shine ${i % 2 ? 'delay-1' : ''} flex items-center gap-1.5 rounded-full border border-[#d9b64a]/60 bg-[linear-gradient(135deg,#fff6d6_0%,#f3dc8a_45%,#e4bd45_100%)] px-3.5 py-2 shadow-[0_8px_22px_-10px_rgba(180,140,20,0.7)]`} style={`--d:${i * 70}ms`}>
+				<li class="laurel-gold flex items-center gap-1 px-2 py-1" style={`--d:${i * 70}ms`}>
 					<svg viewBox="0 0 24 40" class="h-7 w-4 text-[#9a6d00]" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M20 38C10 34 4 26 4 14M4 14c4 0 7 2 8 6M4 14c-1-4 0-8 2-12M6 22c3 0 6 2 7 6M9 30c3 0 5 1 7 4" /></svg>
-					<span class="text-center"><span class="crown block"><svg viewBox="0 0 24 24" class="mx-auto -mb-0.5 h-3.5 w-3.5 drop-shadow-[0_1px_1px_rgba(120,80,0,0.35)]" aria-hidden="true"><path class="gold-fill" d="M3 18h18l1-10-5.5 4L12 5l-4.5 7L2 8z" /></svg></span><span class="block font-mono text-[15px] font-bold leading-none text-[#5a4300]">{l.value}</span><span class="label-mono mt-0.5 block !text-[9.5px] text-[#8a6a10]">{l.label}</span></span>
+					<span class="text-center"><span class="crown block"><svg viewBox="0 0 24 24" class="mx-auto -mb-0.5 h-3.5 w-3.5 drop-shadow-[0_1px_1px_rgba(120,80,0,0.35)]" aria-hidden="true"><path class="gold-fill" d="M3 18h18l1-10-5.5 4L12 5l-4.5 7L2 8z" /></svg></span><span class="gold-text block font-mono text-[17px] font-bold leading-none">{l.value}</span><span class="label-mono mt-0.5 block !text-[9.5px] text-ink-3">{l.label}</span></span>
 					<svg viewBox="0 0 24 40" class="h-7 w-4 -scale-x-100 text-[#9a6d00]" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M20 38C10 34 4 26 4 14M4 14c4 0 7 2 8 6M4 14c-1-4 0-8 2-12M6 22c3 0 6 2 7 6M9 30c3 0 5 1 7 4" /></svg>
 				</li>
 			{/each}
@@ -77,8 +74,8 @@
 		</div>
 		<p class="arrive label-mono mt-5 text-ink-3" style="--reveal-delay:640ms">{CTA.under}</p>
 		<!-- the trust line: the faces of owners who said so, five stars, the count -->
-		<div class="arrive mx-auto mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-3 rounded-full border border-line bg-surface-2/80 px-5 py-3 backdrop-blur-sm" style="--reveal-delay:680ms" aria-label="Rated {copy.rating.value} {copy.rating.note}">
-			{#if faces.length}<span class="flex -space-x-2.5">{#each faces as f, i}<img src={f} alt="" width="32" height="32" loading="lazy" class="face h-8 w-8 rounded-full border-2 border-surface-2 object-cover" style={`--d:${i * 60}ms`} />{/each}</span>{/if}
+		<div class="arrive mx-auto mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-3" style="--reveal-delay:680ms" aria-label="Rated {copy.rating.value} {copy.rating.note}">
+			{#if faces.length}<span class="flex -space-x-2.5">{#each faces as f, i}<img src={f} alt="" width="32" height="32" loading="lazy" class="face h-8 w-8 rounded-full border-2 border-bg object-cover" style={`--d:${i * 60}ms`} />{/each}</span>{/if}
 			<span class="shine flex items-center gap-1.5 rounded-full px-1" aria-hidden="true">
 				<svg width="0" height="0" class="absolute"><defs><linearGradient id="gold-grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3b0" /><stop offset="0.35" stop-color="#f4c542" /><stop offset="0.65" stop-color="#d69e12" /><stop offset="1" stop-color="#fbe58a" /></linearGradient></defs></svg>
 				{#each [1, 2, 3, 4, 5] as s}<svg viewBox="0 0 20 20" class="star h-[18px] w-[18px] drop-shadow-[0_1px_1px_rgba(120,80,0,0.35)]" style={`--d:${s * 90}ms`}><path class="gold-fill" d="M10 1.6l2.5 5.3 5.8.7-4.3 4 1.1 5.8L10 14.6l-5.1 2.8 1.1-5.8-4.3-4 5.8-.7z" /></svg>{/each}
@@ -86,9 +83,9 @@
 			<span class="text-[14px] text-ink-2"><span class="font-mono font-bold text-ink">{copy.rating.value}</span> {copy.rating.note}<span class="mx-2 text-ink-3">·</span>{copy.rating.count}</span>
 		</div>
 		<!-- what is in it for them, in four figures -->
-		<ul class="arrive mx-auto mt-10 flex max-w-4xl flex-wrap items-stretch justify-center gap-2.5" style="--reveal-delay:720ms" aria-label="What you get">
-			{#each HERO.outcomes as [figure, what]}
-				<li class="flex items-center gap-2.5 rounded-full border border-line bg-surface-1/70 py-2 pl-3 pr-4 text-left text-[13.5px] text-ink-2 backdrop-blur-sm"><span class="font-mono text-[15px] font-bold text-ink">{figure}</span>{what}</li>
+		<ul class="arrive mx-auto mt-8 flex max-w-4xl flex-wrap items-baseline justify-center gap-x-6 gap-y-2 text-[13.5px] text-ink-2" style="--reveal-delay:720ms" aria-label="What you get">
+			{#each HERO.outcomes as [figure, what], i}
+				<li class="flex items-baseline gap-2"><span class="font-mono text-[15px] font-bold text-ink">{figure}</span>{what}{#if i < HERO.outcomes.length - 1}<span aria-hidden="true" class="ml-4 hidden text-ink-3 sm:inline">·</span>{/if}</li>
 			{/each}
 		</ul>
 	</div>
@@ -116,9 +113,7 @@
 <style>
 	.face { animation: face-in 0.5s var(--ease-out-expo) both; animation-delay: calc(0.7s + var(--d)); }
 	@keyframes face-in { from { opacity: 0; transform: translateX(-8px) scale(0.6); } to { opacity: 1; transform: none; } }
-	.halo-ring { box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-accent) 35%, transparent); animation: ring 3.2s ease-out infinite; }
-	@keyframes ring { 0% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-accent) 35%, transparent); } 100% { box-shadow: 0 0 0 22px transparent; } }
-	@media (prefers-reduced-motion: reduce) { .halo-ring, .face { animation: none; } }
+	@media (prefers-reduced-motion: reduce) { .face { animation: none; } }
 	.laurel-gold { animation: laurel-in 0.6s var(--ease-out-expo) both; animation-delay: calc(0.5s + var(--d)); }
 	@keyframes laurel-in { from { opacity: 0; transform: translateY(10px) scale(0.92); } to { opacity: 1; transform: none; } }
 	.star { animation: star-in 0.6s var(--ease-out-expo) both; animation-delay: calc(0.9s + var(--d)); filter: drop-shadow(0 1px 2px rgb(245 179 1 / 0.35)); }

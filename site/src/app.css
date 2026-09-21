@@ -394,6 +394,16 @@ main > div[aria-hidden] {
 .ticker:hover .ticker-track { animation-play-state: paused; }
 /* gold: the stars and the laurels — a metal gradient with a light passing over it, left to right */
 .gold-fill { fill: url(#gold-grad); }
+.gold-text {
+	background: linear-gradient(100deg, #7a5600 0%, #c58f10 35%, #f0c64a 50%, #c58f10 65%, #7a5600 100%);
+	background-size: 250% 100%;
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+	animation: gold-sweep 5s ease-in-out infinite;
+}
+@keyframes gold-sweep { 0%, 100% { background-position: 100% 50%; } 50% { background-position: 0% 50%; } }
+@media (prefers-reduced-motion: reduce) { .gold-text { animation: none; } }
 .shine {
 	position: relative;
 	overflow: hidden;

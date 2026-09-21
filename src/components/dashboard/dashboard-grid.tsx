@@ -81,7 +81,8 @@ function DashboardHeader({ scope }: { scope: Exclude<DashboardScope, "home"> }) 
           {/* The chip is the kind of business ("Restaurant operations"); the title already names the platform. */}
           <span className="rounded-full border border-border bg-card px-2 py-0.5 text-[10.5px] font-medium normal-case tracking-normal text-muted-foreground">{mod ? def.eyebrow : def.platform}</span>
         </p>
-        <h1 className="mt-2 text-[30px] font-semibold tracking-tight sm:text-[34px]">{def.title}</h1>
+        {/* the last word is the aside, the landing page's headline voice: "Fleet *dashboard*" */}
+        <h1 className="headline mt-2 text-[30px] sm:text-[34px]">{def.title.split(" ").slice(0, -1).join(" ")} <em>{def.title.split(" ").at(-1)}</em></h1>
         <p className="mt-1.5 text-[14.5px] text-muted-foreground">{healthy ? def.description : "Some data couldn't be loaded just now — showing what we have."}</p>
       </div>
       <nav aria-label="Quick links" className="flex flex-wrap gap-1.5">

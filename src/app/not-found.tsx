@@ -15,7 +15,7 @@ export default function NotFound() {
         <Compass className="h-5 w-5" strokeWidth={1.75} />
       </span>
       <p className="mt-6 text-[11.5px] font-semibold uppercase tracking-[0.14em] text-accent">404</p>
-      <h1 className="mt-2 text-balance text-[30px] font-semibold tracking-tight md:text-[38px]">There is nothing at this address.</h1>
+      <h1 className="headline mt-2 text-balance text-[30px] md:text-[38px]">There is <em>nothing</em> at this address.</h1>
       <p className="mt-3 max-w-md text-pretty text-[15px] leading-relaxed text-muted-foreground">
         The page may have moved when the product moved under /app, or the link was never quite right.
       </p>

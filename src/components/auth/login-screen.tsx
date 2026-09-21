@@ -82,8 +82,8 @@ export function LoginScreen({ callbackUrl, error, deniedEmail }: { callbackUrl?:
           <motion.div variants={item}>
             <LogoMark size={56} glow />
           </motion.div>
-          <motion.h1 variants={item} className="mt-6 text-[40px] font-semibold leading-[1.05] tracking-[-0.03em]">
-            Welcome back to <span className="text-gradient">your command center.</span>
+          <motion.h1 variants={item} className="headline mt-6 text-[40px]">
+            Welcome back to <em>your command center.</em>
           </motion.h1>
           <motion.p variants={item} className="mt-4 max-w-md text-[15px] leading-relaxed text-muted-foreground">
             {SITE.tagline} Sign in to open your workspaces.

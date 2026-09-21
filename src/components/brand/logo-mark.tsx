@@ -1,21 +1,24 @@
 "use client";
 
+import { useId } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 /**
- * The hostOS mark: a rounded square in the brand gradient carrying a
- * fingerprint — three ridges over a core line, open at the bottom. One
- * identity, many businesses: every host runs on their own print.
+ * The hostOS mark: a rounded square carrying a fingerprint — three ridges
+ * that fill the frame over a core line, open at the bottom. One identity,
+ * many businesses: every host runs on their own print.
  *
- * Drawn with strokes so it can animate in (path length) and glow.
- * `animate` plays the draw-in once; the shell uses the static version.
- * Keep public/icon.svg and the OG mark in step with the geometry here.
+ * The same geometry and the same moving gradient as the landing page's
+ * mark (site/src/lib/components/ui/Logo.svelte): the stroke drifts between
+ * the brand blues, a halo breathes behind the frame and a light passes
+ * over it now and then. `animate` plays the draw-in once; the shell shows
+ * it already drawn. Keep public/icon.svg and the OG mark in step.
  */
 export const MARK = {
   frame: { x: 6, y: 6, size: 52, rx: 15 },
-  ridges: ["M18 46V36a14 14 0 0 1 28 0v5", "M23 50V36a9 9 0 0 1 18 0v8", "M27.5 47.5V36.5a4.5 4.5 0 0 1 9 0v9"],
-  core: "M32 40v13",
+  ridges: ["M14 44V30a18 18 0 0 1 36 0v8", "M20.5 50V30a11.5 11.5 0 0 1 23 0v12", "M26.5 46V30.5a5.5 5.5 0 0 1 11 0v13"],
+  core: "M32 36v17",
 } as const;
 
 export function LogoMark({
@@ -29,6 +32,9 @@ export function LogoMark({
   glow?: boolean;
   className?: string;
 }) {
+  // several marks can share a page (sidebar, palette, login); each needs its own gradient ids
+  const uid = useId().replace(/:/g, "");
+  const grad = `url(#${uid}-g)`;
   const draw = {
     hidden: { pathLength: 0, opacity: 0 },
     show: (delay: number) => ({
@@ -45,28 +51,42 @@ export function LogoMark({
       viewBox="0 0 64 64"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={cn("shrink-0", glow && "drop-shadow-[0_0_18px_rgba(88,120,255,0.55)]", className)}
+      className={cn("logo-mark shrink-0 overflow-visible", glow && "drop-shadow-[0_0_18px_rgba(88,120,255,0.55)]", className)}
       initial={animate ? "hidden" : "show"}
       animate="show"
       aria-hidden
     >
       <defs>
-        <linearGradient id="hostos-frame" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="var(--accent)" />
-          <stop offset="100%" stopColor="var(--accent-2)" />
+        <linearGradient id={`${uid}-g`} x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="#3B9CFF">
+            <animate attributeName="stop-color" values="#3B9CFF;#6A5CF5;#2C3EF3;#3B9CFF" dur="9s" repeatCount="indefinite" />
+          </stop>
+          <stop offset="1" stopColor="#9B6BFF">
+            <animate attributeName="stop-color" values="#9B6BFF;#3B9CFF;#8B7CFF;#9B6BFF" dur="9s" repeatCount="indefinite" />
+          </stop>
         </linearGradient>
-        <linearGradient id="hostos-print" x1="32" y1="20" x2="32" y2="54" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#FFFFFF" />
-          <stop offset="100%" stopColor="#B9C6FF" />
+        <linearGradient id={`${uid}-s`} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stopColor="#fff" stopOpacity="0" />
+          <stop offset="0.5" stopColor="#fff" stopOpacity="0.9" />
+          <stop offset="1" stopColor="#fff" stopOpacity="0" />
         </linearGradient>
+        <clipPath id={`${uid}-c`}>
+          <rect x={MARK.frame.x} y={MARK.frame.y} width={MARK.frame.size} height={MARK.frame.size} rx={MARK.frame.rx} />
+        </clipPath>
       </defs>
+      {/* the halo breathes behind the frame */}
+      <rect className="logo-halo" x={MARK.frame.x} y={MARK.frame.y} width={MARK.frame.size} height={MARK.frame.size} rx={MARK.frame.rx} stroke={grad} strokeWidth="3.25" opacity="0.35" />
       {/* the frame */}
-      <motion.rect x={MARK.frame.x} y={MARK.frame.y} width={MARK.frame.size} height={MARK.frame.size} rx={MARK.frame.rx} stroke="url(#hostos-frame)" strokeWidth="3.25" variants={draw} custom={0} />
+      <motion.rect x={MARK.frame.x} y={MARK.frame.y} width={MARK.frame.size} height={MARK.frame.size} rx={MARK.frame.rx} stroke={grad} strokeWidth="3.25" variants={draw} custom={0} />
       {/* the print: three ridges, outside in, then the core */}
       {MARK.ridges.map((d, i) => (
-        <motion.path key={d} d={d} stroke="url(#hostos-print)" strokeWidth="3" strokeLinecap="round" variants={draw} custom={0.25 + i * 0.18} />
+        <motion.path key={d} d={d} stroke={grad} strokeWidth="3" strokeLinecap="round" variants={draw} custom={0.25 + i * 0.18} />
       ))}
-      <motion.path d={MARK.core} stroke="url(#hostos-print)" strokeWidth="3" strokeLinecap="round" variants={draw} custom={0.85} />
+      <motion.path d={MARK.core} stroke={grad} strokeWidth="3" strokeLinecap="round" variants={draw} custom={0.85} />
+      {/* a light passes over the frame */}
+      <g clipPath={`url(#${uid}-c)`}>
+        <rect className="logo-sheen" x="-30" y="0" width="26" height="64" fill={`url(#${uid}-s)`} />
+      </g>
     </motion.svg>
   );
 }
@@ -75,7 +95,7 @@ export function LogoMark({
 export function Wordmark({ size = "md", className }: { size?: "sm" | "md" | "lg" | "xl"; className?: string }) {
   const sizes = { sm: "text-[17px]", md: "text-[20px]", lg: "text-[32px]", xl: "text-[44px]" };
   return (
-    <span className={cn("font-semibold tracking-tight text-foreground", sizes[size], className)}>
+    <span className={cn("font-bold tracking-tight text-foreground", sizes[size], className)}>
       host<span className="text-gradient">OS</span>
     </span>
   );
@@ -92,7 +112,7 @@ export function Logo({
 }) {
   const markSize = { sm: 22, md: 26, lg: 40, xl: 56 }[size];
   return (
-    <span className={cn("inline-flex items-center gap-2.5", className)}>
+    <span className={cn("logo inline-flex items-center gap-2.5", className)}>
       {withMark && <LogoMark size={markSize} />}
       <Wordmark size={size} />
     </span>

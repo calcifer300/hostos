@@ -22,7 +22,7 @@ export function CollectivePage({ members }: { members: TeamProfile[] }) {
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: EASE }} className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-[11.5px] font-semibold uppercase tracking-[0.14em] text-accent">HostOS Collective</p>
-          <h1 className="mt-2 text-[30px] font-semibold tracking-tight sm:text-[36px]">The Collective</h1>
+          <h1 className="headline mt-2 text-[30px] sm:text-[36px]">The <em>Collective</em></h1>
           <p className="mt-2 max-w-2xl text-[14.5px] leading-relaxed text-muted-foreground">A collective, not a hierarchy chart: every member owns a craft, and this is what each of us holds and promises — so you always know who to bring a question to.</p>
           <div className="mt-3 flex flex-wrap gap-1.5">
             {departments.map((d) => (

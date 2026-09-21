@@ -126,8 +126,8 @@ export function VerticalChooser({
             )}
           </p>
         )}
-        <h1 className="mt-2 text-balance text-[30px] font-semibold tracking-tight sm:text-[38px]">
-          {firstName ? `${firstName}, which` : "Which"} business are we running today?
+        <h1 className="headline mt-2 text-balance text-[30px] sm:text-[38px]">
+          {firstName ? `${firstName}, which` : "Which"} business are we <em>running</em> today?
         </h1>
         <p className="mx-auto mt-3 max-w-2xl text-pretty text-[15px] text-muted-foreground">
           Every vertical gets its own command center — only the tools that work for that line of business, nothing else in the way. Switch any time from the sidebar.

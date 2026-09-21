@@ -129,6 +129,7 @@
   --radius-2xl: var(--radius-2xl);
   --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-mono: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-serif: var(--font-serif), "Instrument Serif", Georgia, "Times New Roman", serif;
   --ease-out-expo: var(--ease-out-expo);
   --animate-shimmer: shimmer 1.8s linear infinite;
   --animate-float: float 7s ease-in-out infinite;
@@ -496,6 +497,53 @@ body::before {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
+}
+
+/* The landing page's headline voice: Inter bold, and the aside in the serif italic a size up, in the brand gradient. */
+.headline {
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+}
+.headline em {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.14em;
+  letter-spacing: -0.01em;
+  padding-right: 0.04em;
+  background: linear-gradient(90deg, #53628d, var(--accent) 85%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.dark .headline em {
+  background: linear-gradient(90deg, #d5dbf0, #8d9bcf 80%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* The mark: the halo breathes, a light passes over the frame (faster on hover of the whole logo). */
+.logo-halo {
+  animation: logo-halo 4s ease-in-out infinite;
+  transform-origin: 32px 32px;
+}
+.logo-sheen {
+  transform: skewX(-20deg);
+  animation: logo-sheen 6s ease-in-out infinite;
+  animation-delay: 1.5s;
+}
+.logo:hover .logo-sheen, .logo-mark:hover .logo-sheen {
+  animation-duration: 1.2s;
+  animation-delay: 0s;
+}
+@keyframes logo-halo {
+  0%, 100% { transform: scale(1); opacity: 0.35; }
+  50% { transform: scale(1.12); opacity: 0; }
+}
+@keyframes logo-sheen {
+  0%, 70%, 100% { transform: translateX(0) skewX(-20deg); }
+  30% { transform: translateX(110px) skewX(-20deg); }
 }
 
 @media (prefers-reduced-motion: reduce) {

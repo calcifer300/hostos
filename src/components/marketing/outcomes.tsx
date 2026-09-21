@@ -343,7 +343,7 @@ export function Outcomes() {
           </div>
           <Button asChild variant="gradient" size="lg" className="shrink-0">
             <Link href="/#contact">
-              Book a free consultation <ArrowRight />
+              Book a Free Strategy Call <ArrowRight />
             </Link>
           </Button>
         </Reveal>

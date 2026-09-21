@@ -97,7 +97,7 @@ export function MarketingNav() {
               </Button>
               <Button asChild variant="gradient" size="sm" pill>
                 <Link href="/#contact">
-                  Book a consultation
+                  Book a Free Strategy Call
                   <ArrowRight />
                 </Link>
               </Button>
@@ -142,7 +142,7 @@ export function MarketingNav() {
               </Button>
               <Button asChild variant="gradient" className="flex-1" pill>
                 <Link href="/#contact" onClick={() => setOpen(false)}>
-                  Book a consultation
+                  Book a Free Strategy Call
                 </Link>
               </Button>
             </div>

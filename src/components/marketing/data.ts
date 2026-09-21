@@ -57,7 +57,7 @@ export const HERO = {
   title: ["Business solutions built to", "save time and grow revenue."],
   description:
     "HostOS Collective helps businesses with websites, automation, custom systems and reliable virtual support — all run on HostOS, the operations platform we built and use ourselves every day.",
-  primaryCta: { label: "Book a free consultation", href: "#contact" },
+  primaryCta: { label: "Book a Free Strategy Call", href: "#contact" },
   secondaryCta: { label: "View our services", href: "#services" },
   facts: [
     { value: "10+ years", label: "professional experience" },
@@ -409,7 +409,7 @@ export const PRICING: PricingTier[] = [
     period: "services, VAs and custom builds",
     description: "Virtual assistants, custom systems, websites, apps and marketing — scoped to your business, with HostOS included.",
     features: ["Everything in Pro", "Dedicated VA & support team", "Custom automation and internal tools", "Websites, apps, SEO", "Onboarding with HostOS Collective"],
-    cta: "Book a consultation",
+    cta: "Book a Free Strategy Call",
     href: "#contact",
   },
 ];
@@ -477,7 +477,7 @@ export const CONTACT_INTERESTS = [
   "Virtual assistant / admin support",
   "Customer support (phone/email/chat)",
   "HostOS platform",
-  "Free consultation",
+  "Free strategy call",
   "Other",
 ] as const;
 

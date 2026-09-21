@@ -7,7 +7,7 @@
 export const SITE = {
   name: "HostOS",
   company: "HostOS Collective",
-  tagline: "Business solutions built to save time and grow revenue.",
+  tagline: "Focus on what matters most. We’ll handle your operations.",
   description: "Full-stack development, AI automation, virtual assistant support, and customer service solutions for growing businesses — all run on HostOS.",
   /** Public contact channels, as published on the company's site. */
   contactEmail: "hello@hostoscollective.com",

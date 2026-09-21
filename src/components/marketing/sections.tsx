@@ -556,12 +556,12 @@ export function FinalCta() {
           Let&rsquo;s build <span className="text-gradient">something great</span> together.
         </h2>
         <p className="mx-auto mt-4 max-w-xl text-[15.5px] leading-relaxed text-muted-foreground">
-          Whether you need a website, automation, virtual support, or just a free consultation — {SITE.company} is ready to help.
+          Whether you need a website, automation, virtual support, or just a free strategy call — {SITE.company} is ready to help.
         </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
           <Button asChild variant="gradient" size="xl">
             <a href="#contact">
-              Book a free consultation
+              Book a Free Strategy Call
               <ArrowRight />
             </a>
           </Button>
@@ -570,7 +570,7 @@ export function FinalCta() {
           </Button>
         </div>
         <ul className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[12.5px] text-muted-foreground">
-          {["Free consultation", "HostOS included", "No password sharing", "Cancel any time"].map((t) => (
+          {["Free strategy call", "HostOS included", "No password sharing", "Cancel any time"].map((t) => (
             <li key={t} className="inline-flex items-center gap-1.5">
               <Check className="h-3.5 w-3.5 text-success" /> {t}
             </li>

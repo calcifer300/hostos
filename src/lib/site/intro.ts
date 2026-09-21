@@ -63,7 +63,7 @@ export const DEFAULT_INTRO: LandingIntro = {
   enabled: true,
   brand: "COLLECTIVE //",
   hint: "SCROLL TO EXPLORE",
-  ctaLabel: "Book a consultation",
+  ctaLabel: "Book a Free Strategy Call",
   ctaHref: "/#contact",
   panels: [
     {

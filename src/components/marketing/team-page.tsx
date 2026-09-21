@@ -147,12 +147,12 @@ export function TeamPage({ members, footage }: { members: TeamProfile[]; footage
         <Reveal className="gradient-border relative mx-auto max-w-5xl overflow-hidden rounded-[2rem] border border-border bg-card p-10 text-center shadow-[var(--shadow-elevated)] md:p-14">
           {footage?.closing && <Footage src={footage.closing} dim={0.26} className="-z-10 [mask-image:radial-gradient(ellipse_at_center,#000_20%,transparent_80%)]" />}
           <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(60%_80%_at_50%_0%,var(--accent-glow),transparent_70%)]" />
-          <h2 className="text-balance text-[28px] font-semibold tracking-[-0.025em] md:text-[38px]">Ready to work with a real team?</h2>
-          <p className="mx-auto mt-4 max-w-xl text-[15.5px] leading-relaxed text-muted-foreground">Let&rsquo;s talk about how our trained professionals can support your business.</p>
+          <h2 className="text-balance text-[28px] font-semibold tracking-[-0.025em] md:text-[38px]">Ready to hand off your operations?</h2>
+          <p className="mx-auto mt-4 max-w-xl text-[15.5px] leading-relaxed text-muted-foreground">A free 45-minute call: bring one operation and leave with a practical plan.</p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <Button asChild variant="gradient" size="xl">
               <Link href="/#contact">
-                Book a consultation <ArrowRight />
+                Book a Free Strategy Call <ArrowRight />
               </Link>
             </Button>
             <Button asChild variant="secondary" size="xl">

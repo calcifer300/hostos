@@ -36,7 +36,6 @@ export function TeamPulse({ members }: { members: TeamProfile[] }) {
     for (const m of members) seen.set(m.department, (seen.get(m.department) ?? 0) + 1);
     return [...seen.entries()].map(([id, count]) => ({ id, count, ...DEPARTMENTS[id], Icon: DEPARTMENT_ICONS[DEPARTMENTS[id].icon] }));
   }, [members]);
-  const track = [...crafts, ...crafts];
 
   return (
     <Reveal className="mb-12">
@@ -47,10 +46,10 @@ export function TeamPulse({ members }: { members: TeamProfile[] }) {
         <span aria-hidden className="hidden h-8 w-px bg-border sm:block" />
         <Count to={1} label="workspace" />
       </div>
-      <div className="marquee-pause relative mt-8 overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_12%,#000_88%,transparent)]" aria-label="Crafts in the collective">
-        <div className="animate-marquee flex w-max gap-3">
-          {track.map((c, i) => (
-            <span key={`${c.id}-${i}`} aria-hidden={i >= crafts.length} className="inline-flex items-center gap-2 rounded-full border bg-card px-3.5 py-1.5 text-[12.5px] font-medium shadow-[var(--shadow-card)]" style={{ color: c.hue, borderColor: `color-mix(in oklab, ${c.hue} 30%, var(--border))` }}>
+      <div className="relative mt-8" aria-label="Crafts in the collective">
+        <div className="flex flex-wrap justify-center gap-3">
+          {crafts.map((c, i) => (
+            <span key={`${c.id}-${i}`} className="inline-flex items-center gap-2 rounded-full border bg-card px-3.5 py-1.5 text-[12.5px] font-medium shadow-[var(--shadow-card)]" style={{ color: c.hue, borderColor: `color-mix(in oklab, ${c.hue} 30%, var(--border))` }}>
               <c.Icon className="h-3.5 w-3.5" strokeWidth={2} /> {c.label}
               <span className="rounded-full px-1.5 text-[10.5px] font-semibold" style={{ background: `color-mix(in oklab, ${c.hue} 16%, transparent)` }}>{c.count}</span>
             </span>

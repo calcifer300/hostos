@@ -38,7 +38,7 @@ export function Contact() {
                 Let&rsquo;s build something <span className="text-gradient">great together.</span>
               </>
             }
-            description="Whether you need a website, automation, virtual support, a custom system or just a free consultation — tell us what you run and what's costing you time, and we'll come back with a plan."
+            description="Whether you need a website, automation, virtual support, a custom system or just a free strategy call — tell us what you run and what's costing you time, and we'll come back with a plan."
             className="mb-8"
           />
           <Reveal delay={0.1} className="space-y-3">
@@ -69,7 +69,7 @@ export function Contact() {
                 <MessageCircle className="text-success" /> Chat on WhatsApp
               </a>
             </Button>
-            <p className="px-1 text-[12.5px] text-muted-foreground">Replies within one business day. Every engagement starts with a free consultation.</p>
+            <p className="px-1 text-[12.5px] text-muted-foreground">Replies within one business day. Every engagement starts with a free strategy call.</p>
           </Reveal>
         </div>
 

@@ -18,7 +18,7 @@ export function Pricing() {
         <SectionHeading
           eyebrow="Pricing"
           title="Simple platform plans. Services quoted to fit."
-          description="HostOS is free while we pilot; the plans are indicative and nobody is billed without agreeing to one first. Virtual assistants, custom builds, websites and marketing are scoped after a free consultation."
+          description="HostOS is free while we pilot; the plans are indicative and nobody is billed without agreeing to one first. Virtual assistants, custom builds, websites and marketing are scoped after a free strategy call."
           align="center"
         />
         <Stagger className="grid grid-cols-1 gap-4 lg:grid-cols-3" gap={0.08}>

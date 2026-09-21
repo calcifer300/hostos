@@ -50,7 +50,7 @@
 	});
 </script>
 
-<Section id="film" eyebrow={FILM.eyebrow} title={FILM.title} lede={FILM.lede} wide voice="grotesk">
+<Section id="film" eyebrow={FILM.eyebrow} title={FILM.title} lede={FILM.lede} wide voice="grotesk" align="center">
 	<div bind:this={root} use:reveal class="overflow-hidden rounded-3xl border border-line bg-surface-1 shadow-2">
 		<div class="grid lg:grid-cols-[1.35fr_1fr]">
 			<!-- footage -->

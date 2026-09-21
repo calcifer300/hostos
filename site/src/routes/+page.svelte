@@ -13,6 +13,8 @@
 	import Section from '$lib/components/ui/Section.svelte';
 	import Accordion from '$lib/components/ui/Accordion.svelte';
 	import FinalCta from '$lib/components/marketing/FinalCta.svelte';
+	import Testimonials from '$lib/components/marketing/Testimonials.svelte';
+	import Ticker from '$lib/components/marketing/Ticker.svelte';
 	import { FAQ, SITE } from '$lib/content/site';
 	import { jsonLd } from '$lib/seo/jsonld';
 	import { setContext } from 'svelte';
@@ -48,8 +50,10 @@
 <Film chapters={data.chapters} />
 <BeforeAfter />
 <Solutions chapters={data.chapters} extras={data.extras} />
+<Ticker />
 <Industries />
 <Proof />
+<Testimonials />
 <PlatformDemo />
 <Collective members={data.members} teamSrc={data.extras.team} />
 <ThirtyDays />

@@ -16,8 +16,8 @@
 	const always = new Set(['turo', 'doordash']); // these two play on phones as well
 </script>
 
-<Section id="industries" eyebrow={INDUSTRIES.eyebrow} title={INDUSTRIES.title} voice="display">
-	<div use:stagger={50} class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+<Section id="industries" eyebrow={INDUSTRIES.eyebrow} title={INDUSTRIES.title} voice="display" align="center">
+	<div use:stagger={50} class="scroll-in grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
 		{#each INDUSTRIES.items as ind}
 			{@const Icon = icons[ind.id as keyof typeof icons]}
 			{@const clip = tiles[`industry:${ind.id}`]}

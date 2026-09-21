@@ -9,6 +9,8 @@
 	 * over a living background: a slow, dimmed clip (when the section has
 	 * one) under a drift of light in the section's own colour. The Founder
 	 * sets both per section; the headline's *asides* are set in the serif.
+	 * The header sits left, centred, right, or split (title left, lede right)
+	 * — the page changes its stance as it goes, so the eye never settles.
 	 */
 	let {
 		id,
@@ -27,7 +29,7 @@
 		eyebrow?: string;
 		title?: string;
 		lede?: string;
-		align?: 'left' | 'center';
+		align?: 'left' | 'center' | 'right' | 'split';
 		wide?: boolean;
 		tone?: 'bg' | 'surface';
 		class?: string;
@@ -38,16 +40,19 @@
 	const voiceClass = $derived(voice === 'grotesk' ? 'voice-grotesk' : voice === 'serif' ? 'voice-serif' : voice === 'display' ? 'voice-display' : '');
 </script>
 
-<section {id} use:near class={`section-y relative isolate scroll-mt-20 ${tone === 'surface' ? 'border-y border-line bg-surface-1' : ''} ${cls}`} style={`--tint:${look.tint}`}>
+<section {id} use:near class={`section-y relative isolate scroll-mt-20 ${tone === 'surface' ? 'border-y border-line bg-surface-1' : 'bg-bg'} ${cls}`} style={`--tint:${look.tint}`}>
 	<div aria-hidden="true" class="section-bg pointer-events-none absolute inset-0 -z-10 overflow-hidden">
 		{#if look.clip}{#key look.clip}<video class="lazy dim h-full w-full object-cover" muted loop playsinline preload="none" use:lazyVideo={{ src: look.clip }}></video>{/key}{/if}
 	</div>
 	<div class={wide ? 'container-wide' : 'container-x'}>
 		{#if eyebrow || title}
-			<header use:reveal class={`mb-10 max-w-3xl md:mb-14 ${align === 'center' ? 'mx-auto text-center' : ''}`}>
-				{#if eyebrow}<p class="label-mono mb-4 text-accent">{eyebrow}</p>{/if}
-				{#if title}<h2 use:words class={`display-2 headline ${voiceClass}`} aria-label={plain(title)}>{@html emph(title)}</h2>{/if}
-				{#if lede}<p class="mt-5 max-w-2xl text-[17px] leading-relaxed text-ink-2 {align === 'center' ? 'mx-auto' : ''}">{lede}</p>{/if}
+			<header use:reveal class={`scroll-in mb-10 md:mb-14 ${align === 'center' ? 'mx-auto max-w-3xl text-center' : align === 'right' ? 'ml-auto max-w-3xl text-right' : align === 'split' ? 'grid gap-6 md:grid-cols-[1.2fr_1fr] md:items-end' : 'max-w-3xl'}`}>
+				<div>
+					{#if eyebrow}<p class="label-mono mb-4 text-accent">{eyebrow}</p>{/if}
+					{#if title}<h2 use:words class={`display-2 headline ${voiceClass}`} aria-label={plain(title)}>{@html emph(title)}</h2>{/if}
+					{#if lede && align !== 'split'}<p class={`mt-5 max-w-2xl text-[17px] leading-relaxed text-ink-2 ${align === 'center' ? 'mx-auto' : align === 'right' ? 'ml-auto' : ''}`}>{lede}</p>{/if}
+				</div>
+				{#if lede && align === 'split'}<p class="text-[17px] leading-relaxed text-ink-2 md:border-l md:border-line md:pl-6">{lede}</p>{/if}
 			</header>
 		{/if}
 		{@render children()}

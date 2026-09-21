@@ -9,9 +9,9 @@
 	 */
 	type Col = { title: string; items: { id: string; text: string; who?: string }[] };
 	let cols = $state<Col[]>([
-		{ title: 'Open', items: [{ id: 'j1', text: 'Chip repair · Pasig · 14:00' }, { id: 'j2', text: 'Side glass · BGC · 11:30' }] },
-		{ title: 'Assigned', items: [{ id: 'j3', text: 'Windshield · Makati · 10:00', who: 'Ramon' }] },
-		{ title: 'Done', items: [{ id: 'j4', text: 'Windshield · QC · 08:00', who: 'Miguel' }] }
+		{ title: 'Open', items: [{ id: 'j1', text: 'Chip repair · Cedar Park · 14:00' }, { id: 'j2', text: 'Side glass · Round Rock · 11:30' }] },
+		{ title: 'Assigned', items: [{ id: 'j3', text: 'Windshield · Austin · 10:00', who: 'Ramon' }] },
+		{ title: 'Done', items: [{ id: 'j4', text: 'Windshield · Georgetown · 08:00', who: 'Miguel' }] }
 	]);
 	let carBack = $state(false);
 	let message = $state<'none' | 'in' | 'answered'>('none');

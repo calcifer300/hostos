@@ -276,6 +276,10 @@
 	.arrive,
 	.section-bg::before,
 	.section-bg::after,
+	.scroll-in,
+	.hero-stage,
+	.section-bg video,
+	.ticker-track,
 	.plate > span,
 	.draw path,
 	.draw line,
@@ -294,6 +298,75 @@
 		scroll-behavior: auto !important;
 	}
 }
+
+/* ------------------------------------------------------- scroll grammar */
+/* The page moves with the scroll, not just on arrival: the hero stays pinned and dims as the first section slides
+   over it (rounded top, like a card laid on the desk); every header and grid rises and unclips as it enters; the
+   footage behind a section drifts slower than the section (parallax); the ticker is dragged sideways by the scroll.
+   All of it is CSS scroll-driven animation — no scroll listeners — and browsers without it get the arrival reveals. */
+.stack-top {
+	border-top-left-radius: 36px;
+	border-top-right-radius: 36px;
+	border-top: 1px solid var(--color-line);
+	box-shadow: 0 -30px 60px rgb(0 0 0 / 0.45);
+}
+main > section,
+main > .ticker {
+	position: relative;
+	z-index: 1;
+}
+@supports (animation-timeline: view()) {
+	main > .hero-stage {
+		position: sticky;
+		/* pinned by its bottom edge when it is taller than the screen, by its top when it is not (set by the hero) */
+		top: var(--hero-top, 0px);
+		z-index: 0;
+		animation: hero-exit linear both;
+		animation-timeline: view();
+		animation-range: exit 0% exit 100%;
+	}
+	@keyframes hero-exit {
+		to { opacity: 0.15; transform: scale(0.92) translateY(-6%); }
+	}
+	.scroll-in {
+		animation: scroll-in linear both;
+		animation-timeline: view();
+		animation-range: entry 0% entry 60%;
+	}
+	.scroll-in.reveal {
+		opacity: 1;
+		transform: none;
+		transition: none;
+	}
+	@keyframes scroll-in {
+		from { opacity: 0; transform: translateY(56px) scale(0.97); clip-path: inset(0 0 24% 0 round 24px); }
+		to { opacity: 1; transform: none; clip-path: inset(0 0 0 0 round 0); }
+	}
+	.section-bg video {
+		animation: parallax linear both;
+		animation-timeline: view();
+		transform: scale(1.18);
+	}
+	@keyframes parallax {
+		from { transform: scale(1.18) translateY(-7%); }
+		to { transform: scale(1.18) translateY(7%); }
+	}
+	.ticker-track {
+		animation: ticker-drag linear both;
+		animation-timeline: view();
+	}
+	@keyframes ticker-drag {
+		from { transform: translateX(0); }
+		to { transform: translateX(-28%); }
+	}
+}
+@supports not (animation-timeline: view()) {
+	.ticker-track { animation: marquee 40s linear infinite; }
+}
+/* the laurels breathe once as they arrive */
+.laurel svg { transition: transform 0.6s var(--ease-out-expo); }
+.laurel:hover svg:first-child { transform: rotate(-8deg); }
+.laurel:hover svg:last-child { transform: scaleX(-1) rotate(-8deg); }
 
 /* ------------------------------------------------------------ preloader */
 /* The mark draws itself, the wordmark rises, the curtain lifts — 1.2 s, CSS only, gone for reduced motion. */
@@ -376,7 +449,7 @@ video.lazy.dim.is-playing {
 	content: '';
 }
 .section-bg video {
-	--dim: 0.12;
+	--dim: 0.1;
 	mask-image: radial-gradient(ellipse 75% 70% at 50% 45%, #000 20%, transparent 100%);
 }
 @keyframes bloom-a {

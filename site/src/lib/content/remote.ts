@@ -5,7 +5,7 @@
  * Every read falls back to the built-in content — a slow app never breaks
  * the front door.
  */
-import { FILM, SECTIONS, TILES, VIDEO } from '$lib/content/site';
+import { FILM, LAURELS, SECTIONS, TESTIMONIALS, TILES, VIDEO } from '$lib/content/site';
 import { normalizeTeam, TEAM, type Member } from '$lib/content/team';
 
 export const APP_ORIGIN = 'https://hostos-ten.vercel.app';
@@ -18,9 +18,11 @@ export interface Landing {
 	extras: { team: string; delivery: string; closing: string };
 	tiles: Record<string, string>;
 	sections: Record<string, { clip: string; tint: string }>;
+	testimonials: { quote: string; name: string; role: string }[];
+	laurels: { value: string; label: string }[];
 }
 /** The built-in landing, for the sections that render without a page load behind them. */
-export const LANDING_DEFAULTS: Pick<Landing, 'tiles' | 'sections' | 'extras'> = { tiles: TILES, sections: SECTIONS, extras: { team: VIDEO.team, delivery: VIDEO.delivery, closing: VIDEO.closing } };
+export const LANDING_DEFAULTS: Pick<Landing, 'tiles' | 'sections' | 'extras' | 'testimonials' | 'laurels'> = { tiles: TILES, sections: SECTIONS, extras: { team: VIDEO.team, delivery: VIDEO.delivery, closing: VIDEO.closing }, testimonials: TESTIMONIALS, laurels: LAURELS };
 
 const str = (v: unknown, fb: string) => (typeof v === 'string' && v.trim() ? v : fb);
 const src = (v: unknown, fb: string) => (typeof v === 'string' && /^(\/|https:\/\/[a-z0-9-]+\.supabase\.co\/storage\/v1\/object\/public\/|https:\/\/videos\.pexels\.com\/)/i.test(v) ? v : fb);
@@ -57,6 +59,12 @@ export async function loadLanding(fetchFn: typeof fetch): Promise<Landing> {
 				const v = (s[k] && typeof s[k] === 'object' ? s[k] : {}) as Record<string, unknown>;
 				return [k, { clip: v.clip === '' ? '' : src(v.clip, d.clip), tint: typeof v.tint === 'string' && /^#[0-9a-f]{6}$/i.test(v.tint) ? v.tint : d.tint }];
 			}));
-		})()
+		})(),
+		testimonials: Array.isArray(film?.testimonials)
+			? (film!.testimonials as unknown[]).map((t) => { const x = (t && typeof t === 'object' ? t : {}) as Record<string, unknown>; return { quote: str(x.quote, ''), name: str(x.name, ''), role: str(x.role, '') }; }).filter((t) => t.quote && t.name).slice(0, 8)
+			: TESTIMONIALS,
+		laurels: Array.isArray(film?.laurels)
+			? (film!.laurels as unknown[]).map((l) => { const x = (l && typeof l === 'object' ? l : {}) as Record<string, unknown>; return { value: str(x.value, ''), label: str(x.label, '') }; }).filter((l) => l.value && l.label).slice(0, 6)
+			: LAURELS
 	};
 }

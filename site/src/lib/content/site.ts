@@ -136,7 +136,7 @@ export const PROOF = {
 	eyebrow: 'Proof',
 	title: 'Numbers first. *Names* where we’re allowed.',
 	cases: [
-		{ figure: 0, suffix: '', label: 'damage claims missed', line: 'A 146-car Turo fleet in the Philippines, six months on HostOS: every return photographed, every claim inside the window.', who: '146-car fleet · Founder-operated', when: '2026', hue: '#0a84ff' },
+		{ figure: 0, suffix: '', label: 'damage claims missed', line: 'A 146-car Turo fleet in Texas, six months on HostOS: every return photographed, every claim inside the window.', who: '146-car fleet · Founder-operated', when: '2026', hue: '#0a84ff' },
 		{ figure: 4, suffix: ' min', label: 'median guest reply time', line: 'Night and weekend messages for 146 cars, answered by operators working from the same board the owner reads at 8 a.m.', who: 'Same fleet', when: 'Q2 2026', hue: '#30d158' },
 		{ figure: 8, suffix: '', label: 'verticals, one workspace', line: 'Car rental, delivery, commerce, field service, websites, cafés, barbershops and custom — one login, one team.', who: 'HostOS platform', when: 'Today', hue: '#8b7cff' }
 	]
@@ -157,7 +157,7 @@ export const PLATFORM = {
 			{ kind: 'kpi', label: 'Jobs today', value: '11', note: '9 assigned · 2 open' },
 			{ kind: 'kpi', label: 'Estimates quiet', value: '2', note: 'chased this morning' },
 			{ kind: 'kpi', label: 'Techs on the road', value: '4', note: 'all on time' },
-			{ kind: 'list', label: 'Board', rows: [['Ramon', 'Windshield · Makati · 10:00'], ['Jess', 'Side glass · BGC · 11:30'], ['Open', 'Chip repair · Pasig · 14:00'], ['Miguel', 'Windshield · QC · 15:30']] }
+			{ kind: 'list', label: 'Board', rows: [['Ramon', 'Windshield · Austin · 10:00'], ['Jess', 'Side glass · Round Rock · 11:30'], ['Open', 'Chip repair · Cedar Park · 14:00'], ['Miguel', 'Windshield · Georgetown · 15:30']] }
 		] },
 		{ id: 'butler', name: 'Butler', widgets: [
 			{ kind: 'kpi', label: 'Tasks raised today', value: '7', note: 'by the Butler' },
@@ -202,12 +202,69 @@ export const TILES: Record<string, string> = {
 	"solution:integrations": "https://videos.pexels.com/video-files/20693196/20693196-sd_960_540_25fps.mp4",
 	"solution:workflow": "https://videos.pexels.com/video-files/8986890/8986890-sd_960_540_30fps.mp4",
 	"solution:analytics": "https://videos.pexels.com/video-files/6868699/6868699-sd_960_540_30fps.mp4",
-	"solution:bi": "https://videos.pexels.com/video-files/6685171/6685171-sd_960_540_30fps.mp4"
+	"solution:bi": "https://videos.pexels.com/video-files/6685171/6685171-sd_960_540_30fps.mp4",
+	"problem:1": "https://videos.pexels.com/video-files/8094279/8094279-sd_960_540_25fps.mp4",
+	"problem:2": "https://videos.pexels.com/video-files/4208203/4208203-sd_960_540_24fps.mp4",
+	"problem:3": "https://videos.pexels.com/video-files/3986119/3986119-sd_960_540_25fps.mp4",
+	"problem:4": "https://videos.pexels.com/video-files/4177954/4177954-sd_960_540_30fps.mp4",
+	"problem:5": "https://videos.pexels.com/video-files/7413764/7413764-sd_960_540_24fps.mp4",
+	"problem:6": "https://videos.pexels.com/video-files/8064422/8064422-sd_960_540_30fps.mp4",
+	"pillar:people": "https://videos.pexels.com/video-files/8865706/8865706-sd_960_540_25fps.mp4",
+	"pillar:systems": "https://videos.pexels.com/video-files/7413764/7413764-sd_960_540_24fps.mp4",
+	"pillar:software": "https://videos.pexels.com/video-files/8266178/8266178-sd_960_540_25fps.mp4",
+	"week:1": "https://videos.pexels.com/video-files/7413764/7413764-sd_960_540_24fps.mp4",
+	"week:2": "https://videos.pexels.com/video-files/8266178/8266178-sd_960_540_25fps.mp4",
+	"week:3": "https://videos.pexels.com/video-files/8865706/8865706-sd_960_540_25fps.mp4",
+	"week:4": "https://videos.pexels.com/video-files/6868699/6868699-sd_960_540_30fps.mp4",
+	"proof:1": "https://videos.pexels.com/video-files/4208203/4208203-sd_960_540_24fps.mp4",
+	"proof:2": "https://videos.pexels.com/video-files/3986119/3986119-sd_960_540_25fps.mp4",
+	"proof:3": "https://videos.pexels.com/video-files/8064422/8064422-sd_960_540_30fps.mp4"
 };
+/** What owners said, in their words; the laurels carry the figures from the company's record. Both editable in the app. */
+export const TESTIMONIALS = [
+	{
+		quote: "HostOS Collective completely transformed how we handle online orders. Our operations are smoother, and we’ve seen a 30% boost in repeat customers since launching the new system.",
+		name: "Zack Holmes",
+		role: "Restaurant owner"
+	},
+	{
+		quote: "From building our website to setting up automated email campaigns, HostOS Collective delivered everything on time and on budget. Truly a one-stop shop for growing businesses.",
+		name: "Miguel Chavez",
+		role: "E-commerce startup"
+	},
+	{
+		quote: "Having a dedicated VA team that manages my fleet bookings and guest communication has been a game changer. Professional, reliable, and always responsive.",
+		name: "Matt Tolley",
+		role: "Turo host"
+	}
+];
+export const LAURELS = [
+	{
+		value: "98%",
+		label: "client satisfaction"
+	},
+	{
+		value: "50+",
+		label: "clients served"
+	},
+	{
+		value: "120+",
+		label: "projects delivered"
+	},
+	{
+		value: "10+",
+		label: "years in operations"
+	},
+	{
+		value: "5+ yrs",
+		label: "BPO experience per operator"
+	}
+];
+export const VOICES = { eyebrow: 'What owners say', title: 'In their *own words*.' };
 /** Every section's living background: a dimmed clip (or none) and the colour its light leans towards. */
 export const SECTIONS: Record<string, { clip: string; tint: string }> = {
 	problems: {
-		clip: "https://videos.pexels.com/video-files/3986119/3986119-sd_960_540_25fps.mp4",
+		clip: "https://videos.pexels.com/video-files/8094279/8094279-sd_960_540_25fps.mp4",
 		tint: "#ff375f"
 	},
 	how: {
@@ -235,7 +292,7 @@ export const SECTIONS: Record<string, { clip: string; tint: string }> = {
 		tint: "#40c8e0"
 	},
 	platform: {
-		clip: "https://videos.pexels.com/video-files/7362583/7362583-sd_960_540_24fps.mp4",
+		clip: "https://videos.pexels.com/video-files/3986119/3986119-sd_960_540_25fps.mp4",
 		tint: "#af52de"
 	},
 	start: {
@@ -280,7 +337,7 @@ export const FAQ = {
 		{ q: 'What happens when an operator leaves?', a: 'Nothing you notice. Every procedure is written down, every conversation is on the board, and coverage is a team, not a person. Replacement operators train on your procedures before they touch your inbox.' },
 		{ q: 'Is this an agency, a SaaS, or a VA company?', a: 'It’s the three together, which is the point. The people run the operation, the systems make it repeatable, the software is where both happen. You pay for an outcome, not for seats.' },
 		{ q: 'How do you use AI?', a: 'As a tool, in the background: drafting replies an operator approves, spotting a paused store or a quiet estimate, summarising a week. It never talks to your customers unsupervised, and it is never the reason to hire us.' },
-		{ q: 'Where is the team?', a: 'The Philippines, working on your hours. Every operator is on our payroll, trained on your procedures, and covered when they’re off.' },
+		{ q: 'Where is the team?', a: 'The Philippines, working on US hours (and yours, wherever you are). Every operator is on our payroll, trained on your procedures, and covered when they’re off.' },
 		{ q: 'What does it cost?', a: 'Operations retainers start with the hours of coverage you need; builds are quoted from the map we make in week one. The working session is free and you keep the map either way.' },
 		{ q: 'How fast can we start?', a: 'The working session this week; the map the week after; operators on your channels by the end of the month.' }
 	]

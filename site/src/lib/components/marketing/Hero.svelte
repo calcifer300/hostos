@@ -4,13 +4,34 @@
 	import LiveBoard from './LiveBoard.svelte';
 	import { lazyVideo, magnetic } from '$lib/components/motion/actions';
 	import { CTA, HERO, LOGOS, VIDEO } from '$lib/content/site';
+	import { onMount } from 'svelte';
 	let { heroSrc = VIDEO.hero.src }: { heroSrc?: string } = $props();
+	let video: HTMLVideoElement;
+	let stage: HTMLElement;
+	let top = $state(0);
+	// the hero is pinned while the page slides over it; once covered, its footage stops
+	onMount(() => {
+		let covered = false;
+		const next = () => document.getElementById('problems');
+		const onScroll = () => {
+			const c = (next()?.getBoundingClientRect().top ?? 1) <= 0;
+			if (c === covered) return;
+			covered = c;
+			if (covered) video?.pause(); else if (video?.src) video.play().catch(() => {});
+		};
+		window.addEventListener('scroll', onScroll, { passive: true });
+		// pin by the bottom edge when the hero is taller than the screen, so nothing of it is skipped
+		const ro = new ResizeObserver(() => { top = Math.min(0, window.innerHeight - stage.offsetHeight); });
+		ro.observe(stage);
+		ro.observe(document.documentElement);
+		return () => { window.removeEventListener('scroll', onScroll); ro.disconnect(); };
+	});
 </script>
 
-<section class="relative overflow-hidden pt-36 pb-16 md:pt-44 md:pb-24">
+<section id="hero" bind:this={stage} class="hero-stage relative overflow-hidden pt-36 pb-16 md:pt-44 md:pb-24" style={`--hero-top:${top}px`}>
 	<!-- footage: a road at dusk, far behind the copy, only on wide screens and only when allowed -->
 	<div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-20">
-		<video class="lazy h-full w-full object-cover opacity-30 [mask-image:radial-gradient(ellipse_at_center,#000_30%,transparent_75%)]" muted loop playsinline preload="none" use:lazyVideo={{ src: heroSrc }}></video>
+		<video bind:this={video} class="lazy h-full w-full object-cover opacity-30 [mask-image:radial-gradient(ellipse_at_center,#000_30%,transparent_75%)]" muted loop playsinline preload="none" use:lazyVideo={{ src: heroSrc }}></video>
 		<div class="absolute inset-0 bg-[linear-gradient(180deg,var(--color-bg)_0%,transparent_30%,transparent_60%,var(--color-bg)_100%)]"></div>
 	</div>
 	<div aria-hidden="true" class="pointer-events-none absolute inset-0 bg-[linear-gradient(var(--color-line)_1px,transparent_1px),linear-gradient(90deg,var(--color-line)_1px,transparent_1px)] bg-[size:72px_72px] opacity-30 [mask-image:radial-gradient(ellipse_at_top,#000_20%,transparent_70%)]"></div>

@@ -93,11 +93,11 @@ export function FilmEditor({ film: initial, fromDatabase }: { film: LandingFilm;
 
       <Card padding="md">
         <details>
-          <summary className="cursor-pointer text-[12.5px] font-semibold uppercase tracking-wide text-muted-foreground">Tiles · {TILE_SLOTS.length} industry tiles and solution cards</summary>
-          <p className="mt-1 text-[12px] text-muted-foreground">Footage under the words on every tile. Clear the link to leave a tile plain.</p>
-          {(["industry", "solution"] as const).map((group) => (
+          <summary className="cursor-pointer text-[12.5px] font-semibold uppercase tracking-wide text-muted-foreground">Tiles · {TILE_SLOTS.length} cards across the page</summary>
+          <p className="mt-1 text-[12px] text-muted-foreground">Footage under the words on every card. Clear the link to leave a card plain.</p>
+          {(["industry", "solution", "problem", "pillar", "week", "proof"] as const).map((group) => (
             <div key={group} className="mt-4">
-              <p className="mb-2 text-[12px] font-semibold">{group === "industry" ? "Industries" : "Solutions"}</p>
+              <p className="mb-2 text-[12px] font-semibold">{({ industry: "Industries", solution: "Solutions", problem: "The problems", pillar: "How HostOS works", week: "The first thirty days", proof: "Proof" })[group]}</p>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {TILE_SLOTS.filter((t) => t.id.startsWith(group + ":")).map(({ id, label }) => (
                   <div key={id} className="space-y-2">
@@ -108,6 +108,62 @@ export function FilmEditor({ film: initial, fromDatabase }: { film: LandingFilm;
               </div>
             </div>
           ))}
+        </details>
+      </Card>
+
+      <Card padding="md">
+        <details>
+          <summary className="cursor-pointer text-[12.5px] font-semibold uppercase tracking-wide text-muted-foreground">Testimonials and laurels</summary>
+          <p className="mt-1 text-[12px] text-muted-foreground">What owners said, in their words, and the figures on the laurels above them. Keep it true — this is the page people check.</p>
+          <div className="mt-4 space-y-3">
+            {film.testimonials.map((t, i) => (
+              <div key={i} className="grid grid-cols-1 gap-2 rounded-xl border border-border p-3 md:grid-cols-[1fr_180px_180px_auto]">
+                <Input aria-label="Quote" value={t.quote} onChange={(e) => { setFilm((f) => ({ ...f, testimonials: f.testimonials.map((x, k) => (k === i ? { ...x, quote: e.target.value } : x)) })); setDirty(true); }} placeholder="What they said" />
+                <Input aria-label="Name" value={t.name} onChange={(e) => { setFilm((f) => ({ ...f, testimonials: f.testimonials.map((x, k) => (k === i ? { ...x, name: e.target.value } : x)) })); setDirty(true); }} placeholder="Name" />
+                <Input aria-label="Role" value={t.role} onChange={(e) => { setFilm((f) => ({ ...f, testimonials: f.testimonials.map((x, k) => (k === i ? { ...x, role: e.target.value } : x)) })); setDirty(true); }} placeholder="Role · business" />
+                <Button variant="ghost" size="sm" onClick={() => { setFilm((f) => ({ ...f, testimonials: f.testimonials.filter((_, k) => k !== i) })); setDirty(true); }}>Remove</Button>
+              </div>
+            ))}
+            {film.testimonials.length < 8 && <Button variant="ghost" size="sm" onClick={() => { setFilm((f) => ({ ...f, testimonials: [...f.testimonials, { quote: "", name: "", role: "" }] })); setDirty(true); }}>Add a testimonial</Button>}
+          </div>
+          <div className="mt-5 grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
+            {film.laurels.map((l, i) => (
+              <div key={i} className="grid grid-cols-[88px_1fr_auto] gap-2">
+                <Input aria-label="Figure" value={l.value} onChange={(e) => { setFilm((f) => ({ ...f, laurels: f.laurels.map((x, k) => (k === i ? { ...x, value: e.target.value } : x)) })); setDirty(true); }} className="font-mono" placeholder="98%" />
+                <Input aria-label="What it counts" value={l.label} onChange={(e) => { setFilm((f) => ({ ...f, laurels: f.laurels.map((x, k) => (k === i ? { ...x, label: e.target.value } : x)) })); setDirty(true); }} placeholder="client satisfaction" />
+                <Button variant="ghost" size="sm" onClick={() => { setFilm((f) => ({ ...f, laurels: f.laurels.filter((_, k) => k !== i) })); setDirty(true); }}>×</Button>
+              </div>
+            ))}
+            {film.laurels.length < 6 && <Button variant="ghost" size="sm" onClick={() => { setFilm((f) => ({ ...f, laurels: [...f.laurels, { value: "", label: "" }] })); setDirty(true); }}>Add a laurel</Button>}
+          </div>
+        </details>
+      </Card>
+
+      <Card padding="md">
+        <details>
+          <summary className="cursor-pointer text-[12.5px] font-semibold uppercase tracking-wide text-muted-foreground">Testimonials and laurels</summary>
+          <p className="mt-1 text-[12px] text-muted-foreground">What owners said, in their words, and the figures on the laurels above them. Keep it true — this is the page people check.</p>
+          <div className="mt-4 space-y-3">
+            {film.testimonials.map((t, i) => (
+              <div key={i} className="grid grid-cols-1 gap-2 rounded-xl border border-border p-3 md:grid-cols-[1fr_180px_180px_auto]">
+                <Input aria-label="Quote" value={t.quote} onChange={(e) => { setFilm((f) => ({ ...f, testimonials: f.testimonials.map((x, k) => (k === i ? { ...x, quote: e.target.value } : x)) })); setDirty(true); }} placeholder="What they said" />
+                <Input aria-label="Name" value={t.name} onChange={(e) => { setFilm((f) => ({ ...f, testimonials: f.testimonials.map((x, k) => (k === i ? { ...x, name: e.target.value } : x)) })); setDirty(true); }} placeholder="Name" />
+                <Input aria-label="Role" value={t.role} onChange={(e) => { setFilm((f) => ({ ...f, testimonials: f.testimonials.map((x, k) => (k === i ? { ...x, role: e.target.value } : x)) })); setDirty(true); }} placeholder="Role · business" />
+                <Button variant="ghost" size="sm" onClick={() => { setFilm((f) => ({ ...f, testimonials: f.testimonials.filter((_, k) => k !== i) })); setDirty(true); }}>Remove</Button>
+              </div>
+            ))}
+            {film.testimonials.length < 8 && <Button variant="ghost" size="sm" onClick={() => { setFilm((f) => ({ ...f, testimonials: [...f.testimonials, { quote: "", name: "", role: "" }] })); setDirty(true); }}>Add a testimonial</Button>}
+          </div>
+          <div className="mt-5 grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
+            {film.laurels.map((l, i) => (
+              <div key={i} className="grid grid-cols-[88px_1fr_auto] gap-2">
+                <Input aria-label="Figure" value={l.value} onChange={(e) => { setFilm((f) => ({ ...f, laurels: f.laurels.map((x, k) => (k === i ? { ...x, value: e.target.value } : x)) })); setDirty(true); }} className="font-mono" placeholder="98%" />
+                <Input aria-label="What it counts" value={l.label} onChange={(e) => { setFilm((f) => ({ ...f, laurels: f.laurels.map((x, k) => (k === i ? { ...x, label: e.target.value } : x)) })); setDirty(true); }} placeholder="client satisfaction" />
+                <Button variant="ghost" size="sm" onClick={() => { setFilm((f) => ({ ...f, laurels: f.laurels.filter((_, k) => k !== i) })); setDirty(true); }}>×</Button>
+              </div>
+            ))}
+            {film.laurels.length < 6 && <Button variant="ghost" size="sm" onClick={() => { setFilm((f) => ({ ...f, laurels: [...f.laurels, { value: "", label: "" }] })); setDirty(true); }}>Add a laurel</Button>}
+          </div>
         </details>
       </Card>
 

@@ -31,7 +31,7 @@
 	}
 </script>
 
-<section id="contact" class="aurora section-y relative overflow-hidden">
+<section id="contact" class="aurora section-y relative overflow-hidden bg-bg">
 	<div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-20">
 		<video class="lazy dim h-full w-full object-cover [mask-image:radial-gradient(ellipse_at_center,#000_20%,transparent_75%)]" style="--dim:0.24" muted loop playsinline preload="none" use:lazyVideo={{ src: closingSrc }}></video>
 	</div>
@@ -57,7 +57,7 @@
 				<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
 					<label class="block text-[13px] font-medium text-ink-2">Your name<input name="name" required autocomplete="name" class="field" /></label>
 					<label class="block text-[13px] font-medium text-ink-2">Email<input name="email" type="email" required autocomplete="email" class="field" /></label>
-					<label class="block text-[13px] font-medium text-ink-2 sm:col-span-2">Business<input name="business" required placeholder="e.g. 6-car Turo fleet in Cebu" class="field" /></label>
+					<label class="block text-[13px] font-medium text-ink-2 sm:col-span-2">Business<input name="business" required placeholder="e.g. 6-car Turo fleet in Austin" class="field" /></label>
 					<label class="block text-[13px] font-medium text-ink-2 sm:col-span-2">The one operation to bring<textarea name="operation" rows="3" required placeholder="What runs badly, or takes your evenings" class="field"></textarea></label>
 					<label class="hidden" aria-hidden="true">Website<input name="company_website" tabindex="-1" autocomplete="off" /></label>
 				</div>

@@ -104,7 +104,7 @@
 	</div>
 
 	<div class="arrive container-x mt-16 md:mt-24" style="--reveal-delay:520ms">
-		<p class="label-mono mb-4 text-center text-ink-3">Runs on the platforms your business already uses</p>
+		<p class="label-mono mb-4 text-center text-ink-3">Works with the platforms you already use</p>
 		<div class="relative">
 			<ul class="flex flex-wrap justify-center gap-x-8 gap-y-3 md:gap-x-10" aria-label="Platforms">
 				{#each LOGOS as l}

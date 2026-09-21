@@ -10,7 +10,7 @@
 	/** Numbers first, dated, named where allowed. A quote without a number is wallpaper; none here. */
 </script>
 
-<Section id="proof" eyebrow={PROOF.eyebrow} title={PROOF.title} tone="surface" voice="serif" align="right">
+<Section id="proof" eyebrow={PROOF.eyebrow} title={PROOF.title} lede={PROOF.lede} tone="surface" voice="serif" align="right">
 	<div use:stagger={90} class="scroll-in grid grid-cols-1 gap-4 md:grid-cols-3">
 		{#each PROOF.cases as c, i}
 			{@const clip = tiles[`proof:${i + 1}`]}

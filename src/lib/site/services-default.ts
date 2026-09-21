@@ -5,7 +5,7 @@ export const SITE_SERVICES: ServiceRow[] = [
   {
     "id": "operations",
     "name": "Business Operations",
-    "blurb": "Trained operators on your channels — phone, email, chat, delivery tablets — running the procedures we write for your business.",
+    "blurb": "Trained operators handle your phone, email, chat and delivery tablets, following procedures written for your business. For owners who want the daily work handled without hiring and managing staff.",
     "stack": [
       "HostOS board",
       "Google Workspace",
@@ -15,9 +15,9 @@ export const SITE_SERVICES: ServiceRow[] = [
       "Written SOPs"
     ],
     "included": [
-      "Operators trained by the Founder, 5+ yrs VA & BPO each",
+      "Operators trained by the Founder, 5+ years of experience each",
       "Procedures written for your business, one page each",
-      "Coverage as a team, never a single person",
+      "A team that covers for each other, never a single person",
       "Weekly numbers, monthly review",
       "Quality checks on every conversation"
     ],
@@ -27,7 +27,7 @@ export const SITE_SERVICES: ServiceRow[] = [
       "Weekly report",
       "Named lead operator"
     ],
-    "ideal": "Fleets, restaurants, field-service and shop owners with an inbox that never sleeps",
+    "ideal": "Fleet, restaurant, field-service and shop owners with an inbox that never sleeps",
     "timeline": "Live within 30 days",
     "model": "monthly",
     "tiers": [
@@ -51,12 +51,12 @@ export const SITE_SERVICES: ServiceRow[] = [
       }
     ],
     "support": "Included. Add hours at $12/hr.",
-    "why": "A US hire for the same coverage runs $3,500–4,500 a month before benefits; freelancers cost less but bring no cover, no procedures and no board. This sits in between and includes all three."
+    "why": "A US hire for the same coverage costs $3,500–4,500 a month before benefits. Freelancers cost less but bring no cover, no procedures and no dashboard. This sits in between and includes all three."
   },
   {
     "id": "web",
     "name": "Web Development",
-    "blurb": "Fast, findable sites that book, quote and answer — built on the stack HostOS itself runs on, and owned by you.",
+    "blurb": "A fast website that customers can find on Google and use to book, get a quote or ask a question. Built on the same technology HostOS runs on, and owned by you.",
     "stack": [
       "SvelteKit",
       "Next.js",
@@ -70,10 +70,10 @@ export const SITE_SERVICES: ServiceRow[] = [
       "Cloudflare"
     ],
     "included": [
-      "Design and build in-house",
-      "Mobile-first, Lighthouse-tested",
-      "Booking, quote or contact flows",
-      "Technical SEO, schema, sitemap",
+      "Designed and built in-house",
+      "Mobile-first and tested for speed",
+      "Booking, quote or contact forms",
+      "Set up to rank on Google",
       "Your domain, your accounts, your code"
     ],
     "deliverables": [
@@ -82,7 +82,7 @@ export const SITE_SERVICES: ServiceRow[] = [
       "Editing guide",
       "30 days of fixes"
     ],
-    "ideal": "Shops, clinics, trades, agencies and fleets that need to be found and booked",
+    "ideal": "Shops, clinics, trades, agencies and fleets that need to be found and booked online",
     "timeline": "2–6 weeks",
     "model": "one-time",
     "tiers": [
@@ -106,12 +106,12 @@ export const SITE_SERVICES: ServiceRow[] = [
       }
     ],
     "support": "Optional care plan from $190/mo — hosting, updates, small changes.",
-    "why": "US agencies charge $5,000–15,000 for the Professional tier; template builders charge less and leave you with a template. This is custom work at a Philippine cost base."
+    "why": "US agencies charge $5,000–15,000 for the Professional tier. Template builders charge less and leave you with a template. This is custom work at Philippine cost."
   },
   {
     "id": "apps",
     "name": "App Development",
-    "blurb": "Web and cross-platform apps — installable, offline-ready, signed-in — for the tools your business can’t buy off the shelf.",
+    "blurb": "Apps that install on any phone or computer, work offline and sign users in — for the tools your business needs but cannot buy off the shelf.",
     "stack": [
       "Progressive Web Apps",
       "React / SvelteKit",
@@ -123,9 +123,9 @@ export const SITE_SERVICES: ServiceRow[] = [
     ],
     "included": [
       "Discovery and scope",
-      "UI design",
-      "Authentication and roles",
-      "Integrations with the tools you run on",
+      "Screen design",
+      "Sign-in and user roles",
+      "Connections to the tools you already use",
       "Testing on real devices"
     ],
     "deliverables": [
@@ -133,7 +133,7 @@ export const SITE_SERVICES: ServiceRow[] = [
       "Admin dashboard",
       "Source and documentation"
     ],
-    "ideal": "Operators who outgrew spreadsheets and need one tool built around their workflow",
+    "ideal": "Businesses that have outgrown spreadsheets and need one tool built around their workflow",
     "timeline": "6–12 weeks",
     "model": "custom",
     "tiers": [
@@ -145,12 +145,12 @@ export const SITE_SERVICES: ServiceRow[] = [
       }
     ],
     "support": "Optional from $390/mo — monitoring, updates, small features.",
-    "why": "Custom software is priced on scope. We name a floor so you can plan, then quote the rest after the free strategy call."
+    "why": "Custom software is priced on scope. We give you a starting price so you can plan, then quote the rest after the free strategy call."
   },
   {
     "id": "ai",
     "name": "AI Automation",
-    "blurb": "AI where it helps, humans where it matters: assistants that draft, sort, chase and summarize — supervised by your operators.",
+    "blurb": "AI where it helps, humans where it matters. Assistants that draft replies, sort requests, send follow-ups and summarize the week — always checked by your operators.",
     "stack": [
       "OpenAI & Claude APIs",
       "Workflow automation",
@@ -160,9 +160,9 @@ export const SITE_SERVICES: ServiceRow[] = [
       "HostOS Butler"
     ],
     "included": [
-      "Audit of the repetitive work",
+      "A review of your repetitive work",
       "Assistants built for your procedures",
-      "Human-in-the-loop approvals",
+      "A person approves anything that matters",
       "Monitoring and monthly tuning"
     ],
     "deliverables": [
@@ -182,12 +182,12 @@ export const SITE_SERVICES: ServiceRow[] = [
       }
     ],
     "support": "Running and tuning from $350/mo.",
-    "why": "Priced on the hours it gives back. A typical first setup replaces 30–60 hours of admin a month; we quote the rest by scope."
+    "why": "Priced on the hours it gives back. A typical first setup replaces 30–60 hours of admin work a month. Anything beyond that is quoted by scope."
   },
   {
     "id": "crm",
     "name": "CRM & Automations",
-    "blurb": "Every customer, job and conversation in one place, with the follow-ups that run without anyone remembering.",
+    "blurb": "Every customer, job and conversation in one place, with follow-ups that run automatically. For service businesses whose customers come back.",
     "stack": [
       "HubSpot",
       "GoHighLevel",
@@ -198,8 +198,8 @@ export const SITE_SERVICES: ServiceRow[] = [
       "Custom APIs"
     ],
     "included": [
-      "Pipeline design",
-      "Data migration",
+      "Sales pipeline set up for your business",
+      "Your existing data moved over",
       "Automated reminders and follow-ups",
       "Portals for clients and staff",
       "Team training"
@@ -209,7 +209,7 @@ export const SITE_SERVICES: ServiceRow[] = [
       "Automation map",
       "Training session and guide"
     ],
-    "ideal": "Service businesses with repeat customers and five apps that don’t talk to each other",
+    "ideal": "Service businesses with repeat customers and five apps that do not talk to each other",
     "timeline": "2–4 weeks",
     "model": "one-time",
     "tiers": [
@@ -227,12 +227,12 @@ export const SITE_SERVICES: ServiceRow[] = [
       }
     ],
     "support": "Optional from $290/mo — changes, new automations, monitoring.",
-    "why": "Comparable setups run $2,500–6,000 from US consultancies. Tool subscriptions are billed to you directly."
+    "why": "Comparable setups cost $2,500–6,000 from US consultancies. Tool subscriptions are billed to you directly."
   },
   {
     "id": "seo",
     "name": "SEO & Marketing",
-    "blurb": "Be the business that comes up when someone in your city searches — and the one whose reviews are answered.",
+    "blurb": "Be the business that shows up when someone in your city searches — and the one whose reviews get answered. For local businesses that live on search and reviews.",
     "stack": [
       "Technical SEO",
       "Local SEO",
@@ -244,11 +244,11 @@ export const SITE_SERVICES: ServiceRow[] = [
       "Analytics"
     ],
     "included": [
-      "Technical audit and fixes",
+      "Website audit and fixes",
       "Google Business Profile management",
       "Monthly content",
       "Review responses",
-      "Monthly report you can read in five minutes"
+      "A monthly report you can read in five minutes"
     ],
     "deliverables": [
       "Audit",
@@ -273,12 +273,12 @@ export const SITE_SERVICES: ServiceRow[] = [
       }
     ],
     "support": "Included.",
-    "why": "US local-SEO retainers run $1,000–2,500 a month. Ad spend, if any, is billed to you directly."
+    "why": "US local-SEO retainers cost $1,000–2,500 a month. Ad spend, if any, is billed to you directly."
   },
   {
     "id": "design",
     "name": "Branding & Design",
-    "blurb": "An identity and interfaces that read as professional at a glance — the way this page does.",
+    "blurb": "A brand and screens that look professional at a glance — the way this page does. For new businesses, rebrands, and products that need designs before code.",
     "stack": [
       "Figma",
       "Design systems",
@@ -291,7 +291,7 @@ export const SITE_SERVICES: ServiceRow[] = [
     "included": [
       "Discovery",
       "Two directions, one refined",
-      "Logo, color, type, usage guide",
+      "Logo, colors, fonts and usage guide",
       "Screens for web and mobile",
       "Clickable prototype"
     ],
@@ -319,12 +319,12 @@ export const SITE_SERVICES: ServiceRow[] = [
       }
     ],
     "support": "Design retainer from $490/mo.",
-    "why": "Identity work at US studios starts at $5,000; marketplaces at $300 without strategy. This is studio process at a Philippine cost base."
+    "why": "Brand identity at US studios starts at $5,000; marketplaces offer $300 logos with no strategy. This is studio-quality work at Philippine cost."
   },
   {
     "id": "custom",
     "name": "Custom Software",
-    "blurb": "SaaS, internal platforms, fleet software, marketplaces, mobile apps, dashboards, integrations — built to your business, owned by you.",
+    "blurb": "Software built for your business and owned by you: internal platforms, fleet software, marketplaces, mobile apps, dashboards and integrations.",
     "stack": [
       "SvelteKit / Next.js",
       "TypeScript",
@@ -346,7 +346,7 @@ export const SITE_SERVICES: ServiceRow[] = [
       "Milestone builds",
       "Source, documentation, training"
     ],
-    "ideal": "Owners who need software that doesn’t exist yet",
+    "ideal": "Owners who need software that does not exist yet",
     "timeline": "Quoted per project",
     "model": "custom",
     "tiers": [
@@ -354,10 +354,10 @@ export const SITE_SERVICES: ServiceRow[] = [
         "name": "Custom quote",
         "price": "Custom quote",
         "period": "",
-        "note": "Custom pricing based on project scope, technical requirements, integrations, complexity, timeline and business goals."
+        "note": "Custom pricing based on scope, technical requirements, integrations, complexity, timeline and business goals."
       }
     ],
     "support": "Quoted with the build.",
-    "why": "No fixed price is honest for custom software. Bring the operation to the free strategy call and leave with an estimate."
+    "why": "No fixed price would be honest for custom software. Bring the operation to the free strategy call and leave with an estimate."
   }
 ];

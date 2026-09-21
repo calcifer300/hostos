@@ -180,31 +180,23 @@
 	opacity: 1;
 	transform: none;
 }
-/* a line of the headline slides up out of a clipped box */
+/* a word (or a line) of the headline fades up into place. Nothing is ever clipped: no box can cut the serif italic's tails */
 .plate {
 	display: block;
-	overflow: hidden;
-	/* room for the serif italic's overshoot (the tail of a y, the swash of a w) so the clip never cuts a glyph */
-	padding: 0.24em 0.1em 0.3em;
-	margin: -0.24em -0.1em -0.3em;
 }
 .plate > span {
 	display: block;
-	transform: translateY(160%);
-	transition: transform 0.6s var(--ease-out-expo);
+	opacity: 0;
+	transform: translateY(0.35em);
+	transition:
+		opacity 0.6s var(--ease-out-expo),
+		transform 0.6s var(--ease-out-expo);
 	transition-delay: var(--reveal-delay, 0ms);
 }
 .is-in .plate > span,
 .plate.is-in > span {
+	opacity: 1;
 	transform: none;
-}
-/* once the word has arrived the clip is lifted: the serif italic's tails can never be cut, whatever the font's metrics on the reader's machine */
-.is-in .plate,
-.plate.is-in {
-	animation: unclip 0s linear 0.7s both;
-}
-@keyframes unclip {
-	to { overflow: visible; }
 }
 /* a cursor spotlight on interactive cards */
 .spot {
@@ -552,9 +544,13 @@ video.lazy.dim.is-playing {
 	line-height: 0.8;
 	letter-spacing: -0.05em;
 	font-weight: 700;
+	/* an outline in the ink, faint enough to sit under the footer as a watermark; light on the dark islands */
 	color: transparent;
-	-webkit-text-stroke: 1px rgba(230, 235, 245, 0.12);
+	-webkit-text-stroke: 1.5px rgba(23, 27, 39, 0.18);
 	user-select: none;
+}
+.tone-dark .wordmark-giant {
+	-webkit-text-stroke: 1px rgba(230, 235, 245, 0.12);
 }
 
 /* ------------------------------------------------------ living sections */

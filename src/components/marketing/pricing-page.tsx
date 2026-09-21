@@ -15,7 +15,7 @@ export function PricingPage({ services }: { services: ServiceRow[] }) {
   return (
     <div className="px-6 pb-20 pt-32 md:pb-28 md:pt-40">
       <div className="mx-auto max-w-7xl">
-        <SectionHeading eyebrow="Services & pricing" title="Clear prices. No surprises." description="Every price names what it includes. Anything custom is a quote, never a number. The strategy call is free either way." align="center" />
+        <SectionHeading eyebrow="Services & pricing" title="Clear prices. No surprises." description="Every price shows exactly what is included. Custom work is quoted after we understand the scope. The strategy call is free either way." align="center" />
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
           {services.map((s) => (
             <article key={s.id} className="flex flex-col rounded-3xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
@@ -56,7 +56,7 @@ export function PricingPage({ services }: { services: ServiceRow[] }) {
             </article>
           ))}
         </div>
-        <p className="mx-auto mt-10 max-w-3xl text-center text-[14px] leading-relaxed text-muted-foreground">Prices in USD. Tool subscriptions and ad spend are billed to you directly. Every engagement starts with a Free Strategy Call — 45 minutes, no obligation, and you keep the plan either way.</p>
+        <p className="mx-auto mt-10 max-w-3xl text-center text-[14px] leading-relaxed text-muted-foreground">All prices in USD. Tool subscriptions and ad spend are billed to you directly. Every engagement starts with a free 45-minute strategy call — no obligation, and you keep the plan either way.</p>
       </div>
     </div>
   );

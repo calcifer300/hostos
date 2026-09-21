@@ -15,9 +15,9 @@ export const SITE = {
 	email: 'hello@hostoscollective.com',
 	phone: '+63 991 474 5117',
 	whatsapp: 'https://wa.me/639914745117',
-	tagline: 'Run the business. We’ll run the operations.',
+	tagline: 'Focus on what matters most. We’ll handle your operations.',
 	description:
-		'HostOS Collective puts a trained team, written systems and one operations board behind growing businesses — car rental fleets, restaurants, field services, shops — so the owner stops being the software.'
+		'HostOS Collective runs the daily operations of growing businesses — car rental fleets, restaurants, field services, shops — with trained operators, written systems and one shared dashboard, so the owner does not have to handle every task alone.'
 };
 
 export const NAV = [
@@ -25,24 +25,24 @@ export const NAV = [
 	{ href: '/#industries', label: 'Industries' },
 	{ href: '/#platform', label: 'Platform' },
 	{ href: '/#pricing', label: 'Pricing' },
-	{ href: '/#proof', label: 'Work' },
+	{ href: '/#proof', label: 'Results' },
 	{ href: `${SITE.url}/team`, label: 'Team' },
-	{ href: '/#film', label: 'Watch it run' }
+	{ href: '/#film', label: 'See it run' }
 ];
 
 export const CTA = { label: 'Book a Free Strategy Call', href: '/#contact', under: 'Free 45-minute call · No obligation · Leave with a practical plan' };
 
 export const HERO = {
 	eyebrow: 'For Car Rental Fleets · Restaurants · Field Services · Shops',
-	lines: ['Run the business.', 'We’ll run the *operations*.'],
-	body: 'We handle the rest behind the scenes so you can focus on what matters. AI where it helps, humans where it matters — from customer support to daily operations, experienced operators and AI work together so you don’t have to.',
+	lines: ['Focus on what matters most.', 'We’ll handle your *operations*.'],
+	body: 'AI where it helps. Humans where it matters. From customer support to daily operations, we combine intelligent automation with experienced operators so you can focus on growing your business.',
 	secondary: { label: 'See how it works', href: '#how' },
 	/** What is in it for them, in four figures. */
 	outcomes: [
-		['Minutes', 'to every reply, day or night'],
+		['Minutes', 'to answer every customer, day or night'],
 		['0', 'missed orders, claims or estimates'],
-		['~4 hrs', 'of your week spent on operations'],
-		['1', 'board to read at 8 AM']
+		['~4 hrs', 'a week is all you spend on operations'],
+		['1', 'dashboard to read each morning']
 	]
 };
 
@@ -53,77 +53,77 @@ export const LOGOS: { name: string; icon?: string }[] = [
 ];
 
 export const PROBLEMS = {
-	eyebrow: 'The problems we’re hired for',
-	title: 'You didn’t start a business to be its *operating system*.',
+	eyebrow: 'The problems we solve',
+	title: 'You didn’t start a business to *run every task* yourself.',
 	items: [
-		{ scene: 'Your DoorDash tablet paused during dinner. Nobody noticed for 40 minutes.', answer: 'Tablets watched live, store re-opened in a minute, the missed orders counted and reported.' },
-		{ scene: 'Three cars came back today. One has damage. The claim window closes Thursday.', answer: 'Photos at return, claim filed the same day, the calendar blocked until it’s fixed.' },
-		{ scene: 'The estimate went out Monday. Nobody chased it.', answer: 'Quiet estimates chased on day two and day five; you see the pipeline, not the inbox.' },
-		{ scene: 'Your website says “coming soon” on the page clients check first.', answer: 'A site that books, quotes and answers — built and kept by the same team that runs your inbox.' },
-		{ scene: 'Every process lives in one person’s head.', answer: 'Written down, one page each, and the repetitive parts automated so nobody has to remember.' },
-		{ scene: 'You learn something’s wrong from the bank balance, not from a dashboard.', answer: 'One board, updated as the work happens, on your phone at 8 AM' }
+		{ scene: 'Your DoorDash tablet paused during dinner. Nobody noticed for 40 minutes.', answer: 'We watch the tablets live, reopen the store within a minute, and report every missed order.' },
+		{ scene: 'Three cars came back today. One has damage. The claim window closes Thursday.', answer: 'We photograph every return, file the claim the same day, and block the calendar until the car is fixed.' },
+		{ scene: 'The estimate went out Monday. Nobody chased it.', answer: 'We follow up on day two and day five. You see the pipeline, not the inbox.' },
+		{ scene: 'Your website says “coming soon” on the page clients check first.', answer: 'We build and maintain a site that takes bookings, sends quotes and answers questions.' },
+		{ scene: 'Every process lives in one person’s head.', answer: 'We write each process down, one page each, and automate the repetitive parts so nobody has to remember.' },
+		{ scene: 'You learn something’s wrong from the bank balance, not from a dashboard.', answer: 'One dashboard, updated as the work happens, on your phone every morning.' }
 	]
 };
 
 export const HOW = {
 	eyebrow: 'How HostOS works',
-	title: 'People, systems, software. *In that order.*',
+	title: 'People, systems, software — *working together*.',
 	pillars: [
-		{ id: 'people', name: 'People', line: 'Trained operators inside your business.', body: 'On your hours, on your channels — phone, email, chat, the delivery tablets. Managed, covered, accountable. Not freelancers.' },
-		{ id: 'systems', name: 'Systems', line: 'How the work gets done, written down.', body: 'Every operation becomes a one-page procedure. The repetitive parts are automated — reminders, follow-ups, reports — with software and, where it helps, AI. Nothing depends on memory.' },
-		{ id: 'software', name: 'Software', line: 'HostOS: the board everyone works from.', body: 'Built by us, run by us, owned by you. Your team and ours look at the same jobs, orders, cars and conversations. Custom tools when the off-the-shelf ones don’t fit.' }
+		{ id: 'people', name: 'People', line: 'Trained operators inside your business.', body: 'They work your hours on your channels — phone, email, chat and delivery tablets. We manage them, cover their time off, and stay accountable for the results. Not freelancers.' },
+		{ id: 'systems', name: 'Systems', line: 'Every process written down, then automated.', body: 'Each task becomes a one-page procedure. The repetitive parts — reminders, follow-ups, reports — run automatically, with AI where it helps. Nothing depends on memory.' },
+		{ id: 'software', name: 'Software', line: 'HostOS: one dashboard for everyone.', body: 'Built and run by us, owned by you. Your team and ours see the same jobs, orders, cars and conversations. We build custom tools when off-the-shelf ones don’t fit.' }
 	]
 };
 
 export const BEFORE_AFTER = {
 	eyebrow: 'Before and after',
-	title: 'One operation, *two ways* of running it.',
-	lede: 'A 146-car Turo fleet, the month before and the month after it moved onto HostOS.',
+	title: 'The same business, *before and after* HostOS.',
+	lede: 'A 146-car Turo fleet: the month before it moved onto HostOS, and the month after.',
 	rows: [
-		{ label: 'Tools', before: '4 spreadsheets, 3 group chats, the Turo app', after: 'One board' },
-		{ label: 'People', before: 'The owner and two admins, at night', after: '6 operators around the clock; the owner reads it' },
-		{ label: 'Guest messages', before: 'Answered when seen', after: 'Answered in minutes, every hour of the day' },
+		{ label: 'Tools', before: '4 spreadsheets, 3 group chats, the Turo app', after: 'One dashboard' },
+		{ label: 'People', before: 'The owner and two admins, working nights', after: '6 operators around the clock; the owner just reads the dashboard' },
+		{ label: 'Guest messages', before: 'Answered whenever someone saw them', after: 'Answered in minutes, around the clock' },
 		{ label: 'Damage claims', before: '5 missed the window', after: '0 missed; photos at every return' },
-		{ label: 'Turnarounds', before: 'Found out when the next guest called', after: 'Scheduled at booking, checked off on the phone' },
-		{ label: 'Owner’s hours on operations', before: '~60 a week', after: '~4 a week, mostly reading' }
+		{ label: 'Turnarounds', before: 'Discovered when the next guest called', after: 'Scheduled at booking, checked off on the phone' },
+		{ label: 'Owner’s hours on operations', before: 'About 60 a week', after: 'About 4 a week, mostly reading' }
 	]
 };
 
 export const SOLUTIONS = {
 	eyebrow: 'Solutions',
-	title: 'What we *run, build* and *connect*.',
+	title: 'What we do *for your business*.',
 	families: [
 		{
-			id: 'run', name: 'Run', line: 'People and procedures inside your business.',
+			id: 'run', name: 'Run', line: 'Trained people and written procedures inside your business.',
 			items: [
-				{ id: 'va', name: 'Virtual assistant solutions', outcome: 'A trained team on your channels, managed by us.', points: ['Phone, email, chat, delivery tablets', 'Procedures written for your business', 'Coverage, not a single person'], for: 'Any business with an inbox that never sleeps' },
-				{ id: 'turo-ops', name: 'Turo operations', outcome: 'Every car, booking and turnaround on one board.', points: ['Pricing and calendar', 'Guest messages, day and night', 'Claims filed on time, photos at return'], for: 'Hosts with 3 to 300 cars' },
-				{ id: 'doordash-ops', name: 'DoorDash operations', outcome: 'Tablets watched, menus in sync, reviews answered.', points: ['Missed orders caught in minutes', '86’d items pulled across every app', 'Refund disputes filed with evidence'], for: 'Restaurants on two or more delivery apps' },
-				{ id: 'consulting', name: 'Business operations consulting', outcome: 'The way you work, redesigned by people who then run it.', points: ['Process mapping in your language', 'What to automate, what to staff', 'A 30-day plan you can hold us to'], for: 'Owners growing past what they can watch' }
+				{ id: 'va', name: 'Virtual assistant team', outcome: 'A trained team handling your customer channels, managed by us.', points: ['Phone, email, chat, delivery tablets', 'Procedures written for your business', 'A team that covers for each other, never a single person'], for: 'Any business with an inbox that never sleeps' },
+				{ id: 'turo-ops', name: 'Turo operations', outcome: 'Every car, booking and turnaround on one dashboard.', points: ['Pricing and calendar management', 'Guest messages answered day and night', 'Claims filed on time, with photos at every return'], for: 'Hosts with 3 to 300 cars' },
+				{ id: 'doordash-ops', name: 'DoorDash operations', outcome: 'Tablets watched, menus kept in sync, reviews answered.', points: ['Missed orders caught in minutes', 'Sold-out items removed from every app', 'Refund disputes filed with evidence'], for: 'Restaurants on two or more delivery apps' },
+				{ id: 'consulting', name: 'Operations consulting', outcome: 'Your operations redesigned by the people who will then run them.', points: ['Every process mapped in plain language', 'What to automate and what to staff', 'A 30-day plan you can hold us to'], for: 'Owners growing faster than they can manage alone' }
 			]
 		},
 		{
-			id: 'build', name: 'Build', line: 'Software that fits the business, not the other way round.',
+			id: 'build', name: 'Build', line: 'Software built around how your business works.',
 			items: [
-				{ id: 'webapps', name: 'Custom web applications', outcome: 'The tool your business needs and can’t buy.', points: ['Designed around your workflow', 'Built on the stack HostOS runs on', 'Yours — code, data, accounts'], for: 'Operations that outgrew spreadsheets' },
-				{ id: 'websites', name: 'Website design & development', outcome: 'A site that books, quotes and answers.', points: ['Designed and built in-house', 'Fast, mobile-first, findable', 'Your domain in your name'], for: 'Shops, clinics, trades, agencies' },
-				{ id: 'crm', name: 'CRM & internal tools', outcome: 'Every customer, job and conversation in one place.', points: ['A timeline per customer', 'Pipelines your team actually updates', 'Portals for clients and staff'], for: 'Service businesses with repeat customers' },
-				{ id: 'dashboards', name: 'Dashboard development', outcome: 'The numbers that matter, live, on your phone.', points: ['One screen per role', 'Updated as the work happens', 'No reports to run'], for: 'Owners who want to see, not ask' }
+				{ id: 'webapps', name: 'Custom web applications', outcome: 'The tool your business needs but can’t buy off the shelf.', points: ['Designed around your workflow', 'Built on the same technology HostOS runs on', 'You own the code, data and accounts'], for: 'Businesses that have outgrown spreadsheets' },
+				{ id: 'websites', name: 'Website design & development', outcome: 'A website that takes bookings, sends quotes and answers questions.', points: ['Designed and built in-house', 'Fast, mobile-first and easy to find on Google', 'Your domain, in your name'], for: 'Shops, clinics, trades and agencies' },
+				{ id: 'crm', name: 'CRM & internal tools', outcome: 'Every customer, job and conversation in one place.', points: ['A full history for every customer', 'Pipelines your team will actually keep up to date', 'Portals for clients and staff'], for: 'Service businesses with repeat customers' },
+				{ id: 'dashboards', name: 'Dashboards', outcome: 'The numbers that matter, live, on your phone.', points: ['One screen for each role', 'Updated as the work happens', 'No reports to run'], for: 'Owners who want to see the numbers without asking' }
 			]
 		},
 		{
-			id: 'connect', name: 'Connect', line: 'The systems talking to each other so people don’t have to.',
+			id: 'connect', name: 'Connect', line: 'Your tools working together, so your people don’t have to copy data between them.',
 			items: [
-				{ id: 'automation', name: 'Business process automation', outcome: 'The repetitive work, done without anyone remembering.', points: ['Reminders, follow-ups, reports', 'Triggers from the tools you already use', 'Human in the loop where it matters'], for: 'Any process that runs on a checklist' },
-				{ id: 'integrations', name: 'API integrations', outcome: 'Turo, DoorDash, Shopify, Stripe, Google — connected.', points: ['Orders and bookings flow in', 'Payments and payouts reconciled', 'One source of truth'], for: 'Businesses running on five apps' },
-				{ id: 'workflow', name: 'Workflow optimization', outcome: 'Fewer steps, fewer hands, fewer mistakes.', points: ['Every operation mapped and timed', 'The waste removed before it’s automated', 'Measured after, not assumed'], for: 'Teams that feel busy and behind' }
+				{ id: 'automation', name: 'Process automation', outcome: 'Repetitive work done automatically, without anyone remembering.', points: ['Reminders, follow-ups and reports', 'Triggered by the tools you already use', 'A person checks anything that matters'], for: 'Any process that runs on a checklist' },
+				{ id: 'integrations', name: 'Integrations', outcome: 'Turo, DoorDash, Shopify, Stripe and Google, all connected.', points: ['Orders and bookings flow in automatically', 'Payments and payouts reconciled', 'One place with the correct numbers'], for: 'Businesses juggling five different apps' },
+				{ id: 'workflow', name: 'Workflow improvement', outcome: 'Fewer steps, fewer hands, fewer mistakes.', points: ['Every process mapped and timed', 'Wasted steps removed before anything is automated', 'Results measured, not assumed'], for: 'Teams that feel busy but behind' }
 			]
 		},
 		{
-			id: 'understand', name: 'Understand', line: 'Knowing what happened, and what’s about to.',
+			id: 'understand', name: 'Understand', line: 'Know what happened this week, and what is coming next.',
 			items: [
-				{ id: 'analytics', name: 'Operational analytics', outcome: 'Where the hours and the money go, by the week.', points: ['Utilization, response times, misses', 'Per car, per store, per tech', 'Alerts when a number moves'], for: 'Owners making decisions on gut feel' },
-				{ id: 'bi', name: 'Business intelligence', outcome: 'The questions you’d ask an analyst, answered from your own data.', points: ['Warehouse and models, done for you', 'Plain-language questions over your numbers', 'Forecasts you can act on'], for: 'Multi-location and multi-vertical operators' }
+				{ id: 'analytics', name: 'Operational analytics', outcome: 'See where the hours and the money go, week by week.', points: ['Utilization, response times and misses', 'Broken down per car, store or technician', 'Alerts when a number changes'], for: 'Owners who are still deciding on gut feel' },
+				{ id: 'bi', name: 'Business intelligence', outcome: 'The questions you would ask an analyst, answered from your own data.', points: ['Your data organized and kept in order for you', 'Ask questions in plain English, get answers from your numbers', 'Forecasts you can act on'], for: 'Businesses with several locations or lines of business' }
 			]
 		}
 	]
@@ -131,7 +131,7 @@ export const SOLUTIONS = {
 
 export const INDUSTRIES = {
 	eyebrow: 'Industries',
-	title: 'Built for *operational* businesses.',
+	title: 'Built for businesses with *daily operations* to run.',
 	items: [
 		{ id: 'turo', name: 'Turo & car rental', hue: '#0a84ff', line: 'Fleets from 3 to 300 cars', href: '/#solutions' },
 		{ id: 'doordash', name: 'DoorDash & delivery', hue: '#ff375f', line: 'Restaurants on two or more apps', href: '/#solutions' },
@@ -140,42 +140,43 @@ export const INDUSTRIES = {
 		{ id: 'property', name: 'Property management', hue: '#40c8e0', line: 'Units, tenants, maintenance', href: '/#solutions' },
 		{ id: 'services', name: 'Professional & field services', hue: '#8b7cff', line: 'Auto glass, cleaning, trades, agencies', href: '/#solutions' },
 		{ id: 'small', name: 'Small businesses', hue: '#f5b301', line: 'Shops, clinics, studios', href: '/#solutions' },
-		{ id: 'startups', name: 'Growing startups', hue: '#af52de', line: 'Operations before the ops hire', href: '/#solutions' }
+		{ id: 'startups', name: 'Growing startups', hue: '#af52de', line: 'Operations handled before you hire for it', href: '/#solutions' }
 	]
 };
 
 export const PROOF = {
-	eyebrow: 'Proof',
-	title: 'Numbers first. *Names* where we’re allowed.',
+	eyebrow: 'Results',
+	title: 'Real results. *Real businesses.*',
+	lede: 'Measured on the businesses we run. Some client partnerships remain confidential under NDA.',
 	cases: [
-		{ figure: 0, suffix: '', label: 'damage claims missed', line: 'A 146-car Turo fleet in Texas, six months on HostOS: every return photographed, every claim inside the window.', who: '146-car fleet · Founder-operated', when: '2026', hue: '#0a84ff' },
-		{ figure: 4, suffix: ' min', label: 'median guest reply time', line: 'Night and weekend messages for 146 cars, answered by operators working from the same board the owner reads at 8 AM', who: 'Same fleet', when: 'Q2 2026', hue: '#30d158' },
-		{ figure: 8, suffix: '', label: 'verticals, one workspace', line: 'Car rental, delivery, commerce, field service, websites, cafés, barbershops and custom — one login, one team.', who: 'HostOS platform', when: 'Today', hue: '#8b7cff' }
+		{ figure: 0, suffix: '', label: 'Missed damage claims', line: 'A 146-car Turo fleet in Texas, six months on HostOS: every return photographed, every claim filed inside the window.', who: '146-car fleet · Founder-operated', when: '2026', hue: '#0a84ff' },
+		{ figure: 4, suffix: ' min', label: 'Average guest response time', line: 'Night and weekend messages for 146 cars, answered by operators working from the same dashboard the owner reads each morning.', who: 'Same fleet', when: 'Q2 2026', hue: '#30d158' },
+		{ figure: 8, suffix: '', label: 'Industries supported', line: 'Car rental, delivery, online stores, field service, websites, cafés, barbershops and custom software — one login, one team.', who: 'HostOS platform', when: 'Today', hue: '#8b7cff' }
 	]
 };
 
 export const PLATFORM = {
 	eyebrow: 'The platform',
-	title: 'The board your team and ours *work from*.',
-	lede: 'HostOS is the software behind every engagement: one login, a dashboard per line of business. This is what an owner reads.',
+	title: 'One dashboard for your team *and ours*.',
+	lede: 'HostOS is the software behind every engagement: one login, one dashboard per line of business. This is what you read each morning.',
 	tabs: [
 		{ id: 'board', name: 'Today', widgets: [
 			{ kind: 'kpi', label: 'Pickups today', value: '14', note: '8 out · 6 back' },
-			{ kind: 'kpi', label: 'Guest replies', value: '4 min', note: 'median, last 24 hrs' },
+			{ kind: 'kpi', label: 'Guest response time', value: '4 min', note: 'average, last 24 hrs' },
 			{ kind: 'kpi', label: 'Needs attention', value: '3', note: '1 license · 2 messages' },
 			{ kind: 'list', label: 'Next up', rows: [['09:40', 'Tesla Model 3 · keys out'], ['11:00', 'Civic · return + photos'], ['13:30', 'RAV4 · wash before 15:00'], ['16:15', 'Model Y · airport handoff']] }
 		] },
 		{ id: 'dispatch', name: 'Dispatch', widgets: [
 			{ kind: 'kpi', label: 'Jobs today', value: '11', note: '9 assigned · 2 open' },
-			{ kind: 'kpi', label: 'Estimates quiet', value: '2', note: 'chased this morning' },
+			{ kind: 'kpi', label: 'Estimates waiting', value: '2', note: 'followed up this morning' },
 			{ kind: 'kpi', label: 'Techs on the road', value: '4', note: 'all on time' },
 			{ kind: 'list', label: 'Board', rows: [['Ramon', 'Windshield · Austin · 10:00'], ['Jess', 'Side glass · Round Rock · 11:30'], ['Open', 'Chip repair · Cedar Park · 14:00'], ['Miguel', 'Windshield · Georgetown · 15:30']] }
 		] },
 		{ id: 'butler', name: 'Butler', widgets: [
-			{ kind: 'kpi', label: 'Tasks raised today', value: '7', note: 'by the Butler' },
+			{ kind: 'kpi', label: 'Tasks flagged today', value: '7', note: 'by the Butler' },
 			{ kind: 'kpi', label: 'Reviews to answer', value: '2', note: 'DoorDash · Google' },
 			{ kind: 'kpi', label: 'Follow-ups sent', value: '5', note: 'estimates · quotes' },
-			{ kind: 'list', label: 'Raised', rows: [['08:02', 'Store paused on Uber Eats — reopened'], ['08:15', 'Estimate #1042 quiet 5 days — chased'], ['09:00', 'License renewal due in 14 days'], ['09:30', '86’d: garlic rice, pulled from 3 apps']] }
+			{ kind: 'list', label: 'Raised', rows: [['08:02', 'Store paused on Uber Eats — reopened'], ['08:15', 'Estimate #1042 waiting 5 days — followed up'], ['09:00', 'License renewal due in 14 days'], ['09:30', 'Garlic rice sold out — removed from 3 apps']] }
 		] }
 	]
 };
@@ -243,7 +244,7 @@ export const TESTIMONIALS = [
 	{
 		quote: "From building our website to setting up automated email campaigns, HostOS Collective delivered everything on time and on budget. Truly a one-stop shop for growing businesses.",
 		name: "Miguel Chavez",
-		role: "E-commerce startup",
+		role: "Online store founder",
 		photo: '/faces/2379004.jpg'
 	},
 	{
@@ -272,20 +273,20 @@ export const LAURELS = [
 	},
 	{
 		value: "5+ yrs",
-		label: "VA & BPO experience per operator · trained by the Founder"
+		label: "experience per operator · trained by the Founder"
 	}
 ];
 export const VOICES = { eyebrow: 'What owners say', title: 'In their *own words*.' };
 /** What the work is trusted for — stated, not claimed as prizes we have not won. */
 export const RECOGNITION = {
-	title: 'Trusted for the *whole* of it.',
-	body: 'Operations, design and engineering under one roof: the team that answers your customers at 2 AM also builds the software it runs on. These are the disciplines clients hire us for.',
+	title: 'Everything under *one roof*.',
+	body: 'Operations, design and engineering in one team: the people who answer your customers at 2 AM also build the software they work on. This is what clients hire us for.',
 	marks: [
-		{ name: 'Web & app development', note: 'Full-stack, shipped and owned by you' },
-		{ name: 'Product & UI design', note: 'Interfaces owners read at 8 AM' },
-		{ name: 'World-class customer service', note: '5+ yrs VA & BPO per operator · Founder-trained' },
-		{ name: 'B2B operations', note: 'Fleets, kitchens, field service, shops' },
-		{ name: 'Automation & AI', note: 'In the background, supervised — never the pitch' }
+		{ name: 'Web & app development', note: 'Built end to end, and owned by you' },
+		{ name: 'Product & UI design', note: 'Screens an owner can read in a minute' },
+		{ name: 'Customer service', note: '5+ years of experience per operator · trained by the Founder' },
+		{ name: 'Business operations', note: 'Fleets, kitchens, field service, shops' },
+		{ name: 'Automation & AI', note: 'In the background, always supervised by a person' }
 	]
 };
 /** The trust line under the hero's ask. */
@@ -298,28 +299,28 @@ export const CONTACT = { facebook: { handle: '@bimbeez96', url: 'https://www.fac
 /** HostOS on every screen, and what it does for the numbers. */
 export const DEVICES = {
 	eyebrow: 'HostOS on every screen',
-	title: 'The board in your pocket, on your desk — *everywhere* the work is.',
-	lede: 'One login on iPhone, Android, Mac and Windows. The board your operators work from is the one you read over coffee. Nothing to install, nothing to sync.',
+	title: 'Your dashboard on your phone, your desk — *everywhere* the work is.',
+	lede: 'One login on iPhone, Android, Mac and Windows. The dashboard your operators work from is the one you read over coffee. Nothing to install, nothing to sync.',
 	gains: [
-		{ figure: 'Minutes', name: 'To every reply, so more guests book', body: 'A guest answered in minutes books; one answered tomorrow booked elsewhere. Reply time is the single biggest lever on occupancy, and it is the first number we move.' },
-		{ figure: '0', name: 'Missed orders, claims and estimates', body: 'Paused tablets are reopened in a minute, damage is photographed at return and filed inside the window, quiet estimates are chased on day two and day five.' },
-		{ figure: '4–8 hrs', name: 'Of your week, back', body: 'The inbox, the calendar, the tablets and the follow-ups run without you. You read one board at 8 AM and decide; you stop being the software.' },
-		{ figure: 'Daily', name: 'Pricing and calendars kept current', body: 'Calendars priced by demand, turnarounds scheduled at booking, cars and tables that stop sitting empty because someone forgot to open them.' },
-		{ figure: 'Same day', name: 'Every review and dispute answered', body: 'Every review answered the same day, every dispute filed with evidence — the ratings that decide where you appear on Turo, DoorDash and Google.' },
-		{ figure: '1', name: 'Board for the whole business', body: 'Fleet, kitchen, field and shop on one screen with the same team behind it. Add a vertical without adding a vendor.' }
+		{ figure: 'Minutes', name: 'To answer every customer', body: 'A guest answered in minutes books with you. One answered tomorrow has already booked elsewhere. Response time is the first number we improve.' },
+		{ figure: '0', name: 'Missed orders, claims and estimates', body: 'Paused tablets are reopened within a minute. Damage is photographed at return and filed on time. Estimates are followed up on day two and day five.' },
+		{ figure: '4–8 hrs', name: 'Of your week, back', body: 'The inbox, calendar, tablets and follow-ups run without you. You read one dashboard each morning and make the decisions.' },
+		{ figure: 'Daily', name: 'Pricing and calendars kept current', body: 'Prices set by demand, turnarounds scheduled at booking, and no cars or tables sitting empty because someone forgot to open them.' },
+		{ figure: 'Same day', name: 'Every review and dispute answered', body: 'Reviews answered the same day and disputes filed with evidence — these ratings decide where you appear on Turo, DoorDash and Google.' },
+		{ figure: '1', name: 'Dashboard for the whole business', body: 'Fleet, kitchen, field service and shop on one screen, with the same team behind it. Add a line of business without adding a vendor.' }
 	]
 };
 export const WHY = {
 	eyebrow: 'Why HostOS Collective',
 	title: 'Why a team *from the Philippines* — and why this one.',
-	lede: 'Based in the Philippines, working US hours, for owners in the US and anywhere else.',
+	lede: 'Based in the Philippines, working US hours, for business owners in the US and anywhere else.',
 	reasons: [
-		{ id: 'hours', name: 'Awake when your customers are', body: 'Manila is 13 hours ahead of Austin. Your night is our working day, so a guest message at 2 AM your time is answered live, not queued for the morning.' },
-		{ id: 'people', name: 'Senior operators, not a marketplace', body: 'Every operator has five or more years in VA and customer operations and was trained by the Founder from day one. They are on our payroll, learn your procedures, and are covered when they’re off. You get a team, not a freelancer.' },
-		{ id: 'one', name: 'One team for people, systems and software', body: 'Most vendors sell one of the three. We run the operation, write it down, and build the board it runs on — so nothing falls between an agency, a SaaS and a VA firm.' },
-		{ id: 'value', name: 'US-grade service at Philippine cost', body: 'The Philippines is the customer-operations capital of the world: English-fluent, US-aligned, and trained for it. The savings buy the round-the-clock coverage most owners can’t afford locally.' },
-		{ id: 'own', name: 'You own everything', body: 'Your domain, workspace, data and code stay in your name. If we part ways, you keep all of it — including the map.' },
-		{ id: 'plan', name: 'A plan you can hold us to', body: 'Thirty days, four milestones, the numbers in a weekly note. If it isn’t a fit after the free strategy call, you keep the plan at no charge.' }
+		{ id: 'hours', name: 'Awake when your customers are', body: 'Manila is 13 hours ahead of Texas. Your night is our working day, so a message at 2 AM your time is answered right away, not the next morning.' },
+		{ id: 'people', name: 'Experienced operators, not freelancers', body: 'Every operator has five or more years of experience and was trained by the Founder from day one. They are on our payroll, learn your procedures, and are covered when they are off. You get a team, not a freelancer.' },
+		{ id: 'one', name: 'One team for people, systems and software', body: 'Most vendors offer one of the three. We run your operations, write them down, and build the software they run on — so nothing falls between an agency, a software vendor and a VA firm.' },
+		{ id: 'value', name: 'US-quality service at Philippine cost', body: 'The Philippines is the customer-service capital of the world: fluent in English, aligned with US business, and trained for it. The savings pay for round-the-clock coverage most owners could not afford locally.' },
+		{ id: 'own', name: 'You own everything', body: 'Your domain, workspace, data and code stay in your name. If we part ways, you keep all of it — including the plan.' },
+		{ id: 'plan', name: 'A plan you can hold us to', body: 'Thirty days, four milestones, and the numbers in a weekly note. If it is not a fit after the free strategy call, you keep the plan at no charge.' }
 	]
 };
 
@@ -376,46 +377,46 @@ export const SECTIONS: Record<string, { clip: string; tint: string }> = {
 };
 
 export const FILM = {
-	eyebrow: 'Watch it run',
-	title: 'One day, four businesses, *one board*.',
-	lede: 'Same team, same software, a different business every few hours. It plays itself.',
+	eyebrow: 'See it run',
+	title: 'One day, four businesses, *one dashboard*.',
+	lede: 'The same team and the same software, running a different business every few hours.',
 	chapters: [
-		{ id: 'fleet', time: '07:40', name: 'Fleet', src: clip(4208203, 24), line: '146 cars. Eleven going out before nine.', events: [['07:41', 'Guest asks for an early pickup — answered in 1 min'], ['07:52', 'Model 3 · keys out · lockbox code sent'], ['08:10', 'Civic back · 12 photos · no damage']] },
-		{ id: 'kitchen', time: '11:30', name: 'Kitchen', src: clip(8094279, 25), line: 'Lunch rush on three delivery apps.', events: [['11:32', 'Uber Eats store paused — reopened in 40 sec'], ['11:48', '86 garlic rice · pulled from 3 apps'], ['12:05', 'Refund dispute filed with photos']] },
-		{ id: 'field', time: '14:00', name: 'Field', src: clip(20693196, 25), line: 'A windshield job from call to signature.', events: [['14:02', 'Lead → customer → estimate · one screen'], ['14:15', 'Ramon dispatched · customer texted the ETA'], ['15:40', 'Work order signed on the phone · invoice sent']] },
+		{ id: 'fleet', time: '07:40', name: 'Fleet', src: clip(4208203, 24), line: '146 cars. Eleven going out before 9 AM.', events: [['07:41', 'Guest asks for an early pickup — answered in 1 min'], ['07:52', 'Model 3 · keys out · lockbox code sent'], ['08:10', 'Civic back · 12 photos · no damage']] },
+		{ id: 'kitchen', time: '11:30', name: 'Kitchen', src: clip(8094279, 25), line: 'Lunch rush on three delivery apps.', events: [['11:32', 'Uber Eats store paused — reopened in 40 sec'], ['11:48', 'Garlic rice sold out · removed from 3 apps'], ['12:05', 'Refund dispute filed with photos']] },
+		{ id: 'field', time: '14:00', name: 'Field', src: clip(20693196, 25), line: 'A windshield job from call to signature.', events: [['14:02', 'Lead to customer to estimate · one screen'], ['14:15', 'Ramon dispatched · customer texted the ETA'], ['15:40', 'Work order signed on the phone · invoice sent']] },
 		{ id: 'shop', time: '17:30', name: 'Shop', src: clip(4177954, 30), line: 'A barbershop’s site goes live.', events: [['17:31', 'Domain in the owner’s name · DNS set'], ['17:45', 'Bookings page connected to the calendar'], ['18:02', 'First online booking · Saturday 10:00']] }
 	]
 };
 
 export const THIRTY_DAYS = {
-	eyebrow: 'How an engagement starts',
-	title: 'The first *thirty days*.',
+	eyebrow: 'How we start',
+	title: 'Your first *thirty days*.',
 	steps: [
-		{ week: 'Week 1', name: 'Map', body: 'We sit in your operation — the inbox, the calendar, the tablets — and write down how it actually runs. You get the map whether or not we continue.' },
-		{ week: 'Week 2', name: 'Set up', body: 'Your workspace on HostOS, the procedures, the connections to Turo, DoorDash, Shopify or whatever you run on. Operators trained on your business, not on a script.' },
-		{ week: 'Week 3', name: 'Run alongside', body: 'We run it with you watching. Every miss gets a procedure; every repetitive step gets a candidate for automation.' },
-		{ week: 'Week 4', name: 'Hand you the board', body: 'You read the board; we run the board. A weekly note on the numbers, a monthly conversation on what to change.' }
+		{ week: 'Week 1', name: 'Map', body: 'We sit inside your operation — the inbox, the calendar, the tablets — and write down how it actually runs. You keep this plan whether or not we continue.' },
+		{ week: 'Week 2', name: 'Set up', body: 'We set up your HostOS workspace, write the procedures, and connect Turo, DoorDash, Shopify or whatever you run on. Operators are trained on your business, not on a script.' },
+		{ week: 'Week 3', name: 'Run it together', body: 'We run your operations while you watch. Every miss gets a procedure; every repetitive step becomes a candidate for automation.' },
+		{ week: 'Week 4', name: 'Hand you the dashboard', body: 'You read the dashboard; we run the operations. A weekly note on the numbers, and a monthly conversation about what to change.' }
 	]
 };
 
 export const FAQ = {
-	eyebrow: 'Questions owners ask',
-	title: '*Straight* answers.',
+	eyebrow: 'Common questions',
+	title: 'Straight *answers*.',
 	items: [
-		{ q: 'Do I have to switch software?', a: 'No. HostOS connects to what you already run — Turo, DoorDash, Uber Eats, Shopify, Stripe, Google. Where a tool is missing we build it; where one works, we plug it in.' },
-		{ q: 'Who owns the data, the accounts, the code?', a: 'You do. Your domain is in your name, your workspace is yours, and anything we build for you is delivered with the source. If we part ways, you keep everything.' },
-		{ q: 'What happens when an operator leaves?', a: 'Nothing you notice. Every procedure is written down, every conversation is on the board, and coverage is a team, not a person. Replacement operators train on your procedures before they touch your inbox.' },
-		{ q: 'Is this an agency, a SaaS, or a VA company?', a: 'It’s the three together, which is the point. The people run the operation, the systems make it repeatable, the software is where both happen. You pay for an outcome, not for seats.' },
-		{ q: 'How do you use AI?', a: 'As a tool, in the background: drafting replies an operator approves, spotting a paused store or a quiet estimate, summarizing a week. It never talks to your customers unsupervised, and it is never the reason to hire us.' },
-		{ q: 'Where is the team?', a: 'The Philippines, working US hours — or yours, wherever you are. Every operator is on our payroll, trained on your procedures, and covered when they’re off.' },
-		{ q: 'What does it cost?', a: 'Operations are a monthly retainer sized to the hours of coverage you need. Builds are quoted from the map we make in week one. The strategy call is free, and you keep the plan either way.' },
-		{ q: 'How fast can we start?', a: 'The free strategy call this week; the plan the week after; operators on your channels by the end of the month.' }
+		{ q: 'Do I need to replace my current tools?', a: 'No. HostOS connects to what you already use — Turo, DoorDash, Uber Eats, Shopify, Stripe, Google. If a tool works, we plug it in. If one is missing, we build it.' },
+		{ q: 'Who owns the data and accounts?', a: 'You do. Your domain is in your name, your workspace is yours, and anything we build for you comes with the source code. If we part ways, you keep everything.' },
+		{ q: 'What happens if an operator leaves?', a: 'Nothing you will notice. Every procedure is written down, every conversation is on the dashboard, and you are covered by a team, not one person. A replacement is trained on your procedures before they touch your inbox.' },
+		{ q: 'Is this a VA agency or a software company?', a: 'Both, and that is the point. Our people run your operations, our systems make them repeatable, and our software is where it all happens. You pay for results, not for seats.' },
+		{ q: 'How do you use AI?', a: 'As a tool in the background: drafting replies an operator approves, spotting a paused store or a waiting estimate, summarizing the week. It never talks to your customers unsupervised.' },
+		{ q: 'Where is the team based?', a: 'In the Philippines, working US hours — or your hours, wherever you are. Every operator is on our payroll, trained on your procedures, and covered when they are off.' },
+		{ q: 'What does it cost?', a: 'Operations are a monthly fee based on the hours of coverage you need. Software and websites are quoted from the plan we make in week one. See the prices above. The strategy call is free, and you keep the plan either way.' },
+		{ q: 'How fast can we start?', a: 'The free strategy call this week, the plan the week after, and operators on your channels by the end of the month.' }
 	]
 };
 
 export const FINAL = {
-	title: 'Bring *one* operation.',
-	body: 'On a free 45-minute call we map how it runs today, where it leaks, and how it would run on HostOS. Not a fit? You keep the plan.',
+	title: 'Start with *one* operation.',
+	body: 'On a free 45-minute call, we map how it runs today, where it loses time and money, and how it would run on HostOS. Not a fit? You keep the plan.',
 	channels: [
 		{ label: 'Email', value: SITE.email, href: `mailto:${SITE.email}` },
 		{ label: 'WhatsApp', value: SITE.phone, href: SITE.whatsapp }
@@ -424,7 +425,7 @@ export const FINAL = {
 
 export const FOOTER = {
 	columns: [
-		{ title: 'Solutions', links: [['Run', '/#solutions'], ['Build', '/#solutions'], ['Connect', '/#solutions'], ['Understand', '/#solutions'], ['Pricing', '/#pricing']] },
+		{ title: 'Services', links: [['Operations', '/#solutions'], ['Software & websites', '/#solutions'], ['Automation', '/#solutions'], ['Pricing', '/#pricing'], ['Results', '/#proof']] },
 		{ title: 'Company', links: [['The Collective', `${SITE.url}/team`], ['About', `${SITE.url}/about`], ['Contact', '/#contact']] },
 		{ title: 'Platform', links: [['Open HostOS', SITE.app], ['Sign in', SITE.login], ['Install the app', `${SITE.url}/install`]] }
 	]

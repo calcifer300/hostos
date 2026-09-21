@@ -11,7 +11,7 @@ import { SITE } from "@/lib/site";
  * face, so Inter is fetched from Google Fonts at build time — falling back
  * to the default face if that fetch ever fails rather than failing the build.
  */
-export const alt = `${SITE.company} — Run the business. We’ll run the operations.`;
+export const alt = `${SITE.company} — Focus on what matters most. We’ll handle your operations.`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -97,9 +97,9 @@ export default async function OpenGraphImage() {
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
-          <div style={{ display: "flex", flexDirection: "column", fontSize: 66, fontWeight: 700, lineHeight: 1.04, letterSpacing: -2.5 }}><span>Run the business.</span><span style={{ color: "#2c3ef3" }}>We’ll run the operations.</span></div>
+          <div style={{ display: "flex", flexDirection: "column", fontSize: 66, fontWeight: 700, lineHeight: 1.04, letterSpacing: -2.5 }}><span>Focus on what matters most.</span><span style={{ color: "#2c3ef3" }}>We’ll handle your operations.</span></div>
           <div style={{ fontSize: 27, color: "#3a4460", lineHeight: 1.4, maxWidth: 980 }}>
-            AI where it helps, humans where it matters — from customer support to daily operations, we handle the rest behind the scenes so you can focus on what matters.
+            AI where it helps. Humans where it matters. From customer support to daily operations, we combine intelligent automation with experienced operators so you can focus on growing your business.
           </div>
         </div>
 

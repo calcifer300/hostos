@@ -59,7 +59,7 @@
 			{/each}
 		</div>
 	{/key}
-	<div class="mt-10"><Button href={CTA.href} variant="secondary">Ask which of these you need <ArrowRight class="h-4 w-4" /></Button></div>
+	<div class="mt-10"><Button href={CTA.href} variant="secondary">Not sure which you need? Ask us <ArrowRight class="h-4 w-4" /></Button></div>
 </Section>
 
 <style>

@@ -67,5 +67,5 @@
 			</article>
 		{/each}
 	</div>
-	<p class="mx-auto mt-10 max-w-3xl text-center text-[14px] leading-relaxed text-ink-3">Prices in USD. Tool subscriptions and ad spend are billed to you directly. Every engagement starts with a Free Strategy Call — 45 minutes, no obligation, and you keep the plan either way.</p>
+	<p class="mx-auto mt-10 max-w-3xl text-center text-[14px] leading-relaxed text-ink-3">All prices in USD. Tool subscriptions and ad spend are billed to you directly. Every engagement starts with a free 45-minute strategy call — no obligation, and you keep the plan either way.</p>
 </Section>

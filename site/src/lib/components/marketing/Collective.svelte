@@ -10,7 +10,7 @@
 	let { members, teamSrc = VIDEO.team }: { members: Member[]; teamSrc?: string } = $props();
 </script>
 
-<Section id="collective" eyebrow="The Collective" title="A collective, not a hierarchy chart." lede="Twelve people who each own a craft, work inside the same HostOS workspace, and answer to the same clients. What we sell is what we use.">
+<Section id="collective" eyebrow="The Collective" title="The people behind *your operations*." lede="Twelve people, each responsible for one craft, working in the same HostOS workspace and answering to the same clients. We run our own business on what we sell.">
 	<div class="relative isolate">
 	<div aria-hidden="true" class="pointer-events-none absolute inset-x-0 -inset-y-12 -z-20 overflow-hidden sm:-inset-x-4 lg:-inset-x-8 rounded-[40px] [mask-image:radial-gradient(ellipse_at_center,#000_30%,transparent_80%)]">
 		<video class="lazy dim h-full w-full object-cover" style="--dim:0.34" muted loop playsinline preload="none" use:lazyVideo={{ src: teamSrc, still: true }}></video>
@@ -31,7 +31,7 @@
 		{/each}
 	</ul>
 	</div>
-	<div class="mt-10 text-center"><Button href={`${SITE.url}/team`} variant="secondary">Meet everyone <ArrowUpRight class="h-4 w-4" /></Button></div>
+	<div class="mt-10 text-center"><Button href={`${SITE.url}/team`} variant="secondary">Meet the team <ArrowUpRight class="h-4 w-4" /></Button></div>
 </Section>
 
 <style>

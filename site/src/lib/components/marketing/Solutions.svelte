@@ -25,15 +25,15 @@
 			</button>
 		{/each}
 	</div>
-	<div class="relative mb-6 h-40 overflow-hidden rounded-2xl border border-line bg-bg sm:h-52" aria-hidden="true">
+	<!-- the four families at once: a collage of landscape clips, each a little off the line; the chosen one steps forward -->
+	<div class="collage mb-8 grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4" aria-hidden="true">
 		{#each SOLUTIONS.families as f, i (f.id)}
-			<div class={`absolute inset-0 transition-opacity duration-1000 ${i === active ? 'opacity-100' : 'opacity-0'}`}>
-				{#if Math.abs(i - active) <= 1}{#key banner[i]}<video class="lazy h-full w-full object-cover" muted loop playsinline preload="none" use:lazyVideo={{ src: banner[i], always: true }}></video>{/key}{/if}
-			</div>
+			<button type="button" tabindex="-1" onclick={() => (active = i)} class={`tile relative aspect-video overflow-hidden rounded-2xl border bg-surface-2 text-left transition-[transform,box-shadow,border-color,opacity] duration-700 ease-[var(--ease-out-expo)] ${i === active ? 'z-10 scale-[1.04] border-accent/60 shadow-2 opacity-100' : 'border-line opacity-80 hover:opacity-100'}`} style={`--i:${i}`}>
+				{#key banner[i]}<video class="lazy dim absolute inset-0 h-full w-full object-cover" style={`--dim:${i === active ? 0.9 : 0.55}`} muted loop playsinline preload="none" use:lazyVideo={{ src: banner[i], always: true }}></video>{/key}
+				<div class="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_45%,color-mix(in_oklab,var(--color-surface-2)_85%,transparent)_100%)]"></div>
+				<p class="absolute bottom-3 left-4 flex items-center gap-2 text-[13px] font-semibold text-ink"><span class="label-mono text-accent">0{i + 1}</span>{f.name}</p>
+			</button>
 		{/each}
-		<div class="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,var(--color-surface-1)_0%,transparent_45%,transparent_70%,var(--color-surface-1)_100%)]"></div>
-		<div class="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,transparent_50%,var(--color-surface-1)_100%)]"></div>
-		<p class="label-mono absolute bottom-4 left-5 text-accent">0{active + 1} · {family.name}</p>
 	</div>
 	<div class="mb-6 flex items-center justify-between gap-6">
 		<p class="text-[16px] text-ink-2">{family.line}</p>
@@ -64,5 +64,14 @@
 
 <style>
 	.card { --dim: 0.38; }
+	/* the collage sits a little off the line, like prints on a desk */
+	@media (min-width: 768px) {
+		.collage .tile:nth-child(1) { transform: translateY(14px) rotate(-1.2deg); }
+		.collage .tile:nth-child(2) { transform: translateY(-8px) rotate(0.8deg); }
+		.collage .tile:nth-child(3) { transform: translateY(10px) rotate(-0.6deg); }
+		.collage .tile:nth-child(4) { transform: translateY(-12px) rotate(1.1deg); }
+		.collage .tile.z-10 { transform: translateY(0) rotate(0) scale(1.06); }
+	}
+	.tile :global(video) { mix-blend-mode: normal; filter: none; }
 	.card:hover :global(video.is-playing) { opacity: 0.42; }
 </style>

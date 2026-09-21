@@ -142,12 +142,13 @@ export function words(el: HTMLElement, step = 45) {
 /**
  * A video that costs nothing until it is needed: the src is attached only
  * when the element nears the viewport, it plays only while on screen, and
- * it never loads at all under reduced motion, data saver, or on a phone
- * unless `always` is set. Fades in on its first frame.
+ * it never loads at all under reduced motion or data saver. Fades in on
+ * its first frame. (`always` is kept for callers; every screen size plays now.)
  */
 export function lazyVideo(video: HTMLVideoElement, opts: { src: string; always?: boolean }) {
 	const nav = navigator as Navigator & { connection?: { saveData?: boolean } };
-	const allowed = !reduced() && !nav.connection?.saveData && (opts.always || window.matchMedia('(min-width: 768px)').matches);
+	// phones get the footage too (the clips are SD and load only as they near the screen); data saver and reduced motion never do
+	const allowed = !reduced() && !nav.connection?.saveData;
 	if (!allowed) return {};
 	let loaded = false;
 	const io = new IntersectionObserver(([e]) => {

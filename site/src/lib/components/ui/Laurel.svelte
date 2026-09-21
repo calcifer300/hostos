@@ -10,7 +10,14 @@
 	const P0 = { x: 30, y: 4 }, P1 = { x: -4, y: 40 }, P2 = { x: 30, y: 76 };
 	const at = (t: number) => ({ x: (1 - t) ** 2 * P0.x + 2 * (1 - t) * t * P1.x + t ** 2 * P2.x, y: (1 - t) ** 2 * P0.y + 2 * (1 - t) * t * P1.y + t ** 2 * P2.y });
 	const tangent = (t: number) => { const dx = 2 * (1 - t) * (P1.x - P0.x) + 2 * t * (P2.x - P1.x), dy = 2 * (1 - t) * (P1.y - P0.y) + 2 * t * (P2.y - P1.y); return (Math.atan2(dy, dx) * 180) / Math.PI; };
-	const items = $derived(Array.from({ length: leaves }, (_, i) => { const t = 0.12 + (i / (leaves - 1)) * 0.8; const p = at(t), a = tangent(t); const s = 0.7 + 0.5 * Math.sin(Math.PI * (0.15 + 0.85 * (1 - i / leaves))); return { p, a, s }; }));
+	const items = $derived(Array.from({ length: leaves }, (_, i) => {
+		const t = 0.1 + (i / (leaves - 1)) * 0.82;
+		const p = at(t);
+		// leaves lean up the stem toward the tip (the tangent runs downward, so turn it around), and grow from the tip to the base
+		const a = tangent(t) + 180;
+		const s = 0.5 + 0.55 * (i / (leaves - 1));
+		return { p, a, s };
+	}));
 </script>
 
 <svg viewBox="-6 0 44 80" class={`laurel ${flip ? '-scale-x-100' : ''} ${cls}`} aria-hidden="true">
@@ -20,8 +27,8 @@
 	<path d={`M${P0.x} ${P0.y} Q${P1.x} ${P1.y} ${P2.x} ${P2.y}`} fill="none" stroke="url(#{uid}-g)" stroke-width="1.6" stroke-linecap="round" />
 	{#each items as it}
 		<g transform={`translate(${it.p.x} ${it.p.y}) rotate(${it.a}) scale(${it.s})`} fill="url(#{uid}-g)">
-			<path d="M0 0 C 4 -7, 12 -8, 15 -3 C 11 1, 4 3, 0 0 Z" transform="rotate(-38)" />
-			<path d="M0 0 C 4 7, 12 8, 15 3 C 11 -1, 4 -3, 0 0 Z" transform="rotate(38)" />
+			<path d="M0 0 C 3 -5, 9 -7, 14 -4 C 10 0, 4 2, 0 0 Z" transform="rotate(-30)" />
+			<path d="M0 0 C 3 5, 9 7, 14 4 C 10 0, 4 -2, 0 0 Z" transform="rotate(30)" />
 		</g>
 	{/each}
 </svg>

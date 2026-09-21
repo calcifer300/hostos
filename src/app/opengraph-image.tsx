@@ -11,11 +11,11 @@ import { SITE } from "@/lib/site";
  * face, so Inter is fetched from Google Fonts at build time — falling back
  * to the default face if that fetch ever fails rather than failing the build.
  */
-export const alt = `${SITE.company} — Smarter operations. Higher earnings. Less risk.`;
+export const alt = `${SITE.company} — Run the business. We’ll run the operations.`;
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-const VERTICALS = ["Turo", "DoorDash", "Shopify", "Service Businesses", "Websites & Domains", "Coffee Shops", "Barbershops", "Custom"];
+const VERTICALS = ["Turo & car rental", "DoorDash & delivery", "Hospitality", "Field services", "Shops", "Property", "Startups"];
 
 /** A soft glow from four concentric low-alpha discs — what a blurred orb looks like once Satori has had its say. */
 function Orb({ x, y, size, rgb }: { x: number; y: number; size: number; rgb: string }) {
@@ -72,41 +72,40 @@ export default async function OpenGraphImage() {
           flexDirection: "column",
           justifyContent: "space-between",
           padding: 72,
-          background: "linear-gradient(135deg, #09090B 0%, #0F0F17 55%, #16132A 100%)",
-          color: "#FAFAFA",
+          background: "linear-gradient(135deg, #e3eaee 0%, #d5dde2 55%, #cfd8e6 100%)",
+          color: "#171b27",
           fontFamily: fonts.length ? "Inter" : "sans-serif",
           fontWeight: 500,
         }}
       >
-        <Orb x={760} y={-260} size={720} rgb="99,102,241" />
-        <Orb x={-200} y={330} size={620} rgb="56,189,248" />
+        <Orb x={760} y={-260} size={720} rgb="106,92,245" />
+        <Orb x={-200} y={330} size={620} rgb="44,62,243" />
 
         <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
           {/* the mark (src/components/brand/logo-mark.tsx), in flat colours since Satori has no gradients */}
           <svg width="60" height="60" viewBox="0 0 64 64" fill="none">
-            <rect x="2" y="2" width="60" height="60" rx="17" fill="#0B0D14" />
-            <rect x="8" y="8" width="48" height="48" rx="14" stroke="#6E8CFF" strokeWidth="3.25" />
-            <path d="M18 46V36a14 14 0 0 1 28 0v5" stroke="#F5F7FF" strokeWidth="3" strokeLinecap="round" />
-            <path d="M23 50V36a9 9 0 0 1 18 0v8" stroke="#F5F7FF" strokeWidth="3" strokeLinecap="round" />
-            <path d="M27.5 47.5V36.5a4.5 4.5 0 0 1 9 0v9" stroke="#F5F7FF" strokeWidth="3" strokeLinecap="round" />
-            <path d="M32 40v13" stroke="#F5F7FF" strokeWidth="3" strokeLinecap="round" />
+            <rect x="6" y="6" width="52" height="52" rx="15" stroke="#3B5BFF" strokeWidth="3.25" />
+            <path d="M14 44V30a18 18 0 0 1 36 0v8" stroke="#4a5cf5" strokeWidth="3" strokeLinecap="round" />
+            <path d="M20.5 50V30a11.5 11.5 0 0 1 23 0v12" stroke="#4a5cf5" strokeWidth="3" strokeLinecap="round" />
+            <path d="M26.5 46V30.5a5.5 5.5 0 0 1 11 0v13" stroke="#4a5cf5" strokeWidth="3" strokeLinecap="round" />
+            <path d="M32 36v17" stroke="#4a5cf5" strokeWidth="3" strokeLinecap="round" />
           </svg>
           <div style={{ display: "flex", flexDirection: "column" }}>
             <div style={{ fontSize: 30, fontWeight: 700, letterSpacing: -0.5 }}>{SITE.company}</div>
-            <div style={{ fontSize: 18, color: "#A1A1AA" }}>hostoscollective.com</div>
+            <div style={{ fontSize: 18, color: "#53628d" }}>hostoscollective.com · Philippines · US hours</div>
           </div>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
-          <div style={{ fontSize: 68, fontWeight: 700, lineHeight: 1.05, letterSpacing: -2, maxWidth: 1000 }}>Smarter operations. Higher earnings. Less risk.</div>
-          <div style={{ fontSize: 27, color: "#C4C4CC", lineHeight: 1.4, maxWidth: 980 }}>
-            Virtual assistants, automation, custom systems and websites — all run on HostOS, a dashboard for every line of business.
+          <div style={{ display: "flex", fontSize: 72, fontWeight: 700, lineHeight: 1.02, letterSpacing: -3, maxWidth: 1040 }}>Run the business. <span style={{ color: "#2c3ef3", marginLeft: 16 }}>We’ll run the operations.</span></div>
+          <div style={{ fontSize: 27, color: "#3a4460", lineHeight: 1.4, maxWidth: 980 }}>
+            A trained team, written procedures and one live board — answering your guests, watching your tablets, filing your claims, chasing your estimates.
           </div>
         </div>
 
         <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
           {VERTICALS.map((v) => (
-            <div key={v} style={{ padding: "10px 18px", borderRadius: 9999, border: "1px solid rgba(255,255,255,0.14)", background: "rgba(255,255,255,0.05)", fontSize: 20, color: "#E4E4E7" }}>
+            <div key={v} style={{ padding: "10px 18px", borderRadius: 9999, border: "1px solid rgba(23,27,39,0.16)", background: "rgba(255,255,255,0.45)", fontSize: 20, color: "#171b27" }}>
               {v}
             </div>
           ))}

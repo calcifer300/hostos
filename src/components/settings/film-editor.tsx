@@ -44,7 +44,7 @@ export function FilmEditor({ film: initial, fromDatabase }: { film: LandingFilm;
           <div>
             <p className="flex items-center gap-2 text-[13px] font-semibold"><Clapperboard className="h-4 w-4 text-accent" /> Landing page footage</p>
             <p className="mt-0.5 text-[12.5px] text-muted-foreground">
-              The clip behind the hero and the four chapters of “Watch it run” on hostoscollective.com. {fromDatabase ? "Showing your saved footage." : "Showing the stock clips until you save."} MP4, WebM or MOV, up to 300 MB; 960p or 1080p is plenty — it plays muted, small and dark.
+              The clip behind the hero and the four chapters of “Watch it run” on hostoscollective.com. {fromDatabase ? "Showing your saved footage." : "Showing the stock clips until you save."} MP4, WebM or MOV, up to 50 MB; 960p is plenty — it plays muted, small and dark.
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">

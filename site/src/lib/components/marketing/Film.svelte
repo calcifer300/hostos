@@ -80,7 +80,7 @@
 			<!-- the board, in step -->
 			<div class="flex flex-col border-t border-line lg:border-l lg:border-t-0">
 				<div class="flex items-center justify-between border-b border-line px-5 py-3">
-					<span class="label-mono text-ink-3">app.hostos · the day</span>
+					<span class="label-mono text-ink-3">app.hostos · The day</span>
 					<span class="flex items-center gap-1.5 label-mono text-ok"><span class="h-1.5 w-1.5 rounded-full bg-ok animate-blink"></span>Live</span>
 				</div>
 				<ol class="flex-1 divide-y divide-line">

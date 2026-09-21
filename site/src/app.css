@@ -141,23 +141,6 @@
 	text-wrap: balance;
 }
 /* per-section voices */
-/* the voices are one voice now; the classes stay so nothing else has to change */
-@utility voice-grotesk {
-	font-family: var(--font-sans);
-}
-@utility voice-serif {
-	font-family: var(--font-sans);
-}
-@utility voice-display {
-	font-family: var(--font-sans);
-	font-weight: 700;
-}
-@utility italic-serif {
-	font-family: var(--font-serif);
-	font-style: italic;
-	font-weight: 400;
-	letter-spacing: -0.01em;
-}
 /* headlines: white falling into the section's light; the *aside* in the serif italic */
 @utility headline {
 	color: transparent;

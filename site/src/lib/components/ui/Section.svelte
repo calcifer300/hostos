@@ -20,7 +20,8 @@
 		align = 'left',
 		wide = false,
 		tone = 'bg',
-		voice = 'sans',
+		// kept for callers; every headline is one voice now
+		voice: _voice = 'sans',
 		class: cls = '',
 		children
 	}: {
@@ -45,7 +46,6 @@
 	// one entrance per section, so no two titles arrive the same way
 	const TITLE_MOTION: Record<string, string> = { problems: 'title-rise', how: 'title-left', film: 'title-zoom', 'before-after': 'title-unclip', solutions: 'title-right', industries: 'title-focus', proof: 'title-flip', voices: 'title-track', platform: 'title-swing', start: 'title-drop', faq: 'title-skew', why: 'title-tilt', devices: 'title-zoom', collective: 'title-rise' };
 	const titleMotion = $derived((id && TITLE_MOTION[id]) || 'title-rise');
-	const voiceClass = $derived(voice === 'grotesk' ? 'voice-grotesk' : voice === 'serif' ? 'voice-serif' : voice === 'display' ? 'voice-display' : '');
 </script>
 
 <section {id} use:near class={`section-y relative isolate scroll-mt-20 ${tone === 'surface' ? 'border-y border-line bg-surface-1' : tone === 'dark' ? 'tone-dark' : 'bg-bg'} ${cls}`} style={`--tint:${look.tint}`}>
@@ -57,7 +57,7 @@
 			<!-- every header is centred: the eye lands on the statement first, wherever the section is -->
 			<header use:reveal class="scroll-in mx-auto mb-10 max-w-3xl text-center md:mb-14">
 				{#if eyebrowText}<p class="label-mono mb-4 text-accent">{eyebrowText}</p>{/if}
-				{#if titleText}{#key titleText}<h2 use:words class={`display-2 headline ${voiceClass} ${titleMotion}`} aria-label={plain(titleText)}>{@html emph(titleText)}</h2>{/key}{/if}
+				{#if titleText}{#key titleText}<h2 use:words class={`display-2 headline ${titleMotion}`} aria-label={plain(titleText)}>{@html emph(titleText)}</h2>{/key}{/if}
 				{#if ledeText}<p class="mx-auto mt-5 max-w-2xl text-[17px] leading-relaxed text-ink-2">{ledeText}</p>{/if}
 			</header>
 		{/if}

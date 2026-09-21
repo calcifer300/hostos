@@ -36,7 +36,7 @@
 		<div class="flex flex-wrap items-center justify-between gap-3 border-b border-line px-4 py-3">
 			<div class="flex items-center gap-2">
 				<span class="flex gap-1.5" aria-hidden="true"><span class="h-2.5 w-2.5 rounded-full bg-danger/70"></span><span class="h-2.5 w-2.5 rounded-full bg-warn/70"></span><span class="h-2.5 w-2.5 rounded-full bg-ok/70"></span></span>
-				<span class="label-mono ml-2 text-ink-3">app.hostoscollective.com</span>
+				<span class="label-mono ml-2 text-ink-3">app.hostos</span>
 			</div>
 			<div class="flex rounded-full border border-line bg-bg p-1" role="tablist" aria-label="Screens" tabindex="-1" onkeydown={onKey}>
 				{#each PLATFORM.tabs as t, i}
@@ -70,6 +70,6 @@
 	</div>
 	<div class="mt-8 flex flex-wrap items-center gap-3">
 		<Button href={SITE.login} variant="secondary">Open HostOS <ArrowUpRight class="h-4 w-4" /></Button>
-		<p class="text-[13px] text-ink-3">Clients and the team sign in with Google. Every business gets its own dashboard; one login.</p>
+		<p class="text-[13px] text-ink-3">Clients and operators sign in with Google. Every business gets its own dashboard, one login.</p>
 	</div>
 </Section>

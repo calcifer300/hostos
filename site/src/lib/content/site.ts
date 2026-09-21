@@ -184,52 +184,52 @@ export const PLATFORM = {
  * for now; self-host under /static/video before the domain cutover. Each
  * plays muted, only while on screen, never on reduced motion or data saver.
  */
-const clip = (id: number, fps: number) => `https://videos.pexels.com/video-files/${id}/${id}-sd_960_540_${fps}fps.mp4`;
+const clip = (id: number, _fps: number) => `https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/${id}.mp4`;
 export const VIDEO = {
-	hero: { src: clip(5834188, 24), poster: 'https://images.pexels.com/videos/5834188/pexels-photo-5834188.jpeg?auto=compress&cs=tinysrgb&w=1280' },
+	hero: { src: clip(5834188, 24) },
 	team: clip(8865706, 25),
 	delivery: clip(4168426, 25),
 	closing: clip(8064422, 30)
 };
 /** Footage under every industry tile and solution card; the Founder can swap or clear any of them. */
 export const TILES: Record<string, string> = {
-	"industry:turo": "https://videos.pexels.com/video-files/4208203/4208203-sd_960_540_24fps.mp4",
-	"industry:doordash": "https://videos.pexels.com/video-files/4168426/4168426-sd_960_540_25fps.mp4",
-	"industry:hospitality": "https://videos.pexels.com/video-files/7820478/7820478-sd_960_540_25fps.mp4",
-	"industry:fleet": "https://videos.pexels.com/video-files/5834188/5834188-sd_960_540_24fps.mp4",
-	"industry:property": "https://videos.pexels.com/video-files/4877217/4877217-sd_960_540_30fps.mp4",
-	"industry:services": "https://videos.pexels.com/video-files/8986482/8986482-sd_960_540_30fps.mp4",
-	"industry:small": "https://videos.pexels.com/video-files/7697073/7697073-sd_960_540_30fps.mp4",
-	"industry:startups": "https://videos.pexels.com/video-files/8266178/8266178-sd_960_540_25fps.mp4",
-	"solution:va": "https://videos.pexels.com/video-files/8865706/8865706-sd_960_540_25fps.mp4",
-	"solution:turo-ops": "https://videos.pexels.com/video-files/4208203/4208203-sd_960_540_24fps.mp4",
-	"solution:doordash-ops": "https://videos.pexels.com/video-files/7362583/7362583-sd_960_540_24fps.mp4",
-	"solution:consulting": "https://videos.pexels.com/video-files/7413764/7413764-sd_960_540_24fps.mp4",
-	"solution:webapps": "https://videos.pexels.com/video-files/854053/854053-sd_960_540_25fps.mp4",
-	"solution:websites": "https://videos.pexels.com/video-files/4177954/4177954-sd_960_540_30fps.mp4",
-	"solution:crm": "https://videos.pexels.com/video-files/8632602/8632602-sd_960_540_25fps.mp4",
-	"solution:dashboards": "https://videos.pexels.com/video-files/8064422/8064422-sd_960_540_30fps.mp4",
-	"solution:automation": "https://videos.pexels.com/video-files/8094279/8094279-sd_960_540_25fps.mp4",
-	"solution:integrations": "https://videos.pexels.com/video-files/20693196/20693196-sd_960_540_25fps.mp4",
-	"solution:workflow": "https://videos.pexels.com/video-files/8986890/8986890-sd_960_540_30fps.mp4",
-	"solution:analytics": "https://videos.pexels.com/video-files/6868699/6868699-sd_960_540_30fps.mp4",
-	"solution:bi": "https://videos.pexels.com/video-files/6685171/6685171-sd_960_540_30fps.mp4",
-	"problem:1": "https://videos.pexels.com/video-files/8094279/8094279-sd_960_540_25fps.mp4",
-	"problem:2": "https://videos.pexels.com/video-files/4208203/4208203-sd_960_540_24fps.mp4",
-	"problem:3": "https://videos.pexels.com/video-files/3986119/3986119-sd_960_540_25fps.mp4",
-	"problem:4": "https://videos.pexels.com/video-files/4177954/4177954-sd_960_540_30fps.mp4",
-	"problem:5": "https://videos.pexels.com/video-files/7413764/7413764-sd_960_540_24fps.mp4",
-	"problem:6": "https://videos.pexels.com/video-files/8064422/8064422-sd_960_540_30fps.mp4",
-	"pillar:people": "https://videos.pexels.com/video-files/8865706/8865706-sd_960_540_25fps.mp4",
-	"pillar:systems": "https://videos.pexels.com/video-files/7413764/7413764-sd_960_540_24fps.mp4",
-	"pillar:software": "https://videos.pexels.com/video-files/8480293/8480293-sd_960_540_25fps.mp4",
-	"week:1": "https://videos.pexels.com/video-files/7413764/7413764-sd_960_540_24fps.mp4",
-	"week:2": "https://videos.pexels.com/video-files/8266178/8266178-sd_960_540_25fps.mp4",
-	"week:3": "https://videos.pexels.com/video-files/8865706/8865706-sd_960_540_25fps.mp4",
-	"week:4": "https://videos.pexels.com/video-files/6868699/6868699-sd_960_540_30fps.mp4",
-	"proof:1": "https://videos.pexels.com/video-files/4208203/4208203-sd_960_540_24fps.mp4",
-	"proof:2": "https://videos.pexels.com/video-files/3986119/3986119-sd_960_540_25fps.mp4",
-	"proof:3": "https://videos.pexels.com/video-files/8064422/8064422-sd_960_540_30fps.mp4"
+	"industry:turo": "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/4208203.mp4",
+	"industry:doordash": "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/4168426.mp4",
+	"industry:hospitality": "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/7820478.mp4",
+	"industry:fleet": "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/5834188.mp4",
+	"industry:property": "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/4877217.mp4",
+	"industry:services": "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/8986482.mp4",
+	"industry:small": "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/7697073.mp4",
+	"industry:startups": "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/8266178.mp4",
+	"solution:va": "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/8865706.mp4",
+	"solution:turo-ops": "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/4208203.mp4",
+	"solution:doordash-ops": "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/7362583.mp4",
+	"solution:consulting": "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/7413764.mp4",
+	"solution:webapps": "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/854053.mp4",
+	"solution:websites": "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/4177954.mp4",
+	"solution:crm": "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/8632602.mp4",
+	"solution:dashboards": "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/8064422.mp4",
+	"solution:automation": "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/8094279.mp4",
+	"solution:integrations": "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/20693196.mp4",
+	"solution:workflow": "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/8986890.mp4",
+	"solution:analytics": "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/6868699.mp4",
+	"solution:bi": "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/6685171.mp4",
+	"problem:1": "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/8094279.mp4",
+	"problem:2": "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/4208203.mp4",
+	"problem:3": "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/3986119.mp4",
+	"problem:4": "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/4177954.mp4",
+	"problem:5": "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/7413764.mp4",
+	"problem:6": "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/8064422.mp4",
+	"pillar:people": "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/8865706.mp4",
+	"pillar:systems": "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/7413764.mp4",
+	"pillar:software": "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/8480293.mp4",
+	"week:1": "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/7413764.mp4",
+	"week:2": "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/8266178.mp4",
+	"week:3": "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/8865706.mp4",
+	"week:4": "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/6868699.mp4",
+	"proof:1": "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/4208203.mp4",
+	"proof:2": "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/3986119.mp4",
+	"proof:3": "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/8064422.mp4"
 };
 /** What owners said, in their words; the laurels carry the figures from the company's record. Both editable in the app. */
 export const TESTIMONIALS = [
@@ -325,11 +325,11 @@ export const WHY = {
 /** Every section's living background: a dimmed clip (or none) and the colour its light leans towards. */
 export const SECTIONS: Record<string, { clip: string; tint: string }> = {
 	problems: {
-		clip: "https://videos.pexels.com/video-files/8094279/8094279-sd_960_540_25fps.mp4",
+		clip: "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/8094279.mp4",
 		tint: "#ff375f"
 	},
 	how: {
-		clip: "https://videos.pexels.com/video-files/7413764/7413764-sd_960_540_24fps.mp4",
+		clip: "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/7413764.mp4",
 		tint: "#3b9cff"
 	},
 	film: {
@@ -337,7 +337,7 @@ export const SECTIONS: Record<string, { clip: string; tint: string }> = {
 		tint: "#8b7cff"
 	},
 	'before-after': {
-		clip: "https://videos.pexels.com/video-files/8064422/8064422-sd_960_540_30fps.mp4",
+		clip: "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/8064422.mp4",
 		tint: "#30d158"
 	},
 	solutions: {
@@ -349,15 +349,15 @@ export const SECTIONS: Record<string, { clip: string; tint: string }> = {
 		tint: "#ff9f0a"
 	},
 	proof: {
-		clip: "https://videos.pexels.com/video-files/6868699/6868699-sd_960_540_30fps.mp4",
+		clip: "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/6868699.mp4",
 		tint: "#40c8e0"
 	},
 	platform: {
-		clip: "https://videos.pexels.com/video-files/3986119/3986119-sd_960_540_25fps.mp4",
+		clip: "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/3986119.mp4",
 		tint: "#af52de"
 	},
 	start: {
-		clip: "https://videos.pexels.com/video-files/8266178/8266178-sd_960_540_25fps.mp4",
+		clip: "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/8266178.mp4",
 		tint: "#3b9cff"
 	},
 	faq: {
@@ -365,7 +365,7 @@ export const SECTIONS: Record<string, { clip: string; tint: string }> = {
 		tint: "#8b7cff"
 	},
 	why: {
-		clip: "https://videos.pexels.com/video-files/8865706/8865706-sd_960_540_25fps.mp4",
+		clip: "https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/8865706.mp4",
 		tint: "#ff9f0a"
 	},
 	devices: { clip: "", tint: "#3b9cff" },

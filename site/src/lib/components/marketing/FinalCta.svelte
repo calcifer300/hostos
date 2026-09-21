@@ -74,8 +74,8 @@
 				</div>
 				{#if error}<p class="mt-3 text-[13px] text-danger" role="alert">{error}</p>{/if}
 				<div class="mt-5 flex flex-wrap items-center gap-4">
-					<Button type="submit" size="lg" loading={sending}>Book the session <ArrowRight class="h-4 w-4" /></Button>
-					<p class="label-mono text-ink-3">45 min · free · you keep the map</p>
+					<Button type="submit" size="lg" loading={sending}>Book my working session <ArrowRight class="h-4 w-4" /></Button>
+					<p class="label-mono text-ink-3">45 minutes · Free · You keep the map</p>
 				</div>
 			{/if}
 		</form>

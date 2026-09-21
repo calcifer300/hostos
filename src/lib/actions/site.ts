@@ -33,7 +33,7 @@ function refresh() {
 }
 
 const VIDEO_TYPES: Record<string, string> = { "video/mp4": "mp4", "video/webm": "webm", "video/quicktime": "mov" };
-const VIDEO_MAX = 300 * 1024 * 1024;
+const VIDEO_MAX = 50 * 1024 * 1024; // the storage plan caps a single object at 50 MB
 
 /** The landing page's footage: the hero clip and the four chapters. Uploads no longer referenced are removed after the save. */
 export async function saveLandingFilm(input: unknown): Promise<SiteResult> {
@@ -54,7 +54,7 @@ export async function saveLandingFilm(input: unknown): Promise<SiteResult> {
   return { ok: true };
 }
 
-/** Signs a direct upload for a clip (MP4, WebM or MOV, up to 300 MB). The browser PUTs the file to the returned URL; the public URL goes in the clip field. */
+/** Signs a direct upload for a clip (MP4, WebM or MOV, up to 50 MB). The browser PUTs the file to the returned URL; the public URL goes in the clip field. */
 export async function signFilmUpload(input: { name?: unknown; type?: unknown; size?: unknown; slug?: unknown }): Promise<SiteResult & { uploadUrl?: string }> {
   const gate = await founder();
   if (!gate.ok) return { ok: false, error: gate.error };
@@ -62,7 +62,7 @@ export async function signFilmUpload(input: { name?: unknown; type?: unknown; si
   const ext = VIDEO_TYPES[type];
   if (!ext) return { ok: false, error: "Use an MP4, WebM or MOV clip." };
   const size = typeof input.size === "number" ? input.size : 0;
-  if (size <= 0 || size > VIDEO_MAX) return { ok: false, error: "Clips can be up to 300 MB." };
+  if (size <= 0 || size > VIDEO_MAX) return { ok: false, error: "Clips can be up to 50 MB — export at 960p; an SD clip is 2–5 MB." };
   const slug = str(input.slug, 40).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "clip";
   const r = await signPublicUpload("site", `film-${slug}`, ext);
   return r.ok ? { ok: true, uploadUrl: r.uploadUrl, url: r.publicUrl } : { ok: false, error: r.error };

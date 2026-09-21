@@ -9,7 +9,7 @@ import { tryGetSupabaseAdmin } from "@/lib/supabase/server";
  */
 
 type Bucket = "team" | "site";
-const LIMITS: Record<Bucket, string> = { team: "12MB", site: "300MB" };
+const LIMITS: Record<Bucket, string> = { team: "12MB", site: "50MB" };
 const TYPES: Record<Bucket, string[]> = { team: ["image/jpeg", "image/png", "image/webp"], site: ["image/jpeg", "image/png", "image/webp", "video/mp4", "video/webm", "video/quicktime"] };
 const publicPrefix = (bucket: Bucket) => `/storage/v1/object/public/${bucket}/`;
 

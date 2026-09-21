@@ -63,7 +63,7 @@ export const SECTION_SLOTS: { id: string; label: string }[] = [{"id":"problems",
 export const FILM_KEY = "landing_film";
 
 /** Pexels clips (free licence) until the company's own footage is uploaded. */
-const clip = (id: number, fps: number) => `https://videos.pexels.com/video-files/${id}/${id}-sd_960_540_${fps}fps.mp4`;
+const clip = (id: number, _fps: number) => `https://yrijcgeictfrumkqwqeu.supabase.co/storage/v1/object/public/site/clips/${id}.mp4`;
 
 export const DEFAULT_FILM: LandingFilm = {
 	hero: { src: clip(5834188, 24) },

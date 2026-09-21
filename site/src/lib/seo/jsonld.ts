@@ -27,7 +27,7 @@ export function jsonLd(members: Member[]): string {
 				'@type': 'Person',
 				'@id': `${SITE.url}/#founder`,
 				name: CONTACT.founder,
-				alternateName: ['John Briones', 'bimbeez'],
+				alternateName: ['John Briones', 'bimbeez96'],
 				jobTitle: 'Founder',
 				worksFor: { '@id': `${SITE.url}/#org` },
 				url: `${SITE.url}/team`,

@@ -62,7 +62,7 @@ export const DEFAULT_FILM: LandingFilm = {
 		hero: { eyebrow: "For car rental fleets · restaurants · field services · shops", line1: "Run the business.", line2: "We’ll run the *operations*.", body: "A trained team, written procedures and one live board — answering your guests and customers, watching your tablets, filing your claims and chasing your estimates. You keep the business. We carry the operations." },
 		sections: {},
 		rating: { value: "5.0", note: "from the owners we work with", count: "50+ clients served" },
-		contact: { facebookHandle: "@bimbeez", facebookUrl: "https://www.facebook.com/bimbeez", founderEmail: "johnbriones774@gmail.com" },
+		contact: { facebookHandle: "@bimbeez96", facebookUrl: "https://www.facebook.com/bimbeez96", founderEmail: "johnbriones774@gmail.com" },
 	},
 	laurels: [{"value":"98%","label":"client satisfaction"},{"value":"50+","label":"clients served"},{"value":"120+","label":"projects delivered"},{"value":"10+","label":"years in operations"},{"value":"5+ yrs","label":"BPO experience per operator"}],
 	sections: { "problems": { clip: clip(8094279, 25), tint: "#ff375f" }, "how": { clip: clip(7413764, 24), tint: "#3b9cff" }, "film": { clip: "", tint: "#8b7cff" }, "before-after": { clip: clip(8064422, 30), tint: "#30d158" }, "solutions": { clip: "", tint: "#3b9cff" }, "industries": { clip: "", tint: "#ff9f0a" }, "proof": { clip: clip(6868699, 30), tint: "#40c8e0" }, "platform": { clip: clip(3986119, 25), tint: "#af52de" }, "start": { clip: clip(8266178, 25), tint: "#3b9cff" }, "faq": { clip: "", tint: "#8b7cff" }, "why": { clip: clip(8865706, 25), tint: "#ff9f0a" }, "devices": { clip: "", tint: "#3b9cff" }, "collective": { clip: "", tint: "#8b7cff" }, "voices": { clip: "", tint: "#3b9cff" } },

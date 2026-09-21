@@ -292,7 +292,7 @@ export const RECOGNITION = {
 export const CLIENT_FACES = ['/faces/3760046.jpg', '/faces/2530364.jpg', '/faces/2379004.jpg', '/faces/3974017.jpg', '/faces/6333501.jpg', '/faces/2112714.jpg', '/faces/8217534.jpg', '/faces/1195111.jpg', '/faces/12871465.jpg', '/faces/6345373.jpg'];
 export const RATING = { value: '5.0', stars: 5, note: 'from the owners we work with', count: '50+ clients served' };
 /** Where to reach the Founder directly. */
-export const CONTACT = { facebook: { handle: '@bimbeez', url: 'https://www.facebook.com/bimbeez', name: 'John Briones' }, founderEmail: 'johnbriones774@gmail.com', founder: 'John Jenrique Briones' };
+export const CONTACT = { facebook: { handle: '@bimbeez96', url: 'https://www.facebook.com/bimbeez96', name: 'John Briones' }, founderEmail: 'johnbriones774@gmail.com', founder: 'John Jenrique Briones' };
 /** HostOS on every screen, and what it does for the numbers. */
 export const DEVICES = {
 	eyebrow: 'HostOS on every screen',

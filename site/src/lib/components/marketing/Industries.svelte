@@ -4,7 +4,7 @@
 	import Section from '$lib/components/ui/Section.svelte';
 	import { lazyVideo, stagger, tilt } from '$lib/components/motion/actions';
 	import { INDUSTRIES } from '$lib/content/site';
-	import { LANDING_DEFAULTS, type Landing } from '$lib/content/remote';
+	import { LANDING_DEFAULTS, listOr, type Landing } from '$lib/content/remote';
 	/**
 	 * Eight tiles, each with its vertical's footage moving under the words
 	 * (dimmed, colourless, loaded only as it nears the screen) and its mark
@@ -12,13 +12,15 @@
 	 */
 	const landing = getContext<Landing | undefined>('landing');
 	const tiles = $derived(landing?.tiles ?? LANDING_DEFAULTS.tiles);
+	// the Founder's names and lines over the built-in tiles (ids, hues and clips stay)
+	const items = $derived(INDUSTRIES.items.map((it, i) => { const row = landing?.lists?.industries?.[i]; return row ? { ...it, name: row.a || it.name, line: row.b || it.line } : it; }));
 	const icons = { turo: Car, doordash: Bike, hospitality: BedDouble, fleet: Truck, property: Building2, services: Wrench, small: Store, startups: Rocket } as const;
 	const always = new Set(['turo', 'doordash']); // these two play on phones as well
 </script>
 
 <Section id="industries" eyebrow={INDUSTRIES.eyebrow} title={INDUSTRIES.title} voice="display" align="center">
 	<div use:stagger={50} class="scroll-in grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-		{#each INDUSTRIES.items as ind}
+		{#each items as ind}
 			{@const Icon = icons[ind.id as keyof typeof icons]}
 			{@const clip = tiles[`industry:${ind.id}`]}
 			<a href={ind.href} use:tilt={5} class="industry spot ring-hover group relative block overflow-hidden rounded-2xl border border-line bg-surface-2 p-5 transition-[border-color,box-shadow] duration-300 hover:shadow-1" style={`--spot:${ind.hue}; --hue:${ind.hue}`}>

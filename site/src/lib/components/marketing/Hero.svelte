@@ -5,6 +5,7 @@
 	import { lazyVideo, magnetic } from '$lib/components/motion/actions';
 	import { CLIENT_FACES, CTA, HERO, LOGOS, VIDEO } from '$lib/content/site';
 	import Logo from '$lib/components/ui/Logo.svelte';
+	import Laurel from '$lib/components/ui/Laurel.svelte';
 	import { emph, plain } from '$lib/content/emph';
 	import { getContext } from 'svelte';
 	import { LANDING_DEFAULTS, listOr, type Landing } from '$lib/content/remote';
@@ -64,9 +65,9 @@
 		<ul class="arrive mx-auto mt-7 grid max-w-4xl grid-cols-2 gap-x-2 gap-y-3 sm:flex sm:flex-wrap sm:items-stretch sm:justify-center sm:gap-2.5" style="--reveal-delay:440ms" aria-label="Figures">
 			{#each laurels as l, i}
 				<li class="laurel-gold flex items-center justify-center gap-1 px-1 py-1 sm:px-2" style={`--d:${i * 70}ms`}>
-					<svg viewBox="0 0 24 40" class="h-6 w-3.5 text-[#9a6d00] sm:h-7 sm:w-4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M20 38C10 34 4 26 4 14M4 14c4 0 7 2 8 6M4 14c-1-4 0-8 2-12M6 22c3 0 6 2 7 6M9 30c3 0 5 1 7 4" /></svg>
+					<Laurel class="h-9 w-5 sm:h-11 sm:w-6" />
 					<span class="text-center"><span class="crown block"><svg viewBox="0 0 24 24" class="mx-auto -mb-0.5 h-3.5 w-3.5 drop-shadow-[0_1px_1px_rgba(120,80,0,0.35)]" aria-hidden="true"><path class="gold-fill" d="M3 18h18l1-10-5.5 4L12 5l-4.5 7L2 8z" /></svg></span><span class="gold-text block font-mono text-[17px] font-bold leading-none">{l.value}</span><span class="label-mono mt-0.5 block !text-[9.5px] text-ink-3">{l.label}</span></span>
-					<svg viewBox="0 0 24 40" class="h-6 w-3.5 -scale-x-100 text-[#9a6d00] sm:h-7 sm:w-4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M20 38C10 34 4 26 4 14M4 14c4 0 7 2 8 6M4 14c-1-4 0-8 2-12M6 22c3 0 6 2 7 6M9 30c3 0 5 1 7 4" /></svg>
+					<Laurel flip class="h-9 w-5 sm:h-11 sm:w-6" />
 				</li>
 			{/each}
 		</ul>

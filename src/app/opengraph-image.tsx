@@ -99,7 +99,7 @@ export default async function OpenGraphImage() {
         <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
           <div style={{ display: "flex", flexDirection: "column", fontSize: 66, fontWeight: 700, lineHeight: 1.04, letterSpacing: -2.5 }}><span>Run the business.</span><span style={{ color: "#2c3ef3" }}>We’ll run the operations.</span></div>
           <div style={{ fontSize: 27, color: "#3a4460", lineHeight: 1.4, maxWidth: 980 }}>
-            A trained team, written procedures and one live board — answering your guests, watching your tablets, filing your claims, chasing your estimates.
+            AI where it helps, humans where it matters — from customer support to daily operations, we handle the rest behind the scenes so you can focus on what matters.
           </div>
         </div>
 

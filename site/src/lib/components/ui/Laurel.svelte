@@ -1,0 +1,36 @@
+<script lang="ts">
+	/**
+	 * A laurel branch in gold: a curved stem with leaves on both sides, filled
+	 * with a metal gradient and glowing on a slow pulse. `flip` mirrors it for
+	 * the right-hand side. Drawn from a few numbers so every size is crisp.
+	 */
+	let { class: cls = '', flip = false, leaves = 7 }: { class?: string; flip?: boolean; leaves?: number } = $props();
+	const uid = `l${Math.random().toString(36).slice(2, 7)}`;
+	// the stem: a quadratic curve from the top, bowing left, to the bottom
+	const P0 = { x: 30, y: 4 }, P1 = { x: -4, y: 40 }, P2 = { x: 30, y: 76 };
+	const at = (t: number) => ({ x: (1 - t) ** 2 * P0.x + 2 * (1 - t) * t * P1.x + t ** 2 * P2.x, y: (1 - t) ** 2 * P0.y + 2 * (1 - t) * t * P1.y + t ** 2 * P2.y });
+	const tangent = (t: number) => { const dx = 2 * (1 - t) * (P1.x - P0.x) + 2 * t * (P2.x - P1.x), dy = 2 * (1 - t) * (P1.y - P0.y) + 2 * t * (P2.y - P1.y); return (Math.atan2(dy, dx) * 180) / Math.PI; };
+	const items = $derived(Array.from({ length: leaves }, (_, i) => { const t = 0.12 + (i / (leaves - 1)) * 0.8; const p = at(t), a = tangent(t); const s = 0.7 + 0.5 * Math.sin(Math.PI * (0.15 + 0.85 * (1 - i / leaves))); return { p, a, s }; }));
+</script>
+
+<svg viewBox="-6 0 44 80" class={`laurel ${flip ? '-scale-x-100' : ''} ${cls}`} aria-hidden="true">
+	<defs>
+		<linearGradient id="{uid}-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff0b3" /><stop offset="0.4" stop-color="#f1c14a" /><stop offset="0.7" stop-color="#c8931a" /><stop offset="1" stop-color="#f6dc8c" /></linearGradient>
+	</defs>
+	<path d={`M${P0.x} ${P0.y} Q${P1.x} ${P1.y} ${P2.x} ${P2.y}`} fill="none" stroke="url(#{uid}-g)" stroke-width="1.6" stroke-linecap="round" />
+	{#each items as it}
+		<g transform={`translate(${it.p.x} ${it.p.y}) rotate(${it.a}) scale(${it.s})`} fill="url(#{uid}-g)">
+			<path d="M0 0 C 4 -7, 12 -8, 15 -3 C 11 1, 4 3, 0 0 Z" transform="rotate(-38)" />
+			<path d="M0 0 C 4 7, 12 8, 15 3 C 11 -1, 4 -3, 0 0 Z" transform="rotate(38)" />
+		</g>
+	{/each}
+</svg>
+
+<style>
+	.laurel { filter: drop-shadow(0 0 2px rgb(240 190 60 / 0.35)); animation: laurel-glow 3.2s ease-in-out infinite; }
+	@keyframes laurel-glow {
+		0%, 100% { filter: drop-shadow(0 0 2px rgb(240 190 60 / 0.3)) brightness(1); }
+		50% { filter: drop-shadow(0 0 9px rgb(255 205 80 / 0.85)) brightness(1.18); }
+	}
+	@media (prefers-reduced-motion: reduce) { .laurel { animation: none; } }
+</style>

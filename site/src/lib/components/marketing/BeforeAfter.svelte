@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { getContext } from 'svelte';
+	import { listOr, type Landing } from '$lib/content/remote';
+	const landing = getContext<Landing | undefined>('landing');
 	import Section from '$lib/components/ui/Section.svelte';
 	import { reveal } from '$lib/components/motion/actions';
 	import { BEFORE_AFTER } from '$lib/content/site';
@@ -8,6 +11,7 @@
 		{ label: 'Before', value: false },
 		{ label: 'After', value: true }
 	];
+	const rows = $derived(listOr(landing?.lists?.beforeAfter, BEFORE_AFTER.rows, (r) => ({ label: r.a, before: r.b, after: r.c })));
 </script>
 
 <Section id="before-after" eyebrow={BEFORE_AFTER.eyebrow} title={BEFORE_AFTER.title} lede={BEFORE_AFTER.lede} voice="serif" align="split">
@@ -22,7 +26,7 @@
 			</div>
 		</div>
 		<dl class="divide-y divide-line">
-			{#each BEFORE_AFTER.rows as r}
+			{#each rows as r}
 				<div class="grid grid-cols-1 gap-2 px-5 py-4 sm:grid-cols-[180px_1fr] sm:items-center">
 					<dt class="label-mono text-ink-3">{r.label}</dt>
 					<dd class="relative min-h-[24px] text-[15px]">

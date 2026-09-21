@@ -24,9 +24,9 @@ export interface Landing {
 	lists: LandingLists;
 }
 export interface ListRow { a: string; b: string; c: string }
-export type ListKey = 'outcomes' | 'problems' | 'pillars' | 'why' | 'gains' | 'recognition' | 'faq' | 'faces';
+export type ListKey = 'outcomes' | 'problems' | 'pillars' | 'why' | 'gains' | 'recognition' | 'faq' | 'faces' | 'industries' | 'steps' | 'beforeAfter';
 export type LandingLists = Record<ListKey, ListRow[]>;
-export const EMPTY_LISTS: LandingLists = { outcomes: [], problems: [], pillars: [], why: [], gains: [], recognition: [], faq: [], faces: [] };
+export const EMPTY_LISTS: LandingLists = { outcomes: [], problems: [], pillars: [], why: [], gains: [], recognition: [], faq: [], faces: [], industries: [], steps: [], beforeAfter: [] };
 /** A list from the landing when the Founder wrote one, else the built-in rows. */
 export const listOr = <T>(rows: ListRow[] | undefined, fallback: T[], map: (r: ListRow) => T): T[] => (rows && rows.length ? rows.map(map) : fallback);
 export interface LandingCopy {

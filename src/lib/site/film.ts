@@ -31,7 +31,7 @@ export interface Testimonial { quote: string; name: string; role: string; photo:
 export interface ListRow { a: string; b: string; c: string }
 /** Every list on the page. Empty = the built-in one. */
 export type LandingLists = Record<ListKey, ListRow[]>;
-export type ListKey = "outcomes" | "problems" | "pillars" | "why" | "gains" | "recognition" | "faq" | "faces";
+export type ListKey = "outcomes" | "problems" | "pillars" | "why" | "gains" | "recognition" | "faq" | "faces" | "industries" | "steps" | "beforeAfter";
 export const LIST_SLOTS: { key: ListKey; label: string; cols: [string, string?, string?]; max: number }[] = [
 	{ key: "outcomes", label: "Hero · the four figures", cols: ["Figure", "What it is"], max: 6 },
 	{ key: "problems", label: "The problems · six cards", cols: ["The scene", "What we do"], max: 9 },
@@ -41,6 +41,9 @@ export const LIST_SLOTS: { key: ListKey; label: string; cols: [string, string?, 
 	{ key: "recognition", label: "Trusted for · disciplines", cols: ["Discipline", "Note"], max: 8 },
 	{ key: "faq", label: "Questions owners ask", cols: ["Question", "Answer"], max: 12 },
 	{ key: "faces", label: "Trust line · client faces (photo links)", cols: ["Photo link"], max: 12 },
+	{ key: "industries", label: "Industries · eight tiles (name, one line)", cols: ["Name", "One line"], max: 8 },
+	{ key: "steps", label: "The first thirty days · four steps", cols: ["Week", "Name", "Body"], max: 6 },
+	{ key: "beforeAfter", label: "Before and after · rows", cols: ["Label", "Before", "After"], max: 8 },
 ];
 export interface LandingCopy {
 	hero: { eyebrow: string; line1: string; line2: string; body: string };
@@ -68,12 +71,12 @@ export const DEFAULT_FILM: LandingFilm = {
 	tiles: {"industry:turo": clip(4208203, 24),"industry:doordash": clip(4168426, 25),"industry:hospitality": clip(7820478, 25),"industry:fleet": clip(5834188, 24),"industry:property": clip(4877217, 30),"industry:services": clip(8986482, 30),"industry:small": clip(7697073, 30),"industry:startups": clip(8266178, 25),"solution:va": clip(8865706, 25),"solution:turo-ops": clip(4208203, 24),"solution:doordash-ops": clip(7362583, 24),"solution:consulting": clip(7413764, 24),"solution:webapps": clip(854053, 25),"solution:websites": clip(4177954, 30),"solution:crm": clip(8632602, 25),"solution:dashboards": clip(8064422, 30),"solution:automation": clip(8094279, 25),"solution:integrations": clip(20693196, 25),"solution:workflow": clip(8986890, 30),"solution:analytics": clip(6868699, 30),"solution:bi": clip(6685171, 30),"problem:1": clip(8094279, 25),"problem:2": clip(4208203, 24),"problem:3": clip(3986119, 25),"problem:4": clip(4177954, 30),"problem:5": clip(7413764, 24),"problem:6": clip(8064422, 30),"pillar:people": clip(8865706, 25),"pillar:systems": clip(7413764, 24),"pillar:software": clip(8480293, 25),"week:1": clip(7413764, 24),"week:2": clip(8266178, 25),"week:3": clip(8865706, 25),"week:4": clip(6868699, 30),"proof:1": clip(4208203, 24),"proof:2": clip(3986119, 25),"proof:3": clip(8064422, 30)},
 	testimonials: [{"quote":"HostOS Collective completely transformed how we handle online orders. Our operations are smoother, and we’ve seen a 30% boost in repeat customers since launching the new system.","name":"Zack Holmes","role":"Restaurant owner","photo":"/faces/3760046.jpg"},{"quote":"From building our website to setting up automated email campaigns, HostOS Collective delivered everything on time and on budget. Truly a one-stop shop for growing businesses.","name":"Miguel Chavez","role":"E-commerce startup","photo":"/faces/2379004.jpg"},{"quote":"Having a dedicated VA team that manages my fleet bookings and guest communication has been a game changer. Professional, reliable, and always responsive.","name":"Matt Tolley","role":"Turo host","photo":"/faces/6333501.jpg"}],
 	copy: {
-		hero: { eyebrow: "For car rental fleets · restaurants · field services · shops", line1: "Run the business.", line2: "We’ll run the *operations*.", body: "A trained team, written procedures and one live board — answering your guests and customers, watching your tablets, filing your claims and chasing your estimates. You keep the business. We carry the operations." },
+		hero: { eyebrow: "For car rental fleets · restaurants · field services · shops", line1: "Run the business.", line2: "We’ll run the *operations*.", body: "We handle the rest behind the scenes so you can focus on what matters. AI where it helps, humans where it matters — from customer support to daily operations, AI and experienced operators work together so you don’t have to." },
 		sections: {},
 		rating: { value: "5.0", note: "from the owners we work with", count: "50+ clients served" },
 		contact: { facebookHandle: "@bimbeez96", facebookUrl: "https://www.facebook.com/bimbeez96", founderEmail: "johnbriones774@gmail.com" },
 	},
-	lists: { outcomes: [], problems: [], pillars: [], why: [], gains: [], recognition: [], faq: [], faces: [] },
+	lists: { outcomes: [], problems: [], pillars: [], why: [], gains: [], recognition: [], faq: [], faces: [], industries: [], steps: [], beforeAfter: [] },
 	laurels: [{"value":"98%","label":"client satisfaction"},{"value":"50+","label":"clients served"},{"value":"120+","label":"projects delivered"},{"value":"10+","label":"years in operations"},{"value":"5+ yrs","label":"VA & BPO experience per operator · trained by the Founder"}],
 	sections: { "problems": { clip: clip(8094279, 25), tint: "#ff375f" }, "how": { clip: clip(7413764, 24), tint: "#3b9cff" }, "film": { clip: "", tint: "#8b7cff" }, "before-after": { clip: clip(8064422, 30), tint: "#30d158" }, "solutions": { clip: "", tint: "#3b9cff" }, "industries": { clip: "", tint: "#ff9f0a" }, "proof": { clip: clip(6868699, 30), tint: "#40c8e0" }, "platform": { clip: clip(3986119, 25), tint: "#af52de" }, "start": { clip: clip(8266178, 25), tint: "#3b9cff" }, "faq": { clip: "", tint: "#8b7cff" }, "why": { clip: clip(8865706, 25), tint: "#ff9f0a" }, "devices": { clip: "", tint: "#3b9cff" }, "collective": { clip: "", tint: "#8b7cff" }, "voices": { clip: "", tint: "#3b9cff" } },
 	chapters: [

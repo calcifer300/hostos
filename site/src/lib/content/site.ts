@@ -34,7 +34,7 @@ export const CTA = { label: 'Book a working session', href: '/#contact', under: 
 export const HERO = {
 	eyebrow: 'For car rental fleets · restaurants · field services · shops',
 	lines: ['Run the business.', 'We’ll run the *operations*.'],
-	body: 'A trained team, written procedures and one live board — answering your guests and customers, watching your tablets, filing your claims and chasing your estimates. You keep the business. We carry the operations.',
+	body: 'We handle the rest behind the scenes so you can focus on what matters. AI where it helps, humans where it matters — from customer support to daily operations, AI and experienced operators work together so you don’t have to.',
 	secondary: { label: 'See how it works', href: '#how' },
 	/** What is in it for them, in four figures. */
 	outcomes: [

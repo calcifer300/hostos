@@ -4,6 +4,7 @@
 	import { stagger, tilt } from '$lib/components/motion/actions';
 	import { RECOGNITION, VOICES } from '$lib/content/site';
 	import { emph, plain } from '$lib/content/emph';
+	import Laurel from '$lib/components/ui/Laurel.svelte';
 	import { LANDING_DEFAULTS, listOr, type Landing } from '$lib/content/remote';
 	/**
 	 * Owners in their own words, under a row of laurels carrying the
@@ -20,9 +21,9 @@
 	<!-- recognition: the wreath flanks the statement; the disciplines beneath it; the figures beneath those -->
 	<div use:stagger={80} class="scroll-in mx-auto mb-14 max-w-4xl text-center md:mb-20">
 		<div class="flex items-center justify-center gap-4 md:gap-8">
-			<svg viewBox="0 0 24 40" class="wreath h-16 w-10 shrink-0 text-[#b8860b] md:h-24 md:w-14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><path d="M20 38C10 34 4 26 4 14M4 14c4 0 7 2 8 6M4 14c-1-4 0-8 2-12M6 22c3 0 6 2 7 6M9 30c3 0 5 1 7 4M5 8c3-1 6 0 8 3M7 4c3 0 5 1 7 3" /></svg>
+<Laurel leaves={9} class="h-20 w-11 shrink-0 md:h-28 md:w-16" />
 			<h3 class="display-2 headline" aria-label={plain(RECOGNITION.title)}>{@html emph(RECOGNITION.title)}</h3>
-			<svg viewBox="0 0 24 40" class="wreath h-16 w-10 shrink-0 -scale-x-100 text-[#b8860b] md:h-24 md:w-14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><path d="M20 38C10 34 4 26 4 14M4 14c4 0 7 2 8 6M4 14c-1-4 0-8 2-12M6 22c3 0 6 2 7 6M9 30c3 0 5 1 7 4M5 8c3-1 6 0 8 3M7 4c3 0 5 1 7 3" /></svg>
+<Laurel flip leaves={9} class="h-20 w-11 shrink-0 md:h-28 md:w-16" />
 		</div>
 		<p class="mx-auto mt-5 max-w-2xl text-[16px] leading-relaxed text-ink-2">{RECOGNITION.body}</p>
 		<ul class="mt-8 flex flex-wrap items-start justify-center gap-x-10 gap-y-5" aria-label="What we are trusted for">
@@ -34,9 +35,9 @@
 	<ul use:stagger={60} class="scroll-in mb-12 flex flex-wrap items-stretch justify-center gap-3 md:mb-16" aria-label="Figures">
 		{#each laurels as l}
 			<li class="laurel flex items-center gap-2 px-3 py-2">
-				<svg viewBox="0 0 24 40" class="h-8 w-5 text-[#9a6d00]" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M20 38C10 34 4 26 4 14M4 14c4 0 7 2 8 6M4 14c-1-4 0-8 2-12M6 22c3 0 6 2 7 6M9 30c3 0 5 1 7 4" /></svg>
+				<Laurel class="h-11 w-6" />
 				<span class="text-center"><svg viewBox="0 0 24 24" class="mx-auto -mb-0.5 h-3.5 w-3.5" aria-hidden="true"><path class="gold-fill" d="M3 18h18l1-10-5.5 4L12 5l-4.5 7L2 8z" /></svg><span class="gold-text block font-mono text-[18px] font-bold leading-none">{l.value}</span><span class="label-mono mt-1 block text-ink-3">{l.label}</span></span>
-				<svg viewBox="0 0 24 40" class="h-8 w-5 -scale-x-100 text-[#9a6d00]" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M20 38C10 34 4 26 4 14M4 14c4 0 7 2 8 6M4 14c-1-4 0-8 2-12M6 22c3 0 6 2 7 6M9 30c3 0 5 1 7 4" /></svg>
+				<Laurel flip class="h-11 w-6" />
 			</li>
 		{/each}
 	</ul>

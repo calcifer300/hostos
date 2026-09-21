@@ -4,6 +4,7 @@
 	import LiveBoard from './LiveBoard.svelte';
 	import { lazyVideo, magnetic } from '$lib/components/motion/actions';
 	import { CTA, HERO, LOGOS, VIDEO } from '$lib/content/site';
+	import { emph, plain } from '$lib/content/emph';
 	import { onMount } from 'svelte';
 	let { heroSrc = VIDEO.hero.src }: { heroSrc?: string } = $props();
 	let video: HTMLVideoElement;
@@ -39,9 +40,9 @@
 
 	<div class="container-x text-center">
 		<p class="arrive label-mono mb-6 text-accent">{HERO.eyebrow}</p>
-		<h1 class="display-1 mx-auto max-w-5xl text-ink">
+		<h1 class="display-1 headline mx-auto max-w-5xl" aria-label={HERO.lines.map(plain).join(' ')}>
 			{#each HERO.lines as line, i}
-				<span class="plate is-in"><span style={`--reveal-delay:${120 + i * 110}ms`} class={i === HERO.lines.length - 1 ? 'voice-display font-extrabold text-gradient' : ''}>{line}</span></span>
+				<span class="plate is-in" aria-hidden="true"><span style={`--reveal-delay:${120 + i * 110}ms`}>{@html emph(line)}</span></span>
 			{/each}
 		</h1>
 		<p class="arrive mx-auto mt-7 max-w-[64ch] text-[17px] leading-relaxed text-ink-2 md:text-[20px]" style="--reveal-delay:380ms">{HERO.body}</p>
@@ -68,8 +69,10 @@
 		<p class="label-mono mb-4 text-center text-ink-3">Runs on the platforms your business already uses</p>
 		<div class="relative overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_12%,#000_88%,transparent)]">
 			<ul class="flex w-max gap-10 animate-marquee motion-reduce:animate-none" aria-label="Platforms">
-				{#each [...LOGOS, ...LOGOS] as name, i}
-					<li aria-hidden={i >= LOGOS.length} class="text-[15px] font-semibold tracking-tight text-ink-3">{name}</li>
+				{#each [...LOGOS, ...LOGOS] as l, i}
+					<li aria-hidden={i >= LOGOS.length} class="flex items-center gap-2 text-[15px] font-semibold tracking-tight text-ink-3">
+						{#if l.icon}<img src={`https://cdn.simpleicons.org/${l.icon}/8e97ad`} alt="" width="20" height="20" loading="lazy" decoding="async" class="h-5 w-5 opacity-80" />{/if}{l.name}
+					</li>
 				{/each}
 			</ul>
 		</div>

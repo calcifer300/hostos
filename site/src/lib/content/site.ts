@@ -33,7 +33,7 @@ export const CTA = { label: 'Book a working session', href: '/#contact', under: 
 
 export const HERO = {
 	eyebrow: 'For car rental fleets · restaurants · field services · shops',
-	lines: ['Run the business.', 'We’ll run the operations.'],
+	lines: ['Run the business.', 'We’ll run the *operations*.'],
 	body: 'A trained team, written procedures and one live board — answering your guests and customers, watching your tablets, filing your claims and chasing your estimates. You keep the business. We carry the operations.',
 	secondary: { label: 'See how it works', href: '#how' },
 	/** What is in it for them, in four figures. */
@@ -45,7 +45,11 @@ export const HERO = {
 	]
 };
 
-export const LOGOS = ['Turo', 'DoorDash', 'Uber Eats', 'Grubhub', 'Shopify', 'Stripe', 'Google', 'Cloudflare', 'Supabase', 'Vercel'];
+/** The platforms the work runs on; a mark where one is published, the name where it isn't. */
+export const LOGOS: { name: string; icon?: string }[] = [
+	{ name: 'Turo' }, { name: 'DoorDash', icon: 'doordash' }, { name: 'Uber Eats', icon: 'ubereats' }, { name: 'Grubhub' }, { name: 'Shopify', icon: 'shopify' },
+	{ name: 'Stripe', icon: 'stripe' }, { name: 'Google', icon: 'google' }, { name: 'Cloudflare', icon: 'cloudflare' }, { name: 'Supabase', icon: 'supabase' }, { name: 'Vercel', icon: 'vercel' }
+];
 
 export const PROBLEMS = {
 	eyebrow: 'The problems we’re hired for',

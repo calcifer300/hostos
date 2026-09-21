@@ -1,10 +1,8 @@
 @import 'tailwindcss';
 @import '@fontsource-variable/inter';
 @import '@fontsource-variable/jetbrains-mono';
-@import '@fontsource-variable/space-grotesk';
 @import '@fontsource/instrument-serif/400.css';
 @import '@fontsource/instrument-serif/400-italic.css';
-@import '@fontsource-variable/syne';
 
 /*
   HostOS Collective — design tokens.
@@ -31,10 +29,10 @@
 
 	--font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 	--font-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, monospace;
-	/* the voices: Inter says it plainly; Space Grotesk is the system talking; Instrument Serif is the editorial aside; Syne is the loud one */
-	--font-grotesk: 'Space Grotesk Variable', var(--font-sans);
+	/* two voices, as the best agency sites do it: Inter, bold and tight, for every headline; the serif italic for the aside */
+	--font-grotesk: var(--font-sans);
 	--font-serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
-	--font-display: 'Syne Variable', var(--font-sans);
+	--font-display: var(--font-sans);
 
 	--radius-sm: 8px;
 	--radius-md: 12px;
@@ -126,34 +124,29 @@
 /* display type: tight, heavy, balanced */
 @utility display-1 {
 	font-size: clamp(44px, 6vw, 88px);
-	line-height: 0.98;
-	letter-spacing: -0.03em;
-	font-weight: 600;
+	line-height: 1;
+	letter-spacing: -0.045em;
+	font-weight: 700;
 	text-wrap: balance;
 }
 @utility display-2 {
-	font-size: clamp(34px, 4vw, 56px);
-	line-height: 1.04;
-	letter-spacing: -0.025em;
-	font-weight: 600;
+	font-size: clamp(34px, 4vw, 60px);
+	line-height: 1.02;
+	letter-spacing: -0.04em;
+	font-weight: 700;
 	text-wrap: balance;
 }
 /* per-section voices */
+/* the voices are one voice now; the classes stay so nothing else has to change */
 @utility voice-grotesk {
-	font-family: var(--font-grotesk);
-	letter-spacing: -0.02em;
+	font-family: var(--font-sans);
 }
 @utility voice-serif {
-	font-family: var(--font-serif);
-	font-weight: 400;
-	letter-spacing: -0.01em;
-	font-size: 1.12em;
+	font-family: var(--font-sans);
 }
 @utility voice-display {
-	font-family: var(--font-display);
+	font-family: var(--font-sans);
 	font-weight: 700;
-	letter-spacing: -0.02em;
-	text-transform: none;
 }
 @utility italic-serif {
 	font-family: var(--font-serif);
@@ -164,7 +157,7 @@
 /* headlines: white falling into the section's light; the *aside* in the serif italic */
 @utility headline {
 	color: transparent;
-	background: linear-gradient(180deg, #ffffff 0%, color-mix(in oklab, var(--tint, var(--color-accent)) 28%, #b8c2ea) 100%);
+	background: linear-gradient(180deg, #ffffff 0%, #c9d0e6 100%);
 	-webkit-background-clip: text;
 	background-clip: text;
 }
@@ -469,13 +462,13 @@ video.lazy.dim.is-playing {
 .section-bg::before {
 	left: 4%;
 	top: 6%;
-	background: radial-gradient(circle at center, color-mix(in oklab, var(--tint, var(--color-accent)) 24%, transparent), transparent 68%);
+	background: radial-gradient(circle at center, color-mix(in oklab, var(--tint, var(--color-accent)) 15%, transparent), transparent 68%);
 	animation: bloom-a 26s ease-in-out infinite alternate;
 }
 .section-bg::after {
 	right: 2%;
 	bottom: 4%;
-	background: radial-gradient(circle at center, color-mix(in oklab, var(--color-platform) 16%, transparent), transparent 68%);
+	background: radial-gradient(circle at center, color-mix(in oklab, var(--color-platform) 10%, transparent), transparent 68%);
 	animation: bloom-b 32s ease-in-out infinite alternate;
 }
 .is-near .section-bg::before,
@@ -494,17 +487,51 @@ video.lazy.dim.is-playing {
 	from { transform: translate3d(8%, 10%, 0) scale(2.4); }
 	to { transform: translate3d(-26%, -30%, 0) scale(2); }
 }
+/* the aside: the serif italic, a size up, in a quieter gradient — the one flourish a headline gets */
 .headline em,
 .display-1 em {
-	font-family: var(--font-display);
-	font-style: normal;
-	font-weight: 800;
-	letter-spacing: -0.02em;
-	background: linear-gradient(92deg, var(--color-accent), var(--color-platform));
+	font-family: var(--font-serif);
+	font-style: italic;
+	font-weight: 400;
+	font-size: 1.14em;
+	line-height: 0.9;
+	letter-spacing: -0.01em;
+	background: linear-gradient(90deg, #d5dbf0, #8d9bcf 80%);
 	-webkit-background-clip: text;
 	background-clip: text;
 	color: transparent;
+	padding-right: 0.04em;
 }
+/* a light section: paper-blue, dark ink — the page breathes between the dark rooms */
+.tone-light {
+	--color-bg: #cfd8dd;
+	--color-surface-1: #d9e1e5;
+	--color-surface-2: #e6ecef;
+	--color-surface-3: #f1f4f6;
+	--color-line: rgb(23 27 39 / 0.14);
+	--color-line-strong: rgb(23 27 39 / 0.26);
+	--color-ink: #171b27;
+	--color-ink-2: rgb(23 27 39 / 0.76);
+	--color-ink-3: rgb(23 27 39 / 0.56);
+	--color-accent: #2c3ef3;
+	background: var(--color-bg);
+	color: var(--color-ink);
+}
+.tone-light .headline {
+	background: linear-gradient(180deg, #171b27, #36425d);
+	-webkit-background-clip: text;
+	background-clip: text;
+}
+.tone-light .headline em {
+	background: linear-gradient(90deg, #53628d, #2c3ef3 85%);
+	-webkit-background-clip: text;
+	background-clip: text;
+}
+.tone-light .section-bg::before,
+.tone-light .section-bg::after {
+	opacity: 0.35;
+}
+.tone-light .label-mono { color: #2c3ef3; }
 .plate > span > em {
 	display: inline;
 }

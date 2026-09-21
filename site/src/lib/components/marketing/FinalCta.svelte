@@ -39,7 +39,7 @@
 	<div class="container-x grid items-start gap-12 lg:grid-cols-[1fr_1fr]">
 		<div use:reveal>
 			<p class="label-mono mb-4 text-accent">Start here</p>
-			<h2 class="display-1 voice-display headline" aria-label={plain(FINAL.title)}>{@html emph(FINAL.title)}</h2>
+			<h2 class="display-1 headline" aria-label={plain(FINAL.title)}>{@html emph(FINAL.title)}</h2>
 			<p class="mt-6 max-w-[48ch] text-[17px] leading-relaxed text-ink-2 md:text-[19px]">{FINAL.body}</p>
 			<ul class="mt-8 space-y-2">
 				{#each FINAL.channels as c}

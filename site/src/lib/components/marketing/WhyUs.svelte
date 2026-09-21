@@ -8,13 +8,13 @@
 	const hues = ['#3b9cff', '#30d158', '#8b7cff', '#ff9f0a', '#40c8e0', '#ff375f'];
 </script>
 
-<Section id="why" eyebrow={WHY.eyebrow} title={WHY.title} lede={WHY.lede} align="center" voice="display">
+<Section id="why" eyebrow={WHY.eyebrow} title={WHY.title} lede={WHY.lede} align="center" tone="light">
 	<div use:stagger={70} class="scroll-in grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
 		{#each WHY.reasons as r, i}
 			{@const Icon = icons[r.id as keyof typeof icons]}
 			<article use:tilt={4} class="spot ring-hover group relative flex flex-col rounded-2xl border border-line bg-surface-2 p-6 transition-[border-color,box-shadow] duration-300 hover:shadow-1" style={`--spot:${hues[i]}; --hue:${hues[i]}`}>
 				<div class="flex items-start justify-between">
-					<span class="grid h-11 w-11 place-items-center rounded-xl border border-white/10 bg-white/5" style={`color:${hues[i]}`}><Icon class="h-5 w-5" strokeWidth={1.75} /></span>
+					<span class="grid h-11 w-11 place-items-center rounded-xl border border-line bg-surface-3" style={`color:${hues[i]}`}><Icon class="h-5 w-5" strokeWidth={1.75} /></span>
 					<span class="label-mono text-ink-3">0{i + 1}</span>
 				</div>
 				<h3 class="mt-5 text-[19px] font-semibold tracking-tight text-ink">{r.name}</h3>

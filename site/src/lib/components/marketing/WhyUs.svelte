@@ -3,6 +3,11 @@
 	import Section from '$lib/components/ui/Section.svelte';
 	import { stagger, tilt } from '$lib/components/motion/actions';
 	import { WHY } from '$lib/content/site';
+	import { getContext } from 'svelte';
+	import { LANDING_DEFAULTS, listOr, type Landing } from '$lib/content/remote';
+	const landing = getContext<Landing | undefined>('landing');
+	const lists = $derived(landing?.lists ?? LANDING_DEFAULTS.lists);
+	const reasons = $derived(listOr(lists.why, WHY.reasons, (r) => ({ id: '', name: r.a, body: r.b })).map((x, i) => ({ ...x, id: x.id || WHY.reasons[i % WHY.reasons.length].id })));
 	/** The case for us — and for a team based in the Philippines — made in six plain reasons. */
 	const icons = { hours: Clock, people: Users, one: Layers, value: BadgeDollarSign, own: KeyRound, plan: ClipboardCheck } as const;
 	const hues = ['#3b9cff', '#30d158', '#8b7cff', '#ff9f0a', '#40c8e0', '#ff375f'];
@@ -10,7 +15,7 @@
 
 <Section id="why" eyebrow={WHY.eyebrow} title={WHY.title} lede={WHY.lede} align="center" tone="surface">
 	<div use:stagger={70} class="scroll-in grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-		{#each WHY.reasons as r, i}
+		{#each reasons as r, i}
 			{@const Icon = icons[r.id as keyof typeof icons]}
 			<article use:tilt={4} class="spot ring-hover group relative flex flex-col rounded-2xl border border-line bg-surface-2 p-6 transition-[border-color,box-shadow] duration-300 hover:shadow-1" style={`--spot:${hues[i]}; --hue:${hues[i]}`}>
 				<div class="flex items-start justify-between">

@@ -20,6 +20,7 @@
 	import { FAQ, SITE } from '$lib/content/site';
 	import { jsonLd } from '$lib/seo/jsonld';
 	import { setContext } from 'svelte';
+	import { listOr } from '$lib/content/remote';
 
 	let { data } = $props();
 	// every section and tile reads its footage and light from here
@@ -30,6 +31,7 @@
 	const description = 'HostOS Collective is a Philippines-based virtual assistant agency and business solutions team, founded by John Jenrique Briones: trained operators, written systems and the HostOS platform running car rental fleets, restaurants, field services and shops for owners in the US and worldwide.';
 	const keywords = 'HostOS Collective, HostOS, John Briones, John Jenrique Briones, VA agency Philippines, virtual assistant agency Philippines, business solutions Philippines, business operations outsourcing, Turo fleet management, DoorDash restaurant operations, field service dispatch, custom web applications Philippines';
 	const ld = $derived(jsonLd(data.members));
+	const faq = $derived(listOr(data.lists?.faq, FAQ.items, (r) => ({ q: r.a, a: r.b })));
 </script>
 
 <svelte:head>
@@ -69,6 +71,6 @@
 <Collective members={data.members} teamSrc={data.extras.team} />
 <ThirtyDays />
 <Section id="faq" eyebrow={FAQ.eyebrow} title={FAQ.title} align="center" voice="serif">
-	<div class="mx-auto max-w-3xl"><Accordion items={FAQ.items} /></div>
+	<div class="mx-auto max-w-3xl"><Accordion items={faq} /></div>
 </Section>
 <FinalCta closingSrc={data.extras.closing} />

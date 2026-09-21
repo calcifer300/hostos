@@ -4,7 +4,7 @@
 	import { stagger, tilt } from '$lib/components/motion/actions';
 	import { RECOGNITION, VOICES } from '$lib/content/site';
 	import { emph, plain } from '$lib/content/emph';
-	import { LANDING_DEFAULTS, type Landing } from '$lib/content/remote';
+	import { LANDING_DEFAULTS, listOr, type Landing } from '$lib/content/remote';
 	/**
 	 * Owners in their own words, under a row of laurels carrying the
 	 * company's figures. Both lists are the Founder's to edit in the app;
@@ -13,6 +13,7 @@
 	const landing = getContext<Landing | undefined>('landing');
 	const testimonials = $derived(landing?.testimonials ?? LANDING_DEFAULTS.testimonials);
 	const laurels = $derived(landing?.laurels ?? LANDING_DEFAULTS.laurels);
+	const marks = $derived(listOr(landing?.lists?.recognition, RECOGNITION.marks, (r) => ({ name: r.a, note: r.b })));
 </script>
 
 <Section id="voices" eyebrow={VOICES.eyebrow} title={VOICES.title} align="center">
@@ -25,7 +26,7 @@
 		</div>
 		<p class="mx-auto mt-5 max-w-2xl text-[16px] leading-relaxed text-ink-2">{RECOGNITION.body}</p>
 		<ul class="mt-8 flex flex-wrap items-start justify-center gap-x-10 gap-y-5" aria-label="What we are trusted for">
-			{#each RECOGNITION.marks as m}
+			{#each marks as m}
 				<li class="max-w-[180px] text-center"><p class="text-[17px] font-bold tracking-tight text-ink">{m.name}</p><p class="label-mono mt-1 !text-[9.5px] text-ink-3">{m.note}</p></li>
 			{/each}
 		</ul>

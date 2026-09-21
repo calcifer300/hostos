@@ -23,16 +23,25 @@ export interface LandingFilm {
 	/** The laurels above them: a figure and what it counts. */
 	laurels: Laurel[];
 	copy: LandingCopy;
+	lists: LandingLists;
 }
 export interface Testimonial { quote: string; name: string; role: string; photo: string }
 /** The words the Founder can change without a deploy: the hero, every section's header, the trust line, how to reach him. */
-export interface LandingCopy {
-	hero: { eyebrow: string; line1: string; line2: string; body: string };
-	sections: Record<string, { eyebrow: string; title: string; lede: string }>;
-	rating: { value: string; note: string; count: string };
-	contact: { facebookHandle: string; facebookUrl: string; founderEmail: string };
-}
-/** The words the Founder can change without a deploy: the hero, every section's header, the trust line, how to reach him. */
+/** A row of one of the page's lists: up to three short texts (what each means depends on the list). */
+export interface ListRow { a: string; b: string; c: string }
+/** Every list on the page. Empty = the built-in one. */
+export type LandingLists = Record<ListKey, ListRow[]>;
+export type ListKey = "outcomes" | "problems" | "pillars" | "why" | "gains" | "recognition" | "faq" | "faces";
+export const LIST_SLOTS: { key: ListKey; label: string; cols: [string, string?, string?]; max: number }[] = [
+	{ key: "outcomes", label: "Hero · the four figures", cols: ["Figure", "What it is"], max: 6 },
+	{ key: "problems", label: "The problems · six cards", cols: ["The scene", "What we do"], max: 9 },
+	{ key: "pillars", label: "How HostOS works · three pillars", cols: ["Name", "One line", "Body"], max: 3 },
+	{ key: "why", label: "Why HostOS Collective · reasons", cols: ["Reason", "Body"], max: 9 },
+	{ key: "gains", label: "HostOS on every screen · gains", cols: ["Figure", "Name", "Body"], max: 9 },
+	{ key: "recognition", label: "Trusted for · disciplines", cols: ["Discipline", "Note"], max: 8 },
+	{ key: "faq", label: "Questions owners ask", cols: ["Question", "Answer"], max: 12 },
+	{ key: "faces", label: "Trust line · client faces (photo links)", cols: ["Photo link"], max: 12 },
+];
 export interface LandingCopy {
 	hero: { eyebrow: string; line1: string; line2: string; body: string };
 	sections: Record<string, { eyebrow: string; title: string; lede: string }>;
@@ -64,6 +73,7 @@ export const DEFAULT_FILM: LandingFilm = {
 		rating: { value: "5.0", note: "from the owners we work with", count: "50+ clients served" },
 		contact: { facebookHandle: "@bimbeez96", facebookUrl: "https://www.facebook.com/bimbeez96", founderEmail: "johnbriones774@gmail.com" },
 	},
+	lists: { outcomes: [], problems: [], pillars: [], why: [], gains: [], recognition: [], faq: [], faces: [] },
 	laurels: [{"value":"98%","label":"client satisfaction"},{"value":"50+","label":"clients served"},{"value":"120+","label":"projects delivered"},{"value":"10+","label":"years in operations"},{"value":"5+ yrs","label":"BPO experience per operator"}],
 	sections: { "problems": { clip: clip(8094279, 25), tint: "#ff375f" }, "how": { clip: clip(7413764, 24), tint: "#3b9cff" }, "film": { clip: "", tint: "#8b7cff" }, "before-after": { clip: clip(8064422, 30), tint: "#30d158" }, "solutions": { clip: "", tint: "#3b9cff" }, "industries": { clip: "", tint: "#ff9f0a" }, "proof": { clip: clip(6868699, 30), tint: "#40c8e0" }, "platform": { clip: clip(3986119, 25), tint: "#af52de" }, "start": { clip: clip(8266178, 25), tint: "#3b9cff" }, "faq": { clip: "", tint: "#8b7cff" }, "why": { clip: clip(8865706, 25), tint: "#ff9f0a" }, "devices": { clip: "", tint: "#3b9cff" }, "collective": { clip: "", tint: "#8b7cff" }, "voices": { clip: "", tint: "#3b9cff" } },
 	chapters: [
@@ -131,5 +141,11 @@ export function normalizeFilm(raw: unknown): LandingFilm {
 		rating: { value: str(rt.value, dc.rating.value, 8), note: str(rt.note, dc.rating.note, 80), count: str(rt.count, dc.rating.count, 40) },
 		contact: { facebookHandle: str(ct.facebookHandle, dc.contact.facebookHandle, 40), facebookUrl: (() => { const u = str(ct.facebookUrl, dc.contact.facebookUrl, 200); return /^https:\/\/(www\.)?facebook\.com\//i.test(u) ? u : dc.contact.facebookUrl; })(), founderEmail: (() => { const e = str(ct.founderEmail, dc.contact.founderEmail, 120); return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e) ? e : dc.contact.founderEmail; })() },
 	};
-	return { hero: { src: isFilmSrc(heroSrc) ? heroSrc : DEFAULT_FILM.hero.src }, chapters, extras: { team: extra("team"), delivery: extra("delivery"), closing: extra("closing") }, tiles, sections, testimonials, laurels, copy };
+	const lRaw2 = obj(r.lists);
+	const lists = Object.fromEntries(LIST_SLOTS.map(({ key, max }) => {
+		const arr = Array.isArray(lRaw2[key]) ? (lRaw2[key] as unknown[]) : [];
+		const rows = arr.slice(0, max).map((x) => { const o = obj(x); return { a: str(o.a, "", 600), b: str(o.b, "", 900), c: str(o.c, "", 900) }; }).filter((x) => x.a);
+		return [key, key === "faces" ? rows.filter((x) => isFaceSrc(x.a)) : rows];
+	})) as LandingLists;
+	return { hero: { src: isFilmSrc(heroSrc) ? heroSrc : DEFAULT_FILM.hero.src }, chapters, extras: { team: extra("team"), delivery: extra("delivery"), closing: extra("closing") }, tiles, sections, testimonials, laurels, copy, lists };
 }

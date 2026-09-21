@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input, Label } from "@/components/ui/input";
 import { saveLandingFilm, signFilmUpload, uploadSiteImage } from "@/lib/actions/site";
-import { DEFAULT_FILM, isFilmSrc, SECTION_SLOTS, TILE_SLOTS, type FilmChapter, type LandingFilm } from "@/lib/site/film";
+import { DEFAULT_FILM, isFilmSrc, LIST_SLOTS, SECTION_SLOTS, TILE_SLOTS, type FilmChapter, type LandingFilm, type ListKey } from "@/lib/site/film";
 import { cn } from "@/lib/utils";
 
 /**
@@ -179,6 +179,35 @@ export function FilmEditor({ film: initial, fromDatabase }: { film: LandingFilm;
 
       <Card padding="md">
         <details>
+          <summary className="cursor-pointer text-[12.5px] font-semibold uppercase tracking-wide text-muted-foreground">Lists · the problems, the pillars, the reasons, the gains, the disciplines, the FAQ, the faces</summary>
+          <p className="mt-1 text-[12px] text-muted-foreground">Each list replaces the built-in one entirely once it has at least one row. Leave a list empty to keep what the page ships with.</p>
+          <div className="mt-4 space-y-5">
+            {LIST_SLOTS.map(({ key, label, cols, max }) => {
+              const rows = film.lists[key as ListKey] ?? [];
+              const setRows = (next: typeof rows) => { setFilm((f) => ({ ...f, lists: { ...f.lists, [key]: next } })); setDirty(true); };
+              return (
+                <div key={key} className="rounded-xl border border-border p-3">
+                  <div className="mb-2 flex items-center justify-between gap-3"><p className="text-[12px] font-semibold">{label}</p><span className="text-[11px] text-muted-foreground">{rows.length === 0 ? "built-in" : `${rows.length} of ${max}`}</span></div>
+                  <div className="space-y-2">
+                    {rows.map((row, i) => (
+                      <div key={i} className="grid gap-2" style={{ gridTemplateColumns: `${cols.filter(Boolean).map((_, k) => (k === 0 && cols.length > 1 ? "minmax(120px,0.6fr)" : "1fr")).join(" ")} auto` }}>
+                        {(["a", "b", "c"] as const).slice(0, cols.filter(Boolean).length).map((k, ci) => (
+                          <Input key={k} aria-label={cols[ci]} value={row[k]} onChange={(e) => setRows(rows.map((r, j) => (j === i ? { ...r, [k]: e.target.value } : r)))} placeholder={cols[ci]} />
+                        ))}
+                        <Button variant="ghost" size="sm" onClick={() => setRows(rows.filter((_, j) => j !== i))}>×</Button>
+                      </div>
+                    ))}
+                    {rows.length < max && <Button variant="ghost" size="sm" onClick={() => setRows([...rows, { a: "", b: "", c: "" }])}>Add a row</Button>}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </details>
+      </Card>
+
+      <Card padding="md">
+        <details>
           <summary className="cursor-pointer text-[12.5px] font-semibold uppercase tracking-wide text-muted-foreground">Testimonials and laurels</summary>
           <p className="mt-1 text-[12px] text-muted-foreground">What owners said, in their words, and the figures on the laurels above them. Keep it true — this is the page people check.</p>
           <div className="mt-4 space-y-3">
@@ -268,6 +297,35 @@ export function FilmEditor({ film: initial, fromDatabase }: { film: LandingFilm;
                     <Input aria-label="Eyebrow" value={c.eyebrow} onChange={(e) => set("eyebrow", e.target.value)} placeholder="Eyebrow (small label)" />
                     <Input aria-label="Title" value={c.title} onChange={(e) => set("title", e.target.value)} placeholder="Title — *asterisks* for the serif aside" />
                     <Input aria-label="Lede" value={c.lede} onChange={(e) => set("lede", e.target.value)} placeholder="Lede (the line under the title)" />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </details>
+      </Card>
+
+      <Card padding="md">
+        <details>
+          <summary className="cursor-pointer text-[12.5px] font-semibold uppercase tracking-wide text-muted-foreground">Lists · the problems, the pillars, the reasons, the gains, the disciplines, the FAQ, the faces</summary>
+          <p className="mt-1 text-[12px] text-muted-foreground">Each list replaces the built-in one entirely once it has at least one row. Leave a list empty to keep what the page ships with.</p>
+          <div className="mt-4 space-y-5">
+            {LIST_SLOTS.map(({ key, label, cols, max }) => {
+              const rows = film.lists[key as ListKey] ?? [];
+              const setRows = (next: typeof rows) => { setFilm((f) => ({ ...f, lists: { ...f.lists, [key]: next } })); setDirty(true); };
+              return (
+                <div key={key} className="rounded-xl border border-border p-3">
+                  <div className="mb-2 flex items-center justify-between gap-3"><p className="text-[12px] font-semibold">{label}</p><span className="text-[11px] text-muted-foreground">{rows.length === 0 ? "built-in" : `${rows.length} of ${max}`}</span></div>
+                  <div className="space-y-2">
+                    {rows.map((row, i) => (
+                      <div key={i} className="grid gap-2" style={{ gridTemplateColumns: `${cols.filter(Boolean).map((_, k) => (k === 0 && cols.length > 1 ? "minmax(120px,0.6fr)" : "1fr")).join(" ")} auto` }}>
+                        {(["a", "b", "c"] as const).slice(0, cols.filter(Boolean).length).map((k, ci) => (
+                          <Input key={k} aria-label={cols[ci]} value={row[k]} onChange={(e) => setRows(rows.map((r, j) => (j === i ? { ...r, [k]: e.target.value } : r)))} placeholder={cols[ci]} />
+                        ))}
+                        <Button variant="ghost" size="sm" onClick={() => setRows(rows.filter((_, j) => j !== i))}>×</Button>
+                      </div>
+                    ))}
+                    {rows.length < max && <Button variant="ghost" size="sm" onClick={() => setRows([...rows, { a: "", b: "", c: "" }])}>Add a row</Button>}
                   </div>
                 </div>
               );

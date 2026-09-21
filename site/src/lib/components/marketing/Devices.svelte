@@ -4,7 +4,7 @@
 	import LiveBoard from './LiveBoard.svelte';
 	import { lazyVideo, stagger, tilt } from '$lib/components/motion/actions';
 	import { DEVICES, PLATFORM } from '$lib/content/site';
-	import { LANDING_DEFAULTS, type Landing } from '$lib/content/remote';
+	import { LANDING_DEFAULTS, listOr, type Landing } from '$lib/content/remote';
 	/**
 	 * The board on a MacBook, an iPhone and a Windows laptop — drawn in CSS,
 	 * the screens alive (the live board, a phone view of the day, footage of
@@ -12,6 +12,7 @@
 	 */
 	const landing = getContext<Landing | undefined>('landing');
 	const tiles = $derived(landing?.tiles ?? LANDING_DEFAULTS.tiles);
+	const gains = $derived(listOr(landing?.lists?.gains, DEVICES.gains, (r) => ({ figure: r.a, name: r.b, body: r.c })));
 	const day = PLATFORM.tabs[0].widgets;
 </script>
 
@@ -55,7 +56,7 @@
 	</div>
 
 	<div use:stagger={70} class="scroll-in mt-14 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 md:mt-20">
-		{#each DEVICES.gains as g, i}
+		{#each gains as g, i}
 			<article class="spot ring-hover rounded-2xl border border-line bg-surface-2 p-6 transition-[border-color] duration-300 hover:border-accent/50">
 				<p class="font-mono text-[34px] font-bold leading-none tracking-tight text-accent">{g.figure}</p>
 				<h3 class="mt-3 text-[18px] font-semibold tracking-tight text-ink">{g.name}</h3>

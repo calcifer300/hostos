@@ -3,9 +3,10 @@
 	import { getContext } from 'svelte';
 	import { lazyVideo, stagger, tilt } from '$lib/components/motion/actions';
 	import { PROBLEMS } from '$lib/content/site';
-	import { LANDING_DEFAULTS, type Landing } from '$lib/content/remote';
+	import { LANDING_DEFAULTS, listOr, type Landing } from '$lib/content/remote';
 	const landing = getContext<Landing | undefined>('landing');
 	const tiles = $derived(landing?.tiles ?? LANDING_DEFAULTS.tiles);
+	const items = $derived(listOr(landing?.lists?.problems, PROBLEMS.items, (r) => ({ scene: r.a, answer: r.b })));
 	import Motif from '$lib/components/ui/Motif.svelte';
 	const scenes = ['tablet', 'camera', 'envelope', 'globe', 'head', 'bank'] as const;
 	/** Six Tuesdays. The visitor finds theirs; the answer is under the card. */
@@ -13,7 +14,7 @@
 
 <Section id="problems" eyebrow={PROBLEMS.eyebrow} title={PROBLEMS.title} voice="display" align="center" class="stack-top">
 	<div use:stagger={70} class="scroll-in grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-		{#each PROBLEMS.items as p, i}
+		{#each items as p, i}
 			{@const clip = tiles[`problem:${i + 1}`]}
 			<article use:tilt={5} class="card spot ring-hover group relative flex min-h-[220px] flex-col justify-between overflow-hidden rounded-2xl border border-line bg-surface-2 p-6 transition-[border-color,box-shadow] duration-300 hover:border-accent/50 hover:shadow-1">
 				{#if clip}{#key clip}<video class="lazy dim absolute inset-0 h-full w-full object-cover" muted loop playsinline preload="none" use:lazyVideo={{ src: clip }} aria-hidden="true"></video>{/key}{/if}

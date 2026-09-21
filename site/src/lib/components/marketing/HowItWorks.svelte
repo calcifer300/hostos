@@ -4,9 +4,10 @@
 	import { getContext } from 'svelte';
 	import { lazyVideo, reveal, stagger } from '$lib/components/motion/actions';
 	import { HOW } from '$lib/content/site';
-	import { LANDING_DEFAULTS, type Landing } from '$lib/content/remote';
+	import { LANDING_DEFAULTS, listOr, type Landing } from '$lib/content/remote';
 	const landing = getContext<Landing | undefined>('landing');
 	const tiles = $derived(landing?.tiles ?? LANDING_DEFAULTS.tiles);
+	const pillars = $derived(listOr(landing?.lists?.pillars, HOW.pillars, (r, ) => ({ id: '', name: r.a, line: r.b, body: r.c })).map((p, i) => ({ ...p, id: p.id || HOW.pillars[i]?.id || 'people' })));
 	import Motif from '$lib/components/ui/Motif.svelte';
 	const icons = { people: Users, systems: ListChecks, software: LayoutDashboard } as const;
 	const scenes = { people: 'people', systems: 'checklist', software: 'board' } as const;
@@ -24,7 +25,7 @@
 		</svg>
 	</div>
 	<div use:stagger={90} class="scroll-in grid grid-cols-1 gap-4 md:grid-cols-3">
-		{#each HOW.pillars as p, i}
+		{#each pillars as p, i}
 			{@const Icon = icons[p.id as keyof typeof icons]}
 			{@const clip = tiles[`pillar:${p.id}`]}
 			<article class="card relative overflow-hidden rounded-2xl border border-line bg-surface-2 p-6">

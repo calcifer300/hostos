@@ -21,7 +21,14 @@ export interface Landing {
 	testimonials: { quote: string; name: string; role: string; photo: string }[];
 	laurels: { value: string; label: string }[];
 	copy: LandingCopy;
+	lists: LandingLists;
 }
+export interface ListRow { a: string; b: string; c: string }
+export type ListKey = 'outcomes' | 'problems' | 'pillars' | 'why' | 'gains' | 'recognition' | 'faq' | 'faces';
+export type LandingLists = Record<ListKey, ListRow[]>;
+export const EMPTY_LISTS: LandingLists = { outcomes: [], problems: [], pillars: [], why: [], gains: [], recognition: [], faq: [], faces: [] };
+/** A list from the landing when the Founder wrote one, else the built-in rows. */
+export const listOr = <T>(rows: ListRow[] | undefined, fallback: T[], map: (r: ListRow) => T): T[] => (rows && rows.length ? rows.map(map) : fallback);
 export interface LandingCopy {
 	hero: { eyebrow: string; line1: string; line2: string; body: string };
 	sections: Record<string, { eyebrow: string; title: string; lede: string }>;
@@ -35,7 +42,7 @@ export const COPY_DEFAULTS: LandingCopy = {
 	contact: { facebookHandle: CONTACT.facebook.handle, facebookUrl: CONTACT.facebook.url, founderEmail: CONTACT.founderEmail }
 };
 /** The built-in landing, for the sections that render without a page load behind them. */
-export const LANDING_DEFAULTS: Pick<Landing, 'tiles' | 'sections' | 'extras' | 'testimonials' | 'laurels' | 'copy'> = { tiles: TILES, sections: SECTIONS, extras: { team: VIDEO.team, delivery: VIDEO.delivery, closing: VIDEO.closing }, testimonials: TESTIMONIALS, laurels: LAURELS, copy: COPY_DEFAULTS };
+export const LANDING_DEFAULTS: Pick<Landing, 'tiles' | 'sections' | 'extras' | 'testimonials' | 'laurels' | 'copy' | 'lists'> = { tiles: TILES, sections: SECTIONS, extras: { team: VIDEO.team, delivery: VIDEO.delivery, closing: VIDEO.closing }, testimonials: TESTIMONIALS, laurels: LAURELS, copy: COPY_DEFAULTS, lists: EMPTY_LISTS };
 
 const str = (v: unknown, fb: string) => (typeof v === 'string' && v.trim() ? v : fb);
 const src = (v: unknown, fb: string) => (typeof v === 'string' && /^(\/|https:\/\/[a-z0-9-]+\.supabase\.co\/storage\/v1\/object\/public\/|https:\/\/videos\.pexels\.com\/)/i.test(v) ? v : fb);
@@ -79,6 +86,15 @@ export async function loadLanding(fetchFn: typeof fetch): Promise<Landing> {
 		laurels: Array.isArray(film?.laurels)
 			? (film!.laurels as unknown[]).map((l) => { const x = (l && typeof l === 'object' ? l : {}) as Record<string, unknown>; return { value: str(x.value, ''), label: str(x.label, '') }; }).filter((l) => l.value && l.label).slice(0, 6)
 			: LAURELS,
+		lists: (() => {
+			const l = (film?.lists && typeof film.lists === 'object' ? film.lists : {}) as Record<string, unknown>;
+			const out = { ...EMPTY_LISTS };
+			for (const k of Object.keys(EMPTY_LISTS) as ListKey[]) {
+				const arr = Array.isArray(l[k]) ? (l[k] as unknown[]) : [];
+				out[k] = arr.map((x) => { const o = (x && typeof x === 'object' ? x : {}) as Record<string, unknown>; return { a: str(o.a, ''), b: str(o.b, ''), c: str(o.c, '') }; }).filter((x) => x.a).slice(0, 12);
+			}
+			return out;
+		})(),
 		copy: (() => {
 			const c = (film?.copy && typeof film.copy === 'object' ? film.copy : {}) as Record<string, unknown>;
 			const o = (v: unknown) => (v && typeof v === 'object' ? v : {}) as Record<string, unknown>;

@@ -7,11 +7,13 @@
 	import Logo from '$lib/components/ui/Logo.svelte';
 	import { emph, plain } from '$lib/content/emph';
 	import { getContext } from 'svelte';
-	import { LANDING_DEFAULTS, type Landing } from '$lib/content/remote';
+	import { LANDING_DEFAULTS, listOr, type Landing } from '$lib/content/remote';
 	const landing = getContext<Landing | undefined>('landing');
 	const copy = $derived(landing?.copy ?? LANDING_DEFAULTS.copy);
 	const lines = $derived([copy.hero.line1, copy.hero.line2]);
-	const faces = CLIENT_FACES;
+	const lists = $derived(landing?.lists ?? LANDING_DEFAULTS.lists);
+	const faces = $derived(listOr(lists.faces, CLIENT_FACES, (r) => r.a));
+	const outcomes = $derived(listOr(lists.outcomes, HERO.outcomes as [string, string][], (r) => [r.a, r.b] as [string, string]));
 	const laurels = $derived(landing?.laurels ?? LANDING_DEFAULTS.laurels);
 	import { onMount } from 'svelte';
 	let { heroSrc = VIDEO.hero.src }: { heroSrc?: string } = $props();
@@ -59,12 +61,12 @@
 		</h1>
 		<p class="arrive mx-auto mt-7 max-w-[64ch] text-[17px] leading-relaxed text-ink-2 md:text-[20px]" style="--reveal-delay:380ms">{copy.hero.body}</p>
 		<!-- the laurels, in gold, under the paragraph -->
-		<ul class="arrive mx-auto mt-7 flex max-w-4xl flex-wrap items-stretch justify-center gap-2.5" style="--reveal-delay:440ms" aria-label="Figures">
+		<ul class="arrive mx-auto mt-7 grid max-w-4xl grid-cols-2 gap-x-2 gap-y-3 sm:flex sm:flex-wrap sm:items-stretch sm:justify-center sm:gap-2.5" style="--reveal-delay:440ms" aria-label="Figures">
 			{#each laurels as l, i}
-				<li class="laurel-gold flex items-center gap-1 px-2 py-1" style={`--d:${i * 70}ms`}>
-					<svg viewBox="0 0 24 40" class="h-7 w-4 text-[#9a6d00]" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M20 38C10 34 4 26 4 14M4 14c4 0 7 2 8 6M4 14c-1-4 0-8 2-12M6 22c3 0 6 2 7 6M9 30c3 0 5 1 7 4" /></svg>
+				<li class="laurel-gold flex items-center justify-center gap-1 px-1 py-1 sm:px-2" style={`--d:${i * 70}ms`}>
+					<svg viewBox="0 0 24 40" class="h-6 w-3.5 text-[#9a6d00] sm:h-7 sm:w-4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M20 38C10 34 4 26 4 14M4 14c4 0 7 2 8 6M4 14c-1-4 0-8 2-12M6 22c3 0 6 2 7 6M9 30c3 0 5 1 7 4" /></svg>
 					<span class="text-center"><span class="crown block"><svg viewBox="0 0 24 24" class="mx-auto -mb-0.5 h-3.5 w-3.5 drop-shadow-[0_1px_1px_rgba(120,80,0,0.35)]" aria-hidden="true"><path class="gold-fill" d="M3 18h18l1-10-5.5 4L12 5l-4.5 7L2 8z" /></svg></span><span class="gold-text block font-mono text-[17px] font-bold leading-none">{l.value}</span><span class="label-mono mt-0.5 block !text-[9.5px] text-ink-3">{l.label}</span></span>
-					<svg viewBox="0 0 24 40" class="h-7 w-4 -scale-x-100 text-[#9a6d00]" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M20 38C10 34 4 26 4 14M4 14c4 0 7 2 8 6M4 14c-1-4 0-8 2-12M6 22c3 0 6 2 7 6M9 30c3 0 5 1 7 4" /></svg>
+					<svg viewBox="0 0 24 40" class="h-6 w-3.5 -scale-x-100 text-[#9a6d00] sm:h-7 sm:w-4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M20 38C10 34 4 26 4 14M4 14c4 0 7 2 8 6M4 14c-1-4 0-8 2-12M6 22c3 0 6 2 7 6M9 30c3 0 5 1 7 4" /></svg>
 				</li>
 			{/each}
 		</ul>
@@ -84,8 +86,8 @@
 		</div>
 		<!-- what is in it for them, in four figures -->
 		<ul class="arrive mx-auto mt-8 flex max-w-4xl flex-wrap items-baseline justify-center gap-x-6 gap-y-2 text-[13.5px] text-ink-2" style="--reveal-delay:720ms" aria-label="What you get">
-			{#each HERO.outcomes as [figure, what], i}
-				<li class="flex items-baseline gap-2"><span class="font-mono text-[15px] font-bold text-ink">{figure}</span>{what}{#if i < HERO.outcomes.length - 1}<span aria-hidden="true" class="ml-4 hidden text-ink-3 sm:inline">·</span>{/if}</li>
+			{#each outcomes as [figure, what], i}
+				<li class="flex items-baseline gap-2"><span class="font-mono text-[15px] font-bold text-ink">{figure}</span>{what}{#if i < outcomes.length - 1}<span aria-hidden="true" class="ml-4 hidden text-ink-3 sm:inline">·</span>{/if}</li>
 			{/each}
 		</ul>
 	</div>

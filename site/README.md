@@ -31,15 +31,23 @@ runtime dependencies beyond Svelte and lucide icons. Its own Vercel project
 - Above the fold nothing waits for JavaScript (`.arrive`); without JS everything is visible (`.no-js`).
 - Contrast is checked per token; hue-coloured text is lightened with `color-mix` on dark surfaces.
 
-## Cutover (when the Founder says so)
+## Cutover — one command each way
 
-The app stays at the same domain. Two options, both reversible in one Vercel setting:
+The site proxies every app path to the app's own alias (hostos-ten.vercel.app) — see `vercel.json` —
+so the app keeps its domain, cookies and OAuth callbacks untouched. Moving the domain is a Vercel
+setting, not a DNS change (Cloudflare already points at Vercel):
 
-1. Subdomain split (recommended long-term): `hostoscollective.com` → this site,
-   `app.hostoscollective.com` → the Next.js app. Needs `AUTH_URL` / cookie domain on the
-   app, Google OAuth redirect URIs updated by the Founder, and redirects from
-   `/app/*`, `/login`, `/api/*` on the site to the app host.
-2. Same domain, proxied: attach the domain to this project and add rewrites in
-   `vercel.json` for `/app/:path*`, `/login`, `/api/:path*`, `/_next/:path*`,
-   `/team`, `/install`, `/about` to the app's deployment URL. No auth changes;
-   the session-aware nav works immediately. One extra hop per app request.
+    # from the repo root
+    npx vercel domains add hostoscollective.com hostos-site --yes
+    npx vercel domains add www.hostoscollective.com hostos-site --yes
+
+Rollback, same shape:
+
+    npx vercel domains add hostoscollective.com hostos --yes
+    npx vercel domains add www.hostoscollective.com hostos --yes
+
+Verify after either: `curl -I https://hostoscollective.com/` (X-Vercel-Cache from the site),
+`/login`, `/api/auth/session`, `/team`, `/app/start` (307 to /login), and a Google sign-in.
+
+Longer term, the subdomain split (app.hostoscollective.com for the product) removes the proxy hop;
+it needs the Google OAuth redirect URIs and AUTH_URL changed first.

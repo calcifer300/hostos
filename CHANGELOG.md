@@ -4,6 +4,17 @@ All notable changes to HostOS. Dates are when the work landed on `unified`.
 
 ## [Unreleased] — 2026-09-20 · The SvelteKit front door
 
+- **Footage the Founder edits.** Settings → Website now leads with the
+  landing footage: the hero clip and the four chapters of "Watch it run"
+  (time, name, caption, three board events, the clip). Clips upload straight
+  from the browser to storage with a progress bar (MP4/WebM/MOV, 300 MB);
+  `GET /api/public/landing` serves the result; the site regenerates every
+  five minutes (ISR). "Stock footage" restores the Pexels clips.
+- **The site is ready to take the domain**: every app path is proxied to
+  the app's hostos-ten alias, www redirects to the apex; verified
+  end-to-end on the site's own URL. The domain move itself is the two
+  commands in `site/README.md`.
+
 - **A new marketing site in `site/`** (SvelteKit 2, Svelte 5 runes, Tailwind
   v4, adapter-vercel), live at https://hostos-site-one.vercel.app on its own
   Vercel project; production hostoscollective.com is untouched until the

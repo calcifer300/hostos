@@ -30,6 +30,9 @@ runtime dependencies beyond Svelte and lucide icons. Its own Vercel project
 - Arrive once, respond always, never idle (the live board's 9-second loop is the one exception).
 - Above the fold nothing waits for JavaScript (`.arrive`); without JS everything is visible (`.no-js`).
 - Contrast is checked per token; hue-coloured text is lightened with `color-mix` on dark surfaces.
+- Four voices: Inter says it plainly, Space Grotesk is the system talking, Instrument Serif is the aside (`*word*` in a title), Syne is the loud one. Headlines wear `.headline`: white falling into the section's light.
+- Every section is lit (two blooms in its colour) and most have a dimmed clip behind them; every industry tile and solution card plays its own. All of it comes from the app's `landing_film` document (`film.sections`, `film.tiles`) and is edited at Settings → Website; `site.ts` holds the fallbacks. Nothing in a section animates until it is near the screen (`use:near`).
+- The preloader is CSS only, over in 1.2 s, and 97 % opaque on purpose: an opaque curtain makes Chrome record the first paint at the lift.
 
 ## Cutover — one command each way
 

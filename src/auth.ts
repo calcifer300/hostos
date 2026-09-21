@@ -71,6 +71,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     strategy: "jwt",
   },
   callbacks: {
+    // HostOS is by invitation: the Founder, the roster, and approved requests. Everyone else lands on the request form.
+    async signIn({ user }) {
+      try {
+        const { isAllowedEmail } = await import("@/lib/access-requests");
+        if (await isAllowedEmail(user.email)) return true;
+      } catch (err) {
+        console.error("[auth] allowlist check failed:", err);
+        return false;
+      }
+      return `/login?error=AccessDenied&email=${encodeURIComponent(user.email ?? "")}`;
+    },
     async jwt({ token, account }) {
       // Nothing Gmail-related may run unless explicitly enabled, and even
       // then it must not be able to fail the login. The import is dynamic

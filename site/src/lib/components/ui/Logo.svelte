@@ -5,7 +5,7 @@
 	 * light passing over the frame now and then. The wordmark's "OS" carries
 	 * the same gradient. Same geometry as the product's.
 	 */
-	let { size = 28, wordmark = true, class: cls = '' }: { size?: number; wordmark?: boolean; class?: string } = $props();
+	let { size = 28, wordmark = true, wordSize = 20, class: cls = '' }: { size?: number; wordmark?: boolean; wordSize?: number; class?: string } = $props();
 	const uid = `m${Math.random().toString(36).slice(2, 7)}`;
 </script>
 
@@ -32,7 +32,7 @@
 		<g clip-path="url(#{uid}-c)"><rect class="sheen" x="-30" y="0" width="26" height="64" fill="url(#{uid}-s)" transform="skewX(-20)" /></g>
 	</svg>
 	{#if wordmark}
-		<span class="text-[20px] font-bold tracking-tight text-ink">host<span class="os">OS</span></span>
+		<span class="font-bold tracking-tight text-ink" style={`font-size:${wordSize}px`}>host<span class="os">OS</span></span>
 	{/if}
 </span>
 

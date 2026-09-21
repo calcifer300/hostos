@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: "Sign in" };
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ callbackUrl?: string; error?: string }>;
+  searchParams: Promise<{ callbackUrl?: string; error?: string; email?: string }>;
 }) {
   const params = await searchParams;
   const callbackUrl = safeAppRedirect(params.callbackUrl);
@@ -17,5 +17,5 @@ export default async function LoginPage({
   const session = await auth();
   if (session?.user) redirect(callbackUrl);
 
-  return <LoginScreen callbackUrl={callbackUrl} error={params.error ?? null} />;
+  return <LoginScreen callbackUrl={callbackUrl} error={params.error ?? null} deniedEmail={params.email ?? null} />;
 }

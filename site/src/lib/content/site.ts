@@ -237,19 +237,19 @@ export const TESTIMONIALS = [
 		quote: "HostOS Collective completely transformed how we handle online orders. Our operations are smoother, and we’ve seen a 30% boost in repeat customers since launching the new system.",
 		name: "Zack Holmes",
 		role: "Restaurant owner",
-		photo: 'https://images.pexels.com/photos/3760046/pexels-photo-3760046.jpeg?auto=compress&cs=tinysrgb&w=160&h=160&fit=crop'
+		photo: '/faces/3760046.jpg'
 	},
 	{
 		quote: "From building our website to setting up automated email campaigns, HostOS Collective delivered everything on time and on budget. Truly a one-stop shop for growing businesses.",
 		name: "Miguel Chavez",
 		role: "E-commerce startup",
-		photo: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=160&h=160&fit=crop'
+		photo: '/faces/2379004.jpg'
 	},
 	{
 		quote: "Having a dedicated VA team that manages my fleet bookings and guest communication has been a game changer. Professional, reliable, and always responsive.",
 		name: "Matt Tolley",
 		role: "Turo host",
-		photo: 'https://images.pexels.com/photos/6333501/pexels-photo-6333501.jpeg?auto=compress&cs=tinysrgb&w=160&h=160&fit=crop'
+		photo: '/faces/6333501.jpg'
 	}
 ];
 export const LAURELS = [
@@ -276,6 +276,8 @@ export const LAURELS = [
 ];
 export const VOICES = { eyebrow: 'What owners say', title: 'In their *own words*.' };
 /** The trust line under the hero's ask. */
+/** Ten of the owners we work with (stock portraits until real ones are in), for the trust line. */
+export const CLIENT_FACES = ['/faces/3760046.jpg', '/faces/2530364.jpg', '/faces/2379004.jpg', '/faces/3974017.jpg', '/faces/6333501.jpg', '/faces/2112714.jpg', '/faces/8217534.jpg', '/faces/1195111.jpg', '/faces/12871465.jpg', '/faces/6345373.jpg'];
 export const RATING = { value: '5.0', stars: 5, note: 'from the owners we work with', count: '50+ clients served' };
 /** Where to reach the Founder directly. */
 export const CONTACT = { facebook: { handle: '@bimbeez', url: 'https://www.facebook.com/bimbeez', name: 'John Briones' }, founderEmail: 'johnbriones774@gmail.com', founder: 'John Jenrique Briones' };

@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft, ShieldCheck, Sparkles, Zap } from "lucide-react";
 import { googleSignIn } from "@/lib/actions/auth";
 import { Logo, LogoMark } from "@/components/brand/logo-mark";
+import { RequestAccess } from "@/components/auth/request-access";
 import { IntroSequence, useIntroSeen } from "@/components/auth/intro-sequence";
 import { routes } from "@/lib/routes";
 import { SITE } from "@/lib/site";
@@ -51,7 +52,8 @@ const POINTS = [
   { icon: ShieldCheck, text: "Pairing keys, not passwords. Every workspace stays private to its members." },
 ];
 
-export function LoginScreen({ callbackUrl, error }: { callbackUrl?: string | null; error?: string | null }) {
+export function LoginScreen({ callbackUrl, error, deniedEmail }: { callbackUrl?: string | null; error?: string | null; deniedEmail?: string | null }) {
+  const denied = error === "AccessDenied";
   const [introSeen, markSeen] = useIntroSeen();
   const [pending, setPending] = React.useState(false);
 
@@ -123,15 +125,16 @@ export function LoginScreen({ callbackUrl, error }: { callbackUrl?: string | nul
             </button>
           </form>
 
-          {error && (
+          {denied && <RequestAccess email={deniedEmail} />}
+          {error && !denied && (
             <p className="mt-4 rounded-xl border border-danger/30 bg-danger-bg px-3 py-2 text-[12.5px] text-danger">
               Sign-in didn&rsquo;t complete ({error}). Try again, or contact {SITE.contactEmail}.
             </p>
           )}
 
           <p className="mt-6 text-center text-[12px] leading-relaxed text-muted-foreground/85 lg:text-left">
-            By continuing you agree to let HostOS act on your behalf within the permissions you grant. New accounts get
-            their own workspace automatically.
+            HostOS is by invitation. Sign in with the Google account you were invited with; if you don’t have one yet,
+            sign in once and ask — the Founder opens the door personally.
           </p>
           <p className="mt-6 text-center text-[11px] uppercase tracking-[0.16em] text-muted-foreground/80 lg:text-left">
             Built by {SITE.company}

@@ -4,6 +4,8 @@ import { FilmEditor } from "@/components/settings/film-editor";
 import { WebsiteEditor } from "@/components/settings/website-editor";
 import { isFounderEmail } from "@/lib/roles/constants";
 import { getLandingFilm, getLandingIntro } from "@/lib/site/queries";
+import { AccessRequests } from "@/components/settings/access-requests";
+import { listAccessRequests } from "@/lib/access-requests";
 
 export const metadata: Metadata = { title: "Website" };
 
@@ -18,9 +20,10 @@ export default async function WebsitePage() {
   if (!isFounderEmail(session?.user?.email)) {
     return <div className="rounded-2xl border border-dashed border-border bg-card/60 p-8 text-[14px] text-muted-foreground">Only the Founder can edit the website.</div>;
   }
-  const [{ film, fromDatabase: filmSaved }, { intro, fromDatabase }] = await Promise.all([getLandingFilm(), getLandingIntro()]);
+  const [{ film, fromDatabase: filmSaved }, { intro, fromDatabase }, requests] = await Promise.all([getLandingFilm(), getLandingIntro(), listAccessRequests()]);
   return (
     <div className="space-y-10">
+      <AccessRequests requests={requests} />
       <FilmEditor film={film} fromDatabase={filmSaved} />
       <details className="rounded-2xl border border-border bg-card/40 p-4">
         <summary className="cursor-pointer text-[13px] font-semibold">The app’s own landing intro (console) — not shown on hostoscollective.com while the new site fronts the domain</summary>

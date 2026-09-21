@@ -3,10 +3,11 @@
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { isFounderEmail } from "@/lib/roles/constants";
+import { isFilmSrc, normalizeFilm, type LandingFilm } from "@/lib/site/film";
 import { DEFAULT_INTRO, isIntroImageSrc, normalizeIntro, type LandingIntro } from "@/lib/site/intro";
-import { clearLandingIntro, getLandingIntro, putLandingIntro } from "@/lib/site/queries";
+import { clearLandingIntro, getLandingFilm, getLandingIntro, putLandingFilm, putLandingIntro } from "@/lib/site/queries";
 import { PHOTO_TYPES } from "@/lib/team/photo-look";
-import { putPublicObject, removePublicObject } from "@/lib/team/storage";
+import { putPublicObject, removePublicObject, signPublicUpload } from "@/lib/team/storage";
 
 /**
  * Editing the public landing page's intro. Founder only — this is the
@@ -27,7 +28,43 @@ const str = (v: unknown, max: number) => (typeof v === "string" ? v.trim().slice
 
 function refresh() {
   revalidatePath("/");
+  revalidatePath("/api/public/landing");
   revalidatePath("/app/settings/website");
+}
+
+const VIDEO_TYPES: Record<string, string> = { "video/mp4": "mp4", "video/webm": "webm", "video/quicktime": "mov" };
+const VIDEO_MAX = 300 * 1024 * 1024;
+
+/** The landing page's footage: the hero clip and the four chapters. Uploads no longer referenced are removed after the save. */
+export async function saveLandingFilm(input: unknown): Promise<SiteResult> {
+  const gate = await founder();
+  if (!gate.ok) return { ok: false, error: gate.error };
+  const film: LandingFilm = normalizeFilm(input);
+  const raw = (input && typeof input === "object" ? input : {}) as { hero?: { src?: unknown }; chapters?: { src?: unknown }[] };
+  const offered = [raw.hero?.src, ...(raw.chapters ?? []).map((c) => c?.src)].filter((s): s is string => typeof s === "string" && s.trim() !== "");
+  const bad = offered.find((s) => !isFilmSrc(s));
+  if (bad) return { ok: false, error: "A clip must be an upload, a file on the site (/…) or a videos.pexels.com link." };
+  const before = await getLandingFilm();
+  const r = await putLandingFilm(film, gate.email);
+  if (!r.ok) return { ok: false, error: hint(r.error) };
+  const still = new Set([film.hero.src, ...film.chapters.map((c) => c.src)]);
+  for (const s of [before.film.hero.src, ...before.film.chapters.map((c) => c.src)]) if (!still.has(s)) await removePublicObject("site", s);
+  refresh();
+  return { ok: true };
+}
+
+/** Signs a direct upload for a clip (MP4, WebM or MOV, up to 300 MB). The browser PUTs the file to the returned URL; the public URL goes in the clip field. */
+export async function signFilmUpload(input: { name?: unknown; type?: unknown; size?: unknown; slug?: unknown }): Promise<SiteResult & { uploadUrl?: string }> {
+  const gate = await founder();
+  if (!gate.ok) return { ok: false, error: gate.error };
+  const type = typeof input.type === "string" ? input.type : "";
+  const ext = VIDEO_TYPES[type];
+  if (!ext) return { ok: false, error: "Use an MP4, WebM or MOV clip." };
+  const size = typeof input.size === "number" ? input.size : 0;
+  if (size <= 0 || size > VIDEO_MAX) return { ok: false, error: "Clips can be up to 300 MB." };
+  const slug = str(input.slug, 40).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "clip";
+  const r = await signPublicUpload("site", `film-${slug}`, ext);
+  return r.ok ? { ok: true, uploadUrl: r.uploadUrl, url: r.publicUrl } : { ok: false, error: r.error };
 }
 
 /** Saves the whole intro (every panel), made whole against the defaults first. Photographs that were ours and are no longer used are removed. */

@@ -38,10 +38,10 @@
 	{@html `<script type="application/ld+json">${ld}</script>`}
 </svelte:head>
 
-<Hero />
+<Hero heroSrc={data.heroSrc} />
 <Problems />
 <HowItWorks />
-<Film />
+<Film chapters={data.chapters} />
 <BeforeAfter />
 <Solutions />
 <Industries />

@@ -9,16 +9,41 @@ import { tryGetSupabaseAdmin } from "@/lib/supabase/server";
  */
 
 type Bucket = "team" | "site";
-const LIMITS: Record<Bucket, string> = { team: "12MB", site: "16MB" };
+const LIMITS: Record<Bucket, string> = { team: "12MB", site: "300MB" };
+const TYPES: Record<Bucket, string[]> = { team: ["image/jpeg", "image/png", "image/webp"], site: ["image/jpeg", "image/png", "image/webp", "video/mp4", "video/webm", "video/quicktime"] };
 const publicPrefix = (bucket: Bucket) => `/storage/v1/object/public/${bucket}/`;
 
 type Put = { ok: true; url: string } | { ok: false; error: string };
 
 async function ensureBucket(client: NonNullable<ReturnType<typeof tryGetSupabaseAdmin>>, bucket: Bucket): Promise<string | null> {
   const { data } = await client.storage.getBucket(bucket);
-  if (data) return null;
-  const { error } = await client.storage.createBucket(bucket, { public: true, fileSizeLimit: LIMITS[bucket], allowedMimeTypes: ["image/jpeg", "image/png", "image/webp"] });
+  if (data) {
+    // keep the limits current (the site bucket grew to take video)
+    if (data.file_size_limit !== undefined && String(data.file_size_limit) !== LIMITS[bucket]) await client.storage.updateBucket(bucket, { public: true, fileSizeLimit: LIMITS[bucket], allowedMimeTypes: TYPES[bucket] });
+    return null;
+  }
+  const { error } = await client.storage.createBucket(bucket, { public: true, fileSizeLimit: LIMITS[bucket], allowedMimeTypes: TYPES[bucket] });
   return error && !/already exists/i.test(error.message) ? error.message : null;
+}
+
+/**
+ * A one-shot signed URL the browser can PUT a file to directly — the way
+ * a 100 MB video reaches storage without passing through a server action.
+ * Returns the URL to upload to and the public URL the object will have.
+ */
+export async function signPublicUpload(bucket: Bucket, slug: string, ext: string): Promise<{ ok: true; uploadUrl: string; publicUrl: string; path: string } | { ok: false; error: string }> {
+  const client = tryGetSupabaseAdmin();
+  if (!client) return { ok: false, error: "Storage is not configured." };
+  try {
+    const bucketError = await ensureBucket(client, bucket);
+    if (bucketError) return { ok: false, error: bucketError };
+    const path = `${slug}-${Date.now().toString(36)}.${ext}`;
+    const { data, error } = await client.storage.from(bucket).createSignedUploadUrl(path);
+    if (error || !data) return { ok: false, error: error?.message ?? "Could not sign the upload." };
+    return { ok: true, uploadUrl: data.signedUrl, publicUrl: client.storage.from(bucket).getPublicUrl(path).data.publicUrl, path };
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : "Could not sign the upload." };
+  }
 }
 
 /** True for a URL that points into the given bucket of ours — the only objects we may delete. */

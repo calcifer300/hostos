@@ -4,12 +4,13 @@
 	import LiveBoard from './LiveBoard.svelte';
 	import { lazyVideo, magnetic } from '$lib/components/motion/actions';
 	import { CTA, HERO, LOGOS, VIDEO } from '$lib/content/site';
+	let { heroSrc = VIDEO.hero.src }: { heroSrc?: string } = $props();
 </script>
 
 <section class="relative overflow-hidden pt-36 pb-16 md:pt-44 md:pb-24">
 	<!-- footage: a road at dusk, far behind the copy, only on wide screens and only when allowed -->
 	<div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-20">
-		<video class="lazy h-full w-full object-cover opacity-30 [mask-image:radial-gradient(ellipse_at_center,#000_30%,transparent_75%)]" muted loop playsinline preload="none" use:lazyVideo={{ src: VIDEO.hero.src }}></video>
+		<video class="lazy h-full w-full object-cover opacity-30 [mask-image:radial-gradient(ellipse_at_center,#000_30%,transparent_75%)]" muted loop playsinline preload="none" use:lazyVideo={{ src: heroSrc }}></video>
 		<div class="absolute inset-0 bg-[linear-gradient(180deg,var(--color-bg)_0%,transparent_30%,transparent_60%,var(--color-bg)_100%)]"></div>
 	</div>
 	<div aria-hidden="true" class="pointer-events-none absolute inset-0 bg-[linear-gradient(var(--color-line)_1px,transparent_1px),linear-gradient(90deg,var(--color-line)_1px,transparent_1px)] bg-[size:72px_72px] opacity-30 [mask-image:radial-gradient(ellipse_at_top,#000_20%,transparent_70%)]"></div>

@@ -4,6 +4,7 @@
 	import Section from '$lib/components/ui/Section.svelte';
 	import { lazyVideo, reveal } from '$lib/components/motion/actions';
 	import { FILM } from '$lib/content/site';
+	let { chapters = FILM.chapters }: { chapters?: typeof FILM.chapters } = $props();
 
 	/**
 	 * The film: four chapters of one working day. Real footage on the left,
@@ -19,10 +20,10 @@
 	let shown = $state(0); // events revealed in the current chapter
 	let root = $state<HTMLElement | null>(null);
 	let inView = $state(false);
-	const current = $derived(FILM.chapters[chapter]);
+	const current = $derived(chapters[chapter]);
 
 	function go(i: number, resume = true) {
-		chapter = ((i % FILM.chapters.length) + FILM.chapters.length) % FILM.chapters.length;
+		chapter = ((i % chapters.length) + chapters.length) % chapters.length;
 		progress = 0;
 		shown = 0;
 		playing = resume;
@@ -56,10 +57,10 @@
 			<div class="relative aspect-[16/10] bg-bg lg:aspect-auto lg:min-h-[520px]">
 				<!-- before the footage arrives (or where it never does): the room in the chapter's light -->
 				<div aria-hidden="true" class="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_40%,color-mix(in_oklab,var(--color-accent)_22%,transparent),transparent_60%),radial-gradient(ellipse_at_80%_80%,color-mix(in_oklab,var(--color-platform)_18%,transparent),transparent_55%)]"></div>
-				{#each FILM.chapters as c, i (c.id)}
+				{#each chapters as c, i (c.id)}
 					<div class={`absolute inset-0 transition-opacity duration-1000 ease-[var(--ease-standard)] ${i === chapter ? 'opacity-100' : 'pointer-events-none opacity-0'}`} aria-hidden={i !== chapter}>
-						{#if Math.abs(i - chapter) <= 1 || (chapter === 0 && i === FILM.chapters.length - 1)}
-							<video class="lazy h-full w-full object-cover" muted loop playsinline preload="none" use:lazyVideo={{ src: c.src, always: true }}></video>
+						{#if Math.abs(i - chapter) <= 1 || (chapter === 0 && i === chapters.length - 1)}
+							{#key c.src}<video class="lazy h-full w-full object-cover" muted loop playsinline preload="none" use:lazyVideo={{ src: c.src, always: true }}></video>{/key}
 						{/if}
 					</div>
 				{/each}
@@ -93,7 +94,7 @@
 				<!-- chapters + progress -->
 				<div class="border-t border-line p-3">
 					<div class="grid grid-cols-4 gap-2" role="tablist" aria-label="Chapters">
-						{#each FILM.chapters as c, i}
+						{#each chapters as c, i}
 							<button type="button" role="tab" aria-selected={i === chapter} onclick={() => go(i)} class={`rounded-xl border px-2 py-2 text-left transition-colors ${i === chapter ? 'border-accent/60 bg-accent/10' : 'border-line hover:border-line-strong'}`}>
 								<span class="label-mono block text-ink-3">{c.time}</span>
 								<span class="mt-0.5 block text-[12.5px] font-medium text-ink">{c.name}</span>

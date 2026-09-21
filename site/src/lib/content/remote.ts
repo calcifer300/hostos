@@ -1,0 +1,44 @@
+/**
+ * What the site reads from the app at request time (ISR): the roster and
+ * the landing footage the Founder saved. The app answers on its own
+ * Vercel alias so the read never goes back through this site's proxy.
+ * Every read falls back to the built-in content — a slow app never breaks
+ * the front door.
+ */
+import { FILM, VIDEO } from '$lib/content/site';
+import { normalizeTeam, TEAM, type Member } from '$lib/content/team';
+
+export const APP_ORIGIN = 'https://hostos-ten.vercel.app';
+
+export type Chapter = (typeof FILM.chapters)[number];
+export interface Landing { members: Member[]; chapters: Chapter[]; heroSrc: string }
+
+const str = (v: unknown, fb: string) => (typeof v === 'string' && v.trim() ? v : fb);
+const src = (v: unknown, fb: string) => (typeof v === 'string' && /^(\/|https:\/\/[a-z0-9-]+\.supabase\.co\/storage\/v1\/object\/public\/|https:\/\/videos\.pexels\.com\/)/i.test(v) ? v : fb);
+
+function chaptersFrom(raw: unknown): Chapter[] {
+	const list = Array.isArray(raw) ? raw : [];
+	return FILM.chapters.map((d, i) => {
+		const c = (list[i] && typeof list[i] === 'object' ? list[i] : {}) as Record<string, unknown>;
+		const ev = Array.isArray(c.events) ? c.events : [];
+		const events = d.events.map((de, j) => {
+			const e = (ev[j] && typeof ev[j] === 'object' ? ev[j] : {}) as Record<string, unknown>;
+			return [str(e.t, de[0]), str(e.text, de[1])] as [string, string];
+		});
+		return { ...d, time: str(c.time, d.time), name: str(c.name, d.name), line: str(c.line, d.line), src: src(c.src, d.src), events };
+	});
+}
+
+export async function loadLanding(fetchFn: typeof fetch): Promise<Landing> {
+	const timeout = (ms: number) => { const c = new AbortController(); setTimeout(() => c.abort(), ms); return c.signal; };
+	const [team, landing] = await Promise.all([
+		fetchFn(`${APP_ORIGIN}/api/public/team`, { signal: timeout(4000) }).then((r) => (r.ok ? r.json() : null)).catch(() => null),
+		fetchFn(`${APP_ORIGIN}/api/public/landing`, { signal: timeout(4000) }).then((r) => (r.ok ? r.json() : null)).catch(() => null)
+	]);
+	const film = (landing && typeof landing === 'object' ? (landing as { film?: unknown }).film : null) as Record<string, unknown> | null;
+	return {
+		members: team ? normalizeTeam(team) : TEAM,
+		chapters: chaptersFrom(film?.chapters),
+		heroSrc: src((film?.hero as Record<string, unknown> | undefined)?.src, VIDEO.hero.src)
+	};
+}

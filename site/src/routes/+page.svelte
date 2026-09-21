@@ -62,4 +62,6 @@
 <Section id="faq" eyebrow={FAQ.eyebrow} title={FAQ.title} align="center" voice="serif">
 	<div class="mx-auto max-w-3xl"><Accordion items={FAQ.items} /></div>
 </Section>
+<!-- dusk: the paper darkens into the final ask instead of cutting to it -->
+<div aria-hidden="true" class="relative z-[1] h-40 bg-[linear-gradient(180deg,var(--color-bg)_0%,#5a6b86_45%,#1a2136_80%,#0b0d14_100%)] md:h-56"></div>
 <FinalCta closingSrc={data.extras.closing} />

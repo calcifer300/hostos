@@ -307,7 +307,8 @@
 	box-shadow: 0 -30px 60px rgb(23 27 39 / 0.18);
 }
 main > section,
-main > .ticker {
+main > .ticker,
+main > div[aria-hidden] {
 	position: relative;
 	z-index: 1;
 }

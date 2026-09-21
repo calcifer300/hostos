@@ -183,10 +183,13 @@
 .plate {
 	display: block;
 	overflow: hidden;
+	/* room for the serif italic's overshoot (the tail of a y, the swash of a w) so the clip never cuts a glyph */
+	padding: 0.24em 0.1em 0.3em;
+	margin: -0.24em -0.1em -0.3em;
 }
 .plate > span {
 	display: block;
-	transform: translateY(110%);
+	transform: translateY(160%);
 	transition: transform 0.8s var(--ease-out-expo);
 	transition-delay: var(--reveal-delay, 0ms);
 }

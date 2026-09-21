@@ -68,6 +68,7 @@ export function TeamPage({ members, footage }: { members: TeamProfile[]; footage
 
       {/* The roster: the pulse of the collective, then one tile per person — tilt, sheen, spotlight — in the same language as the vertical chooser. */}
       <section id="roles" className="relative scroll-mt-24 px-6 pb-16 md:pb-24">
+        {footage?.pillars?.[1] && <div aria-hidden className="absolute inset-0 -z-20 [mask-image:radial-gradient(ellipse_80%_70%_at_50%_50%,#000_20%,transparent_100%)]"><Footage src={footage.pillars[1]} dim={0.14} /></div>}
         <div className="mx-auto max-w-7xl">
           <SectionHeading
             eyebrow="Meet the team"
@@ -88,7 +89,8 @@ export function TeamPage({ members, footage }: { members: TeamProfile[]; footage
         </div>
       </section>
 
-      <section className="border-y border-border bg-surface/60 px-6 py-16 md:py-24">
+      <section className="relative overflow-hidden border-y border-border bg-surface/60 px-6 py-16 md:py-24">
+        {footage?.pillars?.[0] && <div aria-hidden className="absolute inset-0 -z-10 [mask-image:radial-gradient(ellipse_80%_70%_at_50%_50%,#000_20%,transparent_100%)]"><Footage src={footage.pillars[0]} dim={0.16} /></div>}
         <div className="mx-auto max-w-6xl">
           <SectionHeading eyebrow="What sets us apart" title="Built on standards, not shortcuts." description="Here's what makes our team different from a typical freelance VA arrangement." />
           <Stagger className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4" gap={0.07}>
@@ -125,7 +127,8 @@ export function TeamPage({ members, footage }: { members: TeamProfile[]; footage
         </div>
       </section>
 
-      <section className="px-6 py-16 md:py-24">
+      <section className="relative overflow-hidden px-6 py-16 md:py-24">
+        {footage?.pillars?.[2] && <div aria-hidden className="absolute inset-0 -z-10 [mask-image:radial-gradient(ellipse_80%_70%_at_50%_50%,#000_20%,transparent_100%)]"><Footage src={footage.pillars[2]} dim={0.14} /></div>}
         <div className="mx-auto max-w-6xl">
           <SectionHeading eyebrow="Channels" title="We've got every channel covered." description="Whether your customers prefer to call, email, or chat — our team is ready, and every conversation lands in your HostOS workspace." align="center" />
           <Stagger className="grid grid-cols-1 gap-4 md:grid-cols-3" gap={0.08}>

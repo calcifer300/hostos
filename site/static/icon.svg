@@ -11,8 +11,8 @@
   </defs>
   <rect x="2" y="2" width="60" height="60" rx="17" fill="#0B0D14"/>
   <rect x="8" y="8" width="48" height="48" rx="14" stroke="url(#frame)" stroke-width="3.25"/>
-  <path d="M18 46V36a14 14 0 0 1 28 0v5" stroke="url(#print)" stroke-width="3" stroke-linecap="round"/>
-  <path d="M23 50V36a9 9 0 0 1 18 0v8" stroke="url(#print)" stroke-width="3" stroke-linecap="round"/>
-  <path d="M27.5 47.5V36.5a4.5 4.5 0 0 1 9 0v9" stroke="url(#print)" stroke-width="3" stroke-linecap="round"/>
-  <path d="M32 40v13" stroke="url(#print)" stroke-width="3" stroke-linecap="round"/>
+  <path d="M14 44V30a18 18 0 0 1 36 0v8" stroke="url(#print)" stroke-width="3" stroke-linecap="round"/>
+  <path d="M20.5 50V30a11.5 11.5 0 0 1 23 0v12" stroke="url(#print)" stroke-width="3" stroke-linecap="round"/>
+  <path d="M26.5 46V30.5a5.5 5.5 0 0 1 11 0v13" stroke="url(#print)" stroke-width="3" stroke-linecap="round"/>
+  <path d="M32 36v17" stroke="url(#print)" stroke-width="3" stroke-linecap="round"/>
 </svg>

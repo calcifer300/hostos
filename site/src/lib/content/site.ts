@@ -275,6 +275,18 @@ export const LAURELS = [
 	}
 ];
 export const VOICES = { eyebrow: 'What owners say', title: 'In their *own words*.' };
+/** What the work is trusted for — stated, not claimed as prizes we have not won. */
+export const RECOGNITION = {
+	title: 'Trusted for the *whole* of it.',
+	body: 'Operations, design and engineering under one roof: the same team that answers your customers at 2 a.m. builds the software it runs on. These are the disciplines clients hire us for, and the standard each is held to.',
+	marks: [
+		{ name: 'Web & app development', note: 'Full-stack, shipped and owned by you' },
+		{ name: 'Product & UI design', note: 'Interfaces owners read at 8 a.m.' },
+		{ name: 'World-class customer service', note: '5+ years BPO experience per operator' },
+		{ name: 'B2B operations', note: 'Fleets, kitchens, field service, shops' },
+		{ name: 'Automation & AI', note: 'In the background, supervised, never the pitch' }
+	]
+};
 /** The trust line under the hero's ask. */
 /** Ten of the owners we work with (stock portraits until real ones are in), for the trust line. */
 export const CLIENT_FACES = ['/faces/3760046.jpg', '/faces/2530364.jpg', '/faces/2379004.jpg', '/faces/3974017.jpg', '/faces/6333501.jpg', '/faces/2112714.jpg', '/faces/8217534.jpg', '/faces/1195111.jpg', '/faces/12871465.jpg', '/faces/6345373.jpg'];
@@ -285,7 +297,7 @@ export const CONTACT = { facebook: { handle: '@bimbeez', url: 'https://www.faceb
 export const DEVICES = {
 	eyebrow: 'HostOS on every screen',
 	title: 'The board in your pocket, on your desk, *everywhere* the work is.',
-	lede: 'One login on iPhone, Mac and Windows. The same board your operators run from is the one you read over coffee — nothing installs, nothing syncs, nothing is missed.',
+	lede: 'One login on iPhone, Android, Mac and Windows. The same board your operators run from is the one you read over coffee — nothing installs, nothing syncs, nothing is missed.',
 	gains: [
 		{ figure: '+18%', name: 'More bookings from faster replies', body: 'A guest answered in minutes books; one answered tomorrow booked elsewhere. Reply time is the single biggest lever on occupancy, and it is the first number we move.' },
 		{ figure: '0', name: 'Missed orders, claims and estimates', body: 'Paused tablets are reopened in a minute, damage is photographed at return and filed inside the window, quiet estimates are chased on day two and day five.' },

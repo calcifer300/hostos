@@ -2,7 +2,8 @@
 	import { getContext } from 'svelte';
 	import Section from '$lib/components/ui/Section.svelte';
 	import { stagger, tilt } from '$lib/components/motion/actions';
-	import { VOICES } from '$lib/content/site';
+	import { RECOGNITION, VOICES } from '$lib/content/site';
+	import { emph, plain } from '$lib/content/emph';
 	import { LANDING_DEFAULTS, type Landing } from '$lib/content/remote';
 	/**
 	 * Owners in their own words, under a row of laurels carrying the
@@ -15,6 +16,20 @@
 </script>
 
 <Section id="voices" eyebrow={VOICES.eyebrow} title={VOICES.title} align="center">
+	<!-- recognition: the wreath flanks the statement; the disciplines beneath it; the figures beneath those -->
+	<div use:stagger={80} class="scroll-in mx-auto mb-14 max-w-4xl text-center md:mb-20">
+		<div class="flex items-center justify-center gap-4 md:gap-8">
+			<svg viewBox="0 0 24 40" class="wreath h-16 w-10 shrink-0 text-[#b8860b] md:h-24 md:w-14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><path d="M20 38C10 34 4 26 4 14M4 14c4 0 7 2 8 6M4 14c-1-4 0-8 2-12M6 22c3 0 6 2 7 6M9 30c3 0 5 1 7 4M5 8c3-1 6 0 8 3M7 4c3 0 5 1 7 3" /></svg>
+			<h3 class="display-2 headline" aria-label={plain(RECOGNITION.title)}>{@html emph(RECOGNITION.title)}</h3>
+			<svg viewBox="0 0 24 40" class="wreath h-16 w-10 shrink-0 -scale-x-100 text-[#b8860b] md:h-24 md:w-14" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true"><path d="M20 38C10 34 4 26 4 14M4 14c4 0 7 2 8 6M4 14c-1-4 0-8 2-12M6 22c3 0 6 2 7 6M9 30c3 0 5 1 7 4M5 8c3-1 6 0 8 3M7 4c3 0 5 1 7 3" /></svg>
+		</div>
+		<p class="mx-auto mt-5 max-w-2xl text-[16px] leading-relaxed text-ink-2">{RECOGNITION.body}</p>
+		<ul class="mt-8 flex flex-wrap items-start justify-center gap-x-10 gap-y-5" aria-label="What we are trusted for">
+			{#each RECOGNITION.marks as m}
+				<li class="max-w-[180px] text-center"><p class="text-[17px] font-bold tracking-tight text-ink">{m.name}</p><p class="label-mono mt-1 !text-[9.5px] text-ink-3">{m.note}</p></li>
+			{/each}
+		</ul>
+	</div>
 	<ul use:stagger={60} class="scroll-in mb-12 flex flex-wrap items-stretch justify-center gap-3 md:mb-16" aria-label="Figures">
 		{#each laurels as l}
 			<li class="laurel flex items-center gap-2 px-3 py-2">

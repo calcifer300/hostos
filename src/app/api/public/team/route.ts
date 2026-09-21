@@ -21,6 +21,7 @@ export async function GET() {
     department: m.department,
     hue: m.hue,
     photoUrl: m.photoUrl ? (m.photoUrl.startsWith("/") ? `${base}${m.photoUrl}` : m.photoUrl) : null,
+    photoFocus: m.photoFocus,
     founder: isFounderProfile(m),
   }));
   return NextResponse.json(members, {

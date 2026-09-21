@@ -16,17 +16,16 @@
 		<video class="lazy dim h-full w-full object-cover" style="--dim:0.34" muted loop playsinline preload="none" use:lazyVideo={{ src: teamSrc }}></video>
 	</div>
 	<Constellation hues={members.map((m) => m.hue)} class="pointer-events-none absolute -inset-x-8 -inset-y-12 -z-10 h-[calc(100%+6rem)] w-[calc(100%+4rem)] [mask-image:radial-gradient(ellipse_at_center,#000_55%,transparent_95%)]" />
-	<ul use:stagger={45} class="collage grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6" aria-label="Members">
+	<ul use:stagger={45} class="collage grid grid-cols-2 gap-x-3 gap-y-8 sm:grid-cols-3 lg:grid-cols-6" aria-label="Members">
 		{#each members as m, i}
-			<li class="tile group relative overflow-hidden rounded-2xl border border-line bg-surface-2 shadow-1" style={`--hue:${m.hue}; --i:${i}`}>
-				<div class="relative aspect-[4/5] overflow-hidden">
-					<img src={m.photo} alt={m.name} width="360" height="450" loading="lazy" decoding="async" class="h-full w-full scale-[1.14] object-cover object-[50%_22%] transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:scale-[1.2]" />
-					<div aria-hidden="true" class="absolute inset-x-0 bottom-0 h-1/2 bg-[linear-gradient(to_top,var(--color-surface-2),transparent)]"></div>
-					{#if m.founder}<span class="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full border border-white/25 bg-white/10 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-white backdrop-blur"><Crown class="h-3 w-3" /> Founder</span>{/if}
+			<li class="tile group relative text-center" style={`--hue:${m.hue}; --i:${i}`}>
+				<div class="relative mx-auto aspect-square w-[78%] overflow-hidden rounded-full border-[3px] border-surface-3 shadow-2 ring-2 ring-[var(--hue)]/40 transition-[box-shadow] duration-500 group-hover:ring-[var(--hue)]">
+					<img src={m.photo} alt={m.name} width="360" height="360" loading="lazy" decoding="async" class="h-full w-full scale-[1.06] object-cover transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:scale-[1.12]" style={`object-position:${m.focus}`} />
+					{#if m.founder}<span class="absolute bottom-0 left-1/2 inline-flex -translate-x-1/2 translate-y-1/2 items-center gap-1 rounded-full border border-white/25 bg-white/10 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-white backdrop-blur"><Crown class="h-3 w-3" /> Founder</span>{/if}
 				</div>
-				<div class="px-3 pb-4 pt-1 text-center">
+				<div class="px-1 pt-3 text-center">
 					<p class="name text-[14px] font-bold leading-tight tracking-tight">{m.name}</p>
-					<p class="role mt-1 text-[15px] leading-snug" style={`--hue:${m.hue}`}>{m.title}</p>
+					<p class="role mt-1 text-[12.5px] font-medium leading-snug" style={`--hue:${m.hue}`}>{m.title}</p>
 				</div>
 			</li>
 		{/each}
@@ -40,13 +39,11 @@
 	@media (min-width: 640px) {
 		.collage .tile { animation: drift 9s ease-in-out infinite; animation-delay: calc(var(--i) * -1.3s); }
 		.collage .tile:nth-child(even) { margin-top: 28px; }
-		.collage .tile:nth-child(3n) { rotate: -1.2deg; }
-		.collage .tile:nth-child(3n + 1) { rotate: 0.9deg; }
 	}
-	.collage .tile:hover { rotate: 0deg; z-index: 2; box-shadow: 0 24px 50px -20px rgb(23 27 39 / 0.35); }
+	.collage .tile:hover { z-index: 2; }
 	@keyframes drift { 0%, 100% { translate: 0 0; } 50% { translate: 0 -8px; } }
 	/* the name in the ink gradient, the role in the serif aside — the house type */
 	.name { background: linear-gradient(180deg, var(--color-ink), color-mix(in oklab, var(--color-ink) 70%, var(--hue))); -webkit-background-clip: text; background-clip: text; color: transparent; }
-	.role { font-family: var(--font-serif); font-style: italic; background: linear-gradient(90deg, color-mix(in oklab, var(--hue) 70%, #2c3ef3), color-mix(in oklab, var(--hue) 45%, #171b27)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+	.role { color: color-mix(in oklab, var(--hue) 60%, #171b27); letter-spacing: 0.01em; }
 	@media (prefers-reduced-motion: reduce) { .collage .tile { animation: none; } }
 </style>

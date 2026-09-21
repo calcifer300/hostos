@@ -45,7 +45,7 @@ export async function saveDefaultTeam(): Promise<TeamPageResult> {
   return { ok: true };
 }
 
-export async function saveTeamProfile(input: { id?: string | null; slug?: string; name: string; nickname?: string; title: string; department?: string; focus?: string | string[]; quote?: string; responsibilities?: string | string[]; photoUrl?: string; hue?: string; email?: string; active?: boolean }): Promise<TeamPageResult> {
+export async function saveTeamProfile(input: { id?: string | null; slug?: string; name: string; nickname?: string; title: string; department?: string; focus?: string | string[]; quote?: string; responsibilities?: string | string[]; photoUrl?: string; photoFocus?: string; hue?: string; email?: string; active?: boolean }): Promise<TeamPageResult> {
   const gate = await founder();
   if (gate !== true) return { ok: false, error: gate };
   const name = str(input.name, 80);
@@ -68,6 +68,7 @@ export async function saveTeamProfile(input: { id?: string | null; slug?: string
     quote: str(input.quote, 160),
     responsibilities: lines(input.responsibilities, 10),
     photoUrl: photo || null,
+    photoFocus: /^\d{1,3}% \d{1,3}%$/.test(str(input.photoFocus, 10)) ? str(input.photoFocus, 10) : existing?.photoFocus ?? "50% 30%",
     hue: /^#[0-9a-f]{6}$/i.test(str(input.hue, 7)) ? str(input.hue, 7).toLowerCase() : existing?.hue ?? null,
     email: str(input.email, 160).toLowerCase() || null,
     position: existing?.position ?? profiles.length,

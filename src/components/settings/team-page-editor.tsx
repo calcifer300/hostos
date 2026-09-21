@@ -17,9 +17,9 @@ import { DEPARTMENTS, DEPARTMENT_IDS, hueOf, type Department, type TeamProfile }
 import { MemberPhoto, Portrait, TeamTile } from "@/components/marketing/team-tiles";
 import { cn } from "@/lib/utils";
 
-type Draft = { id: string | null; slug: string; name: string; nickname: string; title: string; department: Department; focus: string; quote: string; responsibilities: string; photoUrl: string; hue: string; email: string; active: boolean };
+type Draft = { id: string | null; slug: string; name: string; nickname: string; title: string; department: Department; focus: string; quote: string; responsibilities: string; photoUrl: string; photoFocus: string; hue: string; email: string; active: boolean };
 
-const toDraft = (p?: TeamProfile): Draft => ({ id: p?.id ?? null, slug: p?.slug ?? "", name: p?.name ?? "", nickname: p?.nickname ?? "", title: p?.title ?? "", department: p?.department ?? "operations", focus: p?.focus.join(" · ") ?? "", quote: p?.quote ?? "", responsibilities: p?.responsibilities.join("\n") ?? "", photoUrl: p?.photoUrl ?? "", hue: p?.hue ?? (p ? DEPARTMENTS[p.department].hue : ""), email: p?.email ?? "", active: p?.active ?? true });
+const toDraft = (p?: TeamProfile): Draft => ({ id: p?.id ?? null, slug: p?.slug ?? "", name: p?.name ?? "", nickname: p?.nickname ?? "", title: p?.title ?? "", department: p?.department ?? "operations", focus: p?.focus.join(" · ") ?? "", quote: p?.quote ?? "", responsibilities: p?.responsibilities.join("\n") ?? "", photoUrl: p?.photoUrl ?? "", photoFocus: p?.photoFocus ?? "50% 30%", hue: p?.hue ?? (p ? DEPARTMENTS[p.department].hue : ""), email: p?.email ?? "", active: p?.active ?? true });
 
 /**
  * The Founder's editor for hostoscollective.com/team: every member as a
@@ -38,7 +38,7 @@ function PhotoField({ draft, onChange }: { draft: Draft; onChange: (photoUrl: st
   const [busy, setBusy] = React.useState<null | "preparing" | "uploading">(null);
   const [over, setOver] = React.useState(false);
   const [match, setMatch] = React.useState(true);
-  const preview: TeamProfile = { id: "preview", slug: draft.slug || "new", name: draft.name || "?", nickname: draft.nickname || null, title: "", department: draft.department, focus: [], quote: "", responsibilities: [], photoUrl: draft.photoUrl || null, hue: /^#[0-9a-f]{6}$/i.test(draft.hue) ? draft.hue : null, email: null, position: 0, active: true };
+  const preview: TeamProfile = { id: "preview", slug: draft.slug || "new", name: draft.name || "?", nickname: draft.nickname || null, title: "", department: draft.department, focus: [], quote: "", responsibilities: [], photoUrl: draft.photoUrl || null, photoFocus: draft.photoFocus, hue: /^#[0-9a-f]{6}$/i.test(draft.hue) ? draft.hue : null, email: null, position: 0, active: true };
 
   async function take(file: File | undefined) {
     if (!file || busy) return;
@@ -92,6 +92,24 @@ function PhotoField({ draft, onChange }: { draft: Draft; onChange: (photoUrl: st
     </div>
   );
 }
+/** Where the portrait sits in a round frame: two sliders, a live circle, so no face or hair is cut. */
+function FocusField({ draft, onChange }: { draft: Draft; onChange: (focus: string) => void }) {
+  const [x, y] = draft.photoFocus.split(" ").map((v) => parseInt(v, 10) || 50);
+  const set = (nx: number, ny: number) => onChange(`${Math.max(0, Math.min(100, nx))}% ${Math.max(0, Math.min(100, ny))}%`);
+  return (
+    <div className="mt-3 flex items-center gap-4">
+      <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-full border border-border bg-surface">
+        {draft.photoUrl && <img src={draft.photoUrl} alt="" className="h-full w-full scale-[1.05] object-cover" style={{ objectPosition: draft.photoFocus }} />}
+      </div>
+      <div className="flex-1 space-y-2 text-[12px] text-muted-foreground">
+        <label className="flex items-center gap-3">Left · right<input type="range" min={0} max={100} value={x} onChange={(e) => set(Number(e.target.value), y)} className="flex-1 accent-accent" /></label>
+        <label className="flex items-center gap-3">Up · down<input type="range" min={0} max={100} value={y} onChange={(e) => set(x, Number(e.target.value))} className="flex-1 accent-accent" /></label>
+        <p className="font-mono text-[11px]">{draft.photoFocus} · the circle is how the landing page shows it</p>
+      </div>
+    </div>
+  );
+}
+
 export function TeamPageEditor({ profiles, fromDatabase }: { profiles: TeamProfile[]; fromDatabase: boolean }) {
   const router = useRouter();
   const [pending, startTransition] = React.useTransition();
@@ -109,7 +127,7 @@ export function TeamPageEditor({ profiles, fromDatabase }: { profiles: TeamProfi
   }
 
   const preview: TeamProfile | null = draft
-    ? { id: draft.id ?? "new", slug: draft.slug || "new", name: draft.name || "Name", nickname: draft.nickname || null, title: draft.title || "Title", department: draft.department, focus: draft.focus.split("·").map((s) => s.trim()).filter(Boolean), quote: draft.quote, responsibilities: draft.responsibilities.split("\n").map((s) => s.trim()).filter(Boolean), photoUrl: draft.photoUrl || null, hue: /^#[0-9a-f]{6}$/i.test(draft.hue) ? draft.hue : null, email: draft.email || null, position: 0, active: draft.active }
+    ? { id: draft.id ?? "new", slug: draft.slug || "new", name: draft.name || "Name", nickname: draft.nickname || null, title: draft.title || "Title", department: draft.department, focus: draft.focus.split("·").map((s) => s.trim()).filter(Boolean), quote: draft.quote, responsibilities: draft.responsibilities.split("\n").map((s) => s.trim()).filter(Boolean), photoUrl: draft.photoUrl || null, photoFocus: draft.photoFocus, hue: /^#[0-9a-f]{6}$/i.test(draft.hue) ? draft.hue : null, email: draft.email || null, position: 0, active: draft.active }
     : null;
 
   return (
@@ -147,6 +165,7 @@ export function TeamPageEditor({ profiles, fromDatabase }: { profiles: TeamProfi
                   <div className="space-y-1.5 sm:col-span-2"><Label htmlFor="t-quote">One-line promise</Label><Input id="t-quote" value={draft.quote} onChange={(e) => setDraft({ ...draft, quote: e.target.value })} placeholder="Leads the company toward a bigger future." /></div>
                   <div className="space-y-1.5 sm:col-span-2"><Label htmlFor="t-resp">Responsibilities (one per line)</Label><Textarea id="t-resp" rows={6} value={draft.responsibilities} onChange={(e) => setDraft({ ...draft, responsibilities: e.target.value })} /></div>
                   <PhotoField draft={draft} onChange={(photoUrl) => setDraft({ ...draft, photoUrl })} />
+                  <FocusField draft={draft} onChange={(photoFocus) => setDraft({ ...draft, photoFocus })} />
                   <div className="space-y-1.5"><Label htmlFor="t-hue">Tile colour</Label>
                     <div className="flex items-center gap-2">
                       <input id="t-hue" type="color" value={/^#[0-9a-f]{6}$/i.test(draft.hue) ? draft.hue : DEPARTMENTS[draft.department].hue} onChange={(e) => setDraft({ ...draft, hue: e.target.value })} className="h-9 w-12 cursor-pointer rounded-lg border border-border bg-transparent p-0.5" aria-label="Tile colour" />

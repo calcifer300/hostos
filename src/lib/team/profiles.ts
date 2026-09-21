@@ -56,6 +56,8 @@ export interface TeamProfile {
   quote: string;
   responsibilities: string[];
   photoUrl: string | null;
+  /** Where the portrait is centred inside its frame, "x% y%" — set by the Founder so no face or hair is cut. */
+  photoFocus: string;
   /** This person's own tile colour; falls back to the department's. */
   hue: string | null;
   /** Their sign-in, so the roster can link to the workspace member. Optional. */
@@ -75,6 +77,7 @@ const member = (slug: string, name: string, nickname: string, title: string, dep
   quote,
   responsibilities,
   photoUrl: `/team/${slug}.jpg`,
+  photoFocus: "50% 30%",
   hue,
   email: null,
   position: 0,

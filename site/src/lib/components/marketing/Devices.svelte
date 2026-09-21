@@ -21,7 +21,7 @@
 		<div use:tilt={6} class="device phone mx-auto w-[210px] md:mx-0 md:justify-self-end">
 			<div class="relative aspect-[9/19.5] w-full overflow-hidden rounded-[38px] border-[6px] border-[#1a1d27] bg-surface-3 shadow-2">
 				<div class="absolute left-1/2 top-2 z-10 h-6 w-24 -translate-x-1/2 rounded-full bg-[#1a1d27]"></div>
-				<div class="px-4 pb-4 pt-10 text-[10px]">
+				<div class="flex h-full flex-col overflow-hidden px-4 pb-4 pt-10 text-[10px]">
 					<p class="label-mono text-ink-3">app.hostos · Today</p>
 					<p class="mt-2 text-[15px] font-semibold text-ink">Good morning, John</p>
 					<div class="mt-3 grid grid-cols-2 gap-2">
@@ -31,9 +31,9 @@
 					</div>
 					<div class="mt-3 rounded-xl border border-line bg-surface-2 p-2.5">
 						<p class="label-mono mb-1.5 text-ink-3">Next up</p>
-						{#each (day.find((w) => w.kind === 'list')?.rows ?? []).slice(0, 4) as [t, txt]}<p class="flex gap-2 py-1 text-ink-2"><span class="font-mono text-accent">{t}</span>{txt}</p>{/each}
+						{#each (day.find((w) => w.kind === 'list')?.rows ?? []).slice(0, 2) as [t, txt]}<p class="flex gap-2 truncate py-1 text-ink-2"><span class="shrink-0 font-mono text-accent">{t}</span><span class="truncate">{txt}</span></p>{/each}
 					</div>
-					<div class="mt-3 flex items-center gap-2 rounded-xl border border-ok/50 bg-ok/10 p-2.5 text-ink"><span class="h-1.5 w-1.5 rounded-full bg-ok"></span>Civic back · 12 photos · no damage</div>
+					<div class="mt-3 flex items-center gap-2 truncate rounded-xl border border-ok/50 bg-ok/10 p-2.5 text-ink"><span class="h-1.5 w-1.5 shrink-0 rounded-full bg-ok"></span><span class="truncate">Civic back · 12 photos · no damage</span></div>
 				</div>
 			</div>
 		</div>

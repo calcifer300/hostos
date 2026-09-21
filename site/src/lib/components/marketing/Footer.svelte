@@ -8,7 +8,7 @@
 	<div class="container-x grid grid-cols-1 gap-10 py-14 md:grid-cols-[1.4fr_repeat(3,1fr)]">
 		<div>
 			<Logo />
-			<p class="mt-4 max-w-xs text-[14px] leading-relaxed text-ink-3">Operations, systems and software for growing businesses. Manila · working on your hours.</p>
+			<p class="mt-4 max-w-xs text-[14px] leading-relaxed text-ink-3">Operations, systems and software for growing businesses. Founded by John Jenrique Briones · Manila · working on your hours.</p>
 			<p class="label-mono mt-6 text-ink-3">{SITE.email}</p>
 		</div>
 		{#each FOOTER.columns as col}

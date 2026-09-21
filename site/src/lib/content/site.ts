@@ -205,9 +205,9 @@ export const TILES: Record<string, string> = {
 	"solution:turo-ops": "https://videos.pexels.com/video-files/4208203/4208203-sd_960_540_24fps.mp4",
 	"solution:doordash-ops": "https://videos.pexels.com/video-files/7362583/7362583-sd_960_540_24fps.mp4",
 	"solution:consulting": "https://videos.pexels.com/video-files/7413764/7413764-sd_960_540_24fps.mp4",
-	"solution:webapps": "https://videos.pexels.com/video-files/8266178/8266178-sd_960_540_25fps.mp4",
+	"solution:webapps": "https://videos.pexels.com/video-files/854053/854053-sd_960_540_25fps.mp4",
 	"solution:websites": "https://videos.pexels.com/video-files/4177954/4177954-sd_960_540_30fps.mp4",
-	"solution:crm": "https://videos.pexels.com/video-files/3986119/3986119-sd_960_540_25fps.mp4",
+	"solution:crm": "https://videos.pexels.com/video-files/8632602/8632602-sd_960_540_25fps.mp4",
 	"solution:dashboards": "https://videos.pexels.com/video-files/8064422/8064422-sd_960_540_30fps.mp4",
 	"solution:automation": "https://videos.pexels.com/video-files/8094279/8094279-sd_960_540_25fps.mp4",
 	"solution:integrations": "https://videos.pexels.com/video-files/20693196/20693196-sd_960_540_25fps.mp4",
@@ -222,7 +222,7 @@ export const TILES: Record<string, string> = {
 	"problem:6": "https://videos.pexels.com/video-files/8064422/8064422-sd_960_540_30fps.mp4",
 	"pillar:people": "https://videos.pexels.com/video-files/8865706/8865706-sd_960_540_25fps.mp4",
 	"pillar:systems": "https://videos.pexels.com/video-files/7413764/7413764-sd_960_540_24fps.mp4",
-	"pillar:software": "https://videos.pexels.com/video-files/8266178/8266178-sd_960_540_25fps.mp4",
+	"pillar:software": "https://videos.pexels.com/video-files/8480293/8480293-sd_960_540_25fps.mp4",
 	"week:1": "https://videos.pexels.com/video-files/7413764/7413764-sd_960_540_24fps.mp4",
 	"week:2": "https://videos.pexels.com/video-files/8266178/8266178-sd_960_540_25fps.mp4",
 	"week:3": "https://videos.pexels.com/video-files/8865706/8865706-sd_960_540_25fps.mp4",
@@ -275,6 +275,24 @@ export const LAURELS = [
 	}
 ];
 export const VOICES = { eyebrow: 'What owners say', title: 'In their *own words*.' };
+/** The trust line under the hero's ask. */
+export const RATING = { value: '5.0', stars: 5, note: 'from the owners we work with', count: '50+ clients served' };
+/** Where to reach the Founder directly. */
+export const CONTACT = { facebook: { handle: '@bimbeez', url: 'https://www.facebook.com/bimbeez', name: 'John Briones' }, founderEmail: 'johnbriones774@gmail.com', founder: 'John Jenrique Briones' };
+/** HostOS on every screen, and what it does for the numbers. */
+export const DEVICES = {
+	eyebrow: 'HostOS on every screen',
+	title: 'The board in your pocket, on your desk, *everywhere* the work is.',
+	lede: 'One login on iPhone, Mac and Windows. The same board your operators run from is the one you read over coffee — nothing installs, nothing syncs, nothing is missed.',
+	gains: [
+		{ figure: '+18%', name: 'More bookings from faster replies', body: 'A guest answered in minutes books; one answered tomorrow booked elsewhere. Reply time is the single biggest lever on occupancy, and it is the first number we move.' },
+		{ figure: '0', name: 'Missed orders, claims and estimates', body: 'Paused tablets are reopened in a minute, damage is photographed at return and filed inside the window, quiet estimates are chased on day two and day five.' },
+		{ figure: '4–8 h', name: 'Of your week, back', body: 'The inbox, the calendar, the tablets and the follow-ups run without you. You read one board at 8 a.m. and decide; you stop being the software.' },
+		{ figure: '+12%', name: 'Utilization and pricing', body: 'Calendars priced by demand, turnarounds scheduled at booking, cars and tables that stop sitting empty because someone forgot to open them.' },
+		{ figure: '2×', name: 'Reviews and rankings', body: 'Every review answered the same day, every dispute filed with evidence — the ratings that decide where you appear on Turo, DoorDash and Google.' },
+		{ figure: '1', name: 'Board for the whole business', body: 'Fleet, kitchen, field and shop on one screen with the same team behind it. Add a vertical without adding a vendor.' }
+	]
+};
 export const WHY = {
 	eyebrow: 'Why HostOS Collective',
 	title: 'Why a team *from the Philippines* — and why this one.',
@@ -288,6 +306,7 @@ export const WHY = {
 		{ id: 'plan', name: 'A plan you can hold us to', body: 'Thirty days, four milestones, the numbers in a weekly note. If it isn’t a fit after the working session, you keep the map at no charge.' }
 	]
 };
+
 /** Every section's living background: a dimmed clip (or none) and the colour its light leans towards. */
 export const SECTIONS: Record<string, { clip: string; tint: string }> = {
 	problems: {
@@ -333,7 +352,10 @@ export const SECTIONS: Record<string, { clip: string; tint: string }> = {
 	why: {
 		clip: "https://videos.pexels.com/video-files/8865706/8865706-sd_960_540_25fps.mp4",
 		tint: "#ff9f0a"
-	}
+	},
+	devices: { clip: "", tint: "#3b9cff" },
+	collective: { clip: "", tint: "#8b7cff" },
+	voices: { clip: "", tint: "#3b9cff" }
 };
 
 export const FILM = {

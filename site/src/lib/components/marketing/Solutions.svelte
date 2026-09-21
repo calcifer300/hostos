@@ -9,7 +9,7 @@
 	const landing = getContext<Landing | undefined>('landing');
 	const tiles = $derived(landing?.tiles ?? LANDING_DEFAULTS.tiles);
 	let { chapters = FILM.chapters, extras = { team: VIDEO.team, delivery: VIDEO.delivery, closing: VIDEO.closing } }: { chapters?: typeof FILM.chapters; extras?: { team: string; delivery: string; closing: string } } = $props();
-	const banner = $derived([extras.team, chapters[3].src, extras.delivery, extras.closing]);
+	const banner = $derived([extras.team, tiles['solution:webapps'] || chapters[3].src, extras.delivery, extras.closing]);
 	import Motif from '$lib/components/ui/Motif.svelte';
 	const motifs = { run: 'schedule', build: 'blocks', connect: 'nodes', understand: 'chart' } as const;
 	import { CTA, SOLUTIONS } from '$lib/content/site';

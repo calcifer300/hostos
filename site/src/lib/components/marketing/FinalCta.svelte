@@ -4,6 +4,10 @@
 	import { lazyVideo, reveal } from '$lib/components/motion/actions';
 	import { FINAL, SITE, VIDEO } from '$lib/content/site';
 	import { emph, plain } from '$lib/content/emph';
+	import { getContext } from 'svelte';
+	import { LANDING_DEFAULTS, type Landing } from '$lib/content/remote';
+	const landing = getContext<Landing | undefined>('landing');
+	const contact = $derived(landing?.copy?.contact ?? LANDING_DEFAULTS.copy.contact);
 	let { closingSrc = VIDEO.closing }: { closingSrc?: string } = $props();
 	/**
 	 * The one ask. The form posts to the app's contact endpoint (same origin
@@ -41,7 +45,13 @@
 			<p class="label-mono mb-4 text-accent">Start here</p>
 			<h2 class="display-1 headline" aria-label={plain(FINAL.title)}>{@html emph(FINAL.title)}</h2>
 			<p class="mt-6 max-w-[48ch] text-[17px] leading-relaxed text-ink-2 md:text-[19px]">{FINAL.body}</p>
-			<ul class="mt-8 space-y-2">
+			<!-- the Founder, directly: his Facebook and his own inbox -->
+			<a href={contact.facebookUrl} target="_blank" rel="noopener" class="mt-8 flex items-center gap-4 rounded-2xl border border-line bg-surface-2/80 p-4 transition-[border-color,transform] duration-300 hover:-translate-y-0.5 hover:border-accent/60">
+				<span class="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[#1877f2] text-white"><svg viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor" aria-hidden="true"><path d="M13.5 22v-8h2.7l.4-3.2h-3.1V8.8c0-.9.3-1.6 1.6-1.6h1.7V4.4c-.3 0-1.3-.1-2.5-.1-2.5 0-4.1 1.5-4.1 4.2v2.3H7.4V14h2.8v8z" /></svg></span>
+				<span class="min-w-0"><span class="block text-[15px] font-semibold text-ink">John Briones on Facebook</span><span class="block text-[13px] text-ink-3">{contact.facebookHandle} · message me directly, I read every one</span></span>
+			</a>
+			<ul class="mt-4 space-y-2">
+				<li><a href={`mailto:${contact.founderEmail}`} class="inline-flex items-center gap-2.5 text-[15px] text-ink-2 transition-colors hover:text-ink"><Mail class="h-4 w-4 text-accent" /><span class="label-mono text-ink-3">Founder</span>{contact.founderEmail}</a></li>
 				{#each FINAL.channels as c}
 					<li><a href={c.href} class="inline-flex items-center gap-2.5 text-[15px] text-ink-2 transition-colors hover:text-ink">{#if c.label === 'Email'}<Mail class="h-4 w-4 text-accent" />{:else}<MessageCircle class="h-4 w-4 text-accent" />{/if}<span class="label-mono w-20 text-ink-3">{c.label}</span>{c.value}</a></li>
 				{/each}

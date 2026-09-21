@@ -112,6 +112,72 @@ export function FilmEditor({ film: initial, fromDatabase }: { film: LandingFilm;
       </Card>
 
       <Card padding="md">
+        <details open>
+          <summary className="cursor-pointer text-[12.5px] font-semibold uppercase tracking-wide text-muted-foreground">Words · the hero, every section’s header, the trust line, how to reach you</summary>
+          <p className="mt-1 text-[12px] text-muted-foreground">Wrap a phrase in *asterisks* to set it in the serif italic. Leave a section field empty to keep the built-in words.</p>
+          <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
+            {([["eyebrow", "Hero eyebrow"], ["line1", "Headline, first line"], ["line2", "Headline, second line"], ["body", "Hero paragraph"]] as const).map(([k, label]) => (
+              <div key={k} className={k === "body" ? "md:col-span-2" : ""}><Label className="mb-1 block">{label}</Label><Input value={film.copy.hero[k]} onChange={(e) => { setFilm((f) => ({ ...f, copy: { ...f.copy, hero: { ...f.copy.hero, [k]: e.target.value } } })); setDirty(true); }} /></div>
+            ))}
+            <div><Label className="mb-1 block">Rating shown under the ask</Label><div className="grid grid-cols-[80px_1fr] gap-2"><Input value={film.copy.rating.value} onChange={(e) => { setFilm((f) => ({ ...f, copy: { ...f.copy, rating: { ...f.copy.rating, value: e.target.value } } })); setDirty(true); }} className="font-mono" /><Input value={film.copy.rating.note} onChange={(e) => { setFilm((f) => ({ ...f, copy: { ...f.copy, rating: { ...f.copy.rating, note: e.target.value } } })); setDirty(true); }} /></div></div>
+            <div><Label className="mb-1 block">Count next to the stars</Label><Input value={film.copy.rating.count} onChange={(e) => { setFilm((f) => ({ ...f, copy: { ...f.copy, rating: { ...f.copy.rating, count: e.target.value } } })); setDirty(true); }} /></div>
+            <div><Label className="mb-1 block">Facebook handle</Label><Input value={film.copy.contact.facebookHandle} onChange={(e) => { setFilm((f) => ({ ...f, copy: { ...f.copy, contact: { ...f.copy.contact, facebookHandle: e.target.value } } })); setDirty(true); }} /></div>
+            <div><Label className="mb-1 block">Facebook link</Label><Input value={film.copy.contact.facebookUrl} onChange={(e) => { setFilm((f) => ({ ...f, copy: { ...f.copy, contact: { ...f.copy.contact, facebookUrl: e.target.value } } })); setDirty(true); }} className="font-mono text-[12px]" /></div>
+            <div className="md:col-span-2"><Label className="mb-1 block">Founder’s email (shown on the consultation panel only)</Label><Input value={film.copy.contact.founderEmail} onChange={(e) => { setFilm((f) => ({ ...f, copy: { ...f.copy, contact: { ...f.copy.contact, founderEmail: e.target.value } } })); setDirty(true); }} className="font-mono text-[12px]" /></div>
+          </div>
+          <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2">
+            {SECTION_SLOTS.map(({ id, label }) => {
+              const c = film.copy.sections[id] ?? { eyebrow: "", title: "", lede: "" };
+              const set = (k: "eyebrow" | "title" | "lede", v: string) => { setFilm((f) => ({ ...f, copy: { ...f.copy, sections: { ...f.copy.sections, [id]: { ...(f.copy.sections[id] ?? { eyebrow: "", title: "", lede: "" }), [k]: v } } } })); setDirty(true); };
+              return (
+                <div key={id} className="rounded-xl border border-border p-3">
+                  <p className="mb-2 text-[12px] font-semibold">{label}</p>
+                  <div className="space-y-2">
+                    <Input aria-label="Eyebrow" value={c.eyebrow} onChange={(e) => set("eyebrow", e.target.value)} placeholder="Eyebrow (small label)" />
+                    <Input aria-label="Title" value={c.title} onChange={(e) => set("title", e.target.value)} placeholder="Title — *asterisks* for the serif aside" />
+                    <Input aria-label="Lede" value={c.lede} onChange={(e) => set("lede", e.target.value)} placeholder="Lede (the line under the title)" />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </details>
+      </Card>
+
+      <Card padding="md">
+        <details open>
+          <summary className="cursor-pointer text-[12.5px] font-semibold uppercase tracking-wide text-muted-foreground">Words · the hero, every section’s header, the trust line, how to reach you</summary>
+          <p className="mt-1 text-[12px] text-muted-foreground">Wrap a phrase in *asterisks* to set it in the serif italic. Leave a section field empty to keep the built-in words.</p>
+          <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
+            {([["eyebrow", "Hero eyebrow"], ["line1", "Headline, first line"], ["line2", "Headline, second line"], ["body", "Hero paragraph"]] as const).map(([k, label]) => (
+              <div key={k} className={k === "body" ? "md:col-span-2" : ""}><Label className="mb-1 block">{label}</Label><Input value={film.copy.hero[k]} onChange={(e) => { setFilm((f) => ({ ...f, copy: { ...f.copy, hero: { ...f.copy.hero, [k]: e.target.value } } })); setDirty(true); }} /></div>
+            ))}
+            <div><Label className="mb-1 block">Rating shown under the ask</Label><div className="grid grid-cols-[80px_1fr] gap-2"><Input value={film.copy.rating.value} onChange={(e) => { setFilm((f) => ({ ...f, copy: { ...f.copy, rating: { ...f.copy.rating, value: e.target.value } } })); setDirty(true); }} className="font-mono" /><Input value={film.copy.rating.note} onChange={(e) => { setFilm((f) => ({ ...f, copy: { ...f.copy, rating: { ...f.copy.rating, note: e.target.value } } })); setDirty(true); }} /></div></div>
+            <div><Label className="mb-1 block">Count next to the stars</Label><Input value={film.copy.rating.count} onChange={(e) => { setFilm((f) => ({ ...f, copy: { ...f.copy, rating: { ...f.copy.rating, count: e.target.value } } })); setDirty(true); }} /></div>
+            <div><Label className="mb-1 block">Facebook handle</Label><Input value={film.copy.contact.facebookHandle} onChange={(e) => { setFilm((f) => ({ ...f, copy: { ...f.copy, contact: { ...f.copy.contact, facebookHandle: e.target.value } } })); setDirty(true); }} /></div>
+            <div><Label className="mb-1 block">Facebook link</Label><Input value={film.copy.contact.facebookUrl} onChange={(e) => { setFilm((f) => ({ ...f, copy: { ...f.copy, contact: { ...f.copy.contact, facebookUrl: e.target.value } } })); setDirty(true); }} className="font-mono text-[12px]" /></div>
+            <div className="md:col-span-2"><Label className="mb-1 block">Founder’s email (shown on the consultation panel only)</Label><Input value={film.copy.contact.founderEmail} onChange={(e) => { setFilm((f) => ({ ...f, copy: { ...f.copy, contact: { ...f.copy.contact, founderEmail: e.target.value } } })); setDirty(true); }} className="font-mono text-[12px]" /></div>
+          </div>
+          <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2">
+            {SECTION_SLOTS.map(({ id, label }) => {
+              const c = film.copy.sections[id] ?? { eyebrow: "", title: "", lede: "" };
+              const set = (k: "eyebrow" | "title" | "lede", v: string) => { setFilm((f) => ({ ...f, copy: { ...f.copy, sections: { ...f.copy.sections, [id]: { ...(f.copy.sections[id] ?? { eyebrow: "", title: "", lede: "" }), [k]: v } } } })); setDirty(true); };
+              return (
+                <div key={id} className="rounded-xl border border-border p-3">
+                  <p className="mb-2 text-[12px] font-semibold">{label}</p>
+                  <div className="space-y-2">
+                    <Input aria-label="Eyebrow" value={c.eyebrow} onChange={(e) => set("eyebrow", e.target.value)} placeholder="Eyebrow (small label)" />
+                    <Input aria-label="Title" value={c.title} onChange={(e) => set("title", e.target.value)} placeholder="Title — *asterisks* for the serif aside" />
+                    <Input aria-label="Lede" value={c.lede} onChange={(e) => set("lede", e.target.value)} placeholder="Lede (the line under the title)" />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </details>
+      </Card>
+
+      <Card padding="md">
         <details>
           <summary className="cursor-pointer text-[12.5px] font-semibold uppercase tracking-wide text-muted-foreground">Testimonials and laurels</summary>
           <p className="mt-1 text-[12px] text-muted-foreground">What owners said, in their words, and the figures on the laurels above them. Keep it true — this is the page people check.</p>
@@ -140,6 +206,72 @@ export function FilmEditor({ film: initial, fromDatabase }: { film: LandingFilm;
               </div>
             ))}
             {film.laurels.length < 6 && <Button variant="ghost" size="sm" onClick={() => { setFilm((f) => ({ ...f, laurels: [...f.laurels, { value: "", label: "" }] })); setDirty(true); }}>Add a laurel</Button>}
+          </div>
+        </details>
+      </Card>
+
+      <Card padding="md">
+        <details open>
+          <summary className="cursor-pointer text-[12.5px] font-semibold uppercase tracking-wide text-muted-foreground">Words · the hero, every section’s header, the trust line, how to reach you</summary>
+          <p className="mt-1 text-[12px] text-muted-foreground">Wrap a phrase in *asterisks* to set it in the serif italic. Leave a section field empty to keep the built-in words.</p>
+          <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
+            {([["eyebrow", "Hero eyebrow"], ["line1", "Headline, first line"], ["line2", "Headline, second line"], ["body", "Hero paragraph"]] as const).map(([k, label]) => (
+              <div key={k} className={k === "body" ? "md:col-span-2" : ""}><Label className="mb-1 block">{label}</Label><Input value={film.copy.hero[k]} onChange={(e) => { setFilm((f) => ({ ...f, copy: { ...f.copy, hero: { ...f.copy.hero, [k]: e.target.value } } })); setDirty(true); }} /></div>
+            ))}
+            <div><Label className="mb-1 block">Rating shown under the ask</Label><div className="grid grid-cols-[80px_1fr] gap-2"><Input value={film.copy.rating.value} onChange={(e) => { setFilm((f) => ({ ...f, copy: { ...f.copy, rating: { ...f.copy.rating, value: e.target.value } } })); setDirty(true); }} className="font-mono" /><Input value={film.copy.rating.note} onChange={(e) => { setFilm((f) => ({ ...f, copy: { ...f.copy, rating: { ...f.copy.rating, note: e.target.value } } })); setDirty(true); }} /></div></div>
+            <div><Label className="mb-1 block">Count next to the stars</Label><Input value={film.copy.rating.count} onChange={(e) => { setFilm((f) => ({ ...f, copy: { ...f.copy, rating: { ...f.copy.rating, count: e.target.value } } })); setDirty(true); }} /></div>
+            <div><Label className="mb-1 block">Facebook handle</Label><Input value={film.copy.contact.facebookHandle} onChange={(e) => { setFilm((f) => ({ ...f, copy: { ...f.copy, contact: { ...f.copy.contact, facebookHandle: e.target.value } } })); setDirty(true); }} /></div>
+            <div><Label className="mb-1 block">Facebook link</Label><Input value={film.copy.contact.facebookUrl} onChange={(e) => { setFilm((f) => ({ ...f, copy: { ...f.copy, contact: { ...f.copy.contact, facebookUrl: e.target.value } } })); setDirty(true); }} className="font-mono text-[12px]" /></div>
+            <div className="md:col-span-2"><Label className="mb-1 block">Founder’s email (shown on the consultation panel only)</Label><Input value={film.copy.contact.founderEmail} onChange={(e) => { setFilm((f) => ({ ...f, copy: { ...f.copy, contact: { ...f.copy.contact, founderEmail: e.target.value } } })); setDirty(true); }} className="font-mono text-[12px]" /></div>
+          </div>
+          <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2">
+            {SECTION_SLOTS.map(({ id, label }) => {
+              const c = film.copy.sections[id] ?? { eyebrow: "", title: "", lede: "" };
+              const set = (k: "eyebrow" | "title" | "lede", v: string) => { setFilm((f) => ({ ...f, copy: { ...f.copy, sections: { ...f.copy.sections, [id]: { ...(f.copy.sections[id] ?? { eyebrow: "", title: "", lede: "" }), [k]: v } } } })); setDirty(true); };
+              return (
+                <div key={id} className="rounded-xl border border-border p-3">
+                  <p className="mb-2 text-[12px] font-semibold">{label}</p>
+                  <div className="space-y-2">
+                    <Input aria-label="Eyebrow" value={c.eyebrow} onChange={(e) => set("eyebrow", e.target.value)} placeholder="Eyebrow (small label)" />
+                    <Input aria-label="Title" value={c.title} onChange={(e) => set("title", e.target.value)} placeholder="Title — *asterisks* for the serif aside" />
+                    <Input aria-label="Lede" value={c.lede} onChange={(e) => set("lede", e.target.value)} placeholder="Lede (the line under the title)" />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </details>
+      </Card>
+
+      <Card padding="md">
+        <details open>
+          <summary className="cursor-pointer text-[12.5px] font-semibold uppercase tracking-wide text-muted-foreground">Words · the hero, every section’s header, the trust line, how to reach you</summary>
+          <p className="mt-1 text-[12px] text-muted-foreground">Wrap a phrase in *asterisks* to set it in the serif italic. Leave a section field empty to keep the built-in words.</p>
+          <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
+            {([["eyebrow", "Hero eyebrow"], ["line1", "Headline, first line"], ["line2", "Headline, second line"], ["body", "Hero paragraph"]] as const).map(([k, label]) => (
+              <div key={k} className={k === "body" ? "md:col-span-2" : ""}><Label className="mb-1 block">{label}</Label><Input value={film.copy.hero[k]} onChange={(e) => { setFilm((f) => ({ ...f, copy: { ...f.copy, hero: { ...f.copy.hero, [k]: e.target.value } } })); setDirty(true); }} /></div>
+            ))}
+            <div><Label className="mb-1 block">Rating shown under the ask</Label><div className="grid grid-cols-[80px_1fr] gap-2"><Input value={film.copy.rating.value} onChange={(e) => { setFilm((f) => ({ ...f, copy: { ...f.copy, rating: { ...f.copy.rating, value: e.target.value } } })); setDirty(true); }} className="font-mono" /><Input value={film.copy.rating.note} onChange={(e) => { setFilm((f) => ({ ...f, copy: { ...f.copy, rating: { ...f.copy.rating, note: e.target.value } } })); setDirty(true); }} /></div></div>
+            <div><Label className="mb-1 block">Count next to the stars</Label><Input value={film.copy.rating.count} onChange={(e) => { setFilm((f) => ({ ...f, copy: { ...f.copy, rating: { ...f.copy.rating, count: e.target.value } } })); setDirty(true); }} /></div>
+            <div><Label className="mb-1 block">Facebook handle</Label><Input value={film.copy.contact.facebookHandle} onChange={(e) => { setFilm((f) => ({ ...f, copy: { ...f.copy, contact: { ...f.copy.contact, facebookHandle: e.target.value } } })); setDirty(true); }} /></div>
+            <div><Label className="mb-1 block">Facebook link</Label><Input value={film.copy.contact.facebookUrl} onChange={(e) => { setFilm((f) => ({ ...f, copy: { ...f.copy, contact: { ...f.copy.contact, facebookUrl: e.target.value } } })); setDirty(true); }} className="font-mono text-[12px]" /></div>
+            <div className="md:col-span-2"><Label className="mb-1 block">Founder’s email (shown on the consultation panel only)</Label><Input value={film.copy.contact.founderEmail} onChange={(e) => { setFilm((f) => ({ ...f, copy: { ...f.copy, contact: { ...f.copy.contact, founderEmail: e.target.value } } })); setDirty(true); }} className="font-mono text-[12px]" /></div>
+          </div>
+          <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2">
+            {SECTION_SLOTS.map(({ id, label }) => {
+              const c = film.copy.sections[id] ?? { eyebrow: "", title: "", lede: "" };
+              const set = (k: "eyebrow" | "title" | "lede", v: string) => { setFilm((f) => ({ ...f, copy: { ...f.copy, sections: { ...f.copy.sections, [id]: { ...(f.copy.sections[id] ?? { eyebrow: "", title: "", lede: "" }), [k]: v } } } })); setDirty(true); };
+              return (
+                <div key={id} className="rounded-xl border border-border p-3">
+                  <p className="mb-2 text-[12px] font-semibold">{label}</p>
+                  <div className="space-y-2">
+                    <Input aria-label="Eyebrow" value={c.eyebrow} onChange={(e) => set("eyebrow", e.target.value)} placeholder="Eyebrow (small label)" />
+                    <Input aria-label="Title" value={c.title} onChange={(e) => set("title", e.target.value)} placeholder="Title — *asterisks* for the serif aside" />
+                    <Input aria-label="Lede" value={c.lede} onChange={(e) => set("lede", e.target.value)} placeholder="Lede (the line under the title)" />
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </details>
       </Card>

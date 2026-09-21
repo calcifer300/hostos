@@ -36,9 +36,14 @@
 		children: Snippet;
 	} = $props();
 	const landing = getContext<Landing | undefined>('landing');
+	// the Founder's words, when he has written any, replace the built-in ones
+	const over = $derived((id && landing?.copy?.sections?.[id]) || { eyebrow: '', title: '', lede: '' });
+	const eyebrowText = $derived(over.eyebrow || eyebrow);
+	const titleText = $derived(over.title || title);
+	const ledeText = $derived(over.lede || lede);
 	const look = $derived((id && (landing?.sections ?? LANDING_DEFAULTS.sections)[id]) || { clip: '', tint: '#3b9cff' });
 	// one entrance per section, so no two titles arrive the same way
-	const TITLE_MOTION: Record<string, string> = { problems: 'title-rise', how: 'title-left', film: 'title-zoom', 'before-after': 'title-unclip', solutions: 'title-right', industries: 'title-focus', proof: 'title-flip', voices: 'title-track', platform: 'title-swing', start: 'title-drop', faq: 'title-skew', why: 'title-tilt' };
+	const TITLE_MOTION: Record<string, string> = { problems: 'title-rise', how: 'title-left', film: 'title-zoom', 'before-after': 'title-unclip', solutions: 'title-right', industries: 'title-focus', proof: 'title-flip', voices: 'title-track', platform: 'title-swing', start: 'title-drop', faq: 'title-skew', why: 'title-tilt', devices: 'title-zoom', collective: 'title-rise' };
 	const titleMotion = $derived((id && TITLE_MOTION[id]) || 'title-rise');
 	const voiceClass = $derived(voice === 'grotesk' ? 'voice-grotesk' : voice === 'serif' ? 'voice-serif' : voice === 'display' ? 'voice-display' : '');
 </script>
@@ -48,14 +53,12 @@
 		{#if look.clip}{#key look.clip}<video class="lazy dim h-full w-full object-cover" muted loop playsinline preload="none" use:lazyVideo={{ src: look.clip }}></video>{/key}{/if}
 	</div>
 	<div class={wide ? 'container-wide' : 'container-x'}>
-		{#if eyebrow || title}
-			<header use:reveal class={`scroll-in mb-10 md:mb-14 ${align === 'center' ? 'mx-auto max-w-3xl text-center' : align === 'right' ? 'ml-auto max-w-3xl text-right' : align === 'split' ? 'grid gap-6 md:grid-cols-[1.2fr_1fr] md:items-end' : 'max-w-3xl'}`}>
-				<div>
-					{#if eyebrow}<p class="label-mono mb-4 text-accent">{eyebrow}</p>{/if}
-					{#if title}<h2 use:words class={`display-2 headline ${voiceClass} ${titleMotion}`} aria-label={plain(title)}>{@html emph(title)}</h2>{/if}
-					{#if lede && align !== 'split'}<p class={`mt-5 max-w-2xl text-[17px] leading-relaxed text-ink-2 ${align === 'center' ? 'mx-auto' : align === 'right' ? 'ml-auto' : ''}`}>{lede}</p>{/if}
-				</div>
-				{#if lede && align === 'split'}<p class="text-[17px] leading-relaxed text-ink-2 md:border-l md:border-line md:pl-6">{lede}</p>{/if}
+		{#if eyebrowText || titleText}
+			<!-- every header is centred: the eye lands on the statement first, wherever the section is -->
+			<header use:reveal class="scroll-in mx-auto mb-10 max-w-3xl text-center md:mb-14">
+				{#if eyebrowText}<p class="label-mono mb-4 text-accent">{eyebrowText}</p>{/if}
+				{#if titleText}{#key titleText}<h2 use:words class={`display-2 headline ${voiceClass} ${titleMotion}`} aria-label={plain(titleText)}>{@html emph(titleText)}</h2>{/key}{/if}
+				{#if ledeText}<p class="mx-auto mt-5 max-w-2xl text-[17px] leading-relaxed text-ink-2">{ledeText}</p>{/if}
 			</header>
 		{/if}
 		{@render children()}

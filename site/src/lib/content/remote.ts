@@ -5,7 +5,7 @@
  * Every read falls back to the built-in content — a slow app never breaks
  * the front door.
  */
-import { FILM, LAURELS, SECTIONS, TESTIMONIALS, TILES, VIDEO } from '$lib/content/site';
+import { CONTACT, FILM, HERO, LAURELS, RATING, SECTIONS, TESTIMONIALS, TILES, VIDEO } from '$lib/content/site';
 import { normalizeTeam, TEAM, type Member } from '$lib/content/team';
 
 export const APP_ORIGIN = 'https://hostos-ten.vercel.app';
@@ -20,9 +20,22 @@ export interface Landing {
 	sections: Record<string, { clip: string; tint: string }>;
 	testimonials: { quote: string; name: string; role: string; photo: string }[];
 	laurels: { value: string; label: string }[];
+	copy: LandingCopy;
 }
+export interface LandingCopy {
+	hero: { eyebrow: string; line1: string; line2: string; body: string };
+	sections: Record<string, { eyebrow: string; title: string; lede: string }>;
+	rating: { value: string; note: string; count: string };
+	contact: { facebookHandle: string; facebookUrl: string; founderEmail: string };
+}
+export const COPY_DEFAULTS: LandingCopy = {
+	hero: { eyebrow: HERO.eyebrow, line1: HERO.lines[0], line2: HERO.lines[1], body: HERO.body },
+	sections: {},
+	rating: { value: RATING.value, note: RATING.note, count: RATING.count },
+	contact: { facebookHandle: CONTACT.facebook.handle, facebookUrl: CONTACT.facebook.url, founderEmail: CONTACT.founderEmail }
+};
 /** The built-in landing, for the sections that render without a page load behind them. */
-export const LANDING_DEFAULTS: Pick<Landing, 'tiles' | 'sections' | 'extras' | 'testimonials' | 'laurels'> = { tiles: TILES, sections: SECTIONS, extras: { team: VIDEO.team, delivery: VIDEO.delivery, closing: VIDEO.closing }, testimonials: TESTIMONIALS, laurels: LAURELS };
+export const LANDING_DEFAULTS: Pick<Landing, 'tiles' | 'sections' | 'extras' | 'testimonials' | 'laurels' | 'copy'> = { tiles: TILES, sections: SECTIONS, extras: { team: VIDEO.team, delivery: VIDEO.delivery, closing: VIDEO.closing }, testimonials: TESTIMONIALS, laurels: LAURELS, copy: COPY_DEFAULTS };
 
 const str = (v: unknown, fb: string) => (typeof v === 'string' && v.trim() ? v : fb);
 const src = (v: unknown, fb: string) => (typeof v === 'string' && /^(\/|https:\/\/[a-z0-9-]+\.supabase\.co\/storage\/v1\/object\/public\/|https:\/\/videos\.pexels\.com\/)/i.test(v) ? v : fb);
@@ -65,6 +78,18 @@ export async function loadLanding(fetchFn: typeof fetch): Promise<Landing> {
 			: TESTIMONIALS,
 		laurels: Array.isArray(film?.laurels)
 			? (film!.laurels as unknown[]).map((l) => { const x = (l && typeof l === 'object' ? l : {}) as Record<string, unknown>; return { value: str(x.value, ''), label: str(x.label, '') }; }).filter((l) => l.value && l.label).slice(0, 6)
-			: LAURELS
+			: LAURELS,
+		copy: (() => {
+			const c = (film?.copy && typeof film.copy === 'object' ? film.copy : {}) as Record<string, unknown>;
+			const o = (v: unknown) => (v && typeof v === 'object' ? v : {}) as Record<string, unknown>;
+			const h = o(c.hero), rt = o(c.rating), ct = o(c.contact), secs = o(c.sections);
+			const d = COPY_DEFAULTS;
+			return {
+				hero: { eyebrow: str(h.eyebrow, d.hero.eyebrow), line1: str(h.line1, d.hero.line1), line2: str(h.line2, d.hero.line2), body: str(h.body, d.hero.body) },
+				sections: Object.fromEntries(Object.entries(secs).map(([k, v]) => { const x = o(v); return [k, { eyebrow: str(x.eyebrow, ''), title: str(x.title, ''), lede: str(x.lede, '') }]; })),
+				rating: { value: str(rt.value, d.rating.value), note: str(rt.note, d.rating.note), count: str(rt.count, d.rating.count) },
+				contact: { facebookHandle: str(ct.facebookHandle, d.contact.facebookHandle), facebookUrl: typeof ct.facebookUrl === 'string' && /^https:\/\/(www\.)?facebook\.com\//i.test(ct.facebookUrl) ? ct.facebookUrl : d.contact.facebookUrl, founderEmail: str(ct.founderEmail, d.contact.founderEmail) }
+			};
+		})()
 	};
 }

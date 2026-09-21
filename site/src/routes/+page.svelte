@@ -16,6 +16,7 @@
 	import Testimonials from '$lib/components/marketing/Testimonials.svelte';
 	import Ticker from '$lib/components/marketing/Ticker.svelte';
 	import WhyUs from '$lib/components/marketing/WhyUs.svelte';
+	import Devices from '$lib/components/marketing/Devices.svelte';
 	import { FAQ, SITE } from '$lib/content/site';
 	import { jsonLd } from '$lib/seo/jsonld';
 	import { setContext } from 'svelte';
@@ -24,23 +25,30 @@
 	// every section and tile reads its footage and light from here
 	// svelte-ignore state_referenced_locally — the landing is loaded once per page
 	setContext('landing', data);
-	const title = `${SITE.company} — ${SITE.tagline}`;
+	// the title carries what people type: the brand, the category, the country
+	const title = `${SITE.company} — VA agency & business operations in the Philippines for US businesses | ${SITE.tagline}`;
+	const description = 'HostOS Collective is a Philippines-based virtual assistant agency and business solutions team, founded by John Jenrique Briones: trained operators, written systems and the HostOS platform running car rental fleets, restaurants, field services and shops for owners in the US and worldwide.';
+	const keywords = 'HostOS Collective, HostOS, John Briones, John Jenrique Briones, VA agency Philippines, virtual assistant agency Philippines, business solutions Philippines, business operations outsourcing, Turo fleet management, DoorDash restaurant operations, field service dispatch, custom web applications Philippines';
 	const ld = $derived(jsonLd(data.members));
 </script>
 
 <svelte:head>
 	<title>{title}</title>
-	<meta name="description" content={SITE.description} />
+	<meta name="description" content={description} />
+	<meta name="keywords" content={keywords} />
+	<meta name="author" content="John Jenrique Briones" />
+	<meta name="robots" content="index, follow, max-image-preview:large" />
 	<link rel="canonical" href={SITE.url + '/'} />
 	<meta property="og:type" content="website" />
 	<meta property="og:site_name" content={SITE.company} />
 	<meta property="og:title" content={title} />
-	<meta property="og:description" content={SITE.description} />
+	<meta property="og:description" content={description} />
+	<meta property="og:locale" content="en_US" />
 	<meta property="og:url" content={SITE.url + '/'} />
 	<meta property="og:image" content={SITE.url + '/opengraph-image'} />
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:title" content={title} />
-	<meta name="twitter:description" content={SITE.description} />
+	<meta name="twitter:description" content={description} />
 	<meta name="twitter:image" content={SITE.url + '/opengraph-image'} />
 	{@html `<script type="application/ld+json">${ld}</script>`}
 </svelte:head>
@@ -57,6 +65,7 @@
 <Testimonials />
 <WhyUs />
 <PlatformDemo />
+<Devices />
 <Collective members={data.members} teamSrc={data.extras.team} />
 <ThirtyDays />
 <Section id="faq" eyebrow={FAQ.eyebrow} title={FAQ.title} align="center" voice="serif">

@@ -26,11 +26,11 @@ export function Portrait({ member, sizes = GRID_SIZES, fallbackSize = 40, priori
   const src = member.photoUrl && member.photoUrl !== broken ? member.photoUrl : null;
   const fail = () => setBroken(member.photoUrl);
   if (src && isOptimizableSrc(src)) {
-    return <Image src={src} alt={member.name} fill sizes={sizes} priority={priority} className="object-cover" style={{ objectPosition: "50% 15%" }} onError={fail} />;
+    return <Image src={src} alt={member.name} fill sizes={sizes} priority={priority} className="scale-[1.12] object-cover" style={{ objectPosition: "50% 15%" }} onError={fail} />;
   }
   if (src) {
     // eslint-disable-next-line @next/next/no-img-element
-    return <img src={src} alt={member.name} className="absolute inset-0 h-full w-full object-cover" style={{ objectPosition: "50% 15%" }} onError={fail} />;
+    return <img src={src} alt={member.name} className="absolute inset-0 h-full w-full scale-[1.12] object-cover" style={{ objectPosition: "50% 15%" }} onError={fail} />;
   }
   return (
     <span className="absolute inset-0 flex items-center justify-center font-semibold" style={{ background: `color-mix(in oklab, ${hue} 18%, var(--card))`, color: hue, fontSize: fallbackSize }} aria-hidden>

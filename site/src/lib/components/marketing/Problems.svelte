@@ -17,7 +17,7 @@
 		{#each items as p, i}
 			{@const clip = tiles[`problem:${i + 1}`]}
 			<article use:tilt={5} class="card spot ring-hover group relative flex min-h-[220px] flex-col justify-between overflow-hidden rounded-2xl border border-line bg-surface-2 p-6 transition-[border-color,box-shadow] duration-300 hover:border-accent/50 hover:shadow-1">
-				{#if clip}{#key clip}<video class="lazy dim absolute inset-0 h-full w-full object-cover" muted loop playsinline preload="none" use:lazyVideo={{ src: clip }} aria-hidden="true"></video>{/key}{/if}
+				{#if clip}{#key clip}<video class="lazy dim absolute inset-0 h-full w-full object-cover" muted loop playsinline preload="none" use:lazyVideo={{ hover: true, src: clip }} aria-hidden="true"></video>{/key}{/if}
 				<div aria-hidden="true" class="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,color-mix(in_oklab,var(--color-surface-2)_35%,transparent),var(--color-surface-2)_72%)]"></div>
 				<div class="relative flex items-start justify-between">
 					<p class="label-mono text-ink-3">{String(i + 1).padStart(2, '0')}</p>

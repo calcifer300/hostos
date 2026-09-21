@@ -136,7 +136,6 @@
   --animate-pulse-soft: pulse-soft 2.4s ease-in-out infinite;
   --animate-marquee: marquee 40s linear infinite;
   --animate-spin-slow: spin 14s linear infinite;
-  --animate-gradient: gradient-shift 9s ease infinite;
   --animate-marquee-reverse: marquee-reverse 46s linear infinite;
   --animate-drift: drift 18s ease-in-out infinite;
   --animate-drift-slow: drift 26s ease-in-out infinite reverse;
@@ -247,11 +246,9 @@ body::before {
 
 .text-gradient {
   background: linear-gradient(120deg, var(--accent) 0%, var(--accent-2) 60%, var(--accent) 120%);
-  background-size: 200% 200%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  animation: var(--animate-gradient);
 }
 
 /* Card lift on hover — used by the shared Card primitive's `interactive` variant. */
@@ -493,11 +490,6 @@ body::before {
   0% { transform: translate(-50%, -50%) scale(0.4); opacity: 0.9; }
   100% { transform: translate(-50%, -50%) scale(3.4); opacity: 0; }
 }
-@keyframes gradient-shift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
 
 /* The landing page's headline voice: Inter bold, and the aside in the serif italic a size up, in the brand gradient. */
 .headline {
@@ -523,27 +515,16 @@ body::before {
   background-clip: text;
 }
 
-/* The mark: the halo breathes, a light passes over the frame (faster on hover of the whole logo). */
-.logo-halo {
-  animation: logo-halo 4s ease-in-out infinite;
-  transform-origin: 32px 32px;
-}
+/* The mark holds still; a light passes over the frame only under the pointer. */
 .logo-sheen {
   transform: skewX(-20deg);
-  animation: logo-sheen 6s ease-in-out infinite;
-  animation-delay: 1.5s;
 }
 .logo:hover .logo-sheen, .logo-mark:hover .logo-sheen {
-  animation-duration: 1.2s;
-  animation-delay: 0s;
-}
-@keyframes logo-halo {
-  0%, 100% { transform: scale(1); opacity: 0.35; }
-  50% { transform: scale(1.12); opacity: 0; }
+  animation: logo-sheen 1.2s ease-in-out 1;
 }
 @keyframes logo-sheen {
-  0%, 70%, 100% { transform: translateX(0) skewX(-20deg); }
-  30% { transform: translateX(110px) skewX(-20deg); }
+  from { transform: translateX(0) skewX(-20deg); }
+  to { transform: translateX(110px) skewX(-20deg); }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -14,7 +14,6 @@
 	import Accordion from '$lib/components/ui/Accordion.svelte';
 	import FinalCta from '$lib/components/marketing/FinalCta.svelte';
 	import Testimonials from '$lib/components/marketing/Testimonials.svelte';
-	import Ticker from '$lib/components/marketing/Ticker.svelte';
 	import WhyUs from '$lib/components/marketing/WhyUs.svelte';
 	import Devices from '$lib/components/marketing/Devices.svelte';
 	import Pricing from '$lib/components/marketing/Pricing.svelte';
@@ -62,7 +61,6 @@
 <Film chapters={data.chapters} />
 <BeforeAfter />
 <Solutions chapters={data.chapters} extras={data.extras} />
-<Ticker />
 <Industries />
 <Proof />
 <Testimonials />

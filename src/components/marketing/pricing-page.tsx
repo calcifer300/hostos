@@ -9,14 +9,13 @@ import type { ServiceRow } from "@/lib/site/film";
  * own route so they are public even between site deploys. Custom work is a
  * quote, never a number. The Founder edits every field at Settings → Website.
  */
-const CUSTOM_LINE = "Custom pricing based on project scope, technical requirements, integrations, complexity, timeline and business goals.";
 const CONSULT = "https://hostoscollective.com/#contact";
 
 export function PricingPage({ services }: { services: ServiceRow[] }) {
   return (
     <div className="px-6 pb-20 pt-32 md:pb-28 md:pt-40">
       <div className="mx-auto max-w-7xl">
-        <SectionHeading eyebrow="Services & pricing" title="Clear prices. No surprises." description="Every price names what it includes. Anything custom is a quote, never a number. The working session is free either way." align="center" />
+        <SectionHeading eyebrow="Services & pricing" title="Clear prices. No surprises." description="Every price names what it includes. Anything custom is a quote, never a number. The strategy call is free either way." align="center" />
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
           {services.map((s) => (
             <article key={s.id} className="flex flex-col rounded-3xl border border-border bg-card p-6 shadow-[var(--shadow-card)]">
@@ -33,7 +32,6 @@ export function PricingPage({ services }: { services: ServiceRow[] }) {
                   </li>
                 ))}
               </ul>
-              {s.id === "custom" && <p className="mt-3 text-[12.5px] leading-relaxed text-muted-foreground">{CUSTOM_LINE}</p>}
               <ul className="mt-5 flex flex-wrap gap-1.5" aria-label="Technologies">
                 {s.stack.map((tech) => <li key={tech} className="rounded-full border border-border bg-background px-2.5 py-1 font-mono text-[10.5px]">{tech}</li>)}
               </ul>
@@ -52,13 +50,13 @@ export function PricingPage({ services }: { services: ServiceRow[] }) {
               </details>
               <div className="mt-auto pt-6">
                 <Button asChild variant={s.id === "operations" ? "primary" : "secondary"} className="w-full">
-                  <Link href={CONSULT}>{s.model === "custom" ? "Get an estimate" : "Book a working session"} <ArrowRight /></Link>
+                  <Link href={CONSULT}>{s.model === "custom" ? "Get an estimate" : "Book a Free Strategy Call"} <ArrowRight /></Link>
                 </Button>
               </div>
             </article>
           ))}
         </div>
-        <p className="mx-auto mt-10 max-w-3xl text-center text-[14px] leading-relaxed text-muted-foreground">Prices in USD. Tool subscriptions and ad spend are billed to you directly. Every engagement starts with a free 45-minute working session — you keep the map either way.</p>
+        <p className="mx-auto mt-10 max-w-3xl text-center text-[14px] leading-relaxed text-muted-foreground">Prices in USD. Tool subscriptions and ad spend are billed to you directly. Every engagement starts with a Free Strategy Call — 45 minutes, no obligation, and you keep the plan either way.</p>
       </div>
     </div>
   );

@@ -34,10 +34,5 @@
 </svg>
 
 <style>
-	.laurel { filter: drop-shadow(0 0 2px rgb(240 190 60 / 0.35)); animation: laurel-glow 3.2s ease-in-out infinite; }
-	@keyframes laurel-glow {
-		0%, 100% { filter: drop-shadow(0 0 2px rgb(240 190 60 / 0.3)) brightness(1); }
-		50% { filter: drop-shadow(0 0 9px rgb(255 205 80 / 0.85)) brightness(1.18); }
-	}
-	@media (prefers-reduced-motion: reduce) { .laurel { animation: none; } }
+	.laurel { filter: drop-shadow(0 0 3px rgb(240 190 60 / 0.4)); }
 </style>

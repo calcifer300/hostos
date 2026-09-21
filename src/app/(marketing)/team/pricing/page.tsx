@@ -6,7 +6,7 @@ import { SITE_SERVICES } from "@/lib/site/services-default";
 
 export const metadata: Metadata = {
   title: { absolute: `Services & pricing — ${SITE.company}` },
-  description: "Business operations, web and app development, AI automation, CRM, SEO and design — clear prices in USD, custom work by quote, and a free working session to start.",
+  description: "Business operations, web and app development, AI automation, CRM, SEO and design — clear prices in USD, custom work by quote, and a Free Strategy Call to start.",
   alternates: { canonical: "https://hostoscollective.com/pricing" },
 };
 

@@ -145,7 +145,7 @@ export const SITE_SERVICES: ServiceRow[] = [
       }
     ],
     "support": "Optional from $390/mo — monitoring, updates, small features.",
-    "why": "Custom software is priced on scope. We name a floor so you can plan, then quote the rest after the working session."
+    "why": "Custom software is priced on scope. We name a floor so you can plan, then quote the rest after the free strategy call."
   },
   {
     "id": "ai",
@@ -291,7 +291,7 @@ export const SITE_SERVICES: ServiceRow[] = [
     "included": [
       "Discovery",
       "Two directions, one refined",
-      "Logo, colour, type, usage guide",
+      "Logo, color, type, usage guide",
       "Screens for web and mobile",
       "Clickable prototype"
     ],
@@ -309,7 +309,7 @@ export const SITE_SERVICES: ServiceRow[] = [
         "name": "Brand identity",
         "price": "$1,900",
         "period": "one-time",
-        "note": "Logo · colours · type · guide"
+        "note": "Logo · colors · type · guide"
       },
       {
         "name": "Product UI/UX",
@@ -358,6 +358,6 @@ export const SITE_SERVICES: ServiceRow[] = [
       }
     ],
     "support": "Quoted with the build.",
-    "why": "No fixed price is honest for custom software. Bring the operation to the working session and leave with an estimate."
+    "why": "No fixed price is honest for custom software. Bring the operation to the free strategy call and leave with an estimate."
   }
 ];

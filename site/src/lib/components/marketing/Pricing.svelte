@@ -5,7 +5,7 @@
 	import Button from '$lib/components/ui/Button.svelte';
 	import { stagger, tilt } from '$lib/components/motion/actions';
 	import { CTA } from '$lib/content/site';
-	import { CUSTOM_LINE, PRICING, SERVICES, type Service } from '$lib/content/pricing';
+	import { PRICING, SERVICES, type Service } from '$lib/content/pricing';
 	import { LANDING_DEFAULTS, type Landing } from '$lib/content/remote';
 	/**
 	 * Services and prices, one card each: what it is, what it runs on, what is
@@ -38,7 +38,6 @@
 						</li>
 					{/each}
 				</ul>
-				{#if s.model === 'custom' && s.id === 'custom'}<p class="mt-3 text-[12.5px] leading-relaxed text-ink-3">{CUSTOM_LINE}</p>{/if}
 
 				<!-- what runs it -->
 				<ul class="mt-5 flex flex-wrap gap-1.5" aria-label="Technologies">
@@ -63,10 +62,10 @@
 				{/if}
 
 				<div class="mt-auto pt-6">
-					<Button href={CTA.href} variant={s.id === 'operations' ? 'primary' : 'secondary'} class="w-full justify-center">{s.model === 'custom' ? 'Get an estimate' : 'Book a working session'} <ArrowRight class="h-4 w-4" /></Button>
+					<Button href={CTA.href} variant={s.id === 'operations' ? 'primary' : 'secondary'} class="w-full justify-center">{s.model === 'custom' ? 'Get an estimate' : 'Book a Free Strategy Call'} <ArrowRight class="h-4 w-4" /></Button>
 				</div>
 			</article>
 		{/each}
 	</div>
-	<p class="mx-auto mt-10 max-w-3xl text-center text-[14px] leading-relaxed text-ink-3">Prices in USD. Tool subscriptions and ad spend are billed to you directly. Every engagement starts with a free 45-minute working session — you keep the map either way.</p>
+	<p class="mx-auto mt-10 max-w-3xl text-center text-[14px] leading-relaxed text-ink-3">Prices in USD. Tool subscriptions and ad spend are billed to you directly. Every engagement starts with a Free Strategy Call — 45 minutes, no obligation, and you keep the plan either way.</p>
 </Section>

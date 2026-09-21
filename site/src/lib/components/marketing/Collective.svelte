@@ -12,10 +12,10 @@
 
 <Section id="collective" eyebrow="The Collective" title="A collective, not a hierarchy chart." lede="Twelve people who each own a craft, work inside the same HostOS workspace, and answer to the same clients. What we sell is what we use.">
 	<div class="relative isolate">
-	<div aria-hidden="true" class="pointer-events-none absolute -inset-x-8 -inset-y-12 -z-20 overflow-hidden rounded-[40px] [mask-image:radial-gradient(ellipse_at_center,#000_30%,transparent_80%)]">
-		<video class="lazy dim h-full w-full object-cover" style="--dim:0.34" muted loop playsinline preload="none" use:lazyVideo={{ src: teamSrc }}></video>
+	<div aria-hidden="true" class="pointer-events-none absolute inset-x-0 -inset-y-12 -z-20 overflow-hidden sm:-inset-x-4 lg:-inset-x-8 rounded-[40px] [mask-image:radial-gradient(ellipse_at_center,#000_30%,transparent_80%)]">
+		<video class="lazy dim h-full w-full object-cover" style="--dim:0.34" muted loop playsinline preload="none" use:lazyVideo={{ src: teamSrc, still: true }}></video>
 	</div>
-	<Constellation hues={members.map((m) => m.hue)} class="pointer-events-none absolute -inset-x-8 -inset-y-12 -z-10 h-[calc(100%+6rem)] w-[calc(100%+4rem)] [mask-image:radial-gradient(ellipse_at_center,#000_55%,transparent_95%)]" />
+	<Constellation hues={members.map((m) => m.hue)} class="pointer-events-none absolute inset-x-0 -inset-y-12 -z-10 h-[calc(100%+6rem)] w-full sm:-inset-x-4 sm:w-[calc(100%+2rem)] lg:-inset-x-8 lg:w-[calc(100%+4rem)] [mask-image:radial-gradient(ellipse_at_center,#000_55%,transparent_95%)]" />
 	<ul use:stagger={45} class="collage grid grid-cols-2 gap-x-3 gap-y-8 sm:grid-cols-3 lg:grid-cols-6" aria-label="Members">
 		{#each members as m, i}
 			<li class="tile group relative text-center" style={`--hue:${m.hue}; --i:${i}`}>
@@ -35,13 +35,11 @@
 </Section>
 
 <style>
-	/* a collage: every other tile a step down, each drifting on its own slow clock */
+	/* a collage: every other tile a step down */
 	@media (min-width: 640px) {
-		.collage .tile { animation: drift 9s ease-in-out infinite; animation-delay: calc(var(--i) * -1.3s); }
 		.collage .tile:nth-child(even) { margin-top: 28px; }
 	}
 	.collage .tile:hover { z-index: 2; }
-	@keyframes drift { 0%, 100% { translate: 0 0; } 50% { translate: 0 -8px; } }
 	/* the name in the ink gradient, the role in the serif aside — the house type */
 	.name { background: linear-gradient(180deg, var(--color-ink), color-mix(in oklab, var(--color-ink) 70%, var(--hue))); -webkit-background-clip: text; background-clip: text; color: transparent; }
 	.role { color: color-mix(in oklab, var(--hue) 60%, #171b27); letter-spacing: 0.01em; }

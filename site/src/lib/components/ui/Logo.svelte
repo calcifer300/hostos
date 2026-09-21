@@ -13,15 +13,14 @@
 	<svg width={size} height={size} viewBox="0 0 64 64" fill="none" aria-hidden="true" class="mark shrink-0 overflow-visible">
 		<defs>
 			<linearGradient id="{uid}-g" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
-				<stop offset="0" stop-color="#3B9CFF"><animate attributeName="stop-color" values="#3B9CFF;#6A5CF5;#2C3EF3;#3B9CFF" dur="9s" repeatCount="indefinite" /></stop>
-				<stop offset="1" stop-color="#9B6BFF"><animate attributeName="stop-color" values="#9B6BFF;#3B9CFF;#8B7CFF;#9B6BFF" dur="9s" repeatCount="indefinite" /></stop>
+				<stop offset="0" stop-color="#3B9CFF" />
+				<stop offset="1" stop-color="#9B6BFF" />
 			</linearGradient>
 			<linearGradient id="{uid}-s" x1="0" y1="0" x2="1" y2="0">
 				<stop offset="0" stop-color="#fff" stop-opacity="0" /><stop offset="0.5" stop-color="#fff" stop-opacity="0.9" /><stop offset="1" stop-color="#fff" stop-opacity="0" />
 			</linearGradient>
 			<clipPath id="{uid}-c"><rect x="6" y="6" width="52" height="52" rx="15" /></clipPath>
 		</defs>
-		<rect class="halo" x="6" y="6" width="52" height="52" rx="15" stroke="url(#{uid}-g)" stroke-width="3.25" opacity="0.35" />
 		<rect class="frame" x="6" y="6" width="52" height="52" rx="15" stroke="url(#{uid}-g)" stroke-width="3.25" pathLength="1" />
 		<g class="print" stroke="url(#{uid}-g)" stroke-width="3" stroke-linecap="round">
 			<path d="M14 44V30a18 18 0 0 1 36 0v8" pathLength="1" />
@@ -42,20 +41,16 @@
 	.print path:nth-child(2) { animation-delay: 0.35s; }
 	.print path:nth-child(3) { animation-delay: 0.5s; }
 	.print path:nth-child(4) { animation-delay: 0.65s; }
-	.halo { animation: halo 4s ease-in-out infinite; transform-origin: 32px 32px; }
-	.sheen { animation: sheen 6s ease-in-out infinite; animation-delay: 1.5s; }
-	.mark-wrap:hover .sheen { animation-duration: 1.2s; animation-delay: 0s; }
+	.sheen { transform: skewX(-20deg); }
+	.mark-wrap:hover .sheen { animation: sheen 1.2s ease-in-out 1; }
 	.os {
 		background: linear-gradient(92deg, #3b9cff, #6a5cf5, #9b6bff);
 		background-size: 200% 100%;
 		-webkit-background-clip: text;
 		background-clip: text;
 		color: transparent;
-		animation: os-shift 6s ease-in-out infinite;
 	}
 	@keyframes draw { to { stroke-dashoffset: 0; } }
-	@keyframes halo { 0%, 100% { transform: scale(1); opacity: 0.35; } 50% { transform: scale(1.12); opacity: 0; } }
-	@keyframes sheen { 0%, 70%, 100% { transform: translateX(0) skewX(-20deg); } 30% { transform: translateX(110px) skewX(-20deg); } }
-	@keyframes os-shift { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
-	@media (prefers-reduced-motion: reduce) { .frame, .print path { animation: none; stroke-dashoffset: 0; } .halo, .sheen, .os { animation: none; } }
+	@keyframes sheen { from { transform: translateX(0) skewX(-20deg); } to { transform: translateX(110px) skewX(-20deg); } }
+	@media (prefers-reduced-motion: reduce) { .frame, .print path { animation: none; stroke-dashoffset: 0; } .sheen { animation: none; } }
 </style>

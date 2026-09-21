@@ -7,40 +7,17 @@
 	import Laurel from '$lib/components/ui/Laurel.svelte';
 	import { LANDING_DEFAULTS, listOr, type Landing } from '$lib/content/remote';
 	/**
-	 * Owners in their own words, under a row of laurels carrying the
-	 * company's figures. Both lists are the Founder's to edit in the app;
-	 * nothing here is invented for the page.
+	 * Owners in their own words, then what the team is trusted for. Both
+	 * lists are the Founder's to edit in the app; nothing here is invented
+	 * for the page. The company's figures stand under the hero and are not
+	 * repeated here.
 	 */
 	const landing = getContext<Landing | undefined>('landing');
 	const testimonials = $derived(landing?.testimonials ?? LANDING_DEFAULTS.testimonials);
-	const laurels = $derived(landing?.laurels ?? LANDING_DEFAULTS.laurels);
 	const marks = $derived(listOr(landing?.lists?.recognition, RECOGNITION.marks, (r) => ({ name: r.a, note: r.b })));
 </script>
 
 <Section id="voices" eyebrow={VOICES.eyebrow} title={VOICES.title} align="center">
-	<!-- recognition: the wreath flanks the statement; the disciplines beneath it; the figures beneath those -->
-	<div use:stagger={80} class="scroll-in mx-auto mb-14 max-w-4xl text-center md:mb-20">
-		<div class="flex items-center justify-center gap-4 md:gap-8">
-<Laurel leaves={9} class="h-20 w-11 shrink-0 md:h-28 md:w-16" />
-			<h3 class="display-2 headline" aria-label={plain(RECOGNITION.title)}>{@html emph(RECOGNITION.title)}</h3>
-<Laurel flip leaves={9} class="h-20 w-11 shrink-0 md:h-28 md:w-16" />
-		</div>
-		<p class="mx-auto mt-5 max-w-2xl text-[16px] leading-relaxed text-ink-2">{RECOGNITION.body}</p>
-		<ul class="mt-8 flex flex-wrap items-start justify-center gap-x-10 gap-y-5" aria-label="What we are trusted for">
-			{#each marks as m}
-				<li class="max-w-[180px] text-center"><p class="text-[17px] font-bold tracking-tight text-ink">{m.name}</p><p class="label-mono mt-1 !text-[9.5px] text-ink-3">{m.note}</p></li>
-			{/each}
-		</ul>
-	</div>
-	<ul use:stagger={60} class="scroll-in mb-12 flex flex-wrap items-stretch justify-center gap-3 md:mb-16" aria-label="Figures">
-		{#each laurels as l}
-			<li class="laurel flex items-center gap-2 px-3 py-2">
-				<Laurel class="h-11 w-6" />
-				<span class="text-center"><svg viewBox="0 0 24 24" class="mx-auto -mb-0.5 h-3.5 w-3.5" aria-hidden="true"><path class="gold-fill" d="M3 18h18l1-10-5.5 4L12 5l-4.5 7L2 8z" /></svg><span class="gold-text block font-mono text-[18px] font-bold leading-none">{l.value}</span><span class="label-mono mt-1 block text-ink-3">{l.label}</span></span>
-				<Laurel flip class="h-11 w-6" />
-			</li>
-		{/each}
-	</ul>
 	<div use:stagger={110} class="scroll-in grid grid-cols-1 gap-4 md:grid-cols-3">
 		{#each testimonials as t, i}
 			<figure use:tilt={4} class="spot ring-hover relative flex flex-col rounded-3xl border border-line bg-surface-2 p-7 transition-[border-color] duration-300 hover:border-accent/50" style="--reveal-delay:{i * 110}ms">
@@ -52,5 +29,19 @@
 				</figcaption>
 			</figure>
 		{/each}
+	</div>
+	<!-- recognition: the wreath flanks the statement; the disciplines beneath it (the figures stand under the hero and are not repeated) -->
+	<div use:stagger={80} class="scroll-in mx-auto mt-16 max-w-4xl text-center md:mt-24">
+		<div class="flex items-center justify-center gap-4 md:gap-8">
+<Laurel leaves={9} class="h-20 w-11 shrink-0 md:h-28 md:w-16" />
+			<h3 class="display-2 headline" aria-label={plain(RECOGNITION.title)}>{@html emph(RECOGNITION.title)}</h3>
+<Laurel flip leaves={9} class="h-20 w-11 shrink-0 md:h-28 md:w-16" />
+		</div>
+		<p class="mx-auto mt-5 max-w-2xl text-[16px] leading-relaxed text-ink-2">{RECOGNITION.body}</p>
+		<ul class="mt-8 flex flex-wrap items-start justify-center gap-x-10 gap-y-5" aria-label="What we are trusted for">
+			{#each marks as m}
+				<li class="max-w-[180px] text-center"><p class="text-[17px] font-bold tracking-tight text-ink">{m.name}</p><p class="label-mono mt-1 !text-[9.5px] text-ink-3">{m.note}</p></li>
+			{/each}
+		</ul>
 	</div>
 </Section>

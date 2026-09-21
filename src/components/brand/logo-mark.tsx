@@ -9,10 +9,9 @@ import { cn } from "@/lib/utils";
  * that fill the frame over a core line, open at the bottom. One identity,
  * many businesses: every host runs on their own print.
  *
- * The same geometry and the same moving gradient as the landing page's
- * mark (site/src/lib/components/ui/Logo.svelte): the stroke drifts between
- * the brand blues, a halo breathes behind the frame and a light passes
- * over it now and then. `animate` plays the draw-in once; the shell shows
+ * The same geometry and gradient as the landing page's
+ * mark (site/src/lib/components/ui/Logo.svelte): the stroke in the brand
+ * gradient, and a light that passes over the frame under the pointer. `animate` plays the draw-in once; the shell shows
  * it already drawn. Keep public/icon.svg and the OG mark in step.
  */
 export const MARK = {
@@ -58,12 +57,8 @@ export function LogoMark({
     >
       <defs>
         <linearGradient id={`${uid}-g`} x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stopColor="#3B9CFF">
-            <animate attributeName="stop-color" values="#3B9CFF;#6A5CF5;#2C3EF3;#3B9CFF" dur="9s" repeatCount="indefinite" />
-          </stop>
-          <stop offset="1" stopColor="#9B6BFF">
-            <animate attributeName="stop-color" values="#9B6BFF;#3B9CFF;#8B7CFF;#9B6BFF" dur="9s" repeatCount="indefinite" />
-          </stop>
+          <stop offset="0" stopColor="#3B9CFF" />
+          <stop offset="1" stopColor="#9B6BFF" />
         </linearGradient>
         <linearGradient id={`${uid}-s`} x1="0" y1="0" x2="1" y2="0">
           <stop offset="0" stopColor="#fff" stopOpacity="0" />
@@ -74,8 +69,6 @@ export function LogoMark({
           <rect x={MARK.frame.x} y={MARK.frame.y} width={MARK.frame.size} height={MARK.frame.size} rx={MARK.frame.rx} />
         </clipPath>
       </defs>
-      {/* the halo breathes behind the frame */}
-      <rect className="logo-halo" x={MARK.frame.x} y={MARK.frame.y} width={MARK.frame.size} height={MARK.frame.size} rx={MARK.frame.rx} stroke={grad} strokeWidth="3.25" opacity="0.35" />
       {/* the frame */}
       <motion.rect x={MARK.frame.x} y={MARK.frame.y} width={MARK.frame.size} height={MARK.frame.size} rx={MARK.frame.rx} stroke={grad} strokeWidth="3.25" variants={draw} custom={0} />
       {/* the print: three ridges, outside in, then the core */}

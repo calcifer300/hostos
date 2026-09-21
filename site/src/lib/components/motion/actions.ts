@@ -141,26 +141,51 @@ export function words(el: HTMLElement, step = 45) {
 
 /**
  * A video that costs nothing until it is needed: the src is attached only
- * when the element nears the viewport, it plays only while on screen, and
- * it never loads at all under reduced motion or data saver. Fades in on
- * its first frame. (`always` is kept for callers; every screen size plays now.)
+ * when the element nears the viewport, and it never loads at all under
+ * reduced motion or data saver. Fades in on its first frame.
+ *
+ * Footage behind something the visitor reads must not move on its own, so
+ * `still` shows one frame and holds it (a photograph, at a clip's cost),
+ * and `hover` lets that frame play while the pointer is over the card and
+ * settle again when it leaves. Without either, the clip plays while on
+ * screen — the hero, the film and the collage, where the motion is the point.
+ * (`always` is kept for callers; every screen size gets the footage.)
  */
-export function lazyVideo(video: HTMLVideoElement, opts: { src: string; always?: boolean }) {
+export function lazyVideo(video: HTMLVideoElement, opts: { src: string; always?: boolean; still?: boolean; hover?: boolean }) {
 	const nav = navigator as Navigator & { connection?: { saveData?: boolean } };
-	// phones get the footage too (the clips are SD and load only as they near the screen); data saver and reduced motion never do
-	const allowed = !reduced() && !nav.connection?.saveData;
-	if (!allowed) return {};
+	// phones get the footage too (the clips are SD and load only as they near the screen); data saver never does; reduced motion only ever sees a still
+	if (nav.connection?.saveData) return {};
+	const still = opts.still || opts.hover || reduced();
+	const hover = opts.hover && !reduced();
 	let loaded = false;
+	let onScreen = false;
+	// the frame a still shows: a little way in, past any fade-from-black
+	const settle = () => { if (video.currentTime < 0.4) video.currentTime = 0.6; };
+	const onLoaded = () => { settle(); if (!still) video.play().catch(() => {}); else video.classList.add('is-playing'); };
 	const io = new IntersectionObserver(([e]) => {
-		if (e.isIntersecting) {
-			if (!loaded) { video.src = opts.src; video.load(); loaded = true; }
-			video.play().catch(() => {});
+		onScreen = e.isIntersecting;
+		if (onScreen) {
+			if (!loaded) { video.src = opts.src; video.preload = 'metadata'; video.load(); loaded = true; }
+			else if (!still) video.play().catch(() => {});
 		} else video.pause();
 	}, { rootMargin: '200px 0px' });
 	io.observe(video);
 	const onPlay = () => video.classList.add('is-playing');
+	video.addEventListener('loadeddata', onLoaded);
 	video.addEventListener('playing', onPlay);
-	return { destroy() { io.disconnect(); video.removeEventListener('playing', onPlay); } };
+	// hover: the card the clip sits in, or the clip itself
+	const host = (video.parentElement ?? video) as HTMLElement;
+	const enter = () => { if (loaded && onScreen) video.play().catch(() => {}); };
+	const leave = () => { video.pause(); };
+	if (hover) { host.addEventListener('pointerenter', enter); host.addEventListener('pointerleave', leave); }
+	return {
+		destroy() {
+			io.disconnect();
+			video.removeEventListener('loadeddata', onLoaded);
+			video.removeEventListener('playing', onPlay);
+			if (hover) { host.removeEventListener('pointerenter', enter); host.removeEventListener('pointerleave', leave); }
+		}
+	};
 }
 
 /** Marks an element `is-near` while it is within half a screen of the viewport: its light, its footage and its motifs run only then. */

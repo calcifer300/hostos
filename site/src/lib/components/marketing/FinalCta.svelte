@@ -29,7 +29,7 @@
 			if (!r.ok) throw new Error();
 			done = true;
 		} catch {
-			window.location.href = `mailto:${SITE.email}?subject=${encodeURIComponent('Working session — ' + (data.business || ''))}&body=${encodeURIComponent(String(data.operation || ''))}`;
+			window.location.href = `mailto:${SITE.email}?subject=${encodeURIComponent('Free Strategy Call — ' + (data.business || ''))}&body=${encodeURIComponent(String(data.operation || ''))}`;
 		} finally {
 			sending = false;
 		}
@@ -38,7 +38,7 @@
 
 <section id="contact" class="aurora section-y relative overflow-hidden bg-bg">
 	<div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-20">
-		<video class="lazy dim h-full w-full object-cover [mask-image:radial-gradient(ellipse_at_center,#000_20%,transparent_75%)]" style="--dim:0.36" muted loop playsinline preload="none" use:lazyVideo={{ src: closingSrc }}></video>
+		<video class="lazy dim h-full w-full object-cover [mask-image:radial-gradient(ellipse_at_center,#000_20%,transparent_75%)]" style="--dim:0.36" muted loop playsinline preload="none" use:lazyVideo={{ still: true, src: closingSrc }}></video>
 	</div>
 	<div aria-hidden="true" class="pointer-events-none absolute left-1/2 top-1/2 h-[600px] w-[1000px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--color-accent)_16%,transparent),transparent)] blur-3xl"></div>
 	<div class="container-x grid items-start gap-12 lg:grid-cols-[1fr_1fr]">
@@ -58,7 +58,7 @@
 				{/each}
 			</ul>
 		</div>
-		<form use:reveal={150} onsubmit={submit} class="rounded-3xl border border-line bg-surface-2 p-6 shadow-2 md:p-8" aria-label="Book a working session">
+		<form use:reveal={150} onsubmit={submit} class="rounded-3xl border border-line bg-surface-2 p-6 shadow-2 md:p-8" aria-label="Book a Free Strategy Call">
 			{#if done}
 				<div class="py-10 text-center" role="status">
 					<p class="text-[22px] font-semibold text-ink">Got it. We’ll reply within one working day.</p>
@@ -74,8 +74,8 @@
 				</div>
 				{#if error}<p class="mt-3 text-[13px] text-danger" role="alert">{error}</p>{/if}
 				<div class="mt-5 flex flex-wrap items-center gap-4">
-					<Button type="submit" size="lg" loading={sending}>Book my working session <ArrowRight class="h-4 w-4" /></Button>
-					<p class="label-mono text-ink-3">45 minutes · Free · You keep the map</p>
+					<Button type="submit" size="lg" loading={sending}>Book my Free Strategy Call <ArrowRight class="h-4 w-4" /></Button>
+					<p class="label-mono text-ink-3">Free 45-minute call · No obligation · Leave with a practical plan</p>
 				</div>
 			{/if}
 		</form>

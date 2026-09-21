@@ -251,7 +251,7 @@ export function RestaurantOps() {
               "Order import and delivery analytics per store",
               "Customer messaging with grounded replies",
               "Inventory support with low-stock alerts and a UPC-A generator",
-              "Reporting that the Butler summarises every morning",
+              "Reporting that the Butler summarizes every morning",
             ]}
           />
           <Reveal delay={0.1} className="mt-8">

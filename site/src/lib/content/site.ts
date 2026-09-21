@@ -30,12 +30,12 @@ export const NAV = [
 	{ href: '/#film', label: 'Watch it run' }
 ];
 
-export const CTA = { label: 'Book a working session', href: '/#contact', under: '45 minutes · Bring one operation · Leave with a plan' };
+export const CTA = { label: 'Book a Free Strategy Call', href: '/#contact', under: 'Free 45-minute call · No obligation · Leave with a practical plan' };
 
 export const HERO = {
 	eyebrow: 'For Car Rental Fleets · Restaurants · Field Services · Shops',
 	lines: ['Run the business.', 'We’ll run the *operations*.'],
-	body: 'We handle the rest behind the scenes so you can focus on what matters. AI where it helps, humans where it matters — from customer support to daily operations, AI and experienced operators work together so you don’t have to.',
+	body: 'We handle the rest behind the scenes so you can focus on what matters. AI where it helps, humans where it matters — from customer support to daily operations, experienced operators and AI work together so you don’t have to.',
 	secondary: { label: 'See how it works', href: '#how' },
 	/** What is in it for them, in four figures. */
 	outcomes: [
@@ -301,11 +301,11 @@ export const DEVICES = {
 	title: 'The board in your pocket, on your desk — *everywhere* the work is.',
 	lede: 'One login on iPhone, Android, Mac and Windows. The board your operators work from is the one you read over coffee. Nothing to install, nothing to sync.',
 	gains: [
-		{ figure: '+18%', name: 'More bookings from faster replies', body: 'A guest answered in minutes books; one answered tomorrow booked elsewhere. Reply time is the single biggest lever on occupancy, and it is the first number we move.' },
+		{ figure: 'Minutes', name: 'To every reply, so more guests book', body: 'A guest answered in minutes books; one answered tomorrow booked elsewhere. Reply time is the single biggest lever on occupancy, and it is the first number we move.' },
 		{ figure: '0', name: 'Missed orders, claims and estimates', body: 'Paused tablets are reopened in a minute, damage is photographed at return and filed inside the window, quiet estimates are chased on day two and day five.' },
 		{ figure: '4–8 hrs', name: 'Of your week, back', body: 'The inbox, the calendar, the tablets and the follow-ups run without you. You read one board at 8 AM and decide; you stop being the software.' },
-		{ figure: '+12%', name: 'Utilization and pricing', body: 'Calendars priced by demand, turnarounds scheduled at booking, cars and tables that stop sitting empty because someone forgot to open them.' },
-		{ figure: '2×', name: 'Reviews and rankings', body: 'Every review answered the same day, every dispute filed with evidence — the ratings that decide where you appear on Turo, DoorDash and Google.' },
+		{ figure: 'Daily', name: 'Pricing and calendars kept current', body: 'Calendars priced by demand, turnarounds scheduled at booking, cars and tables that stop sitting empty because someone forgot to open them.' },
+		{ figure: 'Same day', name: 'Every review and dispute answered', body: 'Every review answered the same day, every dispute filed with evidence — the ratings that decide where you appear on Turo, DoorDash and Google.' },
 		{ figure: '1', name: 'Board for the whole business', body: 'Fleet, kitchen, field and shop on one screen with the same team behind it. Add a vertical without adding a vendor.' }
 	]
 };
@@ -315,11 +315,11 @@ export const WHY = {
 	lede: 'Based in the Philippines, working US hours, for owners in the US and anywhere else.',
 	reasons: [
 		{ id: 'hours', name: 'Awake when your customers are', body: 'Manila is 13 hours ahead of Austin. Your night is our working day, so a guest message at 2 AM your time is answered live, not queued for the morning.' },
-		{ id: 'people', name: 'Senior operators, not a marketplace', body: 'Every operator is a virtual assistant with five or more years in BPO and customer operations, personally trained by the Founder from day one, on our payroll, trained on your procedures, and covered when they’re off. You get a team, not a freelancer.' },
+		{ id: 'people', name: 'Senior operators, not a marketplace', body: 'Every operator has five or more years in VA and customer operations and was trained by the Founder from day one. They are on our payroll, learn your procedures, and are covered when they’re off. You get a team, not a freelancer.' },
 		{ id: 'one', name: 'One team for people, systems and software', body: 'Most vendors sell one of the three. We run the operation, write it down, and build the board it runs on — so nothing falls between an agency, a SaaS and a VA firm.' },
 		{ id: 'value', name: 'US-grade service at Philippine cost', body: 'The Philippines is the customer-operations capital of the world: English-fluent, US-aligned, and trained for it. The savings buy the round-the-clock coverage most owners can’t afford locally.' },
 		{ id: 'own', name: 'You own everything', body: 'Your domain, workspace, data and code stay in your name. If we part ways, you keep all of it — including the map.' },
-		{ id: 'plan', name: 'A plan you can hold us to', body: 'Thirty days, four milestones, the numbers in a weekly note. If it isn’t a fit after the working session, you keep the map at no charge.' }
+		{ id: 'plan', name: 'A plan you can hold us to', body: 'Thirty days, four milestones, the numbers in a weekly note. If it isn’t a fit after the free strategy call, you keep the plan at no charge.' }
 	]
 };
 
@@ -408,14 +408,14 @@ export const FAQ = {
 		{ q: 'Is this an agency, a SaaS, or a VA company?', a: 'It’s the three together, which is the point. The people run the operation, the systems make it repeatable, the software is where both happen. You pay for an outcome, not for seats.' },
 		{ q: 'How do you use AI?', a: 'As a tool, in the background: drafting replies an operator approves, spotting a paused store or a quiet estimate, summarizing a week. It never talks to your customers unsupervised, and it is never the reason to hire us.' },
 		{ q: 'Where is the team?', a: 'The Philippines, working US hours — or yours, wherever you are. Every operator is on our payroll, trained on your procedures, and covered when they’re off.' },
-		{ q: 'What does it cost?', a: 'Operations are a monthly retainer sized to the hours of coverage you need. Builds are quoted from the map we make in week one. The working session is free, and you keep the map either way.' },
-		{ q: 'How fast can we start?', a: 'The working session this week; the map the week after; operators on your channels by the end of the month.' }
+		{ q: 'What does it cost?', a: 'Operations are a monthly retainer sized to the hours of coverage you need. Builds are quoted from the map we make in week one. The strategy call is free, and you keep the plan either way.' },
+		{ q: 'How fast can we start?', a: 'The free strategy call this week; the plan the week after; operators on your channels by the end of the month.' }
 	]
 };
 
 export const FINAL = {
 	title: 'Bring *one* operation.',
-	body: 'In 45 minutes we map how it runs today, where it leaks, and how it would run on HostOS. Not a fit? You keep the map.',
+	body: 'On a free 45-minute call we map how it runs today, where it leaks, and how it would run on HostOS. Not a fit? You keep the plan.',
 	channels: [
 		{ label: 'Email', value: SITE.email, href: `mailto:${SITE.email}` },
 		{ label: 'WhatsApp', value: SITE.phone, href: SITE.whatsapp }

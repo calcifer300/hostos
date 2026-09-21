@@ -19,9 +19,7 @@
 	};
 	const arriving = $derived([['now', 'Guest reply · 47 sec'], ['now', 'Tablet check · all stores open'], ['now', 'Estimate #1051 chased']][beat % 3]);
 	onMount(() => {
-		if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-		const t = window.setInterval(() => { beat += 1; if (!touched && beat % 4 === 0) tab = (tab + 1) % PLATFORM.tabs.length; }, 3500);
-		return () => window.clearInterval(t);
+		// nothing moves on its own: the values hold and the tabs wait for a click (beat stays 0)
 	});
 	const onKey = (e: KeyboardEvent) => {
 		if (e.key === 'ArrowRight') tab = (tab + 1) % PLATFORM.tabs.length;

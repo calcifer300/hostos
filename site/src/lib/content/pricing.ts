@@ -30,7 +30,7 @@ export const CUSTOM_LINE = 'Custom pricing based on project scope, technical req
 export const PRICING = {
 	eyebrow: 'Services & pricing',
 	title: 'Clear prices. *No surprises.*',
-	lede: 'Every price names what it includes. Anything custom is a quote, never a number. The working session is free either way.'
+	lede: 'Every price names what it includes. Anything custom is a quote, never a number. The strategy call is free either way.'
 };
 
 export const SERVICES: Service[] = [
@@ -82,7 +82,7 @@ export const SERVICES: Service[] = [
 		model: 'custom',
 		tiers: [{ name: 'From', price: '$6,500', period: 'one-time', note: 'Starting point for a focused app; the rest is a quote' }],
 		support: 'Optional from $390/mo — monitoring, updates, small features.',
-		why: 'Custom software is priced on scope. We name a floor so you can plan, then quote the rest after the working session.'
+		why: 'Custom software is priced on scope. We name a floor so you can plan, then quote the rest after the free strategy call.'
 	},
 	{
 		id: 'ai',
@@ -137,13 +137,13 @@ export const SERVICES: Service[] = [
 		name: 'Branding & Design',
 		blurb: 'An identity and interfaces that read as professional at a glance — the way this page does.',
 		stack: ['Figma', 'Design systems', 'Brand identity', 'UI/UX', 'Wireframes', 'Prototypes', 'Landing pages'],
-		included: ['Discovery', 'Two directions, one refined', 'Logo, colour, type, usage guide', 'Screens for web and mobile', 'Clickable prototype'],
+		included: ['Discovery', 'Two directions, one refined', 'Logo, color, type, usage guide', 'Screens for web and mobile', 'Clickable prototype'],
 		deliverables: ['Brand kit', 'Figma file', 'Design system', 'Prototype'],
 		ideal: 'New businesses and rebrands, and products that need screens before code',
 		timeline: '2–5 weeks',
 		model: 'one-time',
 		tiers: [
-			{ name: 'Brand identity', price: '$1,900', period: 'one-time', note: 'Logo · colours · type · guide' },
+			{ name: 'Brand identity', price: '$1,900', period: 'one-time', note: 'Logo · colors · type · guide' },
 			{ name: 'Product UI/UX', price: '$2,400', period: 'from', note: 'Wireframes → screens → prototype · scoped per product' }
 		],
 		support: 'Design retainer from $490/mo.',
@@ -161,6 +161,6 @@ export const SERVICES: Service[] = [
 		model: 'custom',
 		tiers: [{ name: 'Custom quote', price: 'Custom quote', period: '', note: CUSTOM_LINE }],
 		support: 'Quoted with the build.',
-		why: 'No fixed price is honest for custom software. Bring the operation to the working session and leave with an estimate.'
+		why: 'No fixed price is honest for custom software. Bring the operation to the free strategy call and leave with an estimate.'
 	}
 ];

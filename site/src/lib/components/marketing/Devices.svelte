@@ -48,7 +48,7 @@
 		<!-- Windows laptop -->
 		<div use:tilt={6} class="device win mx-auto w-[260px] md:mx-0 md:justify-self-start">
 			<div class="relative aspect-[16/10] w-full overflow-hidden rounded-t-xl border-[6px] border-b-0 border-[#1a1d27] bg-surface-3 shadow-2">
-				{#if tiles['pillar:software']}<video class="lazy dim absolute inset-0 h-full w-full object-cover" style="--dim:0.55" muted loop playsinline preload="none" use:lazyVideo={{ src: tiles['pillar:software'], always: true }} aria-hidden="true"></video>{/if}
+				{#if tiles['pillar:software']}<video class="lazy dim absolute inset-0 h-full w-full object-cover" style="--dim:0.55" muted loop playsinline preload="none" use:lazyVideo={{ still: true, src: tiles['pillar:software'], always: true }} aria-hidden="true"></video>{/if}
 				<div class="absolute inset-x-0 bottom-0 bg-[linear-gradient(180deg,transparent,var(--color-surface-3))] p-3 text-[10px]"><p class="label-mono text-ink-3">Butler · this morning</p><p class="mt-1 text-[12px] font-semibold text-ink">7 tasks raised · 5 follow-ups sent</p></div>
 			</div>
 			<div class="h-2.5 w-[106%] -translate-x-[3%] rounded-b-lg bg-[linear-gradient(180deg,#2a2e3b,#12141c)]"></div>
@@ -67,9 +67,5 @@
 </Section>
 
 <style>
-	.device { animation: hover 7s ease-in-out infinite; }
-	.phone { animation-delay: -2s; }
-	.win { animation-delay: -4s; }
-	@keyframes hover { 0%, 100% { translate: 0 0; } 50% { translate: 0 -10px; } }
-	@media (prefers-reduced-motion: reduce) { .device { animation: none; } }
+
 </style>

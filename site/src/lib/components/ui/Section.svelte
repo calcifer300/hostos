@@ -43,14 +43,13 @@
 	const titleText = $derived(over.title || title);
 	const ledeText = $derived(over.lede || lede);
 	const look = $derived((id && (landing?.sections ?? LANDING_DEFAULTS.sections)[id]) || { clip: '', tint: '#3b9cff' });
-	// one entrance per section, so no two titles arrive the same way
-	const TITLE_MOTION: Record<string, string> = { problems: 'title-rise', how: 'title-left', film: 'title-zoom', 'before-after': 'title-unclip', solutions: 'title-right', industries: 'title-focus', proof: 'title-flip', voices: 'title-track', platform: 'title-swing', start: 'title-drop', faq: 'title-skew', why: 'title-tilt', devices: 'title-zoom', collective: 'title-rise', pricing: 'title-focus' };
-	const titleMotion = $derived((id && TITLE_MOTION[id]) || 'title-rise');
+	// every headline arrives the same way — a fade and a rise — so the entrance never competes with the reading
+	const titleMotion = 'title-rise';
 </script>
 
 <section {id} use:near class={`section-y relative isolate scroll-mt-20 ${tone === 'surface' ? 'border-y border-line bg-surface-1' : tone === 'dark' ? 'tone-dark' : 'bg-bg'} ${cls}`} style={`--tint:${look.tint}`}>
 	<div aria-hidden="true" class="section-bg pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-		{#if look.clip}{#key look.clip}<video class="lazy dim h-full w-full object-cover" muted loop playsinline preload="none" use:lazyVideo={{ src: look.clip }}></video>{/key}{/if}
+		{#if look.clip}{#key look.clip}<video class="lazy dim h-full w-full object-cover" muted loop playsinline preload="none" use:lazyVideo={{ src: look.clip, still: true }}></video>{/key}{/if}
 	</div>
 	<div class={wide ? 'container-wide' : 'container-x'}>
 		{#if eyebrowText || titleText}

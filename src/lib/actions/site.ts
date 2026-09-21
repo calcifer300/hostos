@@ -40,15 +40,16 @@ export async function saveLandingFilm(input: unknown): Promise<SiteResult> {
   const gate = await founder();
   if (!gate.ok) return { ok: false, error: gate.error };
   const film: LandingFilm = normalizeFilm(input);
-  const raw = (input && typeof input === "object" ? input : {}) as { hero?: { src?: unknown }; chapters?: { src?: unknown }[]; extras?: Record<string, unknown> };
-  const offered = [raw.hero?.src, ...(raw.chapters ?? []).map((c) => c?.src), ...Object.values(raw.extras ?? {})].filter((s): s is string => typeof s === "string" && s.trim() !== "");
+  const raw = (input && typeof input === "object" ? input : {}) as { hero?: { src?: unknown }; chapters?: { src?: unknown }[]; extras?: Record<string, unknown>; tiles?: Record<string, unknown>; sections?: Record<string, { clip?: unknown }> };
+  const offered = [raw.hero?.src, ...(raw.chapters ?? []).map((c) => c?.src), ...Object.values(raw.extras ?? {}), ...Object.values(raw.tiles ?? {}), ...Object.values(raw.sections ?? {}).map((s) => s?.clip)].filter((s): s is string => typeof s === "string" && s.trim() !== "");
   const bad = offered.find((s) => !isFilmSrc(s));
   if (bad) return { ok: false, error: "A clip must be an upload, a file on the site (/…) or a videos.pexels.com link." };
   const before = await getLandingFilm();
   const r = await putLandingFilm(film, gate.email);
   if (!r.ok) return { ok: false, error: hint(r.error) };
-  const still = new Set([film.hero.src, ...film.chapters.map((c) => c.src), ...Object.values(film.extras)]);
-  for (const s of [before.film.hero.src, ...before.film.chapters.map((c) => c.src), ...Object.values(before.film.extras)]) if (!still.has(s)) await removePublicObject("site", s);
+  const every = (f: LandingFilm) => [f.hero.src, ...f.chapters.map((c) => c.src), ...Object.values(f.extras), ...Object.values(f.tiles), ...Object.values(f.sections).map((s) => s.clip)].filter(Boolean);
+  const still = new Set(every(film));
+  for (const s of every(before.film)) if (!still.has(s)) await removePublicObject("site", s);
   refresh();
   return { ok: true };
 }

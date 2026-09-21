@@ -126,10 +126,14 @@ export function magnetic(el: HTMLElement, strength = 0.28) {
 /** Splits a heading into words, each rising out of its own clipped line when the heading scrolls into view. */
 export function words(el: HTMLElement, step = 45) {
 	const text = el.textContent ?? '';
-	el.setAttribute('aria-label', text);
-	el.innerHTML = text
-		.split(/(\s+)/)
-		.map((w, i) => (/^\s+$/.test(w) ? ' ' : `<span class="plate" aria-hidden="true" style="display:inline-block;vertical-align:top;--reveal-delay:${Math.floor(i / 2) * step}ms"><span>${w}</span></span>`))
+	if (!el.hasAttribute('aria-label')) el.setAttribute('aria-label', text);
+	// each word rides its own plate; a word inside an <em> keeps the <em> (the serif aside)
+	let n = 0;
+	const plate = (inner: string) => `<span class="plate" aria-hidden="true" style="display:inline-block;vertical-align:top;--reveal-delay:${n++ * step}ms"><span>${inner}</span></span>`;
+	const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+	const split = (s: string, wrap: (w: string) => string) => s.split(/(\s+)/).map((w) => (/^\s+$/.test(w) ? ' ' : w === '' ? '' : plate(wrap(esc(w))))).join('');
+	el.innerHTML = Array.from(el.childNodes)
+		.map((node) => (node instanceof HTMLElement ? split(node.textContent ?? '', (w) => `<${node.tagName.toLowerCase()}>${w}</${node.tagName.toLowerCase()}>`) : split(node.textContent ?? '', (w) => w)))
 		.join('');
 	const stop = onceInView(el, () => el.querySelectorAll('.plate').forEach((p) => p.classList.add('is-in')));
 	return { destroy: stop };
@@ -156,4 +160,11 @@ export function lazyVideo(video: HTMLVideoElement, opts: { src: string; always?:
 	const onPlay = () => video.classList.add('is-playing');
 	video.addEventListener('playing', onPlay);
 	return { destroy() { io.disconnect(); video.removeEventListener('playing', onPlay); } };
+}
+
+/** Marks an element `is-near` once it comes within a screen of the viewport, and keeps it: what is lit stays lit. */
+export function near(el: HTMLElement, margin = '40% 0px') {
+	const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { el.classList.add('is-near'); io.disconnect(); } }, { rootMargin: margin });
+	io.observe(el);
+	return { destroy() { io.disconnect(); } };
 }

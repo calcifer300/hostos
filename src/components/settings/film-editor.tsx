@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input, Label } from "@/components/ui/input";
 import { saveLandingFilm, signFilmUpload } from "@/lib/actions/site";
-import { DEFAULT_FILM, isFilmSrc, type FilmChapter, type LandingFilm } from "@/lib/site/film";
+import { DEFAULT_FILM, isFilmSrc, SECTION_SLOTS, TILE_SLOTS, type FilmChapter, type LandingFilm } from "@/lib/site/film";
 import { cn } from "@/lib/utils";
 
 /**
@@ -69,6 +69,46 @@ export function FilmEditor({ film: initial, fromDatabase }: { film: LandingFilm;
             </div>
           ))}
         </div>
+      </Card>
+
+      <Card padding="md">
+        <details>
+          <summary className="cursor-pointer text-[12.5px] font-semibold uppercase tracking-wide text-muted-foreground">Section backgrounds · {SECTION_SLOTS.length} sections</summary>
+          <p className="mt-1 text-[12px] text-muted-foreground">Each section has a slow, dimmed clip behind it and a colour its light leans towards. Clear the link to leave a section with just the light.</p>
+          <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {SECTION_SLOTS.map(({ id, label }) => (
+              <div key={id} className="space-y-2">
+                <div className="flex items-center justify-between gap-3">
+                  <Label>{label}</Label>
+                  <label className="flex items-center gap-2 text-[11.5px] text-muted-foreground">Light
+                    <input type="color" aria-label={`${label} colour`} value={film.sections[id]?.tint ?? "#3b9cff"} onChange={(e) => { setFilm((f) => ({ ...f, sections: { ...f.sections, [id]: { ...f.sections[id], tint: e.target.value } } })); setDirty(true); }} className="h-6 w-8 cursor-pointer rounded border border-border bg-transparent" />
+                  </label>
+                </div>
+                <ClipField slug={`section-${id}`} value={film.sections[id]?.clip ?? ""} onChange={(clip) => { setFilm((f) => ({ ...f, sections: { ...f.sections, [id]: { ...f.sections[id], clip } } })); setDirty(true); }} />
+              </div>
+            ))}
+          </div>
+        </details>
+      </Card>
+
+      <Card padding="md">
+        <details>
+          <summary className="cursor-pointer text-[12.5px] font-semibold uppercase tracking-wide text-muted-foreground">Tiles · {TILE_SLOTS.length} industry tiles and solution cards</summary>
+          <p className="mt-1 text-[12px] text-muted-foreground">Footage under the words on every tile. Clear the link to leave a tile plain.</p>
+          {(["industry", "solution"] as const).map((group) => (
+            <div key={group} className="mt-4">
+              <p className="mb-2 text-[12px] font-semibold">{group === "industry" ? "Industries" : "Solutions"}</p>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {TILE_SLOTS.filter((t) => t.id.startsWith(group + ":")).map(({ id, label }) => (
+                  <div key={id} className="space-y-2">
+                    <Label>{label}</Label>
+                    <ClipField slug={`tile-${id.replace(":", "-")}`} value={film.tiles[id] ?? ""} onChange={(src) => { setFilm((f) => ({ ...f, tiles: { ...f.tiles, [id]: src } })); setDirty(true); }} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </details>
       </Card>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">

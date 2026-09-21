@@ -15,8 +15,12 @@
 	import FinalCta from '$lib/components/marketing/FinalCta.svelte';
 	import { FAQ, SITE } from '$lib/content/site';
 	import { jsonLd } from '$lib/seo/jsonld';
+	import { setContext } from 'svelte';
 
 	let { data } = $props();
+	// every section and tile reads its footage and light from here
+	// svelte-ignore state_referenced_locally — the landing is loaded once per page
+	setContext('landing', data);
 	const title = `${SITE.company} — ${SITE.tagline}`;
 	const ld = $derived(jsonLd(data.members));
 </script>
@@ -44,7 +48,7 @@
 <Film chapters={data.chapters} />
 <BeforeAfter />
 <Solutions chapters={data.chapters} extras={data.extras} />
-<Industries chapters={data.chapters} extras={data.extras} heroSrc={data.heroSrc} />
+<Industries />
 <Proof />
 <PlatformDemo />
 <Collective members={data.members} teamSrc={data.extras.team} />

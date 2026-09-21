@@ -42,7 +42,7 @@ export const LOGOS = ['Turo', 'DoorDash', 'Uber Eats', 'Grubhub', 'Shopify', 'St
 
 export const PROBLEMS = {
 	eyebrow: 'The problems we’re hired for',
-	title: 'You didn’t start a business to be its operating system.',
+	title: 'You didn’t start a business to be its *operating system*.',
 	items: [
 		{ scene: 'Your DoorDash tablet paused during dinner. Nobody noticed for 40 minutes.', answer: 'Tablets watched live, store re-opened in a minute, the missed orders counted and reported.' },
 		{ scene: 'Three cars came back today. One has damage. The claim window closes Thursday.', answer: 'Photos at return, claim filed the same day, the calendar blocked until it’s fixed.' },
@@ -55,7 +55,7 @@ export const PROBLEMS = {
 
 export const HOW = {
 	eyebrow: 'How HostOS works',
-	title: 'People, systems, software. In that order.',
+	title: 'People, systems, software. *In that order.*',
 	pillars: [
 		{ id: 'people', name: 'People', line: 'Trained operators inside your business.', body: 'On your hours, on your channels — phone, email, chat, the delivery tablets. Managed, covered, accountable. Not freelancers.' },
 		{ id: 'systems', name: 'Systems', line: 'How the work gets done, written down.', body: 'Every operation becomes a one-page procedure. The repetitive parts are automated — reminders, follow-ups, reports — with software and, where it helps, AI. Nothing depends on memory.' },
@@ -65,7 +65,7 @@ export const HOW = {
 
 export const BEFORE_AFTER = {
 	eyebrow: 'Before and after',
-	title: 'One operation, two ways of running it.',
+	title: 'One operation, *two ways* of running it.',
 	lede: 'A 146-car Turo fleet, the month before and the month after it moved onto HostOS.',
 	rows: [
 		{ label: 'Tools', before: '4 spreadsheets, 3 group chats, the Turo app', after: 'One board' },
@@ -79,39 +79,39 @@ export const BEFORE_AFTER = {
 
 export const SOLUTIONS = {
 	eyebrow: 'Solutions',
-	title: 'What we run, build and connect.',
+	title: 'What we *run, build* and *connect*.',
 	families: [
 		{
 			id: 'run', name: 'Run', line: 'People and procedures inside your business.',
 			items: [
-				{ name: 'Virtual assistant solutions', outcome: 'A trained team on your channels, managed by us.', points: ['Phone, email, chat, delivery tablets', 'Procedures written for your business', 'Coverage, not a single person'], for: 'Any business with an inbox that never sleeps' },
-				{ name: 'Turo operations', outcome: 'Every car, booking and turnaround on one board.', points: ['Pricing and calendar', 'Guest messages, day and night', 'Claims filed on time, photos at return'], for: 'Hosts with 3 to 300 cars' },
-				{ name: 'DoorDash operations', outcome: 'Tablets watched, menus in sync, reviews answered.', points: ['Missed orders caught in minutes', '86’d items pulled across every app', 'Refund disputes filed with evidence'], for: 'Restaurants on two or more delivery apps' },
-				{ name: 'Business operations consulting', outcome: 'The way you work, redesigned by people who then run it.', points: ['Process mapping in your language', 'What to automate, what to staff', 'A 30-day plan you can hold us to'], for: 'Owners growing past what they can watch' }
+				{ id: 'va', name: 'Virtual assistant solutions', outcome: 'A trained team on your channels, managed by us.', points: ['Phone, email, chat, delivery tablets', 'Procedures written for your business', 'Coverage, not a single person'], for: 'Any business with an inbox that never sleeps' },
+				{ id: 'turo-ops', name: 'Turo operations', outcome: 'Every car, booking and turnaround on one board.', points: ['Pricing and calendar', 'Guest messages, day and night', 'Claims filed on time, photos at return'], for: 'Hosts with 3 to 300 cars' },
+				{ id: 'doordash-ops', name: 'DoorDash operations', outcome: 'Tablets watched, menus in sync, reviews answered.', points: ['Missed orders caught in minutes', '86’d items pulled across every app', 'Refund disputes filed with evidence'], for: 'Restaurants on two or more delivery apps' },
+				{ id: 'consulting', name: 'Business operations consulting', outcome: 'The way you work, redesigned by people who then run it.', points: ['Process mapping in your language', 'What to automate, what to staff', 'A 30-day plan you can hold us to'], for: 'Owners growing past what they can watch' }
 			]
 		},
 		{
 			id: 'build', name: 'Build', line: 'Software that fits the business, not the other way round.',
 			items: [
-				{ name: 'Custom web applications', outcome: 'The tool your business needs and can’t buy.', points: ['Designed around your workflow', 'Built on the stack HostOS runs on', 'Yours — code, data, accounts'], for: 'Operations that outgrew spreadsheets' },
-				{ name: 'Website design & development', outcome: 'A site that books, quotes and answers.', points: ['Designed and built in-house', 'Fast, mobile-first, findable', 'Your domain in your name'], for: 'Shops, clinics, trades, agencies' },
-				{ name: 'CRM & internal tools', outcome: 'Every customer, job and conversation in one place.', points: ['A timeline per customer', 'Pipelines your team actually updates', 'Portals for clients and staff'], for: 'Service businesses with repeat customers' },
-				{ name: 'Dashboard development', outcome: 'The numbers that matter, live, on your phone.', points: ['One screen per role', 'Updated as the work happens', 'No reports to run'], for: 'Owners who want to see, not ask' }
+				{ id: 'webapps', name: 'Custom web applications', outcome: 'The tool your business needs and can’t buy.', points: ['Designed around your workflow', 'Built on the stack HostOS runs on', 'Yours — code, data, accounts'], for: 'Operations that outgrew spreadsheets' },
+				{ id: 'websites', name: 'Website design & development', outcome: 'A site that books, quotes and answers.', points: ['Designed and built in-house', 'Fast, mobile-first, findable', 'Your domain in your name'], for: 'Shops, clinics, trades, agencies' },
+				{ id: 'crm', name: 'CRM & internal tools', outcome: 'Every customer, job and conversation in one place.', points: ['A timeline per customer', 'Pipelines your team actually updates', 'Portals for clients and staff'], for: 'Service businesses with repeat customers' },
+				{ id: 'dashboards', name: 'Dashboard development', outcome: 'The numbers that matter, live, on your phone.', points: ['One screen per role', 'Updated as the work happens', 'No reports to run'], for: 'Owners who want to see, not ask' }
 			]
 		},
 		{
 			id: 'connect', name: 'Connect', line: 'The systems talking to each other so people don’t have to.',
 			items: [
-				{ name: 'Business process automation', outcome: 'The repetitive work, done without anyone remembering.', points: ['Reminders, follow-ups, reports', 'Triggers from the tools you already use', 'Human in the loop where it matters'], for: 'Any process that runs on a checklist' },
-				{ name: 'API integrations', outcome: 'Turo, DoorDash, Shopify, Stripe, Google — connected.', points: ['Orders and bookings flow in', 'Payments and payouts reconciled', 'One source of truth'], for: 'Businesses running on five apps' },
-				{ name: 'Workflow optimisation', outcome: 'Fewer steps, fewer hands, fewer mistakes.', points: ['Every operation mapped and timed', 'The waste removed before it’s automated', 'Measured after, not assumed'], for: 'Teams that feel busy and behind' }
+				{ id: 'automation', name: 'Business process automation', outcome: 'The repetitive work, done without anyone remembering.', points: ['Reminders, follow-ups, reports', 'Triggers from the tools you already use', 'Human in the loop where it matters'], for: 'Any process that runs on a checklist' },
+				{ id: 'integrations', name: 'API integrations', outcome: 'Turo, DoorDash, Shopify, Stripe, Google — connected.', points: ['Orders and bookings flow in', 'Payments and payouts reconciled', 'One source of truth'], for: 'Businesses running on five apps' },
+				{ id: 'workflow', name: 'Workflow optimisation', outcome: 'Fewer steps, fewer hands, fewer mistakes.', points: ['Every operation mapped and timed', 'The waste removed before it’s automated', 'Measured after, not assumed'], for: 'Teams that feel busy and behind' }
 			]
 		},
 		{
 			id: 'understand', name: 'Understand', line: 'Knowing what happened, and what’s about to.',
 			items: [
-				{ name: 'Operational analytics', outcome: 'Where the hours and the money go, by the week.', points: ['Utilisation, response times, misses', 'Per car, per store, per tech', 'Alerts when a number moves'], for: 'Owners making decisions on gut feel' },
-				{ name: 'Business intelligence', outcome: 'The questions you’d ask an analyst, answered from your own data.', points: ['Warehouse and models, done for you', 'Plain-language questions over your numbers', 'Forecasts you can act on'], for: 'Multi-location and multi-vertical operators' }
+				{ id: 'analytics', name: 'Operational analytics', outcome: 'Where the hours and the money go, by the week.', points: ['Utilisation, response times, misses', 'Per car, per store, per tech', 'Alerts when a number moves'], for: 'Owners making decisions on gut feel' },
+				{ id: 'bi', name: 'Business intelligence', outcome: 'The questions you’d ask an analyst, answered from your own data.', points: ['Warehouse and models, done for you', 'Plain-language questions over your numbers', 'Forecasts you can act on'], for: 'Multi-location and multi-vertical operators' }
 			]
 		}
 	]
@@ -119,7 +119,7 @@ export const SOLUTIONS = {
 
 export const INDUSTRIES = {
 	eyebrow: 'Industries',
-	title: 'Built for operational businesses.',
+	title: 'Built for *operational* businesses.',
 	items: [
 		{ id: 'turo', name: 'Turo & car rental', hue: '#0a84ff', line: 'Fleets from 3 to 300 cars', href: '/#solutions' },
 		{ id: 'doordash', name: 'DoorDash & delivery', hue: '#ff375f', line: 'Restaurants on two or more apps', href: '/#solutions' },
@@ -134,7 +134,7 @@ export const INDUSTRIES = {
 
 export const PROOF = {
 	eyebrow: 'Proof',
-	title: 'Numbers first. Names where we’re allowed.',
+	title: 'Numbers first. *Names* where we’re allowed.',
 	cases: [
 		{ figure: 0, suffix: '', label: 'damage claims missed', line: 'A 146-car Turo fleet in the Philippines, six months on HostOS: every return photographed, every claim inside the window.', who: '146-car fleet · Founder-operated', when: '2026', hue: '#0a84ff' },
 		{ figure: 4, suffix: ' min', label: 'median guest reply time', line: 'Night and weekend messages for 146 cars, answered by operators working from the same board the owner reads at 8 a.m.', who: 'Same fleet', when: 'Q2 2026', hue: '#30d158' },
@@ -144,7 +144,7 @@ export const PROOF = {
 
 export const PLATFORM = {
 	eyebrow: 'The platform',
-	title: 'The board your team and ours work from.',
+	title: 'The board your team and ours *work from*.',
 	lede: 'HostOS is the software behind every engagement — a separate dashboard for each line of business, one login. This is a live look at the kind of screens an owner reads.',
 	tabs: [
 		{ id: 'board', name: 'Today', widgets: [
@@ -180,10 +180,77 @@ export const VIDEO = {
 	delivery: clip(4168426, 25),
 	closing: clip(8064422, 30)
 };
+/** Footage under every industry tile and solution card; the Founder can swap or clear any of them. */
+export const TILES: Record<string, string> = {
+	"industry:turo": "https://videos.pexels.com/video-files/4208203/4208203-sd_960_540_24fps.mp4",
+	"industry:doordash": "https://videos.pexels.com/video-files/4168426/4168426-sd_960_540_25fps.mp4",
+	"industry:hospitality": "https://videos.pexels.com/video-files/7820478/7820478-sd_960_540_25fps.mp4",
+	"industry:fleet": "https://videos.pexels.com/video-files/5834188/5834188-sd_960_540_24fps.mp4",
+	"industry:property": "https://videos.pexels.com/video-files/4877217/4877217-sd_960_540_30fps.mp4",
+	"industry:services": "https://videos.pexels.com/video-files/8986482/8986482-sd_960_540_30fps.mp4",
+	"industry:small": "https://videos.pexels.com/video-files/7697073/7697073-sd_960_540_30fps.mp4",
+	"industry:startups": "https://videos.pexels.com/video-files/8266178/8266178-sd_960_540_25fps.mp4",
+	"solution:va": "https://videos.pexels.com/video-files/8865706/8865706-sd_960_540_25fps.mp4",
+	"solution:turo-ops": "https://videos.pexels.com/video-files/4208203/4208203-sd_960_540_24fps.mp4",
+	"solution:doordash-ops": "https://videos.pexels.com/video-files/7362583/7362583-sd_960_540_24fps.mp4",
+	"solution:consulting": "https://videos.pexels.com/video-files/7413764/7413764-sd_960_540_24fps.mp4",
+	"solution:webapps": "https://videos.pexels.com/video-files/8266178/8266178-sd_960_540_25fps.mp4",
+	"solution:websites": "https://videos.pexels.com/video-files/4177954/4177954-sd_960_540_30fps.mp4",
+	"solution:crm": "https://videos.pexels.com/video-files/3986119/3986119-sd_960_540_25fps.mp4",
+	"solution:dashboards": "https://videos.pexels.com/video-files/8064422/8064422-sd_960_540_30fps.mp4",
+	"solution:automation": "https://videos.pexels.com/video-files/8094279/8094279-sd_960_540_25fps.mp4",
+	"solution:integrations": "https://videos.pexels.com/video-files/20693196/20693196-sd_960_540_25fps.mp4",
+	"solution:workflow": "https://videos.pexels.com/video-files/8986890/8986890-sd_960_540_30fps.mp4",
+	"solution:analytics": "https://videos.pexels.com/video-files/6868699/6868699-sd_960_540_30fps.mp4",
+	"solution:bi": "https://videos.pexels.com/video-files/6685171/6685171-sd_960_540_30fps.mp4"
+};
+/** Every section's living background: a dimmed clip (or none) and the colour its light leans towards. */
+export const SECTIONS: Record<string, { clip: string; tint: string }> = {
+	problems: {
+		clip: "https://videos.pexels.com/video-files/3986119/3986119-sd_960_540_25fps.mp4",
+		tint: "#ff375f"
+	},
+	how: {
+		clip: "https://videos.pexels.com/video-files/7413764/7413764-sd_960_540_24fps.mp4",
+		tint: "#3b9cff"
+	},
+	film: {
+		clip: "",
+		tint: "#8b7cff"
+	},
+	'before-after': {
+		clip: "https://videos.pexels.com/video-files/8064422/8064422-sd_960_540_30fps.mp4",
+		tint: "#30d158"
+	},
+	solutions: {
+		clip: "",
+		tint: "#3b9cff"
+	},
+	industries: {
+		clip: "",
+		tint: "#ff9f0a"
+	},
+	proof: {
+		clip: "https://videos.pexels.com/video-files/6868699/6868699-sd_960_540_30fps.mp4",
+		tint: "#40c8e0"
+	},
+	platform: {
+		clip: "https://videos.pexels.com/video-files/7362583/7362583-sd_960_540_24fps.mp4",
+		tint: "#af52de"
+	},
+	start: {
+		clip: "https://videos.pexels.com/video-files/8266178/8266178-sd_960_540_25fps.mp4",
+		tint: "#3b9cff"
+	},
+	faq: {
+		clip: "",
+		tint: "#8b7cff"
+	}
+};
 
 export const FILM = {
 	eyebrow: 'Watch it run',
-	title: 'One day, four businesses, one board.',
+	title: 'One day, four businesses, *one board*.',
 	lede: 'The same team, the same software, a different operation every few hours. Sit back — it plays itself.',
 	chapters: [
 		{ id: 'fleet', time: '07:40', name: 'Fleet', src: clip(4208203, 24), line: '146 cars. Eleven going out before nine.', events: [['07:41', 'Guest asks for an early pickup — answered in 1 m'], ['07:52', 'Model 3 · keys out · lockbox code sent'], ['08:10', 'Civic back · 12 photos · no damage']] },
@@ -195,7 +262,7 @@ export const FILM = {
 
 export const THIRTY_DAYS = {
 	eyebrow: 'How an engagement starts',
-	title: 'The first thirty days.',
+	title: 'The first *thirty days*.',
 	steps: [
 		{ week: 'Week 1', name: 'Map', body: 'We sit in your operation — the inbox, the calendar, the tablets — and write down how it actually runs. You get the map whether or not we continue.' },
 		{ week: 'Week 2', name: 'Set up', body: 'Your workspace on HostOS, the procedures, the connections to Turo, DoorDash, Shopify or whatever you run on. Operators trained on your business, not on a script.' },
@@ -206,7 +273,7 @@ export const THIRTY_DAYS = {
 
 export const FAQ = {
 	eyebrow: 'Questions owners ask',
-	title: 'Straight answers.',
+	title: '*Straight* answers.',
 	items: [
 		{ q: 'Do I have to switch software?', a: 'No. HostOS connects to what you already run — Turo, DoorDash, Uber Eats, Shopify, Stripe, Google. Where a tool is missing we build it; where one works, we plug it in.' },
 		{ q: 'Who owns the data, the accounts, the code?', a: 'You do. Your domain is in your name, your workspace is yours, and anything we build for you is delivered with the source. If we part ways, you keep everything.' },
@@ -220,7 +287,7 @@ export const FAQ = {
 };
 
 export const FINAL = {
-	title: 'Bring one operation.',
+	title: 'Bring *one* operation.',
 	body: 'In 45 minutes we’ll map how it runs today, where it leaks, and what it looks like on HostOS. If it’s not a fit, you keep the map.',
 	channels: [
 		{ label: 'Email', value: SITE.email, href: `mailto:${SITE.email}` },

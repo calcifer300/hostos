@@ -4,6 +4,10 @@
 	import Button from '$lib/components/ui/Button.svelte';
 	import { lazyVideo, tilt } from '$lib/components/motion/actions';
 	import { FILM, VIDEO } from '$lib/content/site';
+	import { getContext } from 'svelte';
+	import { LANDING_DEFAULTS, type Landing } from '$lib/content/remote';
+	const landing = getContext<Landing | undefined>('landing');
+	const tiles = $derived(landing?.tiles ?? LANDING_DEFAULTS.tiles);
 	let { chapters = FILM.chapters, extras = { team: VIDEO.team, delivery: VIDEO.delivery, closing: VIDEO.closing } }: { chapters?: typeof FILM.chapters; extras?: { team: string; delivery: string; closing: string } } = $props();
 	const banner = $derived([extras.team, chapters[3].src, extras.delivery, extras.closing]);
 	import Motif from '$lib/components/ui/Motif.svelte';
@@ -38,17 +42,27 @@
 	{#key active}
 		<div id={`panel-${family.id}`} role="tabpanel" aria-labelledby={`fam-${family.id}`} class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
 			{#each family.items as s, i}
-				<article use:tilt={4} class="spot ring-hover reveal is-in flex flex-col rounded-2xl border border-line bg-surface-2 p-5 transition-[border-color] duration-300 hover:border-accent/50" style={`--reveal-delay:${i * 60}ms`}>
-					<Motif kind={motifs[family.id as keyof typeof motifs]} class="mb-3 h-9 w-9 text-accent opacity-70" />
-					<h3 class="text-[17px] font-semibold tracking-tight text-ink">{s.name}</h3>
-					<p class="mt-1.5 text-[14px] font-medium text-accent">{s.outcome}</p>
-					<ul class="mt-4 space-y-1.5">
-						{#each s.points as pt}<li class="flex items-start gap-2 text-[13.5px] text-ink-2"><span class="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-accent"></span>{pt}</li>{/each}
-					</ul>
-					<p class="label-mono mt-auto pt-5 text-ink-3">For {s.for}</p>
+				{@const clip = tiles[`solution:${s.id}`]}
+				<article use:tilt={4} class="card spot ring-hover reveal is-in relative flex flex-col overflow-hidden rounded-2xl border border-line bg-surface-2 p-5 transition-[border-color] duration-300 hover:border-accent/50" style={`--reveal-delay:${i * 60}ms`}>
+					{#if clip}{#key clip}<video class="lazy dim absolute inset-0 h-full w-full object-cover" muted loop playsinline preload="none" use:lazyVideo={{ src: clip }} aria-hidden="true"></video>{/key}{/if}
+					<div aria-hidden="true" class="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(22,26,38,0.55),var(--color-surface-2)_70%)]"></div>
+					<div class="relative flex flex-1 flex-col">
+						<Motif kind={motifs[family.id as keyof typeof motifs]} class="mb-3 h-9 w-9 text-accent opacity-70" />
+						<h3 class="text-[17px] font-semibold tracking-tight text-ink">{s.name}</h3>
+						<p class="mt-1.5 text-[14px] font-medium text-accent">{s.outcome}</p>
+						<ul class="mt-4 space-y-1.5">
+							{#each s.points as pt}<li class="flex items-start gap-2 text-[13.5px] text-ink-2"><span class="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-accent"></span>{pt}</li>{/each}
+						</ul>
+						<p class="label-mono mt-auto pt-5 text-ink-3">For {s.for}</p>
+					</div>
 				</article>
 			{/each}
 		</div>
 	{/key}
 	<div class="mt-10"><Button href={CTA.href} variant="secondary">Ask which of these you need <ArrowRight class="h-4 w-4" /></Button></div>
 </Section>
+
+<style>
+	.card { --dim: 0.28; }
+	.card:hover :global(video.is-playing) { opacity: 0.42; }
+</style>

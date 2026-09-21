@@ -5,13 +5,22 @@
  * Every read falls back to the built-in content — a slow app never breaks
  * the front door.
  */
-import { FILM, VIDEO } from '$lib/content/site';
+import { FILM, SECTIONS, TILES, VIDEO } from '$lib/content/site';
 import { normalizeTeam, TEAM, type Member } from '$lib/content/team';
 
 export const APP_ORIGIN = 'https://hostos-ten.vercel.app';
 
 export type Chapter = (typeof FILM.chapters)[number];
-export interface Landing { members: Member[]; chapters: Chapter[]; heroSrc: string; extras: { team: string; delivery: string; closing: string } }
+export interface Landing {
+	members: Member[];
+	chapters: Chapter[];
+	heroSrc: string;
+	extras: { team: string; delivery: string; closing: string };
+	tiles: Record<string, string>;
+	sections: Record<string, { clip: string; tint: string }>;
+}
+/** The built-in landing, for the sections that render without a page load behind them. */
+export const LANDING_DEFAULTS: Pick<Landing, 'tiles' | 'sections' | 'extras'> = { tiles: TILES, sections: SECTIONS, extras: { team: VIDEO.team, delivery: VIDEO.delivery, closing: VIDEO.closing } };
 
 const str = (v: unknown, fb: string) => (typeof v === 'string' && v.trim() ? v : fb);
 const src = (v: unknown, fb: string) => (typeof v === 'string' && /^(\/|https:\/\/[a-z0-9-]+\.supabase\.co\/storage\/v1\/object\/public\/|https:\/\/videos\.pexels\.com\/)/i.test(v) ? v : fb);
@@ -40,6 +49,14 @@ export async function loadLanding(fetchFn: typeof fetch): Promise<Landing> {
 		members: team ? normalizeTeam(team) : TEAM,
 		chapters: chaptersFrom(film?.chapters),
 		heroSrc: src((film?.hero as Record<string, unknown> | undefined)?.src, VIDEO.hero.src),
-		extras: (() => { const ex = (film?.extras && typeof film.extras === 'object' ? film.extras : {}) as Record<string, unknown>; return { team: src(ex.team, VIDEO.team), delivery: src(ex.delivery, VIDEO.delivery), closing: src(ex.closing, VIDEO.closing) }; })()
+		extras: (() => { const ex = (film?.extras && typeof film.extras === 'object' ? film.extras : {}) as Record<string, unknown>; return { team: src(ex.team, VIDEO.team), delivery: src(ex.delivery, VIDEO.delivery), closing: src(ex.closing, VIDEO.closing) }; })(),
+		tiles: (() => { const t = (film?.tiles && typeof film.tiles === 'object' ? film.tiles : {}) as Record<string, unknown>; return Object.fromEntries(Object.keys(TILES).map((k) => [k, t[k] === '' ? '' : src(t[k], TILES[k])])); })(),
+		sections: (() => {
+			const s = (film?.sections && typeof film.sections === 'object' ? film.sections : {}) as Record<string, unknown>;
+			return Object.fromEntries(Object.entries(SECTIONS).map(([k, d]) => {
+				const v = (s[k] && typeof s[k] === 'object' ? s[k] : {}) as Record<string, unknown>;
+				return [k, { clip: v.clip === '' ? '' : src(v.clip, d.clip), tint: typeof v.tint === 'string' && /^#[0-9a-f]{6}$/i.test(v.tint) ? v.tint : d.tint }];
+			}));
+		})()
 	};
 }

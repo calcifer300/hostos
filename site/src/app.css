@@ -161,6 +161,13 @@
 	font-weight: 400;
 	letter-spacing: -0.01em;
 }
+/* headlines: white falling into the section's light; the *aside* in the serif italic */
+@utility headline {
+	color: transparent;
+	background: linear-gradient(180deg, #ffffff 0%, color-mix(in oklab, var(--tint, var(--color-accent)) 28%, #b8c2ea) 100%);
+	-webkit-background-clip: text;
+	background-clip: text;
+}
 @utility text-gradient {
 	background: linear-gradient(92deg, var(--color-accent), var(--color-platform));
 	-webkit-background-clip: text;
@@ -267,6 +274,8 @@
 @media (prefers-reduced-motion: reduce) {
 	.reveal,
 	.arrive,
+	.section-bg::before,
+	.section-bg::after,
 	.plate > span,
 	.draw path,
 	.draw line,
@@ -326,6 +335,64 @@ video.lazy {
 }
 video.lazy.is-playing {
 	opacity: 1;
+}
+/* footage that sits behind words is kept dim and colourless so the words stay first */
+video.lazy.dim {
+	mix-blend-mode: luminosity;
+}
+video.lazy.dim.is-playing {
+	opacity: var(--dim, 0.22);
+}
+/* every section's light: two slow blooms in the section's colour. Each is a small disc scaled up on the GPU
+   (rasterised at a quarter of the section, never at full size), lit only once the section is near the screen. */
+.section-bg::before,
+.section-bg::after {
+	content: none;
+	position: absolute;
+	width: 36%;
+	aspect-ratio: 1;
+	border-radius: 50%;
+	z-index: 1;
+	pointer-events: none;
+	will-change: transform;
+}
+.section-bg::before {
+	left: 4%;
+	top: 6%;
+	background: radial-gradient(circle at center, color-mix(in oklab, var(--tint, var(--color-accent)) 24%, transparent), transparent 68%);
+	animation: bloom-a 26s ease-in-out infinite alternate;
+}
+.section-bg::after {
+	right: 2%;
+	bottom: 4%;
+	background: radial-gradient(circle at center, color-mix(in oklab, var(--color-platform) 16%, transparent), transparent 68%);
+	animation: bloom-b 32s ease-in-out infinite alternate;
+}
+.is-near .section-bg::before,
+.is-near .section-bg::after {
+	content: '';
+}
+.section-bg video {
+	--dim: 0.12;
+	mask-image: radial-gradient(ellipse 75% 70% at 50% 45%, #000 20%, transparent 100%);
+}
+@keyframes bloom-a {
+	from { transform: translate3d(-10%, -6%, 0) scale(2.2); }
+	to { transform: translate3d(30%, 24%, 0) scale(2.8); }
+}
+@keyframes bloom-b {
+	from { transform: translate3d(8%, 10%, 0) scale(2.4); }
+	to { transform: translate3d(-26%, -30%, 0) scale(2); }
+}
+.headline em,
+.display-1 em {
+	font-family: var(--font-serif);
+	font-style: italic;
+	font-weight: 400;
+	letter-spacing: -0.01em;
+}
+.plate > span > em {
+	display: inline;
 }
 /* the hero board breathes; the primary button is magnetic (JS), the ring on proof cards follows the pointer */
 .float {

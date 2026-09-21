@@ -14,7 +14,16 @@ export interface LandingFilm {
 	chapters: FilmChapter[];
 	/** Three more places the site plays footage: behind the Collective, on the delivery tile, behind the final ask. */
 	extras: { team: string; delivery: string; closing: string };
+	/** Footage on every industry tile and solution card, keyed "industry:<id>" / "solution:<id>". Empty string = no footage on that tile. */
+	tiles: Record<string, string>;
+	/** Every section's living background: a dimmed clip (or none) and the colour its light leans towards. */
+	sections: Record<string, SectionLook>;
 }
+export interface SectionLook { clip: string; tint: string }
+
+/** The tiles and sections the site has, with the labels the editor shows. */
+export const TILE_SLOTS: { id: string; label: string }[] = [{"id":"industry:turo","label":"Turo & car rental"},{"id":"industry:doordash","label":"DoorDash & delivery"},{"id":"industry:hospitality","label":"Hospitality"},{"id":"industry:fleet","label":"Fleet operations"},{"id":"industry:property","label":"Property management"},{"id":"industry:services","label":"Professional & field services"},{"id":"industry:small","label":"Small businesses"},{"id":"industry:startups","label":"Growing startups"},{"id":"solution:va","label":"Virtual assistant solutions"},{"id":"solution:turo-ops","label":"Turo operations"},{"id":"solution:doordash-ops","label":"DoorDash operations"},{"id":"solution:consulting","label":"Business operations consulting"},{"id":"solution:webapps","label":"Custom web applications"},{"id":"solution:websites","label":"Website design & development"},{"id":"solution:crm","label":"CRM & internal tools"},{"id":"solution:dashboards","label":"Dashboard development"},{"id":"solution:automation","label":"Business process automation"},{"id":"solution:integrations","label":"API integrations"},{"id":"solution:workflow","label":"Workflow optimisation"},{"id":"solution:analytics","label":"Operational analytics"},{"id":"solution:bi","label":"Business intelligence"}];
+export const SECTION_SLOTS: { id: string; label: string }[] = [{"id":"problems","label":"The problems"},{"id":"how","label":"How HostOS works"},{"id":"film","label":"Watch it run"},{"id":"before-after","label":"Before and after"},{"id":"solutions","label":"Solutions"},{"id":"industries","label":"Industries"},{"id":"proof","label":"Proof"},{"id":"platform","label":"The platform"},{"id":"start","label":"The first thirty days"},{"id":"faq","label":"FAQ"}];
 
 export const FILM_KEY = "landing_film";
 
@@ -24,6 +33,8 @@ const clip = (id: number, fps: number) => `https://videos.pexels.com/video-files
 export const DEFAULT_FILM: LandingFilm = {
 	hero: { src: clip(5834188, 24) },
 	extras: { team: clip(8865706, 25), delivery: clip(4168426, 25), closing: clip(8064422, 30) },
+	tiles: {"industry:turo": clip(4208203, 24),"industry:doordash": clip(4168426, 25),"industry:hospitality": clip(7820478, 25),"industry:fleet": clip(5834188, 24),"industry:property": clip(4877217, 30),"industry:services": clip(8986482, 30),"industry:small": clip(7697073, 30),"industry:startups": clip(8266178, 25),"solution:va": clip(8865706, 25),"solution:turo-ops": clip(4208203, 24),"solution:doordash-ops": clip(7362583, 24),"solution:consulting": clip(7413764, 24),"solution:webapps": clip(8266178, 25),"solution:websites": clip(4177954, 30),"solution:crm": clip(3986119, 25),"solution:dashboards": clip(8064422, 30),"solution:automation": clip(8094279, 25),"solution:integrations": clip(20693196, 25),"solution:workflow": clip(8986890, 30),"solution:analytics": clip(6868699, 30),"solution:bi": clip(6685171, 30)},
+	sections: { "problems": { clip: clip(3986119, 25), tint: "#ff375f" }, "how": { clip: clip(7413764, 24), tint: "#3b9cff" }, "film": { clip: "", tint: "#8b7cff" }, "before-after": { clip: clip(8064422, 30), tint: "#30d158" }, "solutions": { clip: "", tint: "#3b9cff" }, "industries": { clip: "", tint: "#ff9f0a" }, "proof": { clip: clip(6868699, 30), tint: "#40c8e0" }, "platform": { clip: clip(7362583, 24), tint: "#af52de" }, "start": { clip: clip(8266178, 25), tint: "#3b9cff" }, "faq": { clip: "", tint: "#8b7cff" } },
 	chapters: [
 		{ id: "fleet", time: "07:40", name: "Fleet", line: "146 cars. Eleven going out before nine.", src: clip(4208203, 24), events: [{ t: "07:41", text: "Guest asks for an early pickup — answered in 1 m" }, { t: "07:52", text: "Model 3 · keys out · lockbox code sent" }, { t: "08:10", text: "Civic back · 12 photos · no damage" }] },
 		{ id: "kitchen", time: "11:30", name: "Kitchen", line: "Lunch rush on three delivery apps.", src: clip(8094279, 25), events: [{ t: "11:32", text: "Uber Eats store paused — reopened in 40 s" }, { t: "11:48", text: "86 garlic rice · pulled from 3 apps" }, { t: "12:05", text: "Refund dispute filed with photos" }] },
@@ -59,5 +70,17 @@ export function normalizeFilm(raw: unknown): LandingFilm {
 	const heroSrc = str(hero.src, DEFAULT_FILM.hero.src, 600);
 	const ex = (r.extras && typeof r.extras === "object" ? r.extras : {}) as Record<string, unknown>;
 	const extra = (k: keyof LandingFilm["extras"]) => { const s = str(ex[k], DEFAULT_FILM.extras[k], 600); return isFilmSrc(s) ? s : DEFAULT_FILM.extras[k]; };
-	return { hero: { src: isFilmSrc(heroSrc) ? heroSrc : DEFAULT_FILM.hero.src }, chapters, extras: { team: extra("team"), delivery: extra("delivery"), closing: extra("closing") } };
+	const tilesRaw = (r.tiles && typeof r.tiles === "object" ? r.tiles : {}) as Record<string, unknown>;
+	const tiles: Record<string, string> = {};
+	for (const { id } of TILE_SLOTS) { const v = tilesRaw[id]; tiles[id] = typeof v === "string" ? (v === "" || isFilmSrc(v) ? v.slice(0, 600) : DEFAULT_FILM.tiles[id]) : DEFAULT_FILM.tiles[id]; }
+	const secRaw = (r.sections && typeof r.sections === "object" ? r.sections : {}) as Record<string, unknown>;
+	const sections: Record<string, SectionLook> = {};
+	for (const { id } of SECTION_SLOTS) {
+		const d = DEFAULT_FILM.sections[id];
+		const s = (secRaw[id] && typeof secRaw[id] === "object" ? secRaw[id] : {}) as Record<string, unknown>;
+		const c = typeof s.clip === "string" ? s.clip.slice(0, 600) : d.clip;
+		const t = typeof s.tint === "string" && /^#[0-9a-f]{6}$/i.test(s.tint) ? s.tint.toLowerCase() : d.tint;
+		sections[id] = { clip: c === "" || isFilmSrc(c) ? c : d.clip, tint: t };
+	}
+	return { hero: { src: isFilmSrc(heroSrc) ? heroSrc : DEFAULT_FILM.hero.src }, chapters, extras: { team: extra("team"), delivery: extra("delivery"), closing: extra("closing") }, tiles, sections };
 }

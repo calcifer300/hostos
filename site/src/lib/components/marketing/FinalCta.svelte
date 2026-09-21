@@ -3,6 +3,7 @@
 	import Button from '$lib/components/ui/Button.svelte';
 	import { lazyVideo, reveal } from '$lib/components/motion/actions';
 	import { FINAL, SITE, VIDEO } from '$lib/content/site';
+	import { emph, plain } from '$lib/content/emph';
 	let { closingSrc = VIDEO.closing }: { closingSrc?: string } = $props();
 	/**
 	 * The one ask. The form posts to the app's contact endpoint (same origin
@@ -32,13 +33,13 @@
 
 <section id="contact" class="aurora section-y relative overflow-hidden">
 	<div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-20">
-		<video class="lazy h-full w-full object-cover opacity-25 [mask-image:radial-gradient(ellipse_at_center,#000_20%,transparent_75%)]" muted loop playsinline preload="none" use:lazyVideo={{ src: closingSrc }}></video>
+		<video class="lazy dim h-full w-full object-cover [mask-image:radial-gradient(ellipse_at_center,#000_20%,transparent_75%)]" style="--dim:0.24" muted loop playsinline preload="none" use:lazyVideo={{ src: closingSrc }}></video>
 	</div>
 	<div aria-hidden="true" class="pointer-events-none absolute left-1/2 top-1/2 h-[600px] w-[1000px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--color-accent)_16%,transparent),transparent)] blur-3xl"></div>
 	<div class="container-x grid items-start gap-12 lg:grid-cols-[1fr_1fr]">
 		<div use:reveal>
 			<p class="label-mono mb-4 text-accent">Start here</p>
-			<h2 class="display-1 voice-display text-ink">{FINAL.title}</h2>
+			<h2 class="display-1 voice-display headline" aria-label={plain(FINAL.title)}>{@html emph(FINAL.title)}</h2>
 			<p class="mt-6 max-w-[48ch] text-[17px] leading-relaxed text-ink-2 md:text-[19px]">{FINAL.body}</p>
 			<ul class="mt-8 space-y-2">
 				{#each FINAL.channels as c}

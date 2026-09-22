@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Download } from "lucide-react";
 import { auth } from "@/auth";
 import { isFounderEmail } from "@/lib/roles/constants";
 import { HOUSE_PROPOSAL } from "@/lib/proposals/content";
@@ -36,6 +36,11 @@ export default async function HouseProposalPage() {
           </span>
           <Button variant="secondary" size="sm" asChild>
             <Link href="/app/proposals">Create one for a client</Link>
+          </Button>
+          <Button variant="primary" size="sm" asChild>
+            <a href="/app/proposals/preview/print?auto=1" target="_blank" rel="noreferrer">
+              <Download /> Download PDF
+            </a>
           </Button>
         </div>
       </div>

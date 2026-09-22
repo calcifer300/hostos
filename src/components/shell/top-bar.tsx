@@ -48,7 +48,7 @@ export function TopBar({
   const vertical = moduleById(verticalFromPath(pathname) ?? focus ?? "");
 
   return (
-    <div className="glass-surface sticky top-0 z-20 hidden items-center justify-between gap-4 border-b px-8 py-3 md:flex">
+    <div className="glass-surface sticky top-0 z-20 hidden items-center justify-between gap-4 border-b px-8 py-3 print:!hidden md:flex">
       <div className="flex min-w-0 items-center gap-3">
         <p className="flex min-w-0 items-center truncate text-[12.5px] text-muted-foreground">
           <span className="text-foreground/80">{workspaceName}</span>

@@ -218,7 +218,7 @@ export function QuickNotes({ initial }: { initial: QuickNote[] }) {
         whileHover={{ y: -2 }}
         whileTap={{ scale: 0.94 }}
         className={cn(
-          "fixed bottom-5 right-5 z-40 flex h-12 items-center gap-2 rounded-full border px-4 text-[13px] font-medium shadow-[var(--shadow-elevated)] backdrop-blur-xl transition-colors max-md:bottom-4 max-md:right-4",
+          "fixed bottom-5 right-5 z-40 flex h-12 items-center gap-2 rounded-full border px-4 text-[13px] print:hidden font-medium shadow-[var(--shadow-elevated)] backdrop-blur-xl transition-colors max-md:bottom-4 max-md:right-4",
           open ? "border-accent/50 bg-accent text-accent-foreground" : "glass-surface border-border text-foreground hover:border-accent/40"
         )}
       >

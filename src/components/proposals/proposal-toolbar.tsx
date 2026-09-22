@@ -100,8 +100,11 @@ export function ProposalToolbar({
             </Link>
           </Button>
 
-          <Button variant="secondary" size="sm" onClick={() => window.print()}>
-            <Printer /> PDF
+          {/* the print route carries the cover, the contents and the internal playbook */}
+          <Button asChild variant="secondary" size="sm">
+            <a href={`/app/proposals/${id}/print?auto=1`} target="_blank" rel="noreferrer">
+              <Printer /> Download PDF
+            </a>
           </Button>
 
           <Button

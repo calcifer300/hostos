@@ -585,3 +585,149 @@ body::before {
     margin: 14mm;
   }
 }
+
+
+/* --------------------------------------------- the printable proposal (PDF) */
+/*
+ * A cover and a contents page that fill a sheet on paper and simply read as
+ * sections on screen, so the same route is previewable before printing.
+ */
+.print-page {
+  padding: 64px 48px;
+  max-width: 1100px;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 70vh;
+}
+.print-cover {
+  min-height: 86vh;
+}
+.print-playbook {
+  background: var(--surface);
+}
+
+@media print {
+  .print-page {
+    min-height: auto;
+    padding: 0 0 24px;
+    break-after: page;
+    page-break-after: always;
+  }
+  .print-cover {
+    min-height: 236mm; /* fills an A4 sheet below the page margin */
+  }
+  .print-document .proposal-section {
+    break-before: auto;
+  }
+  /* the playbook is the document's second half: start it on a fresh sheet */
+  .print-playbook {
+    break-before: page;
+    page-break-before: always;
+    background: #fff !important;
+  }
+  .print-document article,
+  .print-document table,
+  .print-document .break-inside-avoid {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .print-document h2,
+  .print-document h3,
+  .print-document h4 {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+  /*
+   * Sections arrive on scroll, which means their initial state is opacity 0.
+   * A printer never scrolls, so every reveal must be forced to its finished
+   * state or the page comes out blank. This is the single most important
+   * rule in the print sheet.
+   */
+  .print-document *,
+  .proposal-root * {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+  /* the hero's tall on-screen breathing room wastes a whole sheet */
+  .print-document .proposal-section {
+    padding-block: 22px !important;
+  }
+  .print-document .proposal-section:first-of-type {
+    padding-top: 0 !important;
+  }
+  /*
+   * Decoration is what makes a printed page heavy: every gradient wash and
+   * blurred glass panel is rasterised into the file. Flattening them keeps
+   * the document a few megabytes instead of fifteen, and on paper they were
+   * adding nothing a reader could see.
+   */
+  .print-document [aria-hidden='true'][class*='absolute'],
+  .print-document .glass-surface::before,
+  .print-document .gradient-border::before {
+    display: none !important;
+  }
+  .print-document .glass-surface,
+  .print-document [class*='backdrop-blur'] {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  .print-document * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  /*
+   * Anything that forces a compositing layer makes Chrome rasterise the whole
+   * sheet into a bitmap: the text stops being text, and a 50-page document
+   * becomes twelve megabytes. These four properties are the usual culprits,
+   * and none of them mean anything on paper.
+   */
+  *,
+  *::before,
+  *::after {
+    will-change: auto !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    mix-blend-mode: normal !important;
+    filter: none !important;
+  }
+  /*
+   * Gradient text is clipped to the glyphs on screen; printers paint the box
+   * instead. On paper the headline and the wordmark take solid ink — the
+   * serif aside keeps the brand blue so the voice survives the change.
+   */
+  .headline,
+  .text-gradient,
+  .wordmark-giant {
+    background: none !important;
+    -webkit-background-clip: border-box !important;
+    background-clip: border-box !important;
+    color: #171b27 !important;
+  }
+  .headline em,
+  .text-gradient {
+    color: #3a41c9 !important;
+  }
+  /* the app's fixed background wash is rasterised onto every single sheet */
+  body::before,
+  body::after {
+    display: none !important;
+  }
+  /*
+   * Rounded panels over a tinted section force the renderer to rasterise the
+   * fill. Flat fills print as vectors and weigh nothing; the reader loses a
+   * rounded corner and gains a file they can actually email.
+   */
+  .print-document [class*='rounded-3xl'],
+  .print-document [class*='rounded-2xl'] {
+    border-radius: 6px !important;
+  }
+  /* footage and placeholders cost ink and say nothing on paper */
+  .print-document video,
+  .print-document .border-dashed {
+    display: none !important;
+  }
+}

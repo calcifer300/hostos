@@ -155,13 +155,13 @@ export function AppShell({
             initial={false}
             animate={{ width: collapsed ? 72 : 240 }}
             transition={{ duration: 0.32, ease: EASE }}
-            className="glass-surface fixed inset-y-0 left-0 z-30 hidden flex-col border-r px-3 py-4 md:flex"
+            className="glass-surface fixed inset-y-0 left-0 z-30 hidden flex-col border-r px-3 py-4 print:!hidden md:flex"
           >
             {rail(false)}
           </motion.aside>
 
           {/* Mobile top bar */}
-          <div className="glass-surface sticky top-0 z-30 flex items-center justify-between border-b px-4 py-3 md:hidden">
+          <div className="glass-surface sticky top-0 z-30 flex items-center justify-between border-b px-4 py-3 print:hidden md:hidden">
             <Logo size="sm" />
             <div className="flex items-center gap-1.5">
               <UserMenu user={user} roles={roles} />
@@ -206,7 +206,7 @@ export function AppShell({
             initial={false}
             animate={{ paddingLeft: collapsed ? 72 : 240 }}
             transition={{ duration: 0.32, ease: EASE }}
-            className="max-md:!pl-0"
+            className="max-md:!pl-0 print:!pl-0"
           >
             <TopBar
               user={user}
@@ -218,7 +218,7 @@ export function AppShell({
               notesEnabled={quickNotes !== null}
             />
             <BackendStatusBanner status={backendStatus} />
-            <main className="px-5 pb-24 pt-8 md:px-8">{children}</main>
+            <main className="px-5 pb-24 pt-8 print:!p-0 md:px-8">{children}</main>
           </motion.div>
         </div>
       </TooltipProvider>

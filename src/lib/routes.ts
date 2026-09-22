@@ -50,6 +50,8 @@ export const routes = {
   notifications: app("notifications"),
   connectors: app("connectors"),
   settings: app("settings"),
+  /** The internal Client Proposal Center — Founder only. */
+  proposals: app("proposals"),
   automations: app("automations"),
 
   // Restaurant operations (DoorDash) — its own dashboard, then the detail pages.

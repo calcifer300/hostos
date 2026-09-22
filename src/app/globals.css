@@ -535,3 +535,53 @@ body::before {
     scroll-behavior: auto !important;
   }
 }
+
+
+/* ------------------------------------------------------ the Proposal Center */
+/* Each proposal is tinted to the client's brand; the accent is set inline on
+   .proposal-root and every section reads it through var(--proposal-accent). */
+.proposal-root {
+  --proposal-accent: var(--accent);
+}
+
+/*
+ * Printing a proposal is how a PDF is produced: the browser's own Print →
+ * Save as PDF. The internal chrome is removed rather than hidden, links keep
+ * their address, and a section is never split across a page break.
+ */
+@media print {
+  .proposal-chrome,
+  .app-sidebar,
+  .app-topbar,
+  nav[aria-label='Sidebar'],
+  [data-sonner-toaster] {
+    display: none !important;
+  }
+  .proposal-root {
+    background: #fff;
+    color: #111;
+  }
+  .proposal-section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    padding-block: 28px !important;
+    border-color: #e5e5e5 !important;
+  }
+  .proposal-section[tone='ink'],
+  .proposal-root .bg-[#0b0d14] {
+    background: #fff !important;
+    color: #111 !important;
+  }
+  /* an expandable section prints open: a PDF has no affordance to click */
+  .proposal-root .grid-rows-[0fr] {
+    grid-template-rows: 1fr !important;
+  }
+  .proposal-root a[href^='http']::after {
+    content: ' (' attr(href) ')';
+    font-size: 10px;
+    color: #666;
+  }
+  @page {
+    margin: 14mm;
+  }
+}

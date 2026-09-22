@@ -25,6 +25,7 @@ import {
   Users,
   FileText,
   BookOpenCheck,
+  FileSignature,
 } from "lucide-react";
 import { routes } from "@/lib/routes";
 import type { WorkspaceModule } from "@/lib/host/queries";
@@ -151,6 +152,7 @@ export const NAV_SECTIONS: NavSection[] = [
     id: "system",
     label: "System",
     items: [
+      { href: routes.proposals, label: "Proposals", icon: FileSignature, matchPrefix: true },
       { href: routes.knowledge, label: "Knowledge", icon: BookOpen },
       { href: routes.connectors, label: "Connectors", icon: Plug },
       { href: routes.settings, label: "Settings", icon: Settings, matchPrefix: true },

@@ -1,12 +1,24 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
+import { getServerEnv } from "@/lib/env";
 
-const googleClientId = process.env.GOOGLE_CLIENT_ID;
-const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
+const { googleClientId, googleClientSecret } = getServerEnv();
 
-if (!googleClientId || !googleClientSecret) {
-  throw new Error(
-    "GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET must be set in .env.local for Google sign-in to work."
+/**
+ * Missing Google credentials disable sign-in — they do not take the app down.
+ *
+ * This used to `throw` at module scope. Because `auth()` is called from the
+ * root (app) layout, that turned one unset variable into a 500 on every route
+ * including the ones that need no account at all, which contradicts the
+ * public-shell model this app is built around (Project Aurora Phase 1). The
+ * startup report in src/instrumentation.ts names the missing variable; here we
+ * simply register no provider, so /login degrades instead of the whole app.
+ */
+const googleConfigured = Boolean(googleClientId && googleClientSecret);
+
+if (!googleConfigured) {
+  console.warn(
+    "[auth] Google sign-in is disabled: GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET are not set. The app runs signed-out; Gmail-derived pages will prompt to connect an account."
   );
 }
 
@@ -24,32 +36,34 @@ if (!googleClientId || !googleClientSecret) {
  * "Enabling Gmail sync". With the flag off, this file is functionally
  * identical to the configuration that authenticated successfully.
  */
-const gmailSyncEnabled = process.env.GMAIL_SYNC_ENABLED === "true";
+const gmailSyncEnabled = getServerEnv().gmailSyncEnabled;
 
 const baseScope = "openid email profile";
 const gmailScope = "https://www.googleapis.com/auth/gmail.readonly";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  providers: [
-    Google({
-      clientId: googleClientId,
-      clientSecret: googleClientSecret,
-      ...(gmailSyncEnabled
-        ? {
-            // access_type=offline + prompt=consent are what make Google
-            // return a refresh_token; without forced consent, repeat
-            // logins yield an access token only.
-            authorization: {
-              params: {
-                scope: `${baseScope} ${gmailScope}`,
-                access_type: "offline",
-                prompt: "consent",
-              },
-            },
-          }
-        : {}),
-    }),
-  ],
+  providers: googleConfigured
+    ? [
+        Google({
+          clientId: googleClientId as string,
+          clientSecret: googleClientSecret as string,
+          ...(gmailSyncEnabled
+            ? {
+                // access_type=offline + prompt=consent are what make Google
+                // return a refresh_token; without forced consent, repeat
+                // logins yield an access token only.
+                authorization: {
+                  params: {
+                    scope: `${baseScope} ${gmailScope}`,
+                    access_type: "offline",
+                    prompt: "consent",
+                  },
+                },
+              }
+            : {}),
+        }),
+      ]
+    : [],
   pages: {
     signIn: "/login",
   },
@@ -57,6 +71,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     strategy: "jwt",
   },
   callbacks: {
+    // HostOS is by invitation: the Founder, the roster, and approved requests. Everyone else lands on the request form.
+    async signIn({ user }) {
+      try {
+        const { isAllowedEmail } = await import("@/lib/access-requests");
+        if (await isAllowedEmail(user.email)) return true;
+      } catch (err) {
+        console.error("[auth] allowlist check failed:", err);
+        return false;
+      }
+      return `/login?error=AccessDenied&email=${encodeURIComponent(user.email ?? "")}`;
+    },
     async jwt({ token, account }) {
       // Nothing Gmail-related may run unless explicitly enabled, and even
       // then it must not be able to fail the login. The import is dynamic

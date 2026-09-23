@@ -30,5 +30,18 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    // Run by `npm test` through Node's own type stripping, which REQUIRES the
+    // explicit .ts extensions that tsconfig rejects without
+    // allowImportingTsExtensions. Enabling that flag app-wide to satisfy four
+    // test files would change how every import in src/ is written, so the
+    // tests are type-checked by running them instead.
+    "tests",
+    // The SvelteKit marketing site: its own project, its own tsconfig (site/).
+    "site",
+    // Reference copies of the tools that were merged into this app. They
+    // compile against their own (older) module graphs, not this one.
+    "vendor"
+  ]
 }

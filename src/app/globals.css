@@ -1,55 +1,113 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 
-:root {
-  --background: #FAFAF9;
-  --foreground: #171716;
-  --card: #FFFFFF;
-  --card-foreground: #171716;
-  --muted: #F1F0ED;
-  --muted-foreground: #6B6A66;
-  --border: #E5E4E0;
-  --accent: #0071E3;
+/*
+ * HostOS design system
+ * --------------------
+ * Dark-first, grayscale chrome with one accent — a single restrained blue,
+ * matching Apple's system colours so status reads as native rather than
+ * decorative. The second hue (violet) exists only inside gradients: it gives
+ * the brand mark, the landing page and the AI surfaces a signature without
+ * competing with data.
+ *
+ * Every token has a light and a dark value; components never spell a colour.
+ * Motion tokens live here too so the same easing appears in CSS transitions
+ * and in Framer Motion (see components/motion/presets.ts).
+ */
+
+/* paper: the same light, blue-grey room as hostoscollective.com — the app and the site are one thing */
+:root, .light {
+  color-scheme: light;
+  --background: #dfe6ea;
+  --surface: #eef2f4;
+  --foreground: #171b27;
+  --card: #f4f7f8;
+  --card-foreground: #171b27;
+  --muted: #e3e9ed;
+  --muted-foreground: #53628d;
+  --border: rgba(23, 27, 39, 0.12);
+  --border-strong: rgba(23, 27, 39, 0.24);
+  --accent: #2c3ef3;
+  --accent-2: #6a5cf5;
   --accent-foreground: #FFFFFF;
-  --success: #3B6D11;
-  --success-bg: #EAF3DE;
-  --danger: #A32D2D;
-  --danger-bg: #FCEBEB;
-  --warning: #9A6700;
-  --warning-bg: #FBF0DC;
+  --accent-glow: rgba(44, 62, 243, 0.14);
+  --success: #248A3D;
+  --success-bg: #E7F6EA;
+  --danger: #D70015;
+  --danger-bg: #FCE8E8;
+  --warning: #C25A00;
+  --warning-bg: #FCEEDD;
+  --info: #0071E3;
+  --info-bg: #E5F1FF;
   --radius: 0.75rem;
   --radius-xl: 1.25rem;
-  --shadow-card: 0 1px 2px rgba(23, 23, 22, 0.04), 0 8px 24px -12px rgba(23, 23, 22, 0.08);
+  --radius-2xl: 1.75rem;
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px -12px rgba(0, 0, 0, 0.08);
+  --shadow-card-hover: 0 2px 6px rgba(0, 0, 0, 0.05), 0 20px 40px -16px rgba(0, 0, 0, 0.14);
+  --shadow-elevated: 0 4px 16px rgba(0, 0, 0, 0.06), 0 24px 48px -16px rgba(0, 0, 0, 0.16);
+  --shadow-glow: 0 0 0 1px rgba(0, 122, 255, 0.18), 0 12px 40px -12px rgba(0, 122, 255, 0.35);
+  --glass-bg: rgba(238, 242, 244, 0.74);
+  --glass-border: rgba(23, 27, 39, 0.08);
+  --chart-1: #2c3ef3;
+  --chart-2: #6a5cf5;
+  --chart-3: #30B0C7;
+  --chart-4: #FF9F0A;
+  --chart-5: #FF375F;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+  --duration-fast: 160ms;
+  --duration-base: 260ms;
+  --duration-slow: 520ms;
 }
 
 .dark {
-  --background: #0A0A0C;
-  --foreground: #F2F1EE;
-  --card: #17171A;
-  --card-foreground: #F2F1EE;
-  --muted: #1A1A1D;
-  --muted-foreground: #8F8E8A;
-  --border: #26262A;
+  color-scheme: dark;
+  --background: #09090B;
+  --surface: #0F0F12;
+  --foreground: #F5F5F7;
+  --card: #131316;
+  --card-foreground: #F5F5F7;
+  --muted: #1C1C21;
+  --muted-foreground: #A6A6AF;
+  --border: #232329;
+  --border-strong: #2E2E36;
   --accent: #0A84FF;
+  --accent-2: #8B7CFF;
   --accent-foreground: #FFFFFF;
-  --success: #7BC48F;
-  --success-bg: #16241A;
-  --danger: #E5A5A0;
-  --danger-bg: #2A1D1D;
-  --warning: #F0C060;
-  --warning-bg: #2A2213;
-  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.2), 0 12px 32px -14px rgba(0, 0, 0, 0.55);
+  --accent-glow: rgba(10, 132, 255, 0.22);
+  --success: #30D158;
+  --success-bg: #12261A;
+  --danger: #FF453A;
+  --danger-bg: #2C1618;
+  --warning: #FF9F0A;
+  --warning-bg: #2B1F0E;
+  --info: #64B5FF;
+  --info-bg: #0F2238;
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 32px -14px rgba(0, 0, 0, 0.7);
+  --shadow-card-hover: 0 2px 8px rgba(0, 0, 0, 0.5), 0 28px 56px -18px rgba(0, 0, 0, 0.85);
+  --shadow-elevated: 0 4px 20px rgba(0, 0, 0, 0.55), 0 32px 64px -20px rgba(0, 0, 0, 0.9);
+  --shadow-glow: 0 0 0 1px rgba(10, 132, 255, 0.25), 0 16px 48px -12px rgba(10, 132, 255, 0.45);
+  --glass-bg: rgba(15, 15, 18, 0.66);
+  --glass-border: rgba(255, 255, 255, 0.07);
+  --chart-1: #0A84FF;
+  --chart-2: #8B7CFF;
+  --chart-3: #40C8E0;
+  --chart-4: #FF9F0A;
+  --chart-5: #FF375F;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
   --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
   --color-accent-foreground: var(--accent-foreground);
   --color-success: var(--success);
   --color-success-bg: var(--success-bg);
@@ -57,14 +115,42 @@
   --color-danger-bg: var(--danger-bg);
   --color-warning: var(--warning);
   --color-warning-bg: var(--warning-bg);
+  --color-info: var(--info);
+  --color-info-bg: var(--info-bg);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 4px);
   --radius-sm: calc(var(--radius) - 6px);
-  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+  --radius-xl: var(--radius-xl);
+  --radius-2xl: var(--radius-2xl);
+  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-serif: var(--font-serif), "Instrument Serif", Georgia, "Times New Roman", serif;
+  --ease-out-expo: var(--ease-out-expo);
+  --animate-shimmer: shimmer 1.8s linear infinite;
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-pulse-soft: pulse-soft 2.4s ease-in-out infinite;
+  --animate-marquee: marquee 40s linear infinite;
+  --animate-spin-slow: spin 14s linear infinite;
+  --animate-marquee-reverse: marquee-reverse 46s linear infinite;
+  --animate-drift: drift 18s ease-in-out infinite;
+  --animate-drift-slow: drift 26s ease-in-out infinite reverse;
+  --animate-dialog-in: dialog-in 0.36s var(--ease-out-expo) both;
+  --animate-dialog-out: dialog-out 0.22s var(--ease-out-expo) both;
+  --animate-overlay-in: overlay-in 0.28s ease-out both;
+  --animate-overlay-out: overlay-out 0.22s ease-in both;
 }
 
 * {
   border-color: var(--color-border);
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
@@ -72,9 +158,585 @@ body {
   color: var(--color-foreground);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11", "ss01";
+  transition: background-color 0.35s ease, color 0.35s ease;
 }
 
 ::selection {
   background: var(--color-accent);
   color: var(--color-accent-foreground);
+}
+
+/*
+ * Native select popups paint their own list; give it the theme's colours so
+ * an option is never dark text on a dark popup (or the reverse in light mode).
+ */
+select option,
+select optgroup {
+  background-color: var(--card);
+  color: var(--foreground);
+}
+select option:disabled {
+  color: var(--muted-foreground);
+}
+
+/* Thin, quiet scrollbars — the default Windows bar is the loudest element on a dark UI. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+*::-webkit-scrollbar { width: 8px; height: 8px; }
+*::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 999px; }
+*::-webkit-scrollbar-track { background: transparent; }
+
+/*
+ * Ambient backdrop — two low-opacity accent blobs behind all content. The
+ * difference between a flat dashboard and one with depth, without competing
+ * with data. Inert: pointer-events none, negative z-index.
+ */
+/* A page can switch the two fixed ambient lights off by carrying .no-ambient (the team page does). */
+body:has(.no-ambient)::before { display: none; }
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(700px circle at 8% -10%, var(--accent-glow), transparent 60%),
+    radial-gradient(600px circle at 100% 10%, color-mix(in oklab, var(--accent-2) 18%, transparent), transparent 55%);
+  opacity: 0.55;
+}
+
+/* ------------------------------------------------------------- surfaces */
+
+.glass-surface {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border-color: var(--glass-border);
+}
+
+.glass-panel {
+  background: color-mix(in oklab, var(--card) 82%, transparent);
+  backdrop-filter: blur(24px) saturate(1.3);
+  -webkit-backdrop-filter: blur(24px) saturate(1.3);
+  border: 1px solid var(--glass-border);
+}
+
+/* A 1px gradient border via mask, for hero cards and the AI surfaces. */
+.gradient-border {
+  position: relative;
+}
+.gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, color-mix(in oklab, var(--accent) 55%, transparent), color-mix(in oklab, var(--accent-2) 45%, transparent), transparent 70%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.text-gradient {
+  background: linear-gradient(120deg, var(--accent) 0%, var(--accent-2) 60%, var(--accent) 120%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Card lift on hover — used by the shared Card primitive's `interactive` variant. */
+.card-interactive {
+  transition:
+    transform var(--duration-base) var(--ease-out-expo),
+    box-shadow var(--duration-base) var(--ease-out-expo),
+    border-color var(--duration-base) var(--ease-out-expo);
+}
+.card-interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
+  border-color: color-mix(in oklab, var(--accent) 35%, var(--border));
+}
+
+/* The press pulse — one per pointerdown on anything pressable (components/motion/tap-feedback.tsx). */
+.tap-pulse {
+  position: fixed;
+  z-index: 2147483000;
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  border-radius: 999px;
+  /* --pulse is the pressed element's own --hue when it has one (the vertical chooser), the accent otherwise. */
+  background: radial-gradient(circle, color-mix(in oklab, var(--pulse, var(--accent)) 55%, transparent) 0%, color-mix(in oklab, var(--pulse, var(--accent)) 25%, transparent) 45%, transparent 72%);
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0.4);
+  animation: tap-pulse 520ms var(--ease-out-expo) forwards;
+}
+.card-interactive:active {
+  transform: translateY(0) scale(0.99);
+}
+
+/* Skeleton shimmer for loading states. */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--muted);
+  border-radius: 8px;
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--foreground) 6%, transparent), transparent);
+  animation: var(--animate-shimmer);
+}
+
+/* Grid paper for the landing page hero. */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, color-mix(in oklab, var(--foreground) 5%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--foreground) 5%, transparent) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 20%, #000 40%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 20%, #000 40%, transparent 100%);
+}
+
+/* ------------------------------------------------------------- spotlight */
+
+/*
+ * A glow that follows the pointer across a card. One document listener
+ * (components/motion/spotlight.tsx) writes --mx/--my on the card under the
+ * pointer; everything else is CSS, so a page of forty cards costs nothing
+ * until one is hovered. Opt in with the `spot` class; set --spot to tint the
+ * glow in the card's own colour (the vertical chooser does). Uses ::after so
+ * it composes with .gradient-border's ::before.
+ */
+.spot {
+  position: relative;
+  isolation: isolate;
+}
+.spot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    420px circle at var(--mx, 50%) var(--my, 50%),
+    color-mix(in oklab, var(--spot, var(--accent)) 16%, transparent),
+    transparent 62%
+  );
+  transition: opacity 0.45s var(--ease-out-expo);
+}
+.spot:hover::after {
+  opacity: 1;
+}
+
+/* A light sweep across filled buttons on hover — restarts on every hover. */
+.btn-shine {
+  overflow: hidden;
+}
+.btn-shine::after {
+  content: "";
+  position: absolute;
+  top: -20%;
+  bottom: -20%;
+  left: 0;
+  width: 38%;
+  transform: translateX(-160%) skewX(-18deg);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.32), transparent);
+  pointer-events: none;
+}
+.btn-shine:hover::after {
+  animation: shine 0.85s var(--ease-out-expo) forwards;
+}
+
+/* Marquee rows pause while the pointer is over them, so a chip can be read. */
+.marquee-pause:hover > * {
+  animation-play-state: paused;
+}
+
+/* ---------------------------------------------- team: role motifs & seals */
+/* Small animated drawings per craft (src/components/marketing/team-motifs.tsx).
+   transform-box keeps every rotation and scale about the element itself. */
+.motif * { transform-box: fill-box; transform-origin: center; }
+.motif .motif-spin { animation: motif-spin 14s linear infinite; }
+.motif .motif-spin-reverse { animation: motif-spin 9s linear infinite reverse; }
+.motif .motif-orbit { animation: motif-spin 7s linear infinite; }
+.motif .motif-rise { transform-origin: bottom; animation: motif-rise 2.8s ease-in-out infinite; }
+.motif .motif-eq { animation: motif-eq 1.4s ease-in-out infinite; }
+.motif .motif-ripple { animation: motif-ripple 3.6s ease-out infinite; }
+.motif .motif-flow { stroke-dasharray: 5 9; animation: motif-flow 2s linear infinite; }
+.motif .motif-blink { animation: motif-blink 1.1s steps(2, start) infinite; }
+.motif .motif-flicker { animation: motif-flicker 3.6s ease-in-out infinite; }
+.motif .motif-slide { animation: motif-slide 4.5s ease-in-out infinite; }
+.motif .motif-draw { stroke-dasharray: 220; stroke-dashoffset: 220; animation: motif-draw 4.5s ease-in-out infinite; }
+.motif .motif-pulse { animation: motif-pulse 2.6s ease-in-out infinite; }
+
+/* The Founder seal is still: no light passes over it (the Founder asked for the white sweeps to go). */
+.seal-shine::after { content: none; }
+
+/* The ring around the Founder tile: a conic light circling a rounded frame. */
+.founder-ring { position: relative; border-radius: 18px; padding: 2px; }
+.founder-ring::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 2px;
+  /* the ring is the person's colour only — no white highlight */
+  background: conic-gradient(from var(--ring-angle, 0deg), transparent 0deg 200deg, color-mix(in oklab, var(--hue) 45%, transparent) 260deg, var(--hue) 300deg, color-mix(in oklab, var(--hue) 45%, transparent) 330deg, transparent 360deg);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: ring-turn 6s linear infinite;
+  pointer-events: none;
+}
+@property --ring-angle { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+
+/* --------------------------------------------- the landing intro (console) */
+/* src/components/marketing/intro: its own dark palette whatever the theme, a display face, telemetry bits. */
+.intro-root {
+  --intro-void: #05070c;
+  --intro-ink: #e6ebf5;
+  --intro-dim: rgba(230, 235, 245, 0.58);
+  --intro-faint: rgba(230, 235, 245, 0.3);
+  --intro-line: rgba(230, 235, 245, 0.11);
+  --intro-accent: #3b9cff;
+  --intro-hot: #ff375f;
+  color-scheme: dark;
+}
+.intro-display { font-family: var(--font-grotesk), var(--font-sans); }
+.intro-outline { color: transparent; -webkit-text-stroke: 2px var(--intro-accent); paint-order: stroke fill; }
+.intro-scan { animation: intro-scan 11s linear infinite; }
+.intro-blink { animation: intro-blink 1s steps(2, start) infinite; }
+.intro-pulse { animation: intro-pulse 2.4s ease-out infinite; }
+
+/* ------------------------------------------------------------- keyframes */
+
+@keyframes intro-scan { from { top: -2%; } to { top: 102%; } }
+@keyframes intro-blink { to { opacity: 0; } }
+@keyframes intro-pulse { 0% { transform: scale(1); opacity: 0.8; } 100% { transform: scale(2.6); opacity: 0; } }
+
+@keyframes motif-spin { to { transform: rotate(360deg); } }
+@keyframes motif-rise { 0%, 100% { transform: scaleY(0.35); } 50% { transform: scaleY(1); } }
+@keyframes motif-eq { 0%, 100% { transform: scaleY(0.3); } 50% { transform: scaleY(1); } }
+@keyframes motif-ripple { 0% { transform: scale(0.35); opacity: 0.9; } 100% { transform: scale(1.5); opacity: 0; } }
+@keyframes motif-flow { to { stroke-dashoffset: -28; } }
+@keyframes motif-blink { to { opacity: 0.15; } }
+@keyframes motif-flicker { 0%, 100% { opacity: 0.55; transform: scale(0.96); } 50% { opacity: 1; transform: scale(1.05); } }
+@keyframes motif-slide { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-16px); } }
+@keyframes motif-draw { 0% { stroke-dashoffset: 220; } 55%, 100% { stroke-dashoffset: 0; } }
+@keyframes motif-pulse { 0%, 100% { transform: scale(1); opacity: 0.7; } 50% { transform: scale(1.1); opacity: 1; } }
+@keyframes seal-shine { 0%, 55% { transform: translateX(0) skewX(-18deg); } 100% { transform: translateX(420%) skewX(-18deg); } }
+@keyframes ring-turn { to { --ring-angle: 360deg; } }
+@keyframes intro-progress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+@keyframes shine {
+  to { transform: translateX(420%) skewX(-18deg); }
+}
+@keyframes marquee-reverse {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+@keyframes drift {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  33% { transform: translate3d(36px, -28px, 0) scale(1.08); }
+  66% { transform: translate3d(-24px, 22px, 0) scale(0.96); }
+}
+@keyframes dialog-in {
+  from { opacity: 0; transform: scale(0.95) translateY(12px); filter: blur(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+}
+@keyframes dialog-out {
+  from { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+  to { opacity: 0; transform: scale(0.97) translateY(8px); filter: blur(6px); }
+}
+@keyframes overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes overlay-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes tap-pulse {
+  0% { transform: translate(-50%, -50%) scale(0.4); opacity: 0.9; }
+  100% { transform: translate(-50%, -50%) scale(3.4); opacity: 0; }
+}
+
+/* The landing page's headline voice: Inter bold, and the aside in the serif italic a size up, in the brand gradient. */
+.headline {
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+}
+.headline em {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.14em;
+  letter-spacing: -0.01em;
+  padding-right: 0.04em;
+  background: linear-gradient(90deg, #53628d, var(--accent) 85%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.dark .headline em {
+  background: linear-gradient(90deg, #d5dbf0, #8d9bcf 80%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* The mark holds still; a light passes over the frame only under the pointer. */
+.logo-sheen {
+  transform: skewX(-20deg);
+}
+.logo:hover .logo-sheen, .logo-mark:hover .logo-sheen {
+  animation: logo-sheen 1.2s ease-in-out 1;
+}
+@keyframes logo-sheen {
+  from { transform: translateX(0) skewX(-20deg); }
+  to { transform: translateX(110px) skewX(-20deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+
+/* ------------------------------------------------------ the Proposal Center */
+/* Each proposal is tinted to the client's brand; the accent is set inline on
+   .proposal-root and every section reads it through var(--proposal-accent). */
+.proposal-root {
+  --proposal-accent: var(--accent);
+}
+
+/*
+ * Printing a proposal is how a PDF is produced: the browser's own Print →
+ * Save as PDF. The internal chrome is removed rather than hidden, links keep
+ * their address, and a section is never split across a page break.
+ */
+@media print {
+  /* a chapter always opens a fresh sheet */
+  .break-before-page {
+    break-before: page;
+    page-break-before: always;
+  }
+  .print-document .chapter {
+    padding-block: 0 !important;
+  }
+  .proposal-chrome,
+  .app-sidebar,
+  .app-topbar,
+  nav[aria-label='Sidebar'],
+  [data-sonner-toaster] {
+    display: none !important;
+  }
+  .proposal-root {
+    background: #fff;
+    color: #111;
+  }
+  .proposal-section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    padding-block: 28px !important;
+    border-color: #e5e5e5 !important;
+  }
+  .proposal-section[tone='ink'],
+  .proposal-root .bg-[#0b0d14] {
+    background: #fff !important;
+    color: #111 !important;
+  }
+  /* an expandable section prints open: a PDF has no affordance to click */
+  .proposal-root .grid-rows-[0fr] {
+    grid-template-rows: 1fr !important;
+  }
+  .proposal-root a[href^='http']::after {
+    content: ' (' attr(href) ')';
+    font-size: 10px;
+    color: #666;
+  }
+  @page {
+    margin: 14mm;
+  }
+}
+
+
+/* --------------------------------------------- the printable proposal (PDF) */
+/*
+ * A cover and a contents page that fill a sheet on paper and simply read as
+ * sections on screen, so the same route is previewable before printing.
+ */
+.print-page {
+  padding: 64px 48px;
+  max-width: 1100px;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 70vh;
+}
+.print-cover {
+  min-height: 86vh;
+}
+.print-playbook {
+  background: var(--surface);
+}
+
+@media print {
+  .print-page {
+    min-height: auto;
+    padding: 0 0 24px;
+    break-after: page;
+    page-break-after: always;
+  }
+  .print-cover {
+    min-height: 236mm; /* fills an A4 sheet below the page margin */
+  }
+  .print-document .proposal-section {
+    break-before: auto;
+  }
+  /* the playbook is the document's second half: start it on a fresh sheet */
+  .print-playbook {
+    break-before: page;
+    page-break-before: always;
+    background: #fff !important;
+  }
+  .print-document article,
+  .print-document table,
+  .print-document .break-inside-avoid {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .print-document h2,
+  .print-document h3,
+  .print-document h4 {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+  /*
+   * Sections arrive on scroll, which means their initial state is opacity 0.
+   * A printer never scrolls, so every reveal must be forced to its finished
+   * state or the page comes out blank. This is the single most important
+   * rule in the print sheet.
+   */
+  .print-document *,
+  .proposal-root * {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+  /* the hero's tall on-screen breathing room wastes a whole sheet */
+  .print-document .proposal-section {
+    padding-block: 22px !important;
+  }
+  .print-document .proposal-section:first-of-type {
+    padding-top: 0 !important;
+  }
+  /*
+   * Decoration is what makes a printed page heavy: every gradient wash and
+   * blurred glass panel is rasterised into the file. Flattening them keeps
+   * the document a few megabytes instead of fifteen, and on paper they were
+   * adding nothing a reader could see.
+   */
+  .print-document [aria-hidden='true'][class*='absolute'],
+  .print-document .glass-surface::before,
+  .print-document .gradient-border::before {
+    display: none !important;
+  }
+  .print-document .glass-surface,
+  .print-document [class*='backdrop-blur'] {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  .print-document * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  /*
+   * Anything that forces a compositing layer makes Chrome rasterise the whole
+   * sheet into a bitmap: the text stops being text, and a 50-page document
+   * becomes twelve megabytes. These four properties are the usual culprits,
+   * and none of them mean anything on paper.
+   */
+  *,
+  *::before,
+  *::after {
+    will-change: auto !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    mix-blend-mode: normal !important;
+    filter: none !important;
+  }
+  /*
+   * Gradient text is clipped to the glyphs on screen; printers paint the box
+   * instead. On paper the headline and the wordmark take solid ink — the
+   * serif aside keeps the brand blue so the voice survives the change.
+   */
+  .headline,
+  .headline em,
+  .text-gradient,
+  .wordmark-giant {
+    background: none !important;
+    -webkit-background-clip: border-box !important;
+    background-clip: border-box !important;
+    color: #171b27 !important;
+  }
+  .headline em,
+  .text-gradient {
+    color: #3a41c9 !important;
+  }
+  /* the app's fixed background wash is rasterised onto every single sheet */
+  body::before,
+  body::after {
+    display: none !important;
+  }
+  /*
+   * Rounded panels over a tinted section force the renderer to rasterise the
+   * fill. Flat fills print as vectors and weigh nothing; the reader loses a
+   * rounded corner and gains a file they can actually email.
+   */
+  .print-document [class*='rounded-3xl'],
+  .print-document [class*='rounded-2xl'] {
+    border-radius: 6px !important;
+  }
+  /* footage and placeholders cost ink and say nothing on paper */
+  .print-document video,
+  .print-document .border-dashed {
+    display: none !important;
+  }
 }

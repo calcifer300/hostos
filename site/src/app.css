@@ -1,0 +1,596 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/jetbrains-mono';
+@import '@fontsource/instrument-serif/400-italic.css';
+
+/*
+  HostOS Collective — design tokens.
+  Dark-first. One accent means "act"; violet means "the platform"; every
+  other colour on marketing chrome is a neutral. Per-vertical hues appear
+  only inside product visuals.
+*/
+@theme {
+	/* paper: the page is light, blue-grey, with dark ink — the dark is an island, not the room */
+	--color-bg: #d5dde2;
+	--color-surface-1: #dee5e9;
+	--color-surface-2: #eef2f4;
+	--color-surface-3: #f8fafb;
+	--color-line: rgba(23, 27, 39, 0.12);
+	--color-line-strong: rgba(23, 27, 39, 0.24);
+	--color-ink: #171b27;
+	--color-ink-2: rgba(23, 27, 39, 0.76);
+	--color-ink-3: rgba(23, 27, 39, 0.74);
+	--color-accent: #2c3ef3;
+	--color-accent-ink: #ffffff;
+	--color-platform: #6a5cf5;
+	--color-ok: #146e40;
+	--color-warn: #c27400;
+	--color-danger: #d92d4c;
+
+	--font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+	--font-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, monospace;
+	/* two voices, as the best agency sites do it: Inter, bold and tight, for every headline; the serif italic for the aside */
+	--font-grotesk: var(--font-sans);
+	--font-serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+	--font-display: var(--font-sans);
+
+	--radius-sm: 8px;
+	--radius-md: 12px;
+	--radius-lg: 16px;
+	--radius-xl: 24px;
+
+	--shadow-1: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 8px 24px -12px rgba(0, 0, 0, 0.6);
+	--shadow-2: 0 24px 60px -24px rgba(0, 0, 0, 0.7);
+
+	--ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+	--ease-standard: cubic-bezier(0.2, 0, 0, 1);
+
+	--animate-blink: blink 1s steps(2, start) infinite;
+}
+
+:root {
+	color-scheme: light;
+	--container: 1200px;
+	--container-wide: 1400px;
+	--section-y: clamp(64px, 10vw, 128px);
+}
+
+@layer base {
+	html {
+		scroll-behavior: smooth;
+		-webkit-text-size-adjust: 100%;
+	}
+	body {
+		/* phones with a notch: the page never hides under it */
+		padding-left: env(safe-area-inset-left);
+		padding-right: env(safe-area-inset-right);
+		-webkit-tap-highlight-color: transparent;
+		/* nothing decorative may ever widen the page: clip (not hidden) keeps sticky working */
+		overflow-x: clip;
+		font-family: var(--font-sans);
+		font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11', 'ss01';
+		text-rendering: optimizeLegibility;
+	}
+	::selection {
+		background: color-mix(in oklab, var(--color-accent) 35%, transparent);
+	}
+	:focus-visible {
+		outline: 2px solid var(--color-accent);
+		outline-offset: 2px;
+		border-radius: 4px;
+	}
+	/* the first thing a keyboard user meets */
+	.skip-link {
+		position: absolute;
+		left: 16px;
+		top: -64px;
+		z-index: 100;
+		padding: 10px 14px;
+		border-radius: 999px;
+		background: var(--color-accent);
+		color: var(--color-accent-ink);
+		font-weight: 600;
+		transition: top 0.2s var(--ease-out-expo);
+	}
+	.skip-link:focus {
+		top: 16px;
+	}
+}
+
+@utility container-x {
+	margin-inline: auto;
+	width: 100%;
+	max-width: var(--container);
+	padding-inline: 16px;
+	@media (width >= 640px) {
+		padding-inline: 24px;
+	}
+}
+@utility container-wide {
+	margin-inline: auto;
+	width: 100%;
+	max-width: var(--container-wide);
+	padding-inline: 16px;
+	@media (width >= 640px) {
+		padding-inline: 24px;
+	}
+}
+@utility section-y {
+	padding-block: var(--section-y);
+}
+/* the system's voice: small mono labels */
+@utility label-mono {
+	font-family: var(--font-mono);
+	font-size: 11.5px;
+	font-weight: 600;
+	letter-spacing: 0.18em;
+	text-transform: uppercase;
+}
+/* display type: tight, heavy, balanced */
+@utility display-1 {
+	font-size: clamp(44px, 6vw, 88px);
+	line-height: 1;
+	letter-spacing: -0.045em;
+	font-weight: 700;
+	text-wrap: balance;
+}
+@utility display-2 {
+	font-size: clamp(34px, 4vw, 60px);
+	line-height: 1.02;
+	letter-spacing: -0.04em;
+	font-weight: 700;
+	text-wrap: balance;
+}
+/* per-section voices */
+/* headlines: white falling into the section's light; the *aside* in the serif italic */
+@utility headline {
+	color: transparent;
+	background: linear-gradient(180deg, #171b27, #36425d);
+	-webkit-background-clip: text;
+	background-clip: text;
+}
+@utility text-gradient {
+	background: linear-gradient(92deg, var(--color-accent), var(--color-platform));
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+}
+
+/* ---------------------------------------------------------------- motion */
+/* Elements arrive once (the `reveal` action adds .is-in), respond always, never idle. */
+.reveal {
+	opacity: 0;
+	transform: translateY(18px);
+	transition:
+		opacity 0.7s var(--ease-out-expo),
+		transform 0.7s var(--ease-out-expo);
+	transition-delay: var(--reveal-delay, 0ms);
+}
+.reveal.is-in {
+	opacity: 1;
+	transform: none;
+}
+/* above the fold nothing waits for JavaScript: these arrive on their own, and without JS everything is simply visible */
+.arrive {
+	animation: arrive 0.8s var(--ease-out-expo) both;
+	animation-delay: var(--reveal-delay, 0ms);
+}
+.no-js .reveal,
+.no-js .plate > span {
+	opacity: 1;
+	transform: none;
+}
+/* a word (or a line) of the headline fades up into place. Nothing is ever clipped: no box can cut the serif italic's tails */
+.plate {
+	display: block;
+}
+.plate > span {
+	display: block;
+	opacity: 0;
+	transform: translateY(0.35em);
+	transition:
+		opacity 0.6s var(--ease-out-expo),
+		transform 0.6s var(--ease-out-expo);
+	transition-delay: var(--reveal-delay, 0ms);
+}
+.is-in .plate > span,
+.plate.is-in > span {
+	opacity: 1;
+	transform: none;
+}
+/* a cursor spotlight on interactive cards */
+.spot {
+	position: relative;
+	isolation: isolate;
+}
+.spot::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	border-radius: inherit;
+	pointer-events: none;
+	opacity: 0;
+	background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), color-mix(in oklab, var(--spot, var(--color-accent)) 16%, transparent), transparent 60%);
+	transition: opacity 0.4s var(--ease-standard);
+}
+.spot:hover::after {
+	opacity: 1;
+}
+.draw path,
+.draw line,
+.draw circle {
+	stroke-dasharray: 1;
+	stroke-dashoffset: 1;
+	transition: stroke-dashoffset 1.4s var(--ease-out-expo);
+	transition-delay: var(--reveal-delay, 0ms);
+}
+.draw.is-in path,
+.draw.is-in line,
+.draw.is-in circle {
+	stroke-dashoffset: 0;
+}
+
+@keyframes arrive {
+	from {
+		opacity: 0;
+		transform: translateY(18px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+@keyframes blink {
+	to {
+		opacity: 0.15;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.reveal,
+	.arrive,
+	.section-bg::before,
+	.section-bg::after,
+	.scroll-in,
+	[class*="title-"],
+	.ticker,
+	.hero-stage,
+	.section-bg video,
+	.ticker-track,
+	.plate > span,
+	.draw path,
+	.draw line,
+	.draw circle {
+		transition: none !important;
+		animation: none !important;
+		transform: none !important;
+		opacity: 1 !important;
+		stroke-dashoffset: 0 !important;
+	}
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		scroll-behavior: auto !important;
+	}
+}
+
+/* ------------------------------------------------------- scroll grammar */
+/* The page moves with the scroll, not just on arrival: the hero stays pinned and dims as the first section slides
+   over it (rounded top, like a card laid on the desk); every header and grid rises and unclips as it enters; the
+   footage behind a section drifts slower than the section (parallax); the ticker is dragged sideways by the scroll.
+   All of it is CSS scroll-driven animation — no scroll listeners — and browsers without it get the arrival reveals. */
+.stack-top {
+	border-top-left-radius: 36px;
+	border-top-right-radius: 36px;
+	border-top: 1px solid var(--color-line);
+	box-shadow: 0 -30px 60px rgb(23 27 39 / 0.18);
+}
+main > section,
+main > .ticker,
+main > div[aria-hidden] {
+	position: relative;
+	z-index: 1;
+}
+/* everything below the fold is laid out and painted only as it nears the screen: the first paint pays for the hero alone */
+main > section:not(#hero) {
+	content-visibility: auto;
+	contain-intrinsic-size: auto 1000px;
+}
+@supports (animation-timeline: view()) {
+	main > .hero-stage {
+		position: sticky;
+		/* pinned by its bottom edge when it is taller than the screen, by its top when it is not (set by the hero) */
+		top: var(--hero-top, 0px);
+		z-index: 0;
+		overflow-anchor: none; /* a change of pin must never move the reader's scroll */
+		animation: hero-exit linear both;
+		animation-timeline: view();
+		animation-range: exit 0% exit 100%;
+	}
+	@keyframes hero-exit {
+		to { opacity: 0.15; transform: scale(0.92) translateY(-6%); }
+	}
+	.scroll-in {
+		animation: scroll-in linear both;
+		animation-timeline: view();
+		animation-range: entry 0% entry 60%;
+	}
+	.scroll-in.reveal {
+		opacity: 1;
+		transform: none;
+		transition: none;
+	}
+	@keyframes scroll-in {
+		from { opacity: 0; transform: translateY(32px); }
+		to { opacity: 1; transform: none; }
+	}
+	.title-rise {
+		animation-name: title-rise;
+		animation-timing-function: linear;
+		animation-fill-mode: both;
+		animation-timeline: view();
+		animation-range: entry 0% entry 75%;
+	}
+	@keyframes title-rise { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: none; } }
+}
+
+/* gold: the stars and the laurels — a metal gradient with a light passing over it, left to right */
+.gold-fill { fill: url(#gold-grad); }
+.gold-text {
+	/* engraved gold that reads on paper: the dark edges carry the contrast, one bright band in the middle */
+	background: linear-gradient(100deg, #6b4a00 0%, #a8790a 35%, #dcae32 50%, #a8790a 65%, #6b4a00 100%);
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+}
+.shine {
+	position: relative;
+	overflow: hidden;
+	isolation: isolate;
+}
+.shine::after {
+	content: '';
+	position: absolute;
+	top: -20%;
+	bottom: -20%;
+	left: -60%;
+	width: 45%;
+	background: linear-gradient(100deg, transparent 0%, rgb(255 255 255 / 0.75) 50%, transparent 100%);
+	transform: skewX(-18deg);
+	pointer-events: none;
+}
+/* one pass of light as the section arrives */
+.is-near .shine::after { animation: shine 1.6s ease-in-out 0.5s 1 both; }
+.is-near .shine.delay-1::after { animation-delay: 0.9s; }
+@keyframes shine { from { left: -60%; } to { left: 120%; } }
+@media (prefers-reduced-motion: reduce) { .shine::after { animation: none; } }
+/* the word under the mark: set wide, the ink falling into the accent */
+.collective-word {
+	background: linear-gradient(90deg, #36425d, #2c3ef3 70%, #6a5cf5);
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+	padding-left: 0.42em; /* balances the tracking after the last letter */
+}
+/* the laurels breathe once as they arrive */
+.laurel svg { transition: transform 0.6s var(--ease-out-expo); }
+.laurel:hover svg:first-child { transform: rotate(-8deg); }
+.laurel:hover svg:last-child { transform: scaleX(-1) rotate(-8deg); }
+
+/* ------------------------------------------------------------ preloader */
+/* The mark draws itself, the wordmark rises, the curtain lifts — 1.2 s, CSS only, gone for reduced motion. */
+.preloader {
+	position: fixed;
+	inset: 0;
+	z-index: 200;
+	display: grid;
+	place-items: center;
+	/* 97% and not 100%: an opaque curtain lets the compositor cull everything under it, and Chrome then records the
+	   page's first paint only when the curtain lifts (~2 s). At 97% the hero is painted beneath it at ~0.5 s and the
+	   curtain is, to the eye, the same. */
+	background: rgb(213 221 226 / 0.97);
+	animation: curtain 0.35s var(--ease-out-expo) 0.55s forwards;
+	pointer-events: none;
+}
+.preloader .mark path,
+.preloader .mark rect {
+	stroke-dasharray: 1;
+	stroke-dashoffset: 1;
+	animation: preload-draw 0.5s var(--ease-out-expo) forwards;
+}
+.preloader .mark rect { animation-delay: 0s; }
+.preloader .mark path:nth-of-type(1) { animation-delay: 0.06s; }
+.preloader .mark path:nth-of-type(2) { animation-delay: 0.12s; }
+.preloader .mark path:nth-of-type(3) { animation-delay: 0.18s; }
+.preloader .mark path:nth-of-type(4) { animation-delay: 0.24s; }
+.preloader .word {
+	opacity: 0;
+	transform: translateY(10px);
+	animation: preload-word 0.4s var(--ease-out-expo) 0.2s forwards;
+}
+@keyframes preload-draw { to { stroke-dashoffset: 0; } }
+@keyframes preload-word { to { opacity: 1; transform: none; } }
+@keyframes curtain { to { opacity: 0; visibility: hidden; } }
+@media (prefers-reduced-motion: reduce) { .preloader { display: none; } }
+
+/* ------------------------------------------------------------- footage */
+video.lazy {
+	opacity: 0;
+	transition: opacity 1.2s var(--ease-standard);
+}
+video.lazy.is-playing {
+	opacity: 1;
+}
+/* footage that sits behind words is kept dim and colourless so the words stay first */
+video.lazy.dim {
+	mix-blend-mode: multiply;
+	filter: grayscale(1) contrast(1.05);
+}
+.tone-dark video.lazy.dim {
+	mix-blend-mode: luminosity;
+	filter: none;
+}
+video.lazy.dim.is-playing {
+	opacity: var(--dim, 0.34);
+}
+/* every section's light: two slow blooms in the section's colour. Each is a small disc scaled up on the GPU
+   (rasterised at a quarter of the section, never at full size), lit only while the section is near the screen. */
+.section-bg::before,
+.section-bg::after {
+	content: none;
+	position: absolute;
+	width: 36%;
+	aspect-ratio: 1;
+	border-radius: 50%;
+	z-index: 1;
+	pointer-events: none;
+}
+.section-bg::before {
+	left: 4%;
+	top: 6%;
+	background: radial-gradient(circle at center, color-mix(in oklab, var(--tint, var(--color-accent)) 18%, transparent), transparent 68%);
+}
+.section-bg::after {
+	right: 2%;
+	bottom: 4%;
+	background: radial-gradient(circle at center, color-mix(in oklab, var(--color-platform) 10%, transparent), transparent 68%);
+}
+.is-near .section-bg::before,
+.is-near .section-bg::after {
+	content: '';
+}
+.section-bg video {
+	--dim: 0.16;
+	mask-image: radial-gradient(ellipse 80% 75% at 50% 45%, #000 30%, transparent 100%);
+}
+/* the aside: the serif italic, a size up, in a quieter gradient — the one flourish a headline gets */
+.headline em,
+.display-1 em {
+	font-family: var(--font-serif);
+	font-style: italic;
+	font-weight: 400;
+	font-size: 1.14em;
+	line-height: 0.9;
+	letter-spacing: -0.01em;
+	background: linear-gradient(90deg, #53628d, #2c3ef3 85%);
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+	padding-right: 0.04em;
+}
+/* a dark island: the nav pill, the boards, the film, the footer, the final ask keep the night */
+.tone-dark {
+	--color-bg: #0b0d14;
+	--color-surface-1: #10131c;
+	--color-surface-2: #161a26;
+	--color-surface-3: #1d2230;
+	--color-line: rgba(230, 235, 245, 0.1);
+	--color-line-strong: rgba(230, 235, 245, 0.18);
+	--color-ink: #e6ebf5;
+	--color-ink-2: rgba(230, 235, 245, 0.72);
+	--color-ink-3: rgba(230, 235, 245, 0.52);
+	--color-accent: #3b9cff;
+	--color-accent-ink: #0a1020;
+	--color-platform: #8b7cff;
+	--color-ok: #30d158;
+	--color-warn: #ffb020;
+	--color-danger: #ff375f;
+	background: var(--color-bg);
+	color: var(--color-ink);
+	color-scheme: dark;
+}
+.tone-dark .headline {
+	background: linear-gradient(180deg, #ffffff 0%, #c9d0e6 100%);
+	-webkit-background-clip: text;
+	background-clip: text;
+}
+.tone-dark .headline em {
+	background: linear-gradient(90deg, #d5dbf0, #8d9bcf 80%);
+	-webkit-background-clip: text;
+	background-clip: text;
+}
+.tone-light { background: var(--color-bg); color: var(--color-ink); }
+.plate > span > em {
+	display: inline;
+}
+/* the primary button is magnetic (JS), the ring on proof cards follows the pointer */
+.ring-hover {
+	position: relative;
+}
+.ring-hover::before {
+	content: '';
+	position: absolute;
+	inset: -1px;
+	border-radius: inherit;
+	padding: 1px;
+	background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%), var(--spot, var(--color-accent)), transparent 70%);
+	-webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+	mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+	-webkit-mask-composite: xor;
+	mask-composite: exclude;
+	opacity: 0;
+	transition: opacity 0.4s var(--ease-standard);
+	pointer-events: none;
+}
+.ring-hover:hover::before {
+	opacity: 1;
+}
+/* the giant wordmark at the foot of the page */
+.wordmark-giant {
+	font-size: clamp(96px, 22vw, 360px);
+	line-height: 0.8;
+	letter-spacing: -0.05em;
+	font-weight: 700;
+	/* an outline in the ink, faint enough to sit under the footer as a watermark; light on the dark islands */
+	color: transparent;
+	-webkit-text-stroke: 1.5px rgba(23, 27, 39, 0.18);
+	user-select: none;
+}
+.tone-dark .wordmark-giant {
+	-webkit-text-stroke: 1px rgba(230, 235, 245, 0.12);
+}
+
+/* ------------------------------------------------------ living sections */
+/* slow auroras behind sections so nothing sits on flat black */
+.aurora {
+	position: relative;
+	isolation: isolate;
+}
+.aurora::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	pointer-events: none;
+	background:
+		radial-gradient(60% 50% at 15% 20%, color-mix(in oklab, var(--color-accent) 14%, transparent), transparent 70%),
+		radial-gradient(50% 45% at 85% 80%, color-mix(in oklab, var(--color-platform) 12%, transparent), transparent 70%);
+	background-size: 200% 200%;
+	opacity: 0.9;
+}
+/* nothing animates in a section until it is near the screen: an SVG transform or stroke animating off screen still costs a
+   style pass and a layout every frame, and a dozen of them held the first paint back on slow phones */
+section:not(.is-near) .draw *,
+section:not(.is-near) .spark *,
+section:not(.is-near) .cell,
+section:not(.is-near) .intro-scan {
+	animation-play-state: paused !important;
+}
+/* motifs: small drawings, each resting in its finished state */
+.motif * { transform-box: fill-box; transform-origin: center; }
+.motif .m-draw { stroke-dasharray: none; }
+.motif .m-flow { stroke-dasharray: 5 9; }
+.motif .m-ripple, .motif .m-flash { opacity: 0; }
+.motif .m-eq, .motif .m-rise { transform-origin: bottom; }
+/* the week heatmap's cells cross-fade between states */
+.cell { transition: fill 0.7s var(--ease-standard), opacity 0.7s var(--ease-standard); }
+/* sparklines draw themselves on arrival */
+.spark path { stroke-dasharray: 1; stroke-dashoffset: 1; }
+.spark.is-in path { animation: spark 1.6s var(--ease-out-expo) forwards; animation-delay: 0.3s; }
+@keyframes spark { to { stroke-dashoffset: 0; } }
+/* a value that just changed */
+.tick { animation: tick 0.5s var(--ease-out-expo); }
+@keyframes tick { from { opacity: 0.2; transform: translateY(4px); } to { opacity: 1; transform: none; } }

@@ -1,0 +1,106 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "sveltekit",
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.hostoscollective.com"
+        }
+      ],
+      "destination": "https://hostoscollective.com/:path*",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/app",
+      "destination": "https://hostos-ten.vercel.app/app"
+    },
+    {
+      "source": "/app/:path*",
+      "destination": "https://hostos-ten.vercel.app/app/:path*"
+    },
+    {
+      "source": "/login",
+      "destination": "https://hostos-ten.vercel.app/login"
+    },
+    {
+      "source": "/api/:path*",
+      "destination": "https://hostos-ten.vercel.app/api/:path*"
+    },
+    {
+      "source": "/_next/:path*",
+      "destination": "https://hostos-ten.vercel.app/_next/:path*"
+    },
+    {
+      "source": "/team",
+      "destination": "https://hostos-ten.vercel.app/team"
+    },
+    {
+      "source": "/about",
+      "destination": "https://hostos-ten.vercel.app/about"
+    },
+    {
+      "source": "/install",
+      "destination": "https://hostos-ten.vercel.app/install"
+    },
+    {
+      "source": "/offline",
+      "destination": "https://hostos-ten.vercel.app/offline"
+    },
+    {
+      "source": "/sw.js",
+      "destination": "https://hostos-ten.vercel.app/sw.js"
+    },
+    {
+      "source": "/manifest.webmanifest",
+      "destination": "https://hostos-ten.vercel.app/manifest.webmanifest"
+    },
+    {
+      "source": "/icons/:path*",
+      "destination": "https://hostos-ten.vercel.app/icons/:path*"
+    },
+    {
+      "source": "/team/:path*",
+      "destination": "https://hostos-ten.vercel.app/team/:path*"
+    },
+    {
+      "source": "/opengraph-image",
+      "destination": "https://hostos-ten.vercel.app/opengraph-image"
+    },
+    {
+      "source": "/twitter-image",
+      "destination": "https://hostos-ten.vercel.app/twitter-image"
+    },
+    {
+      "source": "/hostos-companion.zip",
+      "destination": "https://hostos-ten.vercel.app/hostos-companion.zip"
+    },
+    {
+      "source": "/apple-touch-icon.png",
+      "destination": "https://hostos-ten.vercel.app/apple-touch-icon.png"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
+        }
+      ]
+    }
+  ]
+}

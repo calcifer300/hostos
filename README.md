@@ -1,42 +1,159 @@
-# HostOS v0.1
+# HostOS
 
-The AI employee is **iHost**. This is the first vertical slice: turn an inbound Turo email into classified, explained, drafted guest communication.
+**The operations platform by [HostOS Collective](https://hostoscollective.com).**
+One workspace for any business, with a dashboard per line of business — Turo
+fleets, DoorDash restaurants, Shopify stores today; more as modules tomorrow —
+plus the teams, tasks, notifications, automation and AI Butler they share.
 
-## Run it
+Next.js 16 · React 19 · TypeScript · Tailwind v4 · Framer Motion · Supabase (Postgres) · one Chrome extension (the **HostOS Companion**) · installable PWA.
 
-```
+Production: **https://hostoscollective.com** (branch `unified`; hostos-ten.vercel.app still serves the same deployment).
+
+---
+
+## What it is
+
+| | |
+|---|---|
+| **Public site** | `/` — HostOS Collective: business solutions (virtual assistants & support, automation & custom systems, websites, apps, SEO) and the HostOS platform. `/team`, `/about`, `/install`. |
+| **Product** | `/app/*` — gated by session. Home + one dashboard per enabled module + shared pages (tasks, notifications, Butler, insights, settings). |
+| **Verticals** | `fleet` (Turo), `restaurants` (DoorDash), `commerce` (Shopify), `web` (GoDaddy), `cafe` (Coffee Shops), `salon` (Barbershops), `custom` (Build a custom). Chosen on `/app/start` after sign-in — the shell focuses on one at a time — and switched on per workspace (`hosts.modules`). |
+| **Companion** | `extension/` — MV3 Chrome extension that recognises turo.com, the DoorDash Merchant Portal and the Shopify admin, injects tools and syncs with a per-workspace pairing key. Packaged to `public/hostos-companion.zip` on build. |
+| **AI Butler** | One orchestrator (`src/lib/butler`) over Gemini: drafts, briefings, task generation, policy answers — grounded in the workspace knowledge base, reply templates and Turo's policy library. Never sends anything itself. |
+| **Roles** | Workspace: owner / admin / manager / member / viewer (`src/lib/roles/permissions.ts`). Platform: Founder, CTO, Tech Lead, Lead Developer, Developer, Operations Manager, Support, Fleet Owner, Virtual Assistant, Co-Host / VA (`src/lib/roles/constants.ts`) — always Title Case; legacy spellings normalise on read. |
+| **PWA** | Installs on iPhone, iPad, Android and desktop from the browser — no app store. Guide at `/install` and in Settings → Install. |
+
+## Run it locally
+
+```bash
 npm install
-cp .env.local.example .env.local   # then add your real Anthropic API key
-npm run dev
+cp .env.local.example .env.local   # fill in the values it documents
+npm run dev                         # http://localhost:3000
 ```
 
-Open http://localhost:3000. iHost starts "watching your inbox," then a seeded example email arrives and plays through the full pipeline automatically. Use "Next example" to cycle through three different event types, or paste a real guest message to run it live against your own text.
+```bash
+npm test              # pure-function tests (no framework) — tests/*.test.mts
+npx tsc --noEmit      # types
+npm run lint          # eslint
+npm run build         # packages the extension, then `next build`
+```
 
-## The application shell
+`npm run build` writes `public/hostos-companion.zip` from `extension/` first, so
+the download a deployment serves always matches the extension source in that
+commit.
 
-`src/components/shell/` is the permanent navigation frame every page lives inside — a desktop rail on `md+`, a slide-in drawer below it, both reading from one `navItems` array so adding a section later means one array edit, not a rewrite of two nav implementations.
+### Environment
 
-Seven routes exist today: `/` (Home — the real iHost briefing) and six placeholders (`/inbox`, `/reservations`, `/knowledge`, `/automations`, `/notifications`, `/settings`) rendered by a single shared `SectionPlaceholder` component. Those six are real Next.js routes that really render and really navigate — they're just honest about not having features behind them yet, per "build the shell, not features yet." Each placeholder's copy says specifically what's missing and why, rather than showing empty tables or fake widgets pretending to be functional.
+See [`.env.local.example`](.env.local.example) — every variable is documented
+there. Only `NEXT_PUBLIC_SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are
+required; the rest switch features on. Startup prints what is missing and what
+each absence disables (`src/lib/env.ts`).
 
-## What's real vs staged
+New since the unification: `NEXT_PUBLIC_APP_URL` (canonical URL),
+`HOSTOS_ENCRYPTION_KEY` (integration secrets at rest), `MAIL_FROM_EMAIL`,
+`CRON_SECRET` (now guards three cron routes).
 
-**Real, and calling a live model:**
-- `POST /api/ihost/analyze` calls the Anthropic API server-side with `ANTHROPIC_API_KEY` from your environment. Nothing about the classification, summary, action reasoning, or draft is mocked or hardcoded.
-- The classification vocabulary, confidence bands, and escalation logic (`src/lib/ihost/prompt.ts`) implement the iHost Charter's Articles VI-VII directly, not a paraphrase of them.
-- Copy-to-clipboard and "Open in Turo" are real browser actions.
-- The reply is genuinely editable before copying — nothing about steps 6-9 of the MVP workflow is simulated.
+### Database
 
-**Staged, and clearly marked as such in code comments:**
-- Steps 1-2 of the MVP workflow ("Gmail receives an email" / "HostOS detects it") are not implemented. `src/lib/mock/seed-emails.ts` stands in for what a real Gmail Connector would deliver via push notifications. That connector — OAuth, token storage, a webhook endpoint — is genuinely new infrastructure and is scoped as the next slice, not silently faked here.
-- The Knowledge Base (`defaultKnowledgeBase` in the same file) is a hardcoded stand-in for a real per-host settings screen. The shape matches what a real Knowledge Base record would be; there's no UI to edit it yet in v0.1.
+Migrations live in `supabase/migrations/` and are **additive and idempotent** —
+re-running is safe. Apply them in order in the Supabase SQL editor.
 
-## Architecture notes
+Migrations **0017–0025** (platform repairs, restaurants, workspace layer,
+templates, marketing, integrations, commerce, roles, the four new verticals)
+are bundled for one paste, and **0026** (per-member verticals, quick notes,
+workspace names) on its own:
 
-- `src/types/ihost.ts` — canonical domain types. No Turo-specific or Trello-shaped fields; `TuroEventType` is a classification vocabulary, not a wrapper around Turo's own notification types.
-- `src/lib/ihost/prompt.ts` + `src/lib/ihost/analyze.ts` — the entire "brain." One function builds the system prompt, one function calls the model and parses the result. Nothing about iHost's behavior is scattered across components.
-- `src/components/ihost/*` — one component per concern (arrival, classification badge, analysis, reply editor), each usable independently once a real Gmail Connector replaces the seed data.
-- `src/components/ui/*` — shadcn-pattern primitives (Button, Textarea, Card, Badge), hand-written rather than pulled via the shadcn CLI, because `ui.shadcn.com` isn't reachable from this build environment's network policy. Same conventions (cva variants, Radix Slot, Tailwind tokens) — a real shadcn CLI run against these files would recognize them as its own output.
+```bash
+node scripts/bundle-migrations.mjs 0017 0025   # → supabase/bundles/0017-0025.sql
+node scripts/bundle-migrations.mjs 0026 0026   # → supabase/bundles/0026-0026.sql
+node scripts/bundle-migrations.mjs 0027 0028   # → services vertical + dedupe-index fix
+node scripts/bundle-migrations.mjs 0029 0029   # → public team roster
+node scripts/bundle-migrations.mjs 0030 0030   # → a colour per team member
+node scripts/bundle-migrations.mjs 0031 0031   # → full names + nicknames, hierarchy order
+node scripts/bundle-migrations.mjs 0032 0032   # → site_content (the editable landing intro)
+```
 
-## Next slice
+Code deployed ahead of a migration degrades quietly (missing tables and columns
+read as empty, and the affected pages say so) rather than erroring.
 
-The literal next piece of infrastructure, per the roadmap discussion: a real Gmail Connector (OAuth + push notifications) replacing `seed-emails.ts`, and a minimal Knowledge Base settings screen replacing the hardcoded default. Both are additive — nothing in `src/lib/ihost/` or `src/components/ihost/` needs to change to support them.
+## How it fits together
+
+```
+ HostOS Companion (Chrome)                Shopify Admin API        Gmail (optional)
+   turo.com · DoorDash Merchant Portal       hourly + on demand        OAuth, opt-in
+   · Shopify admin                                 │                        │
+        │  Bearer <pairing key>                     │                        │
+        ▼                                          ▼                        ▼
+  /api/turo/* · /api/companion/*          lib/commerce/sync          NextAuth session
+        └──────────────────────┬───────────────────┴────────────────────────┘
+                               ▼
+                    Supabase (Postgres) — every table host_id-keyed, RLS on, service-role only
+                               │
+                               ▼
+          Next.js App Router — /app/* behind middleware, / public
+          lib/*/queries.ts (never throw) · lib/actions/* ({ok, error}) · lib/butler
+                               │
+                               ▼
+     /app/start chooser → Home · Fleet · Restaurants · Commerce · Web · Café · Barbershop · Custom
+     tasks · notifications · activity · Butler · insights · settings (shared)
+```
+
+Full walkthrough, module map and conventions: [ARCHITECTURE.md](ARCHITECTURE.md).
+Where things stand and what's next: [PROJECT_STATUS.md](PROJECT_STATUS.md),
+[NEXT_TASKS.md](NEXT_TASKS.md), [TECH_DEBT.md](TECH_DEBT.md), [CHANGELOG.md](CHANGELOG.md).
+The audit that produced this layout: [docs/AUDIT.md](docs/AUDIT.md).
+
+## Installing HostOS as an app (no App Store / Play Store)
+
+HostOS is a Progressive Web App. Open **https://hostoscollective.com** in the
+device's browser and:
+
+- **iPhone / iPad (Safari):** tap **Share** → **Add to Home Screen** → **Add**.
+  HostOS opens full-screen from the home screen like any app.
+- **Android (Chrome):** tap the **⋮** menu → **Install app** (or **Add to Home
+  screen**) → **Install**. Chrome may also show an install banner.
+- **Desktop (Chrome / Edge):** click the **install icon** in the address bar →
+  **Install**.
+
+The in-app guide (`/install`, and Settings → Install) detects the platform and
+shows only the relevant steps. Offline, the service worker serves `/offline`.
+
+## Repository layout
+
+```
+src/app/(marketing)/   public site: /, /team, /about, /install
+src/app/app/           the product (/app/*): page per route, layout = shell, template = page transition
+src/app/api/           auth · companion · turo (Companion ingest) · butler · cron
+src/components/        ui (primitives) · shell · dashboard · marketing · fleet/restaurants/commerce · butler · settings · motion · pwa
+src/lib/               one folder per domain; queries.ts (reads), actions/*.ts (writes), pure engines beside them
+src/middleware.ts      the auth gate + legacy redirects (must stay middleware — see the file)
+extension/             HostOS Companion (MV3); scripts/build-extension.mjs zips it
+public/team/           team portraits; scripts/team-wall-mark.mjs puts the mark on the wall, scripts/team-photos.mjs crops and colour-matches
+src/components/marketing/intro/  the landing intro (four systems, console HUD); content in src/lib/site/intro.ts, editor at /app/settings/website
+supabase/migrations/   0001 … 0032, additive; supabase/bundles/ for one-paste bundles
+tests/                 node --experimental-strip-types, no framework
+vendor/                originals that were merged in (reference only, excluded from lint/tsc)
+docs/                  AUDIT.md (classification + dependency map), history/
+```
+
+## Conventions
+
+- **Query modules never throw.** `src/lib/*/queries.ts` wraps every Supabase
+  call and degrades to `[]` / `null`, so a missing table takes down one widget,
+  never a page.
+- **Server actions return `{ ok, error? }`** and check `hasPermission(...)` —
+  a hidden button is a UI convenience; a server action is a public endpoint.
+- **Routes live in `src/lib/routes.ts`.** No hand-spelled `/app/...` strings.
+- **One place per concern.** One notifications table (`notify()`), one task
+  board (`createTask()`), one activity stream (`logActivity()`), one AI
+  orchestrator, one extension, one dashboard grid with per-scope catalogues.
+- **AI is quarantined.** The Butler drafts and suggests; every send, cancel or
+  change is a person's click.
+- **Comments explain why, not what.** Many cite the specific bug that shaped
+  the code they sit above.
+- Lint, types, tests and build clean before anything is called done.
+
+## Team
+
+Founder: John Briones (johnbriones774@gmail.com) · HostOS Collective.
+See [PROJECT_STATUS.md](PROJECT_STATUS.md) for the hand-over notes.

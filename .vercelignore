@@ -1,0 +1,19 @@
+# Not part of the deployed app. vendor/ alone is 2.6 GB of reference material.
+# Every pattern is anchored to the repo root: an unanchored "supabase" also
+# matched src/lib/supabase and broke the build.
+/vendor
+/docs
+/tests
+/supabase
+/.git
+/.github
+/.claude
+/node_modules
+/.next
+/.env
+/.env.*
+!/.env.local.example
+/*.md
+
+# The SvelteKit marketing site is its own Vercel project (site/); not part of the app bundle.
+/site

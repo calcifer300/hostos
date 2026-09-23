@@ -1,4 +1,6 @@
 import "server-only";
+import { getServerEnv } from "@/lib/env";
+import { fetchJsonOrThrow } from "@/lib/http";
 import { getSupabaseAdmin } from "@/lib/supabase/server";
 
 export interface GmailTokens {
@@ -35,29 +37,29 @@ export async function saveGmailTokens(userEmail: string, tokens: GmailTokens): P
 }
 
 async function refreshAccessToken(userEmail: string, refreshToken: string): Promise<string> {
-  const clientId = process.env.GOOGLE_CLIENT_ID;
-  const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-  if (!clientId || !clientSecret) {
+  const { googleClientId, googleClientSecret } = getServerEnv();
+  if (!googleClientId || !googleClientSecret) {
     throw new Error("GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET must be set in .env.local.");
   }
 
-  const res = await fetch("https://oauth2.googleapis.com/token", {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({
-      client_id: clientId,
-      client_secret: clientSecret,
-      refresh_token: refreshToken,
-      grant_type: "refresh_token",
-    }),
-  });
+  // Bounded, and distinguishes "Google is unreachable" (retryable) from
+  // "Google rejected this refresh token" (needs the host to reconnect).
+  const data = await fetchJsonOrThrow<{ access_token: string; expires_in: number }>(
+    "Google OAuth",
+    "https://oauth2.googleapis.com/token",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        client_id: googleClientId,
+        client_secret: googleClientSecret,
+        refresh_token: refreshToken,
+        grant_type: "refresh_token",
+      }),
+      timeoutMs: 10_000,
+    }
+  );
 
-  if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`Google rejected the Gmail token refresh (${res.status}): ${body}`);
-  }
-
-  const data = (await res.json()) as { access_token: string; expires_in: number };
   const expiresAt = new Date(Date.now() + data.expires_in * 1000);
 
   await saveGmailTokens(userEmail, {

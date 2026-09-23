@@ -48,9 +48,7 @@ export default async function ProposalsPage() {
             <Link href="/app/proposals/preview">View the house story</Link>
           </Button>
           <Button asChild variant="secondary" size="lg">
-            <a href="/app/proposals/preview/print?auto=1" target="_blank" rel="noreferrer">
-              Pricing playbook PDF
-            </a>
+            <Link href="/app/proposals/playbook">Pricing &amp; sales handbook</Link>
           </Button>
           <NewProposalButton />
         </div>

@@ -550,6 +550,14 @@ body::before {
  * their address, and a section is never split across a page break.
  */
 @media print {
+  /* a chapter always opens a fresh sheet */
+  .break-before-page {
+    break-before: page;
+    page-break-before: always;
+  }
+  .print-document .chapter {
+    padding-block: 0 !important;
+  }
   .proposal-chrome,
   .app-sidebar,
   .app-topbar,
@@ -700,6 +708,7 @@ body::before {
    * serif aside keeps the brand blue so the voice survives the change.
    */
   .headline,
+  .headline em,
   .text-gradient,
   .wordmark-giant {
     background: none !important;

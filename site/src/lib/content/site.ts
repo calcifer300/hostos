@@ -244,12 +244,12 @@ export const TESTIMONIALS = [
 	{
 		quote: "From building our website to setting up automated email campaigns, HostOS Collective delivered everything on time and on budget. Truly a one-stop shop for growing businesses.",
 		name: "Miguel Chavez",
-		role: "Online store founder",
+		role: "E-commerce startup",
 		photo: '/faces/2379004.jpg'
 	},
 	{
 		quote: "Having a dedicated VA team that manages my fleet bookings and guest communication has been a game changer. Professional, reliable, and always responsive.",
-		name: "Matt Tolley",
+		name: "Matthew Collins",
 		role: "Turo host",
 		photo: '/faces/6333501.jpg'
 	}
@@ -273,7 +273,7 @@ export const LAURELS = [
 	},
 	{
 		value: "5+ yrs",
-		label: "experience per operator · trained by the Founder"
+		label: "VA & BPO experience per operator"
 	}
 ];
 export const VOICES = { eyebrow: 'What owners say', title: 'In their *own words*.' };
@@ -315,7 +315,7 @@ export const WHY = {
 	title: 'Why a team *from the Philippines* — and why this one.',
 	lede: 'Based in the Philippines, working US hours, for business owners in the US and anywhere else.',
 	reasons: [
-		{ id: 'hours', name: 'Awake when your customers are', body: 'Manila is 13 hours ahead of Texas. Your night is our working day, so a message at 2 AM your time is answered right away, not the next morning.' },
+		{ id: 'hours', name: 'Awake when your customers are', body: 'Manila is 13 to 14 hours ahead of Texas, depending on daylight saving. Your night is our working day, so a message at 2 AM your time is answered right away, not the next morning.' },
 		{ id: 'people', name: 'Experienced operators, not freelancers', body: 'Every operator has five or more years of experience and was trained by the Founder from day one. They are on our payroll, learn your procedures, and are covered when they are off. You get a team, not a freelancer.' },
 		{ id: 'one', name: 'One team for people, systems and software', body: 'Most vendors offer one of the three. We run your operations, write them down, and build the software they run on — so nothing falls between an agency, a software vendor and a VA firm.' },
 		{ id: 'value', name: 'US-quality service at Philippine cost', body: 'The Philippines is the customer-service capital of the world: fluent in English, aligned with US business, and trained for it. The savings pay for round-the-clock coverage most owners could not afford locally.' },

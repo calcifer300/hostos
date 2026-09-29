@@ -23,7 +23,8 @@ eq("titles are Title Case words", DEFAULT_TEAM.every((m) => /^[A-Z]/.test(m.titl
 eq("every member has a full name (two or more words)", DEFAULT_TEAM.every((m) => m.name.trim().split(/\s+/).length >= 2), true);
 eq("every member has a nickname", DEFAULT_TEAM.every((m) => !!m.nickname), true);
 eq("nicknames are unique", new Set(DEFAULT_TEAM.map((m) => m.nickname)).size, DEFAULT_TEAM.length);
-eq("the Founder is Founder & CEO", DEFAULT_TEAM[0].title, "Founder & CEO");
+// Plain titles on purpose (commits e95bdbe, 22fc82a: "simple, humble role titles"). This used to expect "Founder & CEO".
+eq("the Founder's title is the plain 'Founder'", DEFAULT_TEAM[0].title, "Founder");
 eq("exactly one Founder", DEFAULT_TEAM.filter(isFounderProfile).length, 1);
 eq("Karl is not the Founder", isFounderProfile(DEFAULT_TEAM[1]), false);
 

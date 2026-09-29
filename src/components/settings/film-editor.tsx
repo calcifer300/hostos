@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input, Label } from "@/components/ui/input";
 import { saveLandingFilm, signFilmUpload, uploadSiteImage } from "@/lib/actions/site";
-import { DEFAULT_FILM, isFilmSrc, LIST_SLOTS, SECTION_SLOTS, TILE_SLOTS, type FilmChapter, type LandingFilm, type ListKey, type ServiceRow } from "@/lib/site/film";
+import { DEFAULT_FILM, isFilmSrc, LAUREL_LABEL_MAX, LIST_SLOTS, SECTION_SLOTS, TILE_SLOTS, type FilmChapter, type LandingFilm, type ListKey, type ServiceRow } from "@/lib/site/film";
 import { SITE_SERVICES } from "@/lib/site/services-default";
 import { cn } from "@/lib/utils";
 
@@ -248,7 +248,7 @@ export function FilmEditor({ film: initial, fromDatabase }: { film: LandingFilm;
             {film.laurels.map((l, i) => (
               <div key={i} className="grid grid-cols-[88px_1fr_auto] gap-2">
                 <Input aria-label="Figure" value={l.value} onChange={(e) => { setFilm((f) => ({ ...f, laurels: f.laurels.map((x, k) => (k === i ? { ...x, value: e.target.value } : x)) })); setDirty(true); }} className="font-mono" placeholder="98%" />
-                <Input aria-label="What it counts" value={l.label} onChange={(e) => { setFilm((f) => ({ ...f, laurels: f.laurels.map((x, k) => (k === i ? { ...x, label: e.target.value } : x)) })); setDirty(true); }} placeholder="client satisfaction" />
+                <Input aria-label="What it counts" title={`${l.label.length}/${LAUREL_LABEL_MAX} characters`} maxLength={LAUREL_LABEL_MAX} value={l.label} onChange={(e) => { setFilm((f) => ({ ...f, laurels: f.laurels.map((x, k) => (k === i ? { ...x, label: e.target.value } : x)) })); setDirty(true); }} placeholder="client satisfaction" />
                 <Button variant="ghost" size="sm" onClick={() => { setFilm((f) => ({ ...f, laurels: f.laurels.filter((_, k) => k !== i) })); setDirty(true); }}>×</Button>
               </div>
             ))}

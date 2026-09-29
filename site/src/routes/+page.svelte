@@ -26,8 +26,11 @@
 	// every section and tile reads its footage and light from here
 	// svelte-ignore state_referenced_locally — the landing is loaded once per page
 	setContext('landing', data);
-	// the title carries what people type: the brand, the category, the country
-	const title = `${SITE.company} — VA agency & business operations in the Philippines for US businesses | ${SITE.tagline}`;
+	// the title carries what people type: the brand, the category, the country. It stays under ~65 characters:
+	// it used to run to 150 and Google cut it mid-phrase ("…We’ll ha"), which reads like the page is broken.
+	// Link previews get the tagline instead, where the room is.
+	const title = `${SITE.company} — VA agency & business operations, Philippines`;
+	const shareTitle = `${SITE.company} — ${SITE.tagline}`;
 	const description = 'HostOS Collective is a Philippines-based virtual assistant agency and business solutions team, founded by John Jenrique Briones: trained operators, written systems and the HostOS platform running car rental fleets, restaurants, field services and shops for owners in the US and worldwide.';
 	const keywords = 'HostOS Collective, HostOS, John Briones, John Jenrique Briones, VA agency Philippines, virtual assistant agency Philippines, business solutions Philippines, business operations outsourcing, Turo fleet management, DoorDash restaurant operations, field service dispatch, custom web applications Philippines';
 	const ld = $derived(jsonLd(data.members));
@@ -43,13 +46,13 @@
 	<link rel="canonical" href={SITE.url + '/'} />
 	<meta property="og:type" content="website" />
 	<meta property="og:site_name" content={SITE.company} />
-	<meta property="og:title" content={title} />
+	<meta property="og:title" content={shareTitle} />
 	<meta property="og:description" content={description} />
 	<meta property="og:locale" content="en_US" />
 	<meta property="og:url" content={SITE.url + '/'} />
 	<meta property="og:image" content={SITE.url + '/opengraph-image'} />
 	<meta name="twitter:card" content="summary_large_image" />
-	<meta name="twitter:title" content={title} />
+	<meta name="twitter:title" content={shareTitle} />
 	<meta name="twitter:description" content={description} />
 	<meta name="twitter:image" content={SITE.url + '/opengraph-image'} />
 	{@html `<script type="application/ld+json">${ld}</script>`}

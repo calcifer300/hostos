@@ -367,7 +367,7 @@ export const TESTIMONIALS: Testimonial[] = [
   {
     quote:
       "Having a dedicated VA team that manages my fleet bookings and guest communication has been a game changer. Professional, reliable, and always responsive.",
-    name: "Matt Tolley",
+    name: "Matthew Collins",
     role: "Turo Host",
   },
 ];

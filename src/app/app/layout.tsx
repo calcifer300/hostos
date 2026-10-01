@@ -1,3 +1,4 @@
+import { unstable_rethrow } from "next/navigation";
 import { auth } from "@/auth";
 import { AppShell } from "@/components/shell/app-shell";
 import type { BackendStatusView } from "@/components/shell/backend-status-banner";
@@ -39,6 +40,38 @@ function weekAgoDay(): string {
 }
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
+  try {
+    return await renderAppLayout(children);
+  } catch (err) {
+    // redirect() / notFound() use throw for control flow and must keep propagating.
+    unstable_rethrow(err);
+    // Anything else here is outside the page error boundary, so it becomes
+    // Next's full-page "This page couldn't load" — the screen after sign-in.
+    // The shell can render empty; a badge count must not take the product down.
+    console.error("[hostos] app shell failed to assemble", err);
+    return (
+      <AppShell
+        user={null}
+        roles={[]}
+        backendStatus={{ state: "degraded", kind: "unreachable" }}
+        currentHostId=""
+        workspaceName="Workspace"
+        modules={[]}
+        focus={null}
+        quickNotes={null}
+        navCounts={{}}
+        notifications={[]}
+        unreadNotifications={0}
+        workspaces={[]}
+        palette={{ vehicles: [], conversations: [], restaurants: [], stores: [] }}
+      >
+        {children}
+      </AppShell>
+    );
+  }
+}
+
+async function renderAppLayout(children: React.ReactNode) {
   const session = await auth();
   const email = session?.user?.email ?? null;
 
@@ -81,7 +114,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const taskCounts = summarizeTasks(tasks);
   const navCounts: Record<string, number> = {
     operations: data.pickups.length + data.returns.length + data.overdueReturns.length,
-    board: board.trips.filter((t) => needsAttention(t.timer)).length,
+    board: board.trips.filter((t) => t.timer && needsAttention(t.timer)).length,
     tasks: taskCounts.open + taskCounts.inProgress,
     messages: data.messages.length,
     notifications: unread,

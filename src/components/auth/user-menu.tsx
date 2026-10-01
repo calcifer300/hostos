@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Globe, LogIn, LogOut } from "lucide-react";
@@ -13,8 +12,12 @@ function Avatar({ user, size }: { user: SessionUser; size: number }) {
   const initial = (user.name || user.email || "?").charAt(0).toUpperCase();
 
   if (user.image) {
+    // A plain img, not next/image. The Google photo host is not under our
+    // control, and an unconfigured src throws during render — this menu sits
+    // in the app layout, so that throw is the full-page "couldn't load"
+    // screen rather than a missing avatar.
     return (
-      <Image
+      <img
         src={user.image}
         alt=""
         width={size}

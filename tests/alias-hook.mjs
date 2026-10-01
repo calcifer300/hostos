@@ -34,6 +34,12 @@ export function resolve(specifier, context, nextResolve) {
     return nextResolve(pathToFileURL(resolvePath(projectRoot, "tests", "server-only-stub.mjs")).href, context);
   }
 
+  // Next ships "next/server" as server.js at the package root and no "exports" map
+  // to say so, which Node's ESM resolver will not guess. Bundlers do; tests do not.
+  if (specifier === "next/server") {
+    return nextResolve("next/server.js", context);
+  }
+
   if (specifier.startsWith("@/")) {
     const base = resolvePath(projectRoot, "src", specifier.slice(2));
 

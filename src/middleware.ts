@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { APP_BASE, LEGACY_APP_PATHS } from "@/lib/routes";
+import { APP_BASE, LEGACY_APP_PATHS, routes } from "@/lib/routes";
+import { asVertical, VERTICAL_COOKIE, VERTICAL_ROUTES } from "@/lib/verticals";
 
 /**
  * Auth gate for hosted deployments.
@@ -42,10 +43,29 @@ const SESSION_COOKIES = [
 ];
 
 function hasSessionCookie(req: NextRequest): boolean {
-  return SESSION_COOKIES.some((name) => {
-    const value = req.cookies.get(name)?.value;
-    return typeof value === "string" && value.length > 0;
+  // Auth.js splits a session that no longer fits in one cookie into
+  // `authjs.session-token.0`, `.1`, … A check for the unsuffixed name treats
+  // that person as signed out, so /app and /login redirect to each other until
+  // the browser gives up on the page.
+  return req.cookies.getAll().some((cookie) => {
+    if (!cookie.value) return false;
+    return SESSION_COOKIES.some((name) => cookie.name === name || cookie.name.startsWith(`${name}.`));
   });
+}
+
+/**
+ * /app itself never renders. It only chooses a dashboard, and doing that with
+ * redirect() inside the page was coming back as Next's "This page couldn't
+ * load" after sign-in. An HTTP redirect here happens before any of that renders.
+ */
+function productHomeRedirect(req: NextRequest): NextResponse | null {
+  const path = req.nextUrl.pathname;
+  if (path !== APP_BASE && path !== `${APP_BASE}/`) return null;
+  const chosen = asVertical(req.cookies.get(VERTICAL_COOKIE)?.value);
+  const dest = chosen ? VERTICAL_ROUTES[chosen] : routes.start;
+  const target = new URL(dest, req.url);
+  target.search = req.nextUrl.search;
+  return NextResponse.redirect(target);
 }
 
 /**
@@ -138,13 +158,17 @@ export function middleware(req: NextRequest) {
   // are meant to be seen signed-out — that is what they are for.
   if (!isProductPath(req.nextUrl.pathname)) return NextResponse.next();
 
-  if (!requiresAuth()) return NextResponse.next();
-  if (hasSessionCookie(req)) return NextResponse.next();
+  if (requiresAuth() && !hasSessionCookie(req)) {
+    const login = new URL("/login", req.url);
+    // So a shared deep link still lands where it was aimed after signing in.
+    login.searchParams.set("callbackUrl", req.nextUrl.pathname + req.nextUrl.search);
+    return NextResponse.redirect(login);
+  }
 
-  const login = new URL("/login", req.url);
-  // So a shared deep link still lands where it was aimed after signing in.
-  login.searchParams.set("callbackUrl", req.nextUrl.pathname + req.nextUrl.search);
-  return NextResponse.redirect(login);
+  const home = productHomeRedirect(req);
+  if (home) return home;
+
+  return NextResponse.next();
 }
 
 export const config = {

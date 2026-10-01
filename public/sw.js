@@ -7,7 +7,7 @@
  * board is worse than a spinner. Only immutable build assets and the offline
  * fallback are stored.
  */
-const CACHE = "hostos-shell-v1";
+const CACHE = "hostos-shell-v2";
 const OFFLINE_URL = "/offline";
 
 self.addEventListener("install", (event) => {
@@ -30,6 +30,19 @@ self.addEventListener("fetch", (event) => {
   if (request.method !== "GET") return;
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
+
+  // Sign-in is a redirect chain (Google → /api/auth/callback → /app). A
+  // service worker that answers those navigations receives the redirect as
+  // opaque and the browser paints Next's "This page couldn't load" instead
+  // of the workspace. Let the browser handle auth and the product itself.
+  if (
+    url.pathname === "/login" ||
+    url.pathname.startsWith("/api/auth") ||
+    url.pathname === "/app" ||
+    url.pathname.startsWith("/app/")
+  ) {
+    return;
+  }
 
   // Hashed build assets are immutable: cache-first.
   if (url.pathname.startsWith("/_next/static/")) {

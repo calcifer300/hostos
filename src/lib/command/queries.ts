@@ -41,3 +41,9 @@ export async function saveCommandSnapshot(hostId: string, snapshot: CommandSnaps
     })
   );
 }
+
+/** The snapshot and the moment it is being read, taken here so a page component stays pure. */
+export async function getCommandView(hostId: string): Promise<{ stored: StoredSnapshot | null; now: number }> {
+  const stored = await getCommandSnapshot(hostId);
+  return { stored, now: Date.now() };
+}

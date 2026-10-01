@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { ModuleOff } from "@/components/dashboard/module-off";
 import { CommandView } from "@/components/command/command-view";
-import { getCommandSnapshot } from "@/lib/command/queries";
+import { getCommandView } from "@/lib/command/queries";
 import { getCurrentHostId, verticalAccess } from "@/lib/host/context";
 
 export const metadata: Metadata = { title: "Command Center" };
@@ -15,6 +15,6 @@ export const dynamic = "force-dynamic";
 export default async function CommandCenterPage() {
   const access = await verticalAccess("fleet");
   if (access !== "ok") return <ModuleOff module="fleet" reason={access} />;
-  const stored = await getCommandSnapshot(await getCurrentHostId());
-  return <CommandView stored={stored} now={Date.now()} />;
+  const { stored, now } = await getCommandView(await getCurrentHostId());
+  return <CommandView stored={stored} now={now} />;
 }

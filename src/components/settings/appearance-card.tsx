@@ -16,6 +16,79 @@ function useMounted(): boolean {
   );
 }
 
+/**
+ * An ARIA radio group: one tab stop, arrow keys / Home / End move and select.
+ *
+ * Built from buttons rather than <input type="radio" name="…"> on purpose. React
+ * restores a controlled radio by scanning every same-named radio in the
+ * document and throws if one isn't React-managed — and streaming SSR leaves a
+ * hidden, unhydrated duplicate of the page behind (div#S:0[hidden]), which is
+ * exactly that. Native grouping made the first click on this card an uncaught
+ * error; this has no `name` for React to find.
+ */
+function ChoiceGroup<T extends string>({
+  label,
+  value,
+  options,
+  onChange,
+  className,
+  optionClassName,
+  render,
+}: {
+  label: string;
+  value: T;
+  options: readonly { id: T }[];
+  onChange: (next: T) => void;
+  className?: string;
+  optionClassName: string;
+  render: (option: { id: T }, checked: boolean) => React.ReactNode;
+}) {
+  const refs = React.useRef<(HTMLButtonElement | null)[]>([]);
+  const selected = Math.max(0, options.findIndex((o) => o.id === value));
+
+  function onKeyDown(event: React.KeyboardEvent, index: number) {
+    const step: Record<string, number> = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 };
+    let next = -1;
+    if (event.key in step) next = (index + step[event.key] + options.length) % options.length;
+    else if (event.key === "Home") next = 0;
+    else if (event.key === "End") next = options.length - 1;
+    if (next < 0) return;
+    event.preventDefault();
+    onChange(options[next].id);
+    refs.current[next]?.focus();
+  }
+
+  return (
+    <div role="radiogroup" aria-label={label} className={className}>
+      {options.map((option, index) => {
+        const checked = index === selected;
+        return (
+          <button
+            key={option.id}
+            ref={(el) => {
+              refs.current[index] = el;
+            }}
+            type="button"
+            role="radio"
+            aria-checked={checked}
+            tabIndex={checked ? 0 : -1}
+            onClick={() => onChange(option.id)}
+            onKeyDown={(e) => onKeyDown(e, index)}
+            className={cn("outline-none focus-visible:ring-2 focus-visible:ring-accent/60", optionClassName)}
+          >
+            {render(option, checked)}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+const MODES = [
+  { id: "light", label: "Light", Icon: Sun },
+  { id: "dark", label: "Dark", Icon: Moon },
+] as const;
+
 interface Palette {
   content: string;
   side: string;
@@ -95,55 +168,51 @@ export function AppearanceCard() {
         How HostOS looks on this device. It is yours alone — nothing here changes anything for the rest of your workspace.
       </p>
 
-      <fieldset className="mt-4">
-        <legend className="text-[12.5px] font-medium">Look</legend>
-        <div className="mt-2 grid gap-3 sm:grid-cols-2">
-          {SKINS.map((s) => {
-            const checked = skin === s.id;
+      <div className="mt-4">
+        <p className="text-[12.5px] font-medium">Look</p>
+        <ChoiceGroup
+          label="Look"
+          value={skin}
+          options={SKINS}
+          onChange={(next) => writeSkin(next)}
+          className="mt-2 grid gap-3 sm:grid-cols-2"
+          optionClassName="block rounded-xl border border-border p-2 text-left transition-colors hover:border-border-strong aria-checked:border-accent aria-checked:ring-2 aria-checked:ring-accent/30"
+          render={(option, checked) => {
+            const s = SKINS.find((k) => k.id === option.id)!;
             return (
-              <label key={s.id} className="block cursor-pointer">
-                <input type="radio" name="look" value={s.id} checked={checked} onChange={() => writeSkin(s.id)} className="peer sr-only" />
-                <span
-                  className={cn(
-                    "block rounded-xl border border-border p-2 transition-colors hover:border-border-strong",
-                    "peer-checked:border-accent peer-checked:ring-2 peer-checked:ring-accent/30 peer-focus-visible:ring-2 peer-focus-visible:ring-accent/60"
-                  )}
-                >
-                  <MiniWindow look={s.id} dark={dark} />
-                  <span className="mt-2 flex items-center gap-1.5 text-[13px] font-medium">
-                    {s.label}
-                    {checked && <Check className="h-3.5 w-3.5 text-accent" aria-hidden="true" />}
-                  </span>
-                  <span className="block text-[12px] leading-relaxed text-muted-foreground">{s.hint}</span>
+              <>
+                <MiniWindow look={s.id} dark={dark} />
+                <span className="mt-2 flex items-center gap-1.5 text-[13px] font-medium">
+                  {s.label}
+                  {checked && <Check className="h-3.5 w-3.5 text-accent" aria-hidden="true" />}
                 </span>
-              </label>
+                <span className="block text-[12px] leading-relaxed text-muted-foreground">{s.hint}</span>
+              </>
             );
-          })}
-        </div>
-      </fieldset>
+          }}
+        />
+      </div>
 
-      <fieldset className="mt-5">
-        <legend className="text-[12.5px] font-medium">Mode</legend>
-        <div className="mt-2 inline-flex rounded-lg border border-border bg-muted p-0.5">
-          {(
-            [
-              { id: "light", label: "Light", Icon: Sun },
-              { id: "dark", label: "Dark", Icon: Moon },
-            ] as const
-          ).map(({ id, label, Icon }) => {
-            const checked = mounted && (id === "dark") === dark;
+      <div className="mt-5">
+        <p className="text-[12.5px] font-medium">Mode</p>
+        <ChoiceGroup
+          label="Mode"
+          value={dark ? "dark" : "light"}
+          options={MODES}
+          onChange={(next) => setTheme(next)}
+          className="mt-2 inline-flex rounded-lg border border-border bg-muted p-0.5"
+          optionClassName="flex h-7 items-center gap-1.5 rounded-md px-3 text-[12.5px] font-medium text-muted-foreground transition-colors aria-checked:bg-card aria-checked:text-foreground aria-checked:shadow-sm"
+          render={(option) => {
+            const m = MODES.find((k) => k.id === option.id)!;
             return (
-              <label key={id} className="cursor-pointer">
-                <input type="radio" name="mode" value={id} checked={checked} onChange={() => setTheme(id)} className="peer sr-only" />
-                <span className="flex h-7 items-center gap-1.5 rounded-md px-3 text-[12.5px] font-medium text-muted-foreground transition-colors peer-checked:bg-card peer-checked:text-foreground peer-checked:shadow-sm peer-focus-visible:ring-2 peer-focus-visible:ring-accent/60">
-                  <Icon className="h-3.5 w-3.5" aria-hidden="true" />
-                  {label}
-                </span>
-              </label>
+              <>
+                <m.Icon className="h-3.5 w-3.5" aria-hidden="true" />
+                {m.label}
+              </>
             );
-          })}
-        </div>
-      </fieldset>
+          }}
+        />
+      </div>
     </section>
   );
 }

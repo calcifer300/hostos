@@ -41,8 +41,16 @@ html[data-skin="mac"] {
   --border: rgba(0, 0, 0, 0.1);
   --border-strong: rgba(0, 0, 0, 0.2);
 
-  /* system blue, and the indigo that sits beside it */
-  --accent: #007aff;
+  /*
+   * System blue, and the indigo that sits beside it.
+   *
+   * Apple's own blue (#007aff) is 4.0:1 against white, so white text ON it and
+   * blue text ON a light window both fail WCAG AA. Two tones fix that without
+   * leaving the family: a slightly deeper fill, so white labels read, and a
+   * darker text blue for links, so they read on the grey window.
+   */
+  --accent: #0071e3;
+  --accent-text: #0062cc;
   --accent-2: #5e5ce6;
   --accent-foreground: #ffffff;
   --accent-glow: rgba(0, 122, 255, 0.2);
@@ -75,6 +83,8 @@ html[data-skin="mac"] {
   --mac-button-ring: rgba(0, 0, 0, 0.17);
   --mac-hover: rgba(0, 0, 0, 0.06);
   --mac-focus: rgba(0, 122, 255, 0.5);
+  /* white on this is 5.3:1; the system red (#ff3b30) is 3.6 */
+  --mac-badge-red: #d1202a;
   --mac-wallpaper:
     radial-gradient(1100px 720px at 6% 10%, rgba(118, 168, 255, 0.55), transparent 62%),
     radial-gradient(900px 820px at 16% 94%, rgba(196, 148, 255, 0.42), transparent 60%),
@@ -91,11 +101,13 @@ html[data-skin="mac"].dark {
   --card: #2b2b2d;
   --card-foreground: #ececec;
   --muted: #3a3a3c;
-  --muted-foreground: #a1a1a6;
+  --muted-foreground: #b0b0b6;
   --border: rgba(255, 255, 255, 0.1);
   --border-strong: rgba(255, 255, 255, 0.2);
 
-  --accent: #0a84ff;
+  /* the same two-tone split, mirrored: a fill white can sit on, and a text blue light enough for a dark window */
+  --accent: #0a72e0;
+  --accent-text: #5eb0ff;
   --accent-2: #7d7aff;
   --accent-glow: rgba(10, 132, 255, 0.26);
   --info: #64b5ff;
@@ -110,7 +122,7 @@ html[data-skin="mac"].dark {
   --shadow-elevated: 0 0 0 0.5px rgba(255, 255, 255, 0.14), 0 14px 44px -8px rgba(0, 0, 0, 0.7), 0 8px 20px -10px rgba(0, 0, 0, 0.5);
   --shadow-glow: 0 0 0 0.5px rgba(255, 255, 255, 0.1), 0 1px 3px rgba(0, 0, 0, 0.4);
 
-  --glass-bg: rgba(44, 44, 46, 0.64);
+  --glass-bg: rgba(36, 36, 38, 0.66);
   --glass-border: rgba(255, 255, 255, 0.1);
 
   --mac-field: rgba(255, 255, 255, 0.07);
@@ -119,6 +131,7 @@ html[data-skin="mac"].dark {
   --mac-button-ring: rgba(255, 255, 255, 0.12);
   --mac-hover: rgba(255, 255, 255, 0.08);
   --mac-focus: rgba(10, 132, 255, 0.6);
+  --mac-badge-red: #d1202a;
   --mac-wallpaper:
     radial-gradient(1100px 720px at 6% 10%, rgba(52, 86, 200, 0.55), transparent 62%),
     radial-gradient(900px 820px at 16% 94%, rgba(118, 58, 178, 0.44), transparent 60%),
@@ -258,6 +271,20 @@ html[data-skin="mac"] [data-mac="nav-heading"] {
   color: var(--muted-foreground);
 }
 
+/*
+ * A vertical's name is tinted in its own brand colour, set inline, so a token
+ * cannot reach it. On the macOS dark sidebar those hues land at ~4.4:1; lifting
+ * the brightness a notch clears AA without changing which colour it is.
+ */
+html[data-skin="mac"].dark [data-mac="nav-heading"] > span {
+  filter: brightness(1.22);
+}
+
+/* blue text (links, "View all →") takes the AA-safe tone; blue fills keep --accent */
+html[data-skin="mac"] .text-accent {
+  color: var(--accent-text);
+}
+
 /* counts: a quiet grey number, as in Mail's sidebar; urgent ones keep a red pill */
 html[data-skin="mac"] [data-mac="badge"][data-tone="accent"] {
   background: none;
@@ -267,7 +294,7 @@ html[data-skin="mac"] [data-mac="badge"][data-tone="accent"] {
   color: var(--muted-foreground);
 }
 html[data-skin="mac"] [data-mac="badge"][data-tone="danger"] {
-  background: var(--danger);
+  background: var(--mac-badge-red);
   color: #ffffff;
 }
 html[data-skin="mac"] [data-mac="sidebar"] nav a[aria-current="page"] [data-mac="badge"][data-tone="accent"] {

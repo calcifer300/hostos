@@ -78,6 +78,7 @@ export const NAV_SECTIONS: NavSection[] = [
     module: "fleet",
     items: [
       { href: routes.fleet, label: "Dashboard", icon: Gauge },
+      { href: routes.command, label: "Command Center", icon: LayoutGrid },
       { href: routes.board, label: "Board", icon: LayoutList, countKey: "board" },
       { href: routes.operations, label: "Operations", icon: ListChecks, countKey: "operations" },
       { href: routes.messages, label: "Messages", icon: MessageCircle, countKey: "messages", matchPrefix: true },

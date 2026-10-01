@@ -38,6 +38,8 @@ export const routes = {
   inbox: app("inbox"),
   // Fleet operations (Turo) — its own dashboard, then the detail pages.
   fleet: app("fleet"),
+  /** The Command Center: the extension's snapshot, drawn read-only. */
+  command: app("fleet/command"),
   vehicles: app("fleet/vehicles"),
   vehicle: (name: string) => app(`fleet/vehicles/${encodeURIComponent(name)}`),
   reservations: app("reservations"),

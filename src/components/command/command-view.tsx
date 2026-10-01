@@ -14,6 +14,7 @@ const STATE_TONE: Record<FleetCard["state"], string> = {
   ontrip: "bg-primary/10 text-primary", soon: "bg-violet-500/10 text-violet-600 dark:text-violet-400",
   attention: "bg-warning/10 text-warning", available: "bg-success/10 text-success", unlisted: "bg-muted text-muted-foreground",
 };
+const NOT_BILLED_LABEL: Record<string, string> = { ready: "Ready to bill", running: "Waiting for the trip to end", look: "Needs a look", hold: "On hold" };
 const TONE_TEXT: Record<string, string> = { red: "text-destructive", amber: "text-warning", cyan: "text-primary", green: "text-success" };
 
 function Panel({ title, aside, children, className = "" }: { title: string; aside?: React.ReactNode; children: React.ReactNode; className?: string }) {
@@ -206,31 +207,64 @@ export function CommandView({ stored, now }: { stored: StoredSnapshot | null; no
           aside={snap.tolls.at ? `as of ${new Date(snap.tolls.at).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}` : undefined}
         >
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <Tile label="Trips to Bill" value={String(snap.tolls.toBill)} note={cents(snap.tolls.toBillCents)} />
             <Tile label="Billed This Week" value={String(snap.tolls.billedWeekTrips)} note={cents(snap.tolls.billedWeekCents)} />
+            <Tile label="Ready to Bill" value={String(snap.tolls.toBill)} note={cents(snap.tolls.toBillCents)} />
             <Tile label="Waiting on Trips" value={String(snap.tolls.running)} note={`${cents(snap.tolls.runningCents)} so far`} />
             <Tile label="Need a Look" value={String(snap.tolls.looks)} note="before billing" />
           </div>
-          {snap.tolls.weekRows.length ? (
-            <div className="mt-4 overflow-x-auto">
+
+          <h3 className="mb-1.5 mt-5 text-[13px] font-semibold">Billed · {snap.tolls.billedRows.length}</h3>
+          {snap.tolls.billedRows.length ? (
+            <div className="overflow-x-auto">
               <table className="w-full text-left text-[12.5px]">
                 <thead className="text-[11px] uppercase tracking-wide text-muted-foreground">
-                  <tr><th className="py-1.5 pr-3">Guest</th><th className="hidden pr-3 sm:table-cell">Vehicle</th><th className="pr-3">Billed</th><th className="pr-3 text-right">Amount</th><th>Status</th></tr>
+                  <tr>
+                    <th className="py-1.5 pr-3">Guest</th>
+                    <th className="hidden pr-3 sm:table-cell">Vehicle</th>
+                    <th className="pr-3">Reservation ID</th>
+                    <th className="pr-3">Invoice ID</th>
+                    <th className="pr-3">Billed</th>
+                    <th className="text-right">Amount</th>
+                  </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                  {snap.tolls.weekRows.map((row, index) => (
+                  {snap.tolls.billedRows.map((row, index) => (
                     <tr key={index}>
                       <td className="py-1.5 pr-3 font-medium">{row.guest ?? "Guest"}</td>
                       <td className="hidden pr-3 text-muted-foreground sm:table-cell">{row.vehicle}</td>
-                      <td className="pr-3">{row.submitted}</td>
-                      <td className="pr-3 text-right tabular-nums">{cents(row.cents)}</td>
-                      <td className={row.state === "paid" ? "font-semibold text-success" : "font-semibold text-warning"}>{row.state === "paid" ? "Paid" : "Not yet paid"}</td>
+                      <td className="pr-3 tabular-nums">#{row.tripId}</td>
+                      <td className="pr-3 tabular-nums">{row.invoiceNumber ? `#${row.invoiceNumber}` : <span className="text-muted-foreground">not read yet</span>}</td>
+                      <td className="pr-3 whitespace-nowrap">{row.billedAt}</td>
+                      <td className="text-right tabular-nums">{cents(row.cents)}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-          ) : null}
+          ) : (
+            <p className="text-[13px] text-muted-foreground">Nothing has been billed yet.</p>
+          )}
+
+          <h3 className="mb-1.5 mt-5 text-[13px] font-semibold">Not Yet Billed · {snap.tolls.notBilledRows.length}</h3>
+          {snap.tolls.notBilledRows.length ? (
+            <ul className="divide-y divide-border">
+              {snap.tolls.notBilledRows.map((row, index) => (
+                <li key={index} className="flex flex-col gap-0.5 py-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+                  <div className="min-w-0">
+                    <div className="text-[13px] font-semibold">
+                      {row.guest ?? "Guest"} <span className="font-normal text-muted-foreground">· {row.vehicle} · #{row.tripId}</span>
+                    </div>
+                    <div className="text-[12px] text-muted-foreground">{row.why}</div>
+                  </div>
+                  <div className="shrink-0 text-[12.5px] tabular-nums sm:text-right">
+                    {cents(row.cents)} <span className="text-muted-foreground">· {NOT_BILLED_LABEL[row.group] ?? "Other"}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-[13px] text-muted-foreground">Every trip with tolls has been billed.</p>
+          )}
         </Panel>
       ) : null}
 

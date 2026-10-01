@@ -46,14 +46,22 @@ export interface FleetCard {
   next: { guest: string | null; from: string; tripUrl: string | null } | null;
 }
 
-export interface TollRow {
+export interface BilledRow {
   tripId: string;
   guest: string | null;
   vehicle: string | null;
   cents: number;
-  state?: string;
-  submitted?: string;
-  endsAt?: number | null;
+  billedAt: string | null;
+  invoiceNumber: string | null;
+}
+
+export interface NotBilledRow {
+  tripId: string;
+  guest: string | null;
+  vehicle: string | null;
+  cents: number;
+  group: string;
+  why: string;
 }
 
 export interface CommandSnapshot {
@@ -91,8 +99,8 @@ export interface CommandSnapshot {
     billedWeekCents: number;
     fileBilled: number;
     fileTotal: number;
-    weekRows: TollRow[];
-    runningRows: TollRow[];
+    billedRows: BilledRow[];
+    notBilledRows: NotBilledRow[];
   } | null;
   unpriced: { vehicle: string; plate: string | null; guest: string | null; ends: string; reason: string; guess: number | null }[];
   calendar: { fleet: number; fresh: number; needed: number; neededDone: number; complete: boolean } | null;
@@ -152,18 +160,22 @@ export function normalizeSnapshot(raw: unknown): CommandSnapshot | null {
   const weeks = list(model.earnings, 12).filter(isObject).map((bar) => ({
     from: num(bar.from), cents: num(bar.cents), trips: num(bar.trips), future: bool(bar.future),
   }));
-  const tollRows = (rows: unknown): TollRow[] =>
-    list(rows, 100).filter(isObject).map((row) => ({
+  const billedRows = (rows: unknown): BilledRow[] =>
+    list(rows, 250).filter(isObject).map((row) => ({
       tripId: str(row.tripId, 30) ?? "", guest: str(row.guest, 80), vehicle: str(row.vehicle, 100), cents: num(row.cents),
-      state: str(row.state, 20) ?? undefined, submitted: str(row.submitted, 12) ?? undefined,
-      endsAt: typeof row.endsAt === "number" ? row.endsAt : null,
+      billedAt: str(row.billedAt, 30), invoiceNumber: str(row.invoiceNumber, 30),
+    }));
+  const notBilledRows = (rows: unknown): NotBilledRow[] =>
+    list(rows, 150).filter(isObject).map((row) => ({
+      tripId: str(row.tripId, 30) ?? "", guest: str(row.guest, 80), vehicle: str(row.vehicle, 100), cents: num(row.cents),
+      group: str(row.group, 20) ?? "other", why: str(row.why, 240) ?? "",
     }));
   const tolls = isObject(raw.tolls)
     ? {
         at: str(raw.tolls.at, 40), toBill: num(raw.tolls.trips ?? raw.tolls.toBill), toBillCents: num(raw.tolls.cents ?? raw.tolls.toBillCents), running: num(raw.tolls.running),
         runningCents: num(raw.tolls.runningCents), looks: num(raw.tolls.looks), billedWeekTrips: num(raw.tolls.billedWeekTrips),
         billedWeekCents: num(raw.tolls.billedWeekCents), fileBilled: num(raw.tolls.fileBilled), fileTotal: num(raw.tolls.fileTotal),
-        weekRows: tollRows(raw.tolls.weekRows), runningRows: tollRows(raw.tolls.runningRows),
+        billedRows: billedRows(raw.tolls.billedRows), notBilledRows: notBilledRows(raw.tolls.notBilledRows),
       }
     : null;
   const unpriced = list(earnings.unpriced, 100).filter(isObject).map((row) => ({

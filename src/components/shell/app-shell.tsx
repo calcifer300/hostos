@@ -18,6 +18,11 @@ import { WorkspaceSwitcher, type WorkspaceOption } from "@/components/shell/work
 import { CommandPalette, type PaletteSources } from "@/components/shell/command-palette";
 import { QuickNotes } from "@/components/notes/quick-notes";
 import { QuietBoundary } from "@/components/ui/quiet-boundary";
+import { SkinSync } from "@/components/skin/skin-sync";
+import { TrafficLights } from "@/components/skin/traffic-lights";
+// The macOS look. Imported here, not in the root layout, so only the product shell ever downloads it;
+// it is inert unless <html data-skin="mac"> is set (lib/skin.ts).
+import "@/components/skin/mac-skin.css";
 import type { QuickNote } from "@/lib/notes/queries";
 import type { SessionUser } from "@/types/auth";
 import type { Notification } from "@/lib/notifications/queries";
@@ -95,6 +100,8 @@ export function AppShell({
 
   const rail = (mobile: boolean) => (
     <>
+      {/* hidden unless the macOS look is on; the drawer on a phone has no window to control */}
+      {!mobile && <TrafficLights />}
       <div className={cn("px-1", collapsed && !mobile && "px-0")}>
         {collapsed && !mobile ? (
           <div className="flex justify-center py-1">
@@ -142,6 +149,7 @@ export function AppShell({
       <TooltipProvider delayDuration={200}>
         <div className="min-h-screen">
           <AutoRefresh />
+          <SkinSync />
           {user && <GmailAutoSync />}
           <CommandPalette sources={palette} />
           {quickNotes && (
@@ -152,6 +160,8 @@ export function AppShell({
 
           {/* Desktop rail */}
           <motion.aside
+            data-mac="sidebar"
+            data-collapsed={collapsed}
             initial={false}
             animate={{ width: collapsed ? 72 : 240 }}
             transition={{ duration: 0.32, ease: EASE }}
@@ -203,6 +213,7 @@ export function AppShell({
 
           {/* Content */}
           <motion.div
+            data-mac="content"
             initial={false}
             animate={{ paddingLeft: collapsed ? 72 : 240 }}
             transition={{ duration: 0.32, ease: EASE }}

@@ -16,6 +16,7 @@ const TooltipContent = React.forwardRef<
     <TooltipPrimitive.Content
       ref={ref}
       sideOffset={sideOffset}
+      data-mac="tooltip"
       className={cn(
         "z-50 rounded-lg border border-border bg-card px-2.5 py-1.5 text-[12px] text-foreground shadow-[var(--shadow-card)]",
         className

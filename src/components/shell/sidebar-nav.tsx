@@ -15,6 +15,8 @@ function Badge({ count, tone }: { count: number; tone: "accent" | "danger" }) {
   if (count <= 0) return null;
   return (
     <span
+      data-mac="badge"
+      data-tone={tone}
       className={cn(
         "rounded-full px-1.5 py-0.5 text-[10.5px] font-semibold tabular-nums leading-none",
         tone === "danger" ? "bg-danger/12 text-danger" : "bg-accent/12 text-accent"
@@ -55,12 +57,14 @@ function NavLink({
         <>
           <motion.span
             layoutId="sidebar-active"
+            data-mac="nav-pill"
             transition={{ type: "spring", stiffness: 520, damping: 42 }}
             className="absolute inset-0 -z-10 rounded-lg bg-muted"
           />
           {/* The accent rail slides between items with the pill. */}
           <motion.span
             layoutId="sidebar-rail"
+            data-mac="nav-rail"
             transition={{ type: "spring", stiffness: 520, damping: 42 }}
             className={cn("absolute top-1/2 h-4 w-0.5 -translate-y-1/2 rounded-full bg-accent", collapsed ? "left-0.5" : "left-0")}
           />
@@ -130,7 +134,7 @@ export function SidebarNav({
         return (
         <motion.div key={section.id} initial={section.module ? { opacity: 0, x: -6 } : false} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}>
           {section.label && !collapsed && (
-            <p className="mb-1.5 flex items-center gap-1.5 px-2.5 text-[10.5px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/80">
+            <p data-mac="nav-heading" className="mb-1.5 flex items-center gap-1.5 px-2.5 text-[10.5px] font-semibold uppercase tracking-[0.12em] text-muted-foreground/80">
               {def && <span aria-hidden className="h-1.5 w-1.5 rounded-full" style={{ background: def.hue }} />}
               <span style={def ? { color: def.hue } : undefined}>{def ? def.title : section.label}</span>
               {def && (

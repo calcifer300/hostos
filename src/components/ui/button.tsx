@@ -57,6 +57,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled || loading}
         aria-busy={loading || undefined}
+        // Stable hooks for looks that restyle by role rather than by class (lib/skin.ts).
+        data-variant={variant ?? "secondary"}
+        data-size={size ?? "default"}
         {...props}
       >
         {/* Slot requires exactly one child, so the spinner only exists on real buttons. */}

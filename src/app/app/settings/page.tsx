@@ -7,6 +7,7 @@ import { DEV_TOOLS_ROLES } from "@/lib/roles/constants";
 import { TeamRolesSection } from "@/components/settings/team-roles-section";
 import { FleetSettings } from "@/components/settings/fleet-settings";
 import { ModuleSettings } from "@/components/settings/module-settings";
+import { AppearanceCard } from "@/components/settings/appearance-card";
 import { getHost, getHostModules } from "@/lib/host/queries";
 import { canManageSettings, getCurrentFleet, getCurrentHostId, getFleetMembers } from "@/lib/host/context";
 import { asWorkspaceRole, ROLE_LABELS } from "@/lib/roles/permissions";
@@ -40,6 +41,8 @@ export default async function SettingsPage() {
         canRename={canSettings && Boolean(host)}
         isOwner={myRole === "owner"}
       />
+
+      <AppearanceCard />
 
       <ModuleSettings enabled={modules} canEdit={canSettings} />
 

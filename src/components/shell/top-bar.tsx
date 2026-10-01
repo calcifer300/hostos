@@ -48,7 +48,7 @@ export function TopBar({
   const vertical = moduleById(verticalFromPath(pathname) ?? focus ?? "");
 
   return (
-    <div className="glass-surface sticky top-0 z-20 hidden items-center justify-between gap-4 border-b px-8 py-3 print:!hidden md:flex">
+    <div data-mac="toolbar" className="glass-surface sticky top-0 z-20 hidden items-center justify-between gap-4 border-b px-8 py-3 print:!hidden md:flex">
       <div className="flex min-w-0 items-center gap-3">
         <p className="flex min-w-0 items-center truncate text-[12.5px] text-muted-foreground">
           <span className="text-foreground/80">{workspaceName}</span>
@@ -69,6 +69,7 @@ export function TopBar({
       <div className="flex items-center gap-2">
         <button
           type="button"
+          data-mac="search"
           onClick={openCommandPalette}
           className="flex h-9 w-72 items-center gap-2.5 rounded-full border border-border bg-muted/50 pl-3.5 pr-2 text-[13px] text-muted-foreground transition-colors hover:border-accent/40 hover:bg-card"
         >

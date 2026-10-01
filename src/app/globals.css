@@ -576,12 +576,12 @@ body::before {
     border-color: #e5e5e5 !important;
   }
   .proposal-section[tone='ink'],
-  .proposal-root .bg-[#0b0d14] {
+  .proposal-root .bg-\[\#0b0d14\] {
     background: #fff !important;
     color: #111 !important;
   }
   /* an expandable section prints open: a PDF has no affordance to click */
-  .proposal-root .grid-rows-[0fr] {
+  .proposal-root .grid-rows-\[0fr\] {
     grid-template-rows: 1fr !important;
   }
   .proposal-root a[href^='http']::after {

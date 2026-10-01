@@ -6,6 +6,7 @@ import { RegisterServiceWorker } from "@/components/pwa/register-sw";
 import { TapFeedback } from "@/components/motion/tap-feedback";
 import { SpotlightEffect } from "@/components/motion/spotlight";
 import { getPublicAppUrl, SITE } from "@/lib/site";
+import { SKIN_BOOT_SCRIPT } from "@/lib/skin";
 import "./globals.css";
 
 const inter = Inter({
@@ -61,6 +62,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth" className={`${inter.variable} ${serif.variable} ${mono.variable}`}>
+      <head>
+        {/* Sets the chosen look before first paint, so there is no flash of the default one. Inside /app only. */}
+        <script dangerouslySetInnerHTML={{ __html: SKIN_BOOT_SCRIPT }} />
+      </head>
       <body className="font-sans antialiased">
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
           {children}

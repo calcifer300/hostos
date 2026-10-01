@@ -18,8 +18,8 @@ const TONE_TEXT: Record<string, string> = { red: "text-destructive", amber: "tex
 
 function Panel({ title, aside, children, className = "" }: { title: string; aside?: React.ReactNode; children: React.ReactNode; className?: string }) {
   return (
-    <section className={`rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-card)] ${className}`}>
-      <div className="mb-3 flex items-baseline justify-between gap-3">
+    <section className={`min-w-0 rounded-2xl border border-border bg-card p-4 shadow-[var(--shadow-card)] sm:p-5 ${className}`}>
+      <div className="mb-3 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
         <h2 className="text-[15px] font-semibold tracking-tight">{title}</h2>
         {aside ? <span className="text-[12px] text-muted-foreground">{aside}</span> : null}
       </div>
@@ -28,11 +28,11 @@ function Panel({ title, aside, children, className = "" }: { title: string; asid
   );
 }
 
-function Tile({ label, value, note }: { label: string; value: string; note: string }) {
+function Tile({ label, value, note, wide = false }: { label: string; value: string; note: string; wide?: boolean }) {
   return (
-    <div className="rounded-2xl border border-border bg-card px-4 py-3.5 shadow-[var(--shadow-card)]">
+    <div className={`min-w-0 rounded-2xl border border-border bg-card px-3.5 py-3 shadow-[var(--shadow-card)] sm:px-4 sm:py-3.5 ${wide ? "col-span-2 lg:col-span-1" : ""}`}>
       <div className="text-[12px] text-muted-foreground">{label}</div>
-      <div className="mt-0.5 text-[26px] font-semibold leading-tight tracking-tight tabular-nums">{value}</div>
+      <div className="mt-0.5 truncate text-[22px] font-semibold leading-tight tracking-tight tabular-nums sm:text-[26px]">{value}</div>
       <div className="text-[11.5px] text-muted-foreground">{note}</div>
     </div>
   );
@@ -60,11 +60,11 @@ function Schedule({ slots }: { slots: ScheduleSlot[] }) {
       {slots.map((slot, index) => {
         const label = slot.done ? (slot.type === "Pickup" ? "Picked Up" : "Returned") : slot.type;
         return (
-          <li key={index} className={`flex items-center gap-3 rounded-lg px-2 py-1.5 ${slot === next ? "bg-primary/10" : ""} ${slot.done ? "opacity-60" : ""}`}>
+          <li key={index} className={`flex flex-wrap items-center gap-x-3 gap-y-0.5 rounded-lg px-2 py-1.5 ${slot === next ? "bg-primary/10" : ""} ${slot.done ? "opacity-60" : ""}`}>
             <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${slot.done ? "bg-muted-foreground" : slot.type === "Return" ? "bg-success" : "bg-violet-500"}`} />
             <span className="w-[68px] shrink-0 text-[13px] font-semibold tabular-nums">{slot.time}</span>
             <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-[11px] font-semibold">{label}</span>
-            <span className="min-w-0 flex-1 truncate text-[13px]">
+            <span className="min-w-0 basis-full truncate pl-[22px] text-[13px] sm:basis-0 sm:flex-1 sm:pl-0">
               <b className="font-semibold">{slot.vehicle ?? slot.plate ?? "Vehicle"}</b>
               <span className="text-muted-foreground"> · {[slot.guest, slot.plate].filter(Boolean).join(" · ")}</span>
             </span>
@@ -83,9 +83,9 @@ function FleetGrid({ cars }: { cars: FleetCard[] }) {
         <article key={`${car.plate ?? car.name}-${index}`} className={`flex gap-3 rounded-xl border border-border p-2.5 ${car.state === "unlisted" ? "opacity-70" : ""}`}>
           {car.photo ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={car.photo} alt="" loading="lazy" referrerPolicy="no-referrer" className="h-[62px] w-[92px] shrink-0 rounded-lg bg-muted object-cover" />
+            <img src={car.photo} alt="" loading="lazy" referrerPolicy="no-referrer" className="h-[56px] w-[80px] shrink-0 rounded-lg bg-muted object-cover sm:h-[62px] sm:w-[92px]" />
           ) : (
-            <div className="grid h-[62px] w-[92px] shrink-0 place-items-center rounded-lg bg-muted text-muted-foreground"><CarFront className="h-5 w-5" strokeWidth={1.5} aria-hidden /></div>
+            <div className="grid h-[56px] w-[80px] shrink-0 place-items-center rounded-lg bg-muted text-muted-foreground sm:h-[62px] sm:w-[92px]"><CarFront className="h-5 w-5" strokeWidth={1.5} aria-hidden /></div>
           )}
           <div className="min-w-0 flex-1">
             <div className="flex items-center justify-between gap-2">
@@ -114,12 +114,12 @@ function FleetGrid({ cars }: { cars: FleetCard[] }) {
 function Earnings({ weeks }: { weeks: CommandSnapshot["weeks"] }) {
   const max = Math.max(1, ...weeks.map((week) => week.cents));
   return (
-    <div className="flex h-36 items-end gap-2">
+    <div className="flex h-36 items-end gap-1 sm:gap-2">
       {weeks.map((week) => (
-        <div key={week.from} className="flex flex-1 flex-col items-center justify-end gap-1">
-          <span className="text-[10.5px] tabular-nums text-muted-foreground">{week.cents ? money(week.cents / 100) : ""}</span>
+        <div key={week.from} className="flex min-w-0 flex-1 flex-col items-center justify-end gap-1">
+          <span className="hidden text-[10.5px] tabular-nums text-muted-foreground sm:block">{week.cents ? money(week.cents / 100) : ""}</span>
           <div className={`w-full rounded-md ${week.future ? "bg-primary" : "bg-muted-foreground/40"}`} style={{ height: `${Math.max(3, (week.cents / max) * 96)}px`, opacity: week.trips ? 1 : 0.3 }} />
-          <span className="text-[10.5px] text-muted-foreground">{new Date(week.from).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" })}</span>
+          <span className="truncate text-[9.5px] text-muted-foreground sm:text-[10.5px]">{new Date(week.from).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" })}</span>
         </div>
       ))}
     </div>
@@ -132,10 +132,10 @@ export function CommandView({ stored, now }: { stored: StoredSnapshot | null; no
   const age = freshness(snap.builtAt || Date.parse(stored.receivedAt), now);
   const parts = snap.greeting.split(", ");
   return (
-    <div className="mx-auto max-w-[1400px] space-y-5 pb-12">
-      <header className="flex flex-wrap items-end justify-between gap-3">
+    <div className="mx-auto min-w-0 max-w-[1400px] space-y-4 pb-12 sm:space-y-5">
+      <header className="flex flex-col items-start gap-2 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between sm:gap-3">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">
+          <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
             {parts[1] ? <>{parts[0]}, <span className="text-primary">{parts[1]}</span></> : snap.greeting}
           </h1>
           <p className="text-[13px] text-muted-foreground">
@@ -155,7 +155,7 @@ export function CommandView({ stored, now }: { stored: StoredSnapshot | null; no
         <Tile label="Active Trips" value={String(snap.kpis.activeTrips)} note="on the road now" />
         <Tile label="Upcoming Pickups" value={String(snap.kpis.pickups)} note="next 24 hours" />
         <Tile label="Upcoming Returns" value={String(snap.kpis.returns)} note="next 24 hours" />
-        <Tile label="Est. Earnings" value={money(snap.kpis.earningsNext30)} note="trips ending in 30 days" />
+        <Tile label="Est. Earnings" value={money(snap.kpis.earningsNext30)} note="trips ending in 30 days" wide />
       </div>
 
       <div className="grid gap-5 lg:grid-cols-5">
@@ -163,13 +163,13 @@ export function CommandView({ stored, now }: { stored: StoredSnapshot | null; no
           {snap.attention.length ? (
             <ul className="divide-y divide-border">
               {snap.attention.slice(0, 30).map((row, index) => (
-                <li key={index} className="flex items-start justify-between gap-3 py-2">
+                <li key={index} className="flex flex-col gap-1 py-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
                   <div className="min-w-0">
                     <div className={`text-[13px] font-semibold ${TONE_TEXT[row.tone] ?? ""}`}>{row.label}</div>
-                    <div className="truncate text-[12px] text-muted-foreground">{[row.vehicle, row.tripId ? `Trip #${row.tripId}` : null].filter(Boolean).join(" · ")}</div>
+                    <div className="text-[12px] text-muted-foreground sm:truncate">{[row.vehicle, row.tripId ? `Trip #${row.tripId}` : null].filter(Boolean).join(" · ")}</div>
                     {row.detail ? <div className="text-[12px] text-muted-foreground">{row.detail}</div> : null}
                   </div>
-                  <div className="shrink-0 text-right text-[12px]">
+                  <div className="flex shrink-0 items-center gap-3 text-[12px] sm:block sm:text-right">
                     <div className="font-medium">{row.guest ?? "Guest"}</div>
                     {row.tripUrl ? <a href={row.tripUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Open Trip</a> : null}
                   </div>
@@ -215,13 +215,13 @@ export function CommandView({ stored, now }: { stored: StoredSnapshot | null; no
             <div className="mt-4 overflow-x-auto">
               <table className="w-full text-left text-[12.5px]">
                 <thead className="text-[11px] uppercase tracking-wide text-muted-foreground">
-                  <tr><th className="py-1.5 pr-3">Guest</th><th className="pr-3">Vehicle</th><th className="pr-3">Billed</th><th className="pr-3 text-right">Amount</th><th>Status</th></tr>
+                  <tr><th className="py-1.5 pr-3">Guest</th><th className="hidden pr-3 sm:table-cell">Vehicle</th><th className="pr-3">Billed</th><th className="pr-3 text-right">Amount</th><th>Status</th></tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   {snap.tolls.weekRows.map((row, index) => (
                     <tr key={index}>
                       <td className="py-1.5 pr-3 font-medium">{row.guest ?? "Guest"}</td>
-                      <td className="pr-3 text-muted-foreground">{row.vehicle}</td>
+                      <td className="hidden pr-3 text-muted-foreground sm:table-cell">{row.vehicle}</td>
                       <td className="pr-3">{row.submitted}</td>
                       <td className="pr-3 text-right tabular-nums">{cents(row.cents)}</td>
                       <td className={row.state === "paid" ? "font-semibold text-success" : "font-semibold text-warning"}>{row.state === "paid" ? "Paid" : "Not yet paid"}</td>

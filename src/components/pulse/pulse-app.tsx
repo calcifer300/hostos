@@ -54,7 +54,67 @@ function untilEnd(endsAt: number | null, now: number, zone: string): string {
 const money = (value: number) => "$" + Math.round(value).toLocaleString("en-US");
 const cents = (value: number) => "$" + (value / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-type TabId = "overview" | "trips" | "messages" | "fleet" | "tolls";
+/** "Oct 2, 3:14 PM" in the fleet's zone; null when there is no time. */
+function when(value: string | number | null, zone: string): string | null {
+  if (value === null || value === "") return null;
+  const ms = typeof value === "number" ? value : Date.parse(value);
+  if (!Number.isFinite(ms)) return null;
+  return new Date(ms).toLocaleString("en-US", { timeZone: zone, month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+}
+const ageMs = (value: string | number | null, now: number): number | null => {
+  if (value === null || value === "") return null;
+  const ms = typeof value === "number" ? value : Date.parse(value);
+  return Number.isFinite(ms) ? Math.max(0, now - ms) : null;
+};
+
+/** The small grey line under a tile or section: shown only when HostOS is not fully sure of what is above it. */
+function Note({ children }: { children?: React.ReactNode }) {
+  if (!children) return null;
+  return <p className="mt-1.5 text-[10.5px] leading-snug text-muted-foreground/80">{children}</p>;
+}
+
+interface Weather { temp: number; feels: number; code: number; wind: number; high: number; low: number }
+const WEATHER_TEXT: [number[], string, string][] = [
+  [[0], "Clear", "☀️"], [[1, 2], "Partly Cloudy", "⛅"], [[3], "Overcast", "☁️"], [[45, 48], "Fog", "🌫️"],
+  [[51, 53, 55, 56, 57], "Drizzle", "🌦️"], [[61, 63, 65, 66, 67, 80, 81, 82], "Rain", "🌧️"],
+  [[71, 73, 75, 77, 85, 86], "Snow", "❄️"], [[95, 96, 99], "Thunderstorm", "⛈️"],
+];
+const weatherLabel = (code: number): [string, string] => { const hit = WEATHER_TEXT.find(([codes]) => codes.includes(code)); return hit ? [hit[1], hit[2]] : ["Weather", "🌡️"]; };
+const WEATHER_URL = "https://api.open-meteo.com/v1/forecast?latitude=39.7392&longitude=-104.9903&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America%2FDenver&forecast_days=1";
+
+/** Live Denver weather (Open-Meteo, no key), refreshed every 10 minutes. Hidden if it cannot be reached. */
+function WeatherChip() {
+  const [weather, setWeather] = React.useState<Weather | null>(null);
+  React.useEffect(() => {
+    let stopped = false;
+    async function load() {
+      try {
+        const response = await fetch(WEATHER_URL, { cache: "no-store" });
+        if (!response.ok) return;
+        const json = await response.json();
+        const cur = json.current;
+        if (stopped || !cur || typeof cur.temperature_2m !== "number") return;
+        setWeather({ temp: cur.temperature_2m, feels: cur.apparent_temperature, code: cur.weather_code, wind: cur.wind_speed_10m, high: json.daily?.temperature_2m_max?.[0], low: json.daily?.temperature_2m_min?.[0] });
+      } catch { /* the chip just stays hidden */ }
+    }
+    void load();
+    const id = window.setInterval(load, 600000);
+    return () => { stopped = true; window.clearInterval(id); };
+  }, []);
+  if (!weather) return null;
+  const [text, icon] = weatherLabel(weather.code);
+  return (
+    <div className="inline-flex items-center gap-3 rounded-2xl border border-border bg-card px-3.5 py-2 shadow-[var(--shadow-card)]" aria-label="Denver weather">
+      <span className="text-[26px] leading-none" aria-hidden>{icon}</span>
+      <div className="min-w-0">
+        <div className="text-[13px] font-semibold">Denver, CO · {Math.round(weather.temp)}°F <span className="font-normal text-muted-foreground">{text}</span></div>
+        <div className="text-[11px] text-muted-foreground">Feels {Math.round(weather.feels)}° · Wind {Math.round(weather.wind)} mph{Number.isFinite(weather.high) ? ` · High ${Math.round(weather.high)}° Low ${Math.round(weather.low)}°` : ""}</div>
+      </div>
+    </div>
+  );
+}
+
+type TabId ="overview" | "trips" | "messages" | "fleet" | "tolls";
 
 /** How alive the scanner is, from the freshest sign: its own heartbeat, a snapshot, or the last time Turo was read. */
 function liveState(data: PulsePayload, now: number): { state: "live" | "late" | "off"; label: string; detail: string } {
@@ -87,13 +147,20 @@ function Card({ title, aside, children, className = "" }: { title?: string; asid
   );
 }
 
-function Tile({ label, value, note, tone }: { label: string; value: string; note: string; tone: string }) {
-  return (
-    <div className={`pulse-tile ${tone} min-w-0 rounded-2xl border border-border bg-card px-3.5 py-3 shadow-[var(--shadow-card)]`}>
-      <div className="text-[11.5px] text-muted-foreground">{label}</div>
+function Tile({ label, value, note, tone, hint, onOpen }: { label: string; value: string; note: string; tone: string; hint?: string; onOpen?: () => void }) {
+  const body = (
+    <>
+      <div className="flex items-center justify-between text-[11.5px] text-muted-foreground"><span>{label}</span>{onOpen ? <span aria-hidden className="text-[13px]">›</span> : null}</div>
       <div key={value} className="pulse-num mt-0.5 truncate text-[24px] font-semibold leading-tight tracking-tight tabular-nums">{value}</div>
       <div className="truncate text-[11px] text-muted-foreground">{note}</div>
-    </div>
+      {hint ? <div className="mt-1 text-[10px] leading-snug text-muted-foreground/80">{hint}</div> : null}
+    </>
+  );
+  const cls = `pulse-tile ${tone} min-w-0 rounded-2xl border border-border bg-card px-3.5 py-3 text-left shadow-[var(--shadow-card)]`;
+  return onOpen ? (
+    <button type="button" onClick={onOpen} aria-label={`${label}: ${value}. Open the details`} className={`${cls} w-full cursor-pointer transition hover:border-accent/60 active:scale-[.98]`}>{body}</button>
+  ) : (
+    <div className={cls}>{body}</div>
   );
 }
 
@@ -174,6 +241,7 @@ function TopCarCard({ snap }: { snap: CommandSnapshot }) {
         <span aria-hidden>★</span> Top Car · Last 3 Months
       </span>
       <div className="absolute inset-x-3 bottom-2.5 text-white">
+        <div className="text-[10.5px] text-white/60">Estimated from trip prices, last 3 months.</div>
         <div className="text-[17px] font-semibold leading-tight drop-shadow">{top.name}</div>
         <div className="text-[12px] text-white/85">
           {[top.plate, `${money(top.total)} estimated`, `${top.trips} ${top.trips === 1 ? "trip" : "trips"}`, `avg ${money(top.perTrip)}`].filter(Boolean).join(" · ")}
@@ -223,26 +291,44 @@ function FleetGrid({ cars }: { cars: FleetCard[] }) {
   );
 }
 
-function Messages({ rows }: { rows: UnreadRow[] }) {
-  if (!rows.length) return <Card><p className="flex items-center gap-2 py-4 text-[13px] text-muted-foreground"><span className="text-success">✔</span> No guest is waiting for a reply.</p></Card>;
+function Messages({ rows, note }: { rows: UnreadRow[]; note?: React.ReactNode }) {
+  if (!rows.length) return <Card><p className="flex items-center gap-2 py-4 text-[13px] text-muted-foreground"><span className="text-success">✔</span> No guest is waiting for a reply.</p><Note>{note}</Note></Card>;
   return (
-    <ul className="grid gap-2.5 md:grid-cols-2">
-      {rows.map((row, index) => (
-        <li key={`${row.tripId}-${index}`} className={`rounded-2xl border bg-card p-3.5 shadow-[var(--shadow-card)] ${row.urgency === "high" ? "pulse-urgent border-danger/50" : row.urgency === "medium" ? "border-warning/50" : "border-border"}`}>
-          <div className="flex items-start justify-between gap-3">
-            <div className="min-w-0">
-              <div className="truncate text-[14px] font-semibold">{row.guest ?? "Guest"}</div>
-              <div className="truncate text-[12px] text-muted-foreground">{[row.vehicle, row.tripId ? `Trip #${row.tripId}` : null].filter(Boolean).join(" · ")}</div>
-            </div>
-            <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10.5px] font-bold ${row.urgency === "high" ? "bg-danger/10 text-danger" : row.urgency === "medium" ? "bg-warning/10 text-warning" : "bg-accent/10 text-accent"}`}>
-              {row.wait || (row.urgency === "new" ? "New" : "Waiting")}
-            </span>
-          </div>
-          <blockquote className="mt-2 rounded-lg border-l-[3px] border-accent bg-muted/50 px-3 py-2 text-[13px] leading-snug">{row.text || "Guest message waiting."}</blockquote>
-          {row.sent ? <div className="mt-1.5 text-[11px] text-muted-foreground">Sent {row.sent}</div> : null}
-        </li>
-      ))}
-    </ul>
+    <>
+      <ul className="grid gap-2.5 md:grid-cols-2">
+        {rows.map((row, index) => {
+          const urgent = row.tone === "urgent";
+          const fyi = row.tone === "fyi";
+          return (
+            <li key={`${row.tripId}-${index}`} className={`rounded-2xl border bg-card p-3.5 shadow-[var(--shadow-card)] ${urgent ? "pulse-urgent border-danger/60 bg-danger/[0.04]" : fyi ? "border-border opacity-75" : row.urgency === "high" ? "pulse-urgent border-danger/50" : row.urgency === "medium" ? "border-warning/50" : "border-border"}`}>
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="truncate text-[14px] font-semibold">{row.guest ?? "Guest"}</div>
+                  <div className="truncate text-[12px] text-muted-foreground">{[row.vehicle, row.tripId ? `Trip #${row.tripId}` : null].filter(Boolean).join(" · ")}</div>
+                </div>
+                <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10.5px] font-bold ${row.urgency === "high" ? "bg-danger/10 text-danger" : row.urgency === "medium" ? "bg-warning/10 text-warning" : "bg-accent/10 text-accent"}`}>
+                  {row.wait || (row.urgency === "new" ? "New" : "Waiting")}
+                </span>
+              </div>
+              {row.labels.length || fyi ? (
+                <div className="mt-2 flex flex-wrap gap-1">
+                  {row.labels.map((entry) => (
+                    <span key={entry.key} className={`rounded-full px-2 py-0.5 text-[10.5px] font-bold uppercase tracking-wide ${entry.level === "urgent" ? "pulse-urgent-chip bg-danger text-white" : "bg-warning/15 text-warning"}`}>{entry.label}</span>
+                  ))}
+                  {fyi ? <span className="rounded-full bg-muted px-2 py-0.5 text-[10.5px] font-semibold text-muted-foreground">No Reply Needed</span> : null}
+                </div>
+              ) : null}
+              <blockquote className={`mt-2 rounded-lg border-l-[3px] bg-muted/50 px-3 py-2 text-[13px] leading-snug ${urgent ? "border-danger" : fyi ? "border-muted-foreground/40 text-muted-foreground" : "border-accent"}`}>{row.text || "Guest message waiting."}</blockquote>
+              <div className="mt-1.5 flex items-center justify-between gap-2 text-[11px] text-muted-foreground">
+                <span>{row.sent ? `Sent ${row.sent}` : ""}</span>
+                {row.tripUrl ? <a href={row.tripUrl} target="_blank" rel="noopener noreferrer" className="font-medium text-accent hover:underline">Open Trip in Turo</a> : null}
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+      <Note>{note}</Note>
+    </>
   );
 }
 
@@ -402,8 +488,27 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
   const snap = data.snapshot;
   const live = liveState(data, now);
   const unreadRows = snap ? snap.unread.filter((row) => row.sentAt === null || now - row.sentAt <= EXPIRE_MS) : [];
-  const unread = unreadRows.length;
-  const urgentCount = snap ? snap.attention.filter((row) => row.tone === "red").length + unreadRows.filter((row) => row.urgency === "high").length : 0;
+  const unread = unreadRows.filter((row) => row.tone !== "fyi").length;
+  const urgentMessages = unreadRows.filter((row) => row.tone === "urgent").length;
+  const urgentCount = snap ? snap.attention.filter((row) => row.tone === "red").length + urgentMessages : 0;
+  const open = (id: TabId, view?: "active" | "pickups" | "returns") => {
+    if (view) setRange(view);
+    setTab(id);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+  const q = snap ? snap.quality : null;
+  const zone = snap ? snap.zone : "America/Denver";
+  const fleetCount = snap ? (snap.fleet.length || snap.kpis.vehicles) : 0;
+  const fleetBy = (state: FleetCard["state"]) => (snap ? snap.fleet.filter((car) => car.state === state).length : 0);
+  const tripsAge = q ? ageMs(q.tripsAt, now) : null;
+  const tripsNote = !q || !q.tripsAt
+    ? "Trips have not been read from Turo yet. Open Turo on the scanning PC."
+    : tripsAge !== null && tripsAge > 45 * 60000
+      ? `Last read from Turo ${when(q.tripsAt, zone)}. To refresh, open Turo on the scanning PC.`
+      : q.detailsPending > 0
+        ? `${q.detailsPending} trip${q.detailsPending === 1 ? "" : "s"} still being read for details (prices, plates).`
+        : undefined;
+  const messagesNote = `Read from the Turo inbox${q && q.tripsAt ? " " + when(q.tripsAt, zone) : ""}. A guest shows here when they wrote last; Matthew's saved (canned) messages do not count as a reply. Labels come from the guest's words, so always read the message.`;
   const hours24 = 24 * 3600000;
 
   return (
@@ -425,6 +530,7 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
         </div>
       </header>
       <div className="pulse-scan" aria-hidden />
+      <div className="mt-3"><WeatherChip /></div>
       <p className="mb-3 mt-2 text-[11.5px] text-muted-foreground sm:hidden">{live.detail}{!online ? " · you are offline" : ""}</p>
       {!online ? <p className="mb-3 hidden rounded-lg bg-warning/10 px-3 py-1.5 text-[12px] text-warning sm:block">You are offline. Showing what was last received.</p> : null}
 
@@ -433,7 +539,7 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
         {TABS.map((item) => (
           <button key={item.id} type="button" onClick={() => setTab(item.id)} className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2 text-[13px] font-medium transition ${tab === item.id ? "bg-accent text-accent-foreground shadow" : "text-muted-foreground hover:bg-muted"}`}>
             {item.label}
-            {item.id === "messages" ? <Badge n={unread} urgent={unreadRows.some((row) => row.urgency === "high")} /> : null}
+            {item.id === "messages" ? <Badge n={unread} urgent={urgentMessages > 0} /> : null}
           </button>
         ))}
       </nav>
@@ -449,11 +555,14 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
                 <span className="text-[12px] text-muted-foreground">{snap.attention.length ? `${snap.attention.length} need${snap.attention.length === 1 ? "s" : ""} attention` : "Nothing needs attention"}</span>
               </div>
               <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-5">
-                <Tile tone="blue" label="Total Vehicles" value={String(snap.kpis.vehicles)} note={snap.fleetSummary.unlisted ? `${snap.fleetSummary.unlisted} unlisted` : "all listed"} />
-                <Tile tone="violet" label="Active Trips" value={String(snap.kpis.activeTrips)} note="on the road now" />
-                <Tile tone="green" label="Upcoming Pickups" value={String(snap.kpis.pickups)} note="next 24 hours" />
-                <Tile tone="amber" label="Upcoming Returns" value={String(snap.kpis.returns)} note="next 24 hours" />
-                <div className="col-span-2 lg:col-span-1"><Tile tone="green" label="Est. Earnings" value={money(snap.kpis.earningsNext30)} note="trips ending in 30 days" /></div>
+                <Tile tone="blue" label="Total Vehicles" value={String(fleetCount)} note={fleetBy("unlisted") ? `${fleetBy("unlisted")} unlisted` : "all listed"} onOpen={() => open("fleet")}
+                  hint={q && !q.fleetLive ? "Fleet list is HostOS's saved catalog, not confirmed from Turo. Open Turo's Vehicles page on the scanning PC." : undefined} />
+                <Tile tone="violet" label="Active Trips" value={String(snap.kpis.activeTrips)} note="on the road now" onOpen={() => open("trips", "active")}
+                  hint={q && q.activeNoPlate ? `${q.activeNoPlate} active trip has no plate read yet, so its car is unconfirmed.` : tripsNote} />
+                <Tile tone="green" label="Upcoming Pickups" value={String(snap.kpis.pickups)} note="next 24 hours" onOpen={() => open("trips", "pickups")} hint={tripsNote} />
+                <Tile tone="amber" label="Upcoming Returns" value={String(snap.kpis.returns)} note="next 24 hours" onOpen={() => open("trips", "returns")} hint={tripsNote} />
+                <div className="col-span-2 lg:col-span-1"><Tile tone="green" label="Est. Earnings" value={money(snap.kpis.earningsNext30)} note="trips ending in 30 days"
+                  hint={q && q.unpricedTrips ? `Minimum: ${q.unpricedTrips} trip${q.unpricedTrips === 1 ? " has" : "s have"} no price yet and ${q.unpricedTrips === 1 ? "is" : "are"} not counted. Estimates, not payouts.` : "Estimates from trip prices, not payouts."} /></div>
               </div>
               <div className="grid gap-3.5 lg:grid-cols-5">
                 <Card title={`Needs Attention · ${snap.attention.length}`} aside={urgentCount ? <span className="pulse-urgent-chip rounded-full bg-danger/10 px-2 py-0.5 text-[11px] font-bold text-danger">{urgentCount} urgent</span> : undefined} className="lg:col-span-3">
@@ -480,16 +589,18 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
                 </div>
               </div>
               <div className="grid gap-3.5 lg:grid-cols-2">
-                <Card title="Fleet Right Now" aside={`${snap.fleetSummary.total} vehicles`}>
+                <Card title="Fleet Right Now" aside={`${fleetCount} vehicles`}>
                   <div className="grid grid-cols-2 gap-2 text-[13px] sm:grid-cols-5">
-                    {([["On a Trip", snap.fleetSummary.onTrip], ["Pickup Soon", snap.fleetSummary.scheduled], ["Available", snap.fleetSummary.available], ["Needs Attention", snap.fleetSummary.needsAttention], ["Unlisted", snap.fleetSummary.unlisted]] as const).map(([label, value]) => (
+                    {([["On a Trip", fleetBy("ontrip")], ["Pickup Soon", fleetBy("soon")], ["Available", fleetBy("available")], ["Needs Attention", fleetBy("attention")], ["Unlisted", fleetBy("unlisted")]] as const).map(([label, value]) => (
                       <div key={label} className="rounded-xl bg-muted/60 px-3 py-2"><div className="text-[18px] font-semibold tabular-nums">{value}</div><div className="text-[11px] text-muted-foreground">{label}</div></div>
                     ))}
                   </div>
+                  <Note>Counted from the Fleet tab, one state per car.{q && !q.fleetLive ? " Availability is not confirmed from Turo yet. Open Turo's calendar page on the scanning PC." : q && q.fleetAt ? ` Availability last read ${when(q.fleetAt, zone)}.` : ""}</Note>
                 </Card>
                 <Card title="Earnings Overview" aside="estimates · not payouts">
                   <div className="mb-2 text-[24px] font-semibold tabular-nums">{money(snap.kpis.earningsNext30)}<span className="ml-2 text-[12px] font-medium text-success">next 30 days · {snap.kpis.tripsNext30} trips</span></div>
                   <EarningsBars weeks={snap.weeks} />
+                  <Note>Estimates from each trip&rsquo;s listed price, grouped by week.{q && q.unpricedTrips ? ` ${q.unpricedTrips} trip${q.unpricedTrips === 1 ? "" : "s"} without a price are left out, so the real figure is higher.` : ""}</Note>
                 </Card>
               </div>
             </>
@@ -512,9 +623,9 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
 
           {tab === "messages" ? (
             <>
-              <h2 className="text-xl font-semibold tracking-tight">Guests Waiting for a Reply · {unreadRows.length}</h2>
-              <p className="text-[12px] text-muted-foreground">Messages from the last 72 hours. Older ones clear by themselves.</p>
-              <Messages rows={unreadRows} />
+              <h2 className="text-xl font-semibold tracking-tight">Guests Waiting for a Reply · {unread}{unreadRows.length > unread ? <span className="ml-2 text-[13px] font-normal text-muted-foreground">+ {unreadRows.length - unread} no reply needed</span> : null}</h2>
+              <p className="text-[12px] text-muted-foreground">Messages from the last 72 hours, urgent ones first. Older ones clear by themselves.</p>
+              <Messages rows={unreadRows} note={messagesNote} />
             </>
           ) : null}
 
@@ -522,6 +633,7 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
             <>
               <h2 className="text-xl font-semibold tracking-tight">Fleet · {snap.fleet.length}</h2>
               <FleetGrid cars={snap.fleet} />
+              <Note>{q && !q.fleetLive ? "Availability is not confirmed from Turo yet, so Available and Free Now may be wrong. Open Turo's calendar page on the scanning PC." : q && q.fleetAt ? `Availability last read ${when(q.fleetAt, zone)}.` : null}{q && !q.listingsLive ? " Names and photos are from HostOS's saved catalog until the Vehicles page is read." : ""}</Note>
             </>
           ) : null}
 
@@ -530,6 +642,7 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
               <h2 className="text-xl font-semibold tracking-tight">Tolls for This Week · {weekRange(snap.zone, now)}</h2>
               <p className="text-[12px] text-muted-foreground">Monday to Friday, Mountain Time. The week&rsquo;s tolls Matthew sends for billing and reimbursement.</p>
               <Tolls snap={snap} now={now} />
+              <Note>{!snap.tolls ? null : `Tolls last updated ${when(snap.tolls.at, zone) ?? "at an unknown time"}, from the toll file read on the scanning PC. To refresh, open the Toll Manager there.`}{q && q.invoicesMissing ? ` ${q.invoicesMissing} of ${q.invoicesTotal} billed trips show "not read yet" for the invoice number: it is read when the Toll Manager is open on the scanning PC.` : ""}</Note>
             </>
           ) : null}
         </main>
@@ -544,7 +657,7 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
             <button key={item.id} type="button" onClick={() => { setTab(item.id); window.scrollTo({ top: 0, behavior: "smooth" }); }} className={`relative flex flex-col items-center gap-0.5 py-2 text-[10.5px] font-medium ${tab === item.id ? "text-accent" : "text-muted-foreground"}`}>
               <span className="text-[18px] leading-none" aria-hidden>{item.icon}</span>
               {item.label}
-              {item.id === "messages" && unread ? <span className={`pulse-badge absolute right-[22%] top-1 ${unreadRows.some((row) => row.urgency === "high") ? "urgent" : ""}`}>{unread}</span> : null}
+              {item.id === "messages" && unread ? <span className={`pulse-badge absolute right-[22%] top-1 ${urgentMessages > 0 ? "urgent" : ""}`}>{unread}</span> : null}
             </button>
           ))}
         </div>

@@ -103,6 +103,25 @@ export interface UnreadRow {
   sent: string;
   wait: string;
   urgency: "high" | "medium" | "new" | "unknown";
+  /** urgent: a car or trip is at risk; reply: a person should answer; fyi: thanks or an update, nothing asked */
+  tone: "urgent" | "reply" | "fyi";
+  labels: { key: string; label: string; level: "urgent" | "attention" }[];
+}
+
+/** What the scanner could and could not confirm, so each tile can say how far to trust it. */
+export interface SnapshotQuality {
+  tripsAt: string | null;
+  fleetAt: string | null;
+  fleetLive: boolean;
+  listingsLive: boolean;
+  listingsAt: string | null;
+  unpricedTrips: number;
+  detailsPending: number;
+  detailsFailed: number;
+  activeNoPlate: number;
+  tollsAt: string | null;
+  invoicesMissing: number;
+  invoicesTotal: number;
 }
 
 export interface TopCar {
@@ -141,6 +160,7 @@ export interface CommandSnapshot {
   fleet: FleetCard[];
   tripLists: { active: TripRow[]; pickups: TripRow[]; returns: TripRow[] };
   unread: UnreadRow[];
+  quality: SnapshotQuality;
   topCar: TopCar | null;
   weeks: { from: number; cents: number; trips: number; future: boolean }[];
   tolls: {
@@ -230,7 +250,17 @@ export function normalizeSnapshot(raw: unknown): CommandSnapshot | null {
     text: str(row.text, 420) ?? "", sentAt: typeof row.sentAt === "number" ? row.sentAt : null, waitMs: typeof row.waitMs === "number" ? row.waitMs : null,
     sent: str(row.sent, 40) ?? "", wait: str(row.wait, 60) ?? "",
     urgency: (URGENCY as readonly string[]).includes(String(row.urgency)) ? (row.urgency as UnreadRow["urgency"]) : "unknown",
+    tone: row.tone === "urgent" || row.tone === "fyi" ? row.tone : "reply",
+    labels: list(row.labels, 6).filter(isObject).map((entry) => ({
+      key: str(entry.key, 20) ?? "", label: str(entry.label, 40) ?? "", level: entry.level === "urgent" ? ("urgent" as const) : ("attention" as const),
+    })).filter((entry) => entry.key && entry.label),
   }));
+  const q = isObject(raw.quality) ? raw.quality : {};
+  const quality: SnapshotQuality = {
+    tripsAt: str(q.tripsAt, 40), fleetAt: str(q.fleetAt, 40), fleetLive: bool(q.fleetLive), listingsLive: bool(q.listingsLive), listingsAt: str(q.listingsAt, 40),
+    unpricedTrips: num(q.unpricedTrips), detailsPending: num(q.detailsPending), detailsFailed: num(q.detailsFailed), activeNoPlate: num(q.activeNoPlate),
+    tollsAt: str(q.tollsAt, 40), invoicesMissing: num(q.invoicesMissing), invoicesTotal: num(q.invoicesTotal),
+  };
   const tc = isObject(raw.topCar) ? raw.topCar : null;
   const topCar: TopCar | null = tc
     ? {
@@ -283,7 +313,7 @@ export function normalizeSnapshot(raw: unknown): CommandSnapshot | null {
       total: num(fleetSummary.total), onTrip: num(fleetSummary.onTrip), scheduled: num(fleetSummary.scheduled), available: num(fleetSummary.available),
       unlisted: num(fleetSummary.unlisted), needsAttention: num(fleetSummary.needsAttention),
     },
-    unread, topCar,
+    unread, quality, topCar,
     fleet, tripLists: { active: tripRows(lists.active), pickups: tripRows(lists.pickups), returns: tripRows(lists.returns) }, weeks, tolls, unpriced,
     calendar: cal ? { fleet: num(cal.fleet), fresh: num(cal.fresh), needed: num(cal.needed), neededDone: num(cal.neededDone), complete: bool(cal.complete) } : null,
   };

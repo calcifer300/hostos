@@ -50,6 +50,13 @@ eq("the calendar progress is carried", snap.calendar?.neededDone, 1);
 eq("a stored snapshot normalises to itself", JSON.stringify(normalizeSnapshot(snap)), JSON.stringify(snap));
 eq("the size limit is a few megabytes, not unlimited", MAX_SNAPSHOT_BYTES > 100_000 && MAX_SNAPSHOT_BYTES < 10_000_000, true);
 
+console.log("=== labels and confidence ===");
+const labelled = normalizeSnapshot({ ...raw, unread: [{ tripId: "9", text: "what's the lockbox code?", tone: "urgent", labels: [{ key: "access", label: "Can't Get In / Access", level: "urgent" }, { key: "", label: "x" }] }, { tripId: "8", text: "thanks", tone: "bogus" }], quality: { tripsAt: "2026-09-30T18:00:00Z", fleetLive: true, unpricedTrips: 2, invoicesMissing: 1, invoicesTotal: 3 } })!;
+eq("an urgent label is kept and an empty one dropped", [labelled.unread[0].tone, labelled.unread[0].labels], ["urgent", [{ key: "access", label: "Can't Get In / Access", level: "urgent" }]]);
+eq("an unknown tone becomes reply", labelled.unread[1].tone, "reply");
+eq("quality is carried field by field", [labelled.quality.fleetLive, labelled.quality.unpricedTrips, labelled.quality.invoicesMissing, labelled.quality.tripsAt], [true, 2, 1, "2026-09-30T18:00:00Z"]);
+eq("a snapshot without quality gets safe defaults", [snap.quality.fleetLive, snap.quality.tripsAt, snap.quality.unpricedTrips], [false, null, 0]);
+
 console.log("=== how old the data is ===");
 const NOW = 10_000_000;
 eq("a minute-old snapshot is fresh", freshness(NOW - 60_000, NOW), { label: "1 min ago", stale: false });

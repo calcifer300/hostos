@@ -100,10 +100,7 @@ function legacyRedirect(req: NextRequest): NextResponse | null {
 }
 
 function isProductPath(pathname: string): boolean {
-  // The install manifest has to be readable before sign-in (the browser fetches it on its own); it holds no data.
-  if (pathname === "/pulse/manifest.webmanifest") return false;
-  // /pulse is the owner's live page: the same gate as the product, so nothing under it runs for a signed-out visitor.
-  return pathname === APP_BASE || pathname.startsWith(`${APP_BASE}/`) || pathname === "/pulse" || pathname.startsWith("/pulse/");
+  return pathname === APP_BASE || pathname.startsWith(`${APP_BASE}/`);
 }
 
 /**
@@ -137,7 +134,7 @@ function canonicalRedirect(req: NextRequest): NextResponse | null {
  *
  * EVERY ENTRY HERE IS A ROUTE THAT MUST DO ITS OWN AUTH.
  */
-const OWN_AUTH_PREFIXES = ["/login", "/api/auth", "/api/turo", "/api/companion", "/api/cron"];
+const OWN_AUTH_PREFIXES = ["/login", "/api/auth", "/api/turo", "/api/companion", "/api/cron", "/cocruisers", "/api/cocruisers"];
 
 function doesOwnAuth(pathname: string): boolean {
   return OWN_AUTH_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
@@ -151,6 +148,11 @@ export function middleware(req: NextRequest) {
   // showing an older marketing page; localhost keeps its own root for development.
   const host = req.headers.get("host")?.toLowerCase() ?? "";
   if (req.nextUrl.pathname === "/" && host.endsWith(".vercel.app")) return NextResponse.redirect(new URL("https://hostoscollective.com/"), 308);
+
+  // The old address of Matthew's page.
+  if (req.nextUrl.pathname === "/pulse" || req.nextUrl.pathname.startsWith("/pulse/")) {
+    return NextResponse.redirect(new URL("/cocruisers" + req.nextUrl.pathname.slice("/pulse".length) + req.nextUrl.search, req.url), 308);
+  }
 
   if (doesOwnAuth(req.nextUrl.pathname)) return NextResponse.next();
 

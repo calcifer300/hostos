@@ -1,6 +1,7 @@
 /**
- * What the owner's live page is called. It is read-only (nothing can be changed or uploaded there), so it is not a
- * "command center": it shows the fleet's pulse. One place to rename it.
+ * What Matthew's live page is called. It is read-only and belongs to one fleet, so the name says so. One place to rename it.
  */
-export const PULSE_NAME = "Fleet Pulse";
-export const PULSE_TAGLINE = "Colorado Cruisers · watched live";
+export const PULSE_NAME = "Colorado Cruisers Live";
+export const PULSE_TAGLINE = "Matthew's fleet · watched live";
+/** The address, so it is spelled in one place. */
+export const PULSE_PATH = "/cocruisers";

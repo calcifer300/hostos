@@ -3,9 +3,9 @@ import { PULSE_NAME } from "@/lib/pulse/brand";
 import "@/components/pulse/pulse.css";
 
 export const metadata: Metadata = {
-  title: { absolute: PULSE_NAME + " · Colorado Cruisers" },
-  description: "A live, read-only view of the Colorado Cruisers fleet.",
-  manifest: "/pulse/manifest.webmanifest",
+  title: { absolute: PULSE_NAME },
+  description: "A live, read-only view of Matthew's Colorado Cruisers fleet.",
+  manifest: "/cocruisers/manifest.webmanifest",
   robots: { index: false, follow: false },
   appleWebApp: { capable: true, title: PULSE_NAME, statusBarStyle: "black-translucent" },
   formatDetection: { telephone: false },

@@ -305,11 +305,11 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
     async function poll() {
       if (stopped || document.visibilityState === "hidden") return;
       try {
-        const response = await fetch("/api/pulse", { headers: etag.current ? { "If-None-Match": etag.current } : {}, cache: "no-store" });
+        const response = await fetch("/api/cocruisers/data", { headers: etag.current ? { "If-None-Match": etag.current } : {}, cache: "no-store" });
         setOnline(true);
         const serverNow = Number(response.headers.get("X-Server-Now"));
         if (response.status === 304) { if (serverNow) skew.current = serverNow - Date.now(); return; }
-        if (response.status === 401) { window.location.assign("/login?callbackUrl=/pulse"); return; }
+        if (response.status === 401) { window.location.reload(); return; }
         if (!response.ok) return;
         etag.current = response.headers.get("ETag");
         const next = (await response.json()) as PulsePayload;
@@ -343,6 +343,7 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
             <p className="truncate text-[11.5px] text-muted-foreground">{PULSE_TAGLINE}</p>
           </div>
         </div>
+        <button type="button" onClick={() => { fetch("/api/cocruisers/logout", { method: "POST" }).finally(() => window.location.reload()); }} className="hidden shrink-0 rounded-full border border-border px-3 py-1.5 text-[12px] text-muted-foreground hover:bg-muted md:block" aria-label="Lock this browser">Lock</button>
         <div className={`pulse-live ${live.state} flex shrink-0 items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-[12px]`} role="status" aria-live="polite">
           <i className="pulse-dot" />
           <b>{live.label}</b>

@@ -24,6 +24,14 @@
       "destination": "https://hostos-ten.vercel.app/app/:path*"
     },
     {
+      "source": "/cocruisers",
+      "destination": "https://hostos-ten.vercel.app/cocruisers"
+    },
+    {
+      "source": "/cocruisers/:path*",
+      "destination": "https://hostos-ten.vercel.app/cocruisers/:path*"
+    },
+    {
       "source": "/brand/:path*",
       "destination": "https://hostos-ten.vercel.app/brand/:path*"
     },

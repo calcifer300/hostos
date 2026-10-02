@@ -4,12 +4,12 @@ import { PULSE_NAME } from "@/lib/pulse/brand";
 export function GET() {
   return Response.json(
     {
-      name: PULSE_NAME + " · Colorado Cruisers",
-      short_name: PULSE_NAME,
+      name: PULSE_NAME,
+      short_name: "Cruisers Live",
       description: "A live, read-only view of the Colorado Cruisers fleet.",
-      id: "/pulse",
-      start_url: "/pulse",
-      scope: "/pulse",
+      id: "/cocruisers",
+      start_url: "/cocruisers",
+      scope: "/cocruisers",
       display: "standalone",
       orientation: "portrait",
       background_color: "#000000",

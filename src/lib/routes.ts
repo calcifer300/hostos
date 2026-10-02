@@ -41,7 +41,7 @@ export const routes = {
   /** The Command Center: the extension's snapshot, drawn read-only. */
   command: app("fleet/command"),
   /** The owner's live, read-only page (outside the app shell). */
-  pulse: "/pulse",
+  pulse: "/cocruisers",
   vehicles: app("fleet/vehicles"),
   vehicle: (name: string) => app(`fleet/vehicles/${encodeURIComponent(name)}`),
   reservations: app("reservations"),
@@ -105,7 +105,6 @@ export function safeAppRedirect(candidate: string | null | undefined): string {
   // No deep link (or just the bare product root): land on the vertical
   // chooser, so signing in always starts with "which business today?".
   if (!candidate || candidate === APP_BASE || candidate === `${APP_BASE}/`) return routes.start;
-  if (candidate === routes.pulse || candidate.startsWith(`${routes.pulse}/`)) return candidate;
   if (!candidate.startsWith(`${APP_BASE}/`)) return routes.start;
   if (candidate.startsWith("//")) return routes.start;
   return candidate;

@@ -64,6 +64,31 @@ export interface NotBilledRow {
   why: string;
 }
 
+export interface TripLeg {
+  day: string;
+  time: string;
+  rel: string;
+  soon: boolean;
+  past: boolean;
+}
+
+export interface TripRow {
+  tripId: string | null;
+  tripUrl: string | null;
+  guest: string | null;
+  vehicle: string | null;
+  plate: string | null;
+  pickupAt: number | null;
+  returnAt: number | null;
+  pickup: TripLeg | null;
+  ret: TripLeg | null;
+  days: number | null;
+  earnings: number | null;
+  flags: { tone: string; text: string }[];
+  guestRating: number | null;
+  guestTrips: number | null;
+}
+
 export interface CommandSnapshot {
   version: number;
   builtAt: number;
@@ -87,6 +112,7 @@ export interface CommandSnapshot {
   schedule: ScheduleSlot[];
   fleetSummary: { total: number; onTrip: number; scheduled: number; available: number; unlisted: number; needsAttention: number };
   fleet: FleetCard[];
+  tripLists: { active: TripRow[]; pickups: TripRow[]; returns: TripRow[] };
   weeks: { from: number; cents: number; trips: number; future: boolean }[];
   tolls: {
     at: string | null;
@@ -157,6 +183,18 @@ export function normalizeSnapshot(raw: unknown): CommandSnapshot | null {
       issues: list(car.issues, 6).map((issue) => str(issue, 120)).filter((issue): issue is string => Boolean(issue)), now, next,
     };
   });
+  const leg = (value: unknown): TripLeg | null =>
+    isObject(value) ? { day: str(value.day, 30) ?? "", time: str(value.time, 20) ?? "", rel: str(value.rel, 30) ?? "", soon: bool(value.soon), past: bool(value.past) } : null;
+  const tripRows = (rows: unknown): TripRow[] =>
+    list(rows, 250).filter(isObject).map((row) => ({
+      tripId: str(row.tripId, 30), tripUrl: url(row.tripUrl), guest: str(row.guest, 80), vehicle: str(row.vehicle, 100), plate: str(row.plate, 20),
+      pickupAt: typeof row.pickupAt === "number" ? row.pickupAt : null, returnAt: typeof row.returnAt === "number" ? row.returnAt : null,
+      pickup: leg(row.pickup), ret: leg(row.ret), days: typeof row.days === "number" ? row.days : null,
+      earnings: typeof row.earnings === "number" ? row.earnings : null,
+      flags: list(row.flags, 4).filter(isObject).map((flag) => ({ tone: str(flag.tone, 10) ?? "amber", text: str(flag.text, 60) ?? "" })).filter((flag) => flag.text),
+      guestRating: typeof row.guestRating === "number" ? row.guestRating : null, guestTrips: typeof row.guestTrips === "number" ? row.guestTrips : null,
+    }));
+  const lists = isObject(raw.tripLists) ? raw.tripLists : {};
   const weeks = list(model.earnings, 12).filter(isObject).map((bar) => ({
     from: num(bar.from), cents: num(bar.cents), trips: num(bar.trips), future: bool(bar.future),
   }));
@@ -201,7 +239,7 @@ export function normalizeSnapshot(raw: unknown): CommandSnapshot | null {
       total: num(fleetSummary.total), onTrip: num(fleetSummary.onTrip), scheduled: num(fleetSummary.scheduled), available: num(fleetSummary.available),
       unlisted: num(fleetSummary.unlisted), needsAttention: num(fleetSummary.needsAttention),
     },
-    fleet, weeks, tolls, unpriced,
+    fleet, tripLists: { active: tripRows(lists.active), pickups: tripRows(lists.pickups), returns: tripRows(lists.returns) }, weeks, tolls, unpriced,
     calendar: cal ? { fleet: num(cal.fleet), fresh: num(cal.fresh), needed: num(cal.needed), neededDone: num(cal.neededDone), complete: bool(cal.complete) } : null,
   };
 }

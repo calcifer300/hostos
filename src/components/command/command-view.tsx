@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { AlertTriangle, CalendarClock, CarFront, CircleCheck, Plug, Receipt, Wallet } from "lucide-react";
 import { routes } from "@/lib/routes";
-import { freshness, type CommandSnapshot, type FleetCard, type ScheduleSlot } from "@/lib/command/snapshot";
+import { freshness, type CommandSnapshot, type FleetCard, type ScheduleSlot, type TripRow } from "@/lib/command/snapshot";
 import type { StoredSnapshot } from "@/lib/command/queries";
 
 const money = (value: number) => "$" + Math.round(value).toLocaleString("en-US");
@@ -29,13 +29,62 @@ function Panel({ title, aside, children, className = "" }: { title: string; asid
   );
 }
 
-function Tile({ label, value, note, wide = false }: { label: string; value: string; note: string; wide?: boolean }) {
+function Tile({ label, value, note, wide = false, href }: { label: string; value: string; note: string; wide?: boolean; href?: string }) {
+  const Wrapper = href ? "a" : "div";
   return (
-    <div className={`min-w-0 rounded-2xl border border-border bg-card px-3.5 py-3 shadow-[var(--shadow-card)] sm:px-4 sm:py-3.5 ${wide ? "col-span-2 lg:col-span-1" : ""}`}>
+    <Wrapper {...(href ? { href } : {})} className={`min-w-0 rounded-2xl border border-border bg-card px-3.5 py-3 shadow-[var(--shadow-card)] sm:px-4 sm:py-3.5 ${wide ? "col-span-2 lg:col-span-1" : ""}`}>
       <div className="text-[12px] text-muted-foreground">{label}</div>
       <div className="mt-0.5 truncate text-[22px] font-semibold leading-tight tracking-tight tabular-nums sm:text-[26px]">{value}</div>
       <div className="text-[11.5px] text-muted-foreground">{note}</div>
-    </div>
+    </Wrapper>
+  );
+}
+
+function TripList({ id, title, subtitle, rows }: { id: string; title: string; subtitle: string; rows: TripRow[] }) {
+  return (
+    <section id={id} className="min-w-0 scroll-mt-20 rounded-2xl border border-border bg-card p-4 shadow-[var(--shadow-card)] sm:p-5">
+      <div className="mb-3 flex flex-wrap items-baseline justify-between gap-x-3">
+        <h2 className="text-[15px] font-semibold tracking-tight">{title} · {rows.length}</h2>
+        <span className="text-[12px] text-muted-foreground">{subtitle}</span>
+      </div>
+      {rows.length ? (
+        <ul className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
+          {rows.map((row, index) => (
+            <li key={index} className="rounded-xl border border-border p-3">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="truncate text-[13.5px] font-semibold">{row.guest ?? "Guest"}</div>
+                  <div className="truncate text-[11.5px] text-muted-foreground">{[row.vehicle, row.plate].filter(Boolean).join(" · ")}</div>
+                  <div className="text-[11px] text-muted-foreground">
+                    {[row.tripId ? `Trip #${row.tripId}` : null, row.guestRating !== null ? `${row.guestRating.toFixed(1)}★` : null].filter(Boolean).join(" · ")}
+                  </div>
+                </div>
+                <div className="shrink-0 text-right text-[13px] font-semibold tabular-nums text-success">{row.earnings === null ? <span className="text-muted-foreground">not priced</span> : "≈" + money(row.earnings)}</div>
+              </div>
+              <div className="mt-2 grid grid-cols-2 gap-2 text-[12px]">
+                {([["Pickup", row.pickup], ["Return", row.ret]] as const).map(([label, leg]) => (
+                  <div key={label} className={`rounded-lg border px-2.5 py-1.5 ${leg?.soon ? "border-warning/50 bg-warning/10" : "border-border"} ${leg?.past ? "opacity-70" : ""}`}>
+                    <div className="text-[9.5px] font-bold uppercase tracking-wider text-primary">{label}</div>
+                    <div className="text-[15px] font-bold tabular-nums">{leg?.time ?? "not read"}</div>
+                    <div className="text-muted-foreground">{leg ? `${leg.day} · ${leg.rel}` : ""}</div>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
+                <div className="flex flex-wrap gap-1">
+                  {row.flags.map((flag) => (
+                    <span key={flag.text} className={`rounded-full px-2 py-0.5 text-[10.5px] font-semibold ${flag.tone === "red" ? "bg-destructive/10 text-destructive" : "bg-warning/10 text-warning"}`}>{flag.text}</span>
+                  ))}
+                </div>
+                {row.tripUrl ? <a href={row.tripUrl} target="_blank" rel="noopener noreferrer" className="text-[12px] font-medium text-primary hover:underline">Open Trip</a> : null}
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="py-3 text-[13px] text-muted-foreground">Nothing here right now.</p>
+      )}
+    </section>
   );
 }
 
@@ -153,9 +202,9 @@ export function CommandView({ stored, now }: { stored: StoredSnapshot | null; no
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
         <Tile label="Total Vehicles" value={String(snap.kpis.vehicles)} note={snap.fleetSummary.unlisted ? `${snap.fleetSummary.unlisted} unlisted` : "all listed"} />
-        <Tile label="Active Trips" value={String(snap.kpis.activeTrips)} note="on the road now" />
-        <Tile label="Upcoming Pickups" value={String(snap.kpis.pickups)} note="next 24 hours" />
-        <Tile label="Upcoming Returns" value={String(snap.kpis.returns)} note="next 24 hours" />
+        <Tile label="Active Trips" value={String(snap.kpis.activeTrips)} note="on the road now" href="#active" />
+        <Tile label="Upcoming Pickups" value={String(snap.kpis.pickups)} note="next 24 hours" href="#pickups" />
+        <Tile label="Upcoming Returns" value={String(snap.kpis.returns)} note="next 24 hours" href="#returns" />
         <Tile label="Est. Earnings" value={money(snap.kpis.earningsNext30)} note="trips ending in 30 days" wide />
       </div>
 
@@ -200,6 +249,10 @@ export function CommandView({ stored, now }: { stored: StoredSnapshot | null; no
           </Panel>
         </div>
       </div>
+
+      <TripList id="active" title="Active Trips" subtitle="on the road now, soonest return first" rows={snap.tripLists.active} />
+      <TripList id="pickups" title="Upcoming Pickups" subtitle="starting in the next 24 hours" rows={snap.tripLists.pickups.filter((row) => row.pickupAt !== null && row.pickupAt <= now + 24 * 3600000)} />
+      <TripList id="returns" title="Upcoming Returns" subtitle="ending in the next 24 hours" rows={snap.tripLists.returns.filter((row) => row.returnAt !== null && row.returnAt <= now + 24 * 3600000)} />
 
       {snap.tolls ? (
         <Panel

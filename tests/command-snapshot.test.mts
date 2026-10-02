@@ -26,6 +26,7 @@ const raw = {
   tolls: { at: "2026-09-30T18:00:00Z", trips: 2, cents: 1000, running: 1, runningCents: 500, billedWeekTrips: 1, billedWeekCents: 700,
     billedRows: [{ tripId: "1", guest: "A", vehicle: "V", cents: 700, billedAt: "2026-09-29 18:10", invoiceNumber: "115000111" }],
     notBilledRows: [{ tripId: "2", guest: "B", vehicle: "W", cents: 500, group: "running", why: "The trip is still on the road." }] },
+  tripLists: { active: [{ tripId: "7", guest: "Ann", vehicle: "Tesla", plate: "ABC123", tripUrl: "javascript:x", pickupAt: 1, returnAt: 2, pickup: { day: "Fri, Oct 2", time: "9:00 AM", rel: "Today", soon: true, past: false }, ret: null, days: 2, earnings: 120.5, flags: [{ tone: "red", text: "Premier Plan: $0 Excess" }, { tone: "x" }], guestRating: 4.9, guestTrips: 5 }], pickups: [], returns: "junk" },
   earnings: { unpriced: [{ vehicle: "Car", plate: "X", reason: "r", guess: 10 }], calendar: { fleet: 5, fresh: 2, needed: 3, neededDone: 1, complete: false } },
 };
 const snap = normalizeSnapshot(raw)!;
@@ -38,6 +39,8 @@ eq("a car's picture comes from its plate", snap.fleet[0].photo, "https://images.
 eq("an unknown state becomes available, not a crash", snap.fleet[1].state, "available");
 eq("the billed rows keep the IDs, the vehicle and when it was billed", snap.tolls?.billedRows[0], { tripId: "1", guest: "A", vehicle: "V", cents: 700, billedAt: "2026-09-29 18:10", invoiceNumber: "115000111" });
 eq("the not-yet-billed rows keep their reason", snap.tolls?.notBilledRows[0], { tripId: "2", guest: "B", vehicle: "W", cents: 500, group: "running", why: "The trip is still on the road." });
+eq("the trip lists keep their rows, legs and flags", [snap.tripLists.active.length, snap.tripLists.active[0].pickup?.time, snap.tripLists.active[0].flags.length, snap.tripLists.active[0].earnings], [1, "9:00 AM", 1, 120.5]);
+eq("a bad trip link is dropped and a bad list becomes empty", [snap.tripLists.active[0].tripUrl, snap.tripLists.returns.length], [null, 0]);
 eq("the calendar progress is carried", snap.calendar?.neededDone, 1);
 eq("a stored snapshot normalises to itself", JSON.stringify(normalizeSnapshot(snap)), JSON.stringify(snap));
 eq("the size limit is a few megabytes, not unlimited", MAX_SNAPSHOT_BYTES > 100_000 && MAX_SNAPSHOT_BYTES < 10_000_000, true);

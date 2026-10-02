@@ -211,8 +211,8 @@ export function CommandView({ stored, now }: { stored: StoredSnapshot | null; no
       <div className="grid gap-5 lg:grid-cols-5">
         <Panel title={`Trips Requiring Attention · ${snap.attention.length}`} className="lg:col-span-3">
           {snap.attention.length ? (
-            <ul className="divide-y divide-border">
-              {snap.attention.slice(0, 30).map((row, index) => (
+            <ul className="max-h-[420px] divide-y divide-border overflow-y-auto overscroll-contain pr-1.5 [scrollbar-width:thin] sm:max-h-[470px]">
+              {snap.attention.slice(0, 100).map((row, index) => (
                 <li key={index} className="flex flex-col gap-1 py-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
                   <div className="min-w-0">
                     <div className={`text-[13px] font-semibold ${TONE_TEXT[row.tone] ?? ""}`}>{row.label}</div>

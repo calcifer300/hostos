@@ -383,8 +383,8 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
               <div className="grid gap-3.5 lg:grid-cols-5">
                 <Card title={`Needs Attention · ${snap.attention.length}`} aside={urgentCount ? <span className="pulse-urgent-chip rounded-full bg-destructive/10 px-2 py-0.5 text-[11px] font-bold text-destructive">{urgentCount} urgent</span> : undefined} className="lg:col-span-3">
                   {snap.attention.length ? (
-                    <ul className="divide-y divide-border">
-                      {snap.attention.slice(0, 25).map((row, index) => (
+                    <ul className="max-h-[420px] divide-y divide-border overflow-y-auto overscroll-contain pr-1.5 [scrollbar-width:thin] sm:max-h-[470px]">
+                      {snap.attention.slice(0, 100).map((row, index) => (
                         <li key={index} className={`flex flex-col gap-0.5 py-2 sm:flex-row sm:justify-between ${row.tone === "red" ? "pulse-row-red" : ""}`}>
                           <div className="min-w-0">
                             <div className={`text-[13px] font-semibold ${row.tone === "red" ? "text-destructive" : row.tone === "amber" ? "text-warning" : "text-primary"}`}>{row.label}</div>

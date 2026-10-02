@@ -100,7 +100,8 @@ function legacyRedirect(req: NextRequest): NextResponse | null {
 }
 
 function isProductPath(pathname: string): boolean {
-  return pathname === APP_BASE || pathname.startsWith(`${APP_BASE}/`);
+  // /pulse is the owner's live page: the same gate as the product, so nothing under it runs for a signed-out visitor.
+  return pathname === APP_BASE || pathname.startsWith(`${APP_BASE}/`) || pathname === "/pulse" || pathname.startsWith("/pulse/");
 }
 
 /**

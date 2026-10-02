@@ -89,6 +89,31 @@ export interface TripRow {
   guestTrips: number | null;
 }
 
+export interface UnreadRow {
+  tripId: string | null;
+  tripUrl: string | null;
+  guest: string | null;
+  vehicle: string | null;
+  plate: string | null;
+  text: string;
+  sentAt: number | null;
+  waitMs: number | null;
+  sent: string;
+  wait: string;
+  urgency: "high" | "medium" | "new" | "unknown";
+}
+
+export interface TopCar {
+  name: string;
+  plate: string | null;
+  total: number;
+  trips: number;
+  perTrip: number;
+  photo: string | null;
+  photos: string[];
+  runnersUp: { name: string; plate: string | null; total: number }[];
+}
+
 export interface CommandSnapshot {
   version: number;
   builtAt: number;
@@ -113,6 +138,8 @@ export interface CommandSnapshot {
   fleetSummary: { total: number; onTrip: number; scheduled: number; available: number; unlisted: number; needsAttention: number };
   fleet: FleetCard[];
   tripLists: { active: TripRow[]; pickups: TripRow[]; returns: TripRow[] };
+  unread: UnreadRow[];
+  topCar: TopCar | null;
   weeks: { from: number; cents: number; trips: number; future: boolean }[];
   tolls: {
     at: string | null;
@@ -195,6 +222,21 @@ export function normalizeSnapshot(raw: unknown): CommandSnapshot | null {
       guestRating: typeof row.guestRating === "number" ? row.guestRating : null, guestTrips: typeof row.guestTrips === "number" ? row.guestTrips : null,
     }));
   const lists = isObject(raw.tripLists) ? raw.tripLists : {};
+  const URGENCY = ["high", "medium", "new", "unknown"] as const;
+  const unread: UnreadRow[] = list(raw.unread, 80).filter(isObject).map((row) => ({
+    tripId: str(row.tripId, 30), tripUrl: url(row.tripUrl), guest: str(row.guest, 80), vehicle: str(row.vehicle, 100), plate: str(row.plate, 20),
+    text: str(row.text, 420) ?? "", sentAt: typeof row.sentAt === "number" ? row.sentAt : null, waitMs: typeof row.waitMs === "number" ? row.waitMs : null,
+    sent: str(row.sent, 40) ?? "", wait: str(row.wait, 60) ?? "",
+    urgency: (URGENCY as readonly string[]).includes(String(row.urgency)) ? (row.urgency as UnreadRow["urgency"]) : "unknown",
+  }));
+  const tc = isObject(raw.topCar) ? raw.topCar : null;
+  const topCar: TopCar | null = tc
+    ? {
+        name: str(tc.name, 100) ?? "Vehicle", plate: str(tc.plate, 20), total: num(tc.total), trips: num(tc.trips), perTrip: num(tc.perTrip),
+        photo: url(tc.photo), photos: list(tc.photos, 3).map((photo) => url(photo)).filter((photo): photo is string => Boolean(photo)),
+        runnersUp: list(tc.runnersUp, 2).filter(isObject).map((car) => ({ name: str(car.name, 100) ?? "Vehicle", plate: str(car.plate, 20), total: num(car.total) })),
+      }
+    : null;
   const weeks = list(model.earnings, 12).filter(isObject).map((bar) => ({
     from: num(bar.from), cents: num(bar.cents), trips: num(bar.trips), future: bool(bar.future),
   }));
@@ -239,6 +281,7 @@ export function normalizeSnapshot(raw: unknown): CommandSnapshot | null {
       total: num(fleetSummary.total), onTrip: num(fleetSummary.onTrip), scheduled: num(fleetSummary.scheduled), available: num(fleetSummary.available),
       unlisted: num(fleetSummary.unlisted), needsAttention: num(fleetSummary.needsAttention),
     },
+    unread, topCar,
     fleet, tripLists: { active: tripRows(lists.active), pickups: tripRows(lists.pickups), returns: tripRows(lists.returns) }, weeks, tolls, unpriced,
     calendar: cal ? { fleet: num(cal.fleet), fresh: num(cal.fresh), needed: num(cal.needed), neededDone: num(cal.neededDone), complete: bool(cal.complete) } : null,
   };

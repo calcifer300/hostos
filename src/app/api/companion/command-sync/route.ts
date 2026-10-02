@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireCompanionHost } from "@/lib/api/companion-auth";
-import { saveCommandSnapshot } from "@/lib/command/queries";
+import { saveCommandSnapshot, saveHeartbeat } from "@/lib/command/queries";
 import { MAX_SNAPSHOT_BYTES, normalizeSnapshot } from "@/lib/command/snapshot";
 
 /**
@@ -28,11 +28,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Snapshot is too large.", retryable: false }, { status: 413 });
   }
 
-  let body: { snapshot?: unknown };
+  let body: { snapshot?: unknown; heartbeat?: { at?: unknown; lastScan?: unknown } };
   try {
     body = JSON.parse(text);
   } catch {
     return NextResponse.json({ error: "Invalid JSON body.", retryable: false }, { status: 400 });
+  }
+  // A heartbeat: "the scanner is running". Cheap, and never touches the snapshot.
+  if (body && body.heartbeat) {
+    const lastScan = typeof body.heartbeat.lastScan === "string" ? body.heartbeat.lastScan : null;
+    await saveHeartbeat(host.id, lastScan);
+    return NextResponse.json({ ok: true, heartbeat: true });
   }
   const snapshot = normalizeSnapshot(body?.snapshot);
   if (!snapshot) {

@@ -27,6 +27,8 @@ const raw = {
     billedRows: [{ tripId: "1", guest: "A", vehicle: "V", cents: 700, billedAt: "2026-09-29 18:10", invoiceNumber: "115000111" }],
     notBilledRows: [{ tripId: "2", guest: "B", vehicle: "W", cents: 500, group: "running", why: "The trip is still on the road." }] },
   tripLists: { active: [{ tripId: "7", guest: "Ann", vehicle: "Tesla", plate: "ABC123", tripUrl: "javascript:x", pickupAt: 1, returnAt: 2, pickup: { day: "Fri, Oct 2", time: "9:00 AM", rel: "Today", soon: true, past: false }, ret: null, days: 2, earnings: 120.5, flags: [{ tone: "red", text: "Premier Plan: $0 Excess" }, { tone: "x" }], guestRating: 4.9, guestTrips: 5 }], pickups: [], returns: "junk" },
+  unread: [{ tripId: "9", tripUrl: "https://turo.com/us/en/reservation/9", guest: "Dee", vehicle: "Taos", text: "Where do I park?", sentAt: 5, waitMs: 90000000, sent: "Oct 1, 9:00 AM", wait: "Waiting 1 day", urgency: "high", draft: "Hi Dee!" }, { guest: "X", urgency: "weird" }],
+  topCar: { name: "Mazda CX-50 2024", plate: "DJIL68", total: 910, trips: 1, perTrip: 910, photo: "https://images.turo.com/a.jpg", photos: ["https://images.turo.com/a.jpg", "javascript:x"], runnersUp: [{ name: "Tesla", plate: "B", total: 400 }] },
   earnings: { unpriced: [{ vehicle: "Car", plate: "X", reason: "r", guess: 10 }], calendar: { fleet: 5, fresh: 2, needed: 3, neededDone: 1, complete: false } },
 };
 const snap = normalizeSnapshot(raw)!;
@@ -41,6 +43,9 @@ eq("the billed rows keep the IDs, the vehicle and when it was billed", snap.toll
 eq("the not-yet-billed rows keep their reason", snap.tolls?.notBilledRows[0], { tripId: "2", guest: "B", vehicle: "W", cents: 500, group: "running", why: "The trip is still on the road." });
 eq("the trip lists keep their rows, legs and flags", [snap.tripLists.active.length, snap.tripLists.active[0].pickup?.time, snap.tripLists.active[0].flags.length, snap.tripLists.active[0].earnings], [1, "9:00 AM", 1, 120.5]);
 eq("a bad trip link is dropped and a bad list becomes empty", [snap.tripLists.active[0].tripUrl, snap.tripLists.returns.length], [null, 0]);
+eq("unread messages keep who, what and how long, and never a draft", [snap.unread.length, snap.unread[0].urgency, snap.unread[0].text, "draft" in snap.unread[0]], [2, "high", "Where do I park?", false]);
+eq("an unknown urgency becomes unknown, not a crash", snap.unread[1].urgency, "unknown");
+eq("the top car keeps its picture, drops a bad one, and lists runners-up", [snap.topCar?.photos.length, snap.topCar?.total, snap.topCar?.runnersUp.length], [1, 910, 1]);
 eq("the calendar progress is carried", snap.calendar?.neededDone, 1);
 eq("a stored snapshot normalises to itself", JSON.stringify(normalizeSnapshot(snap)), JSON.stringify(snap));
 eq("the size limit is a few megabytes, not unlimited", MAX_SNAPSHOT_BYTES > 100_000 && MAX_SNAPSHOT_BYTES < 10_000_000, true);

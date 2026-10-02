@@ -56,3 +56,26 @@
 .li-colorado-text { font: 800 56px "Arial Black", "Helvetica Neue", Arial, sans-serif; }
 .li-cruisers-text { font: italic 900 168px Impact, Haettenschweiler, "Arial Black", "Arial Narrow", sans-serif; letter-spacing: 2px; }
 .logo-skip { position: absolute; right: max(env(safe-area-inset-right), 16px); bottom: max(env(safe-area-inset-bottom), 16px); padding: 7px 14px; border: 1px solid rgba(255, 255, 255, .25); border-radius: 999px; background: rgba(255, 255, 255, .06); color: rgba(255, 255, 255, .75); font: 600 12px -apple-system, "Segoe UI", sans-serif; cursor: pointer; }
+
+
+/* ---- the page's own look: quiet paper, ink and a thread of gold. Scoped, so nothing else on the site changes. ---- */
+.pulse-shell {
+  --background: #f4f2ed; --foreground: #14161c; --card: #ffffff; --card-foreground: #14161c;
+  --muted: #f0eee8; --muted-foreground: #6b6e7c; --border: rgba(20, 22, 28, .08);
+  --accent: #1d2f6f; --accent-foreground: #ffffff;
+  --shadow-card: 0 1px 2px rgba(20, 22, 28, .04), 0 14px 32px -20px rgba(20, 22, 28, .22);
+  min-height: 100dvh; color: var(--foreground);
+  background: radial-gradient(900px 420px at 88% -8%, rgba(201, 162, 74, .14), transparent 62%), radial-gradient(800px 420px at -8% 0%, rgba(29, 47, 111, .08), transparent 58%), #f4f2ed;
+}
+.dark .pulse-shell {
+  --background: #0c0d11; --foreground: #f2f2f5; --card: #15171d; --card-foreground: #f2f2f5;
+  --muted: #1d2028; --muted-foreground: #9a9dab; --border: rgba(255, 255, 255, .08);
+  --accent: #7f93f5; --accent-foreground: #0c0d11;
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, .4), 0 14px 32px -20px rgba(0, 0, 0, .7);
+  background: radial-gradient(900px 420px at 88% -8%, rgba(201, 162, 74, .10), transparent 62%), #0c0d11;
+}
+.pulse-shell h2 { letter-spacing: -.01em; }
+.pulse-shell .pulse-tile { transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+.pulse-shell button.pulse-tile:hover { transform: translateY(-2px); box-shadow: 0 2px 6px rgba(20, 22, 28, .06), 0 22px 40px -22px rgba(29, 47, 111, .35); }
+.pulse-shell ::-webkit-scrollbar { width: 6px; height: 6px; }
+.pulse-shell ::-webkit-scrollbar-thumb { background: rgba(120, 124, 140, .35); border-radius: 6px; }

@@ -82,8 +82,8 @@ const WEATHER_TEXT: [number[], string, string][] = [
 const weatherLabel = (code: number): [string, string] => { const hit = WEATHER_TEXT.find(([codes]) => codes.includes(code)); return hit ? [hit[1], hit[2]] : ["Weather", "🌡️"]; };
 const WEATHER_URL = "https://api.open-meteo.com/v1/forecast?latitude=39.7392&longitude=-104.9903&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America%2FDenver&forecast_days=1";
 
-/** Live Denver weather (Open-Meteo, no key), refreshed every 10 minutes. Hidden if it cannot be reached. */
-function WeatherChip() {
+/** Live Denver weather (Open-Meteo, no key), refreshed every 10 minutes. Null until it loads or if it cannot be reached. */
+function useWeather(): Weather | null {
   const [weather, setWeather] = React.useState<Weather | null>(null);
   React.useEffect(() => {
     let stopped = false;
@@ -101,14 +101,19 @@ function WeatherChip() {
     const id = window.setInterval(load, 600000);
     return () => { stopped = true; window.clearInterval(id); };
   }, []);
+  return weather;
+}
+
+/** No box: the weather sits on the page itself. */
+function WeatherChip({ weather, className = "" }: { weather: Weather | null; className?: string }) {
   if (!weather) return null;
   const [text, icon] = weatherLabel(weather.code);
   return (
-    <div className="inline-flex items-center gap-3 rounded-2xl border border-border bg-card px-3.5 py-2 shadow-[var(--shadow-card)]" aria-label="Denver weather">
-      <span className="text-[26px] leading-none" aria-hidden>{icon}</span>
-      <div className="min-w-0">
-        <div className="text-[13px] font-semibold">Denver, CO · {Math.round(weather.temp)}°F <span className="font-normal text-muted-foreground">{text}</span></div>
-        <div className="text-[11px] text-muted-foreground">Feels {Math.round(weather.feels)}° · Wind {Math.round(weather.wind)} mph{Number.isFinite(weather.high) ? ` · High ${Math.round(weather.high)}° Low ${Math.round(weather.low)}°` : ""}</div>
+    <div className={`flex items-center gap-2.5 ${className}`} aria-label="Denver weather">
+      <span className="text-[24px] leading-none" aria-hidden>{icon}</span>
+      <div className="min-w-0 leading-tight">
+        <div className="text-[13px] font-semibold">{Math.round(weather.temp)}°F <span className="font-normal text-muted-foreground">{text} · Denver</span></div>
+        <div className="text-[11px] text-muted-foreground">Feels {Math.round(weather.feels)}° · {Math.round(weather.wind)} mph{Number.isFinite(weather.high) ? ` · ${Math.round(weather.high)}° / ${Math.round(weather.low)}°` : ""}</div>
       </div>
     </div>
   );
@@ -135,7 +140,7 @@ function Badge({ n, urgent }: { n: number; urgent?: boolean }) {
 
 function Card({ title, aside, children, className = "" }: { title?: string; aside?: React.ReactNode; children: React.ReactNode; className?: string }) {
   return (
-    <section className={`min-w-0 rounded-2xl border border-border bg-card p-4 shadow-[var(--shadow-card)] ${className}`}>
+    <section className={`min-w-0 rounded-[20px] border border-border bg-card p-4 shadow-[var(--shadow-card)] ${className}`}>
       {title ? (
         <div className="mb-2.5 flex flex-wrap items-baseline justify-between gap-x-3">
           <h2 className="text-[15px] font-semibold tracking-tight">{title}</h2>
@@ -153,10 +158,10 @@ function Tile({ label, value, note, tone, hint, onOpen }: { label: string; value
       <div className="flex items-center justify-between text-[11.5px] text-muted-foreground"><span>{label}</span>{onOpen ? <span aria-hidden className="text-[13px]">›</span> : null}</div>
       <div key={value} className="pulse-num mt-0.5 truncate text-[24px] font-semibold leading-tight tracking-tight tabular-nums">{value}</div>
       <div className="truncate text-[11px] text-muted-foreground">{note}</div>
-      {hint ? <div className="mt-1 text-[10px] leading-snug text-muted-foreground/80">{hint}</div> : null}
+      {hint ? <div className="mt-auto line-clamp-2 text-[10px] leading-snug text-muted-foreground/80">{hint}</div> : null}
     </>
   );
-  const cls = `pulse-tile ${tone} min-w-0 rounded-2xl border border-border bg-card px-3.5 py-3 text-left shadow-[var(--shadow-card)]`;
+  const cls = `pulse-tile ${tone} min-w-0 flex h-[132px] flex-col rounded-[18px] border border-border bg-card px-4 py-3.5 text-left shadow-[var(--shadow-card)]`;
   return onOpen ? (
     <button type="button" onClick={onOpen} aria-label={`${label}: ${value}. Open the details`} className={`${cls} w-full cursor-pointer transition hover:border-accent/60 active:scale-[.98]`}>{body}</button>
   ) : (
@@ -177,7 +182,7 @@ function Leg({ label, leg }: { label: string; leg: TripRow["pickup"] }) {
 function TripCards({ rows, empty }: { rows: TripRow[]; empty: string }) {
   if (!rows.length) return <p className="py-6 text-center text-[13px] text-muted-foreground">{empty}</p>;
   return (
-    <ul className="grid gap-2.5 md:grid-cols-2 xl:grid-cols-3">
+    <ul className="grid max-h-[min(68dvh,660px)] gap-2.5 overflow-y-auto overscroll-contain pr-1.5 [scrollbar-width:thin] md:grid-cols-2 xl:grid-cols-3">
       {rows.map((row, index) => (
         <li key={`${row.tripId}-${index}`} className="rounded-xl border border-border p-3">
           <div className="flex items-start justify-between gap-3">
@@ -317,7 +322,7 @@ function FleetGrid({ cars, filter }: { cars: FleetCard[]; filter: FleetFilter })
   };
   if (!cars.length) return <p className="rounded-2xl border border-border bg-card py-8 text-center text-[13px] text-muted-foreground">No vehicle matches this filter right now.</p>;
   return (
-    <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 xl:grid-cols-3">
+    <div className="grid max-h-[min(62dvh,620px)] grid-cols-1 gap-2.5 overflow-y-auto overscroll-contain pr-1.5 [scrollbar-width:thin] sm:grid-cols-2 xl:grid-cols-3">
       {cars.map((car, index) => (
         <article key={`${car.plate ?? car.name}-${index}`} className={`flex gap-3 rounded-xl border border-border bg-card p-2.5 ${car.state === "unlisted" ? "opacity-70" : ""}`}>
           {car.photo ? (
@@ -359,7 +364,7 @@ function Messages({ rows, note }: { rows: UnreadRow[]; note?: React.ReactNode })
   if (!rows.length) return <Card><p className="flex items-center gap-2 py-4 text-[13px] text-muted-foreground"><span className="text-success">✔</span> No guest is waiting for a reply.</p><Note>{note}</Note></Card>;
   return (
     <>
-      <ul className="grid gap-2.5 md:grid-cols-2">
+      <ul className="grid max-h-[min(68dvh,660px)] gap-2.5 overflow-y-auto overscroll-contain pr-1.5 [scrollbar-width:thin] md:grid-cols-2">
         {rows.map((row, index) => {
           const urgent = row.tone === "urgent";
           const fyi = row.tone === "fyi";
@@ -575,18 +580,21 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
         : undefined;
   const messagesNote = `Read from the Turo inbox${q && q.tripsAt ? " " + when(q.tripsAt, zone) : ""}. A guest shows here when they wrote last; Matthew's saved (canned) messages do not count as a reply. Labels come from the guest's words, so always read the message.`;
   const hours24 = 24 * 3600000;
+  const weather = useWeather();
 
   return (
+    <div className="pulse-shell">
     <div className="pulse-root mx-auto min-h-dvh max-w-[1200px] px-4 pb-28 pt-[max(env(safe-area-inset-top),14px)] md:pb-12">
       <header className="mb-3 flex items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2.5">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/brand/colorado-cruisers.webp" alt="" className="h-10 w-10 shrink-0 rounded-xl bg-black object-contain p-0.5" />
           <div className="min-w-0">
-            <h1 className="truncate text-[17px] font-semibold leading-tight tracking-tight">{PULSE_NAME}</h1>
+            <h1 className="truncate text-[18px] font-semibold leading-tight tracking-tight">{PULSE_NAME}</h1>
             <p className="truncate text-[11.5px] text-muted-foreground">{PULSE_TAGLINE}</p>
           </div>
         </div>
+        <WeatherChip weather={weather} className="ml-auto mr-2 hidden md:flex" />
         <button type="button" onClick={() => { fetch("/api/cocruisers/logout", { method: "POST" }).finally(() => window.location.reload()); }} className="hidden shrink-0 rounded-full border border-border px-3 py-1.5 text-[12px] text-muted-foreground hover:bg-muted md:block" aria-label="Lock this browser">Lock</button>
         <div className={`pulse-live ${live.state} flex shrink-0 items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-[12px]`} role="status" aria-live="polite">
           <i className="pulse-dot" />
@@ -595,14 +603,14 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
         </div>
       </header>
       <div className="pulse-scan" aria-hidden />
-      <div className="mt-3"><WeatherChip /></div>
+      <WeatherChip weather={weather} className="mt-3 md:hidden" />
       <p className="mb-3 mt-2 text-[11.5px] text-muted-foreground sm:hidden">{live.detail}{!online ? " · you are offline" : ""}</p>
       {!online ? <p className="mb-3 hidden rounded-lg bg-warning/10 px-3 py-1.5 text-[12px] text-warning sm:block">You are offline. Showing what was last received.</p> : null}
 
       {/* the desktop tab bar; on a phone the same tabs sit at the bottom */}
-      <nav className="mb-4 hidden gap-1 rounded-xl border border-border bg-card p-1 md:flex" aria-label="Sections">
+      <nav className="mb-5 mt-3 hidden gap-1 rounded-full border border-border bg-card p-1 shadow-[var(--shadow-card)] md:flex" aria-label="Sections">
         {TABS.map((item) => (
-          <button key={item.id} type="button" onClick={() => setTab(item.id)} className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2 text-[13px] font-medium transition ${tab === item.id ? "bg-accent text-accent-foreground shadow" : "text-muted-foreground hover:bg-muted"}`}>
+          <button key={item.id} type="button" onClick={() => setTab(item.id)} className={`flex flex-1 items-center justify-center gap-2 rounded-full px-3 py-2 text-[13px] font-medium transition ${tab === item.id ? "bg-accent text-accent-foreground shadow" : "text-muted-foreground hover:bg-muted"}`}>
             {item.label}
             {item.id === "messages" ? <Badge n={unread} urgent={urgentMessages > 0} /> : null}
           </button>
@@ -632,7 +640,7 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
               <div className="grid gap-3.5 lg:grid-cols-5">
                 <Card title={`Needs Attention · ${snap.attention.length}`} aside={urgentCount ? <span className="pulse-urgent-chip rounded-full bg-danger/10 px-2 py-0.5 text-[11px] font-bold text-danger">{urgentCount} urgent</span> : undefined} className="lg:col-span-3">
                   {snap.attention.length ? (
-                    <ul className="max-h-[420px] divide-y divide-border overflow-y-auto overscroll-contain pr-1.5 [scrollbar-width:thin] sm:max-h-[470px]">
+                    <ul className="max-h-[320px] divide-y divide-border overflow-y-auto overscroll-contain pr-1.5 [scrollbar-width:thin]">
                       {snap.attention.slice(0, 100).map((row, index) => (
                         <li key={index} className={`flex flex-col gap-0.5 py-2 sm:flex-row sm:justify-between ${row.tone === "red" ? "pulse-row-red" : ""}`}>
                           <div className="min-w-0">
@@ -649,7 +657,7 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
                   )}
                 </Card>
                 <div className="space-y-3.5 lg:col-span-2">
-                  <Card title="Today’s Schedule" aside={`${snap.schedule.length} events`}><Schedule slots={snap.schedule} /></Card>
+                  <Card title="Today’s Schedule" aside={`${snap.schedule.length} events`} className="h-full"><div className="max-h-[320px] overflow-y-auto overscroll-contain pr-1.5 [scrollbar-width:thin]"><Schedule slots={snap.schedule} /></div></Card>
                 </div>
               </div>
               <div className="grid gap-3.5 lg:grid-cols-2">
@@ -736,6 +744,7 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
           ))}
         </div>
       </nav>
+    </div>
     </div>
   );
 }

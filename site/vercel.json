@@ -24,6 +24,18 @@
       "destination": "https://hostos-ten.vercel.app/app/:path*"
     },
     {
+      "source": "/brand/:path*",
+      "destination": "https://hostos-ten.vercel.app/brand/:path*"
+    },
+    {
+      "source": "/pulse/:path*",
+      "destination": "https://hostos-ten.vercel.app/pulse/:path*"
+    },
+    {
+      "source": "/pulse",
+      "destination": "https://hostos-ten.vercel.app/pulse"
+    },
+    {
       "source": "/login",
       "destination": "https://hostos-ten.vercel.app/login"
     },

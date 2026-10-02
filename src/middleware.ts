@@ -100,6 +100,8 @@ function legacyRedirect(req: NextRequest): NextResponse | null {
 }
 
 function isProductPath(pathname: string): boolean {
+  // The install manifest has to be readable before sign-in (the browser fetches it on its own); it holds no data.
+  if (pathname === "/pulse/manifest.webmanifest") return false;
   // /pulse is the owner's live page: the same gate as the product, so nothing under it runs for a signed-out visitor.
   return pathname === APP_BASE || pathname.startsWith(`${APP_BASE}/`) || pathname === "/pulse" || pathname.startsWith("/pulse/");
 }

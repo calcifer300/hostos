@@ -14,6 +14,43 @@ export interface PulsePayload {
   signedIn: boolean;
 }
 
+const HOUR = 3600000;
+const EXPIRE_MS = 72 * HOUR;
+
+/** "Good afternoon, Matt": the owner's name (this page is his), and the time of day where the fleet is, right now. */
+function greetingFor(snap: CommandSnapshot, now: number): string {
+  let hour = 12;
+  try {
+    hour = Number(new Intl.DateTimeFormat("en-US", { timeZone: snap.zone, hour: "numeric", hour12: false }).format(new Date(now))) % 24;
+  } catch { /* keep midday */ }
+  const part = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+  return `${part}, ${snap.owner ?? "Matt"}`;
+}
+
+/** The Monday to Friday of the current week in the fleet's zone, as "Sept 28 – Oct 2". Matthew sends the week's tolls Monday to Friday. */
+function weekRange(zone: string, now: number): string {
+  const fmt = new Intl.DateTimeFormat("en-CA", { timeZone: zone, year: "numeric", month: "2-digit", day: "2-digit", weekday: "short" });
+  const parts = Object.fromEntries(fmt.formatToParts(new Date(now)).map((part) => [part.type, part.value]));
+  const dow = ({ Mon: 0, Tue: 1, Wed: 2, Thu: 3, Fri: 4, Sat: 5, Sun: 6 } as Record<string, number>)[parts.weekday] ?? 0;
+  const today = Date.UTC(Number(parts.year), Number(parts.month) - 1, Number(parts.day));
+  const monday = today - dow * 86400000;
+  const label = (ms: number) => {
+    const d = new Date(ms);
+    const month = d.toLocaleDateString("en-US", { month: "short", timeZone: "UTC" });
+    return `${month === "Sep" ? "Sept" : month} ${d.getUTCDate()}`;
+  };
+  return `${label(monday)} – ${label(monday + 4 * 86400000)}`;
+}
+
+/** Days until a trip ends, in words, for the trips whose tolls cannot be billed yet. */
+function untilEnd(endsAt: number | null, now: number, zone: string): string {
+  if (endsAt === null) return "End time not read yet";
+  const days = Math.ceil((endsAt - now) / (24 * HOUR));
+  const when = new Date(endsAt).toLocaleString("en-US", { timeZone: zone, weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+  if (endsAt <= now) return `Ended ${when}: can be billed`;
+  return `Ends ${when} · ${days} ${days === 1 ? "day" : "days"} left`;
+}
+
 const money = (value: number) => "$" + Math.round(value).toLocaleString("en-US");
 const cents = (value: number) => "$" + (value / 100).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
@@ -223,53 +260,89 @@ function EarningsBars({ weeks }: { weeks: CommandSnapshot["weeks"] }) {
   );
 }
 
-function Tolls({ snap }: { snap: CommandSnapshot }) {
+function MiniTile({ label, value, note, tone }: { label: string; value: string; note: string; tone: string }) {
+  return (
+    <div className={"pulse-tile " + tone + " min-w-0 rounded-xl border border-border bg-card px-3 py-2 shadow-[var(--shadow-card)]"}>
+      <div className="truncate text-[10.5px] text-muted-foreground">{label}</div>
+      <div className="truncate text-[18px] font-semibold leading-tight tabular-nums">{value}</div>
+      <div className="truncate text-[10.5px] text-muted-foreground">{note}</div>
+    </div>
+  );
+}
+
+function Tolls({ snap, now }: { snap: CommandSnapshot; now: number }) {
   const tolls = snap.tolls;
   if (!tolls) return <Card><p className="py-4 text-[13px] text-muted-foreground">No toll figures yet. They appear once the toll file has been read on the scanning PC.</p></Card>;
+  const waiting = tolls.notBilledRows.filter((row) => row.group === "running");
+  const rest = tolls.notBilledRows.filter((row) => row.group !== "running");
   return (
     <div className="space-y-3">
-      <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
-        <Tile tone="blue" label="Billed This Week" value={String(tolls.billedWeekTrips)} note={cents(tolls.billedWeekCents)} />
-        <Tile tone="green" label="Ready to Bill" value={String(tolls.toBill)} note={cents(tolls.toBillCents)} />
-        <Tile tone="amber" label="Waiting on Trips" value={String(tolls.running)} note={`${cents(tolls.runningCents)} so far`} />
-        <Tile tone="violet" label="Need a Look" value={String(tolls.looks)} note="before billing" />
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        <MiniTile tone="blue" label="Billed This Week" value={String(tolls.billedWeekTrips)} note={cents(tolls.billedWeekCents)} />
+        <MiniTile tone="green" label="Ready to Bill" value={String(tolls.toBill)} note={cents(tolls.toBillCents)} />
+        <MiniTile tone="amber" label="Trip Still Ongoing" value={String(tolls.running)} note={"can't bill yet · " + cents(tolls.runningCents)} />
+        <MiniTile tone="violet" label="Need a Look" value={String(tolls.looks)} note="before billing" />
       </div>
-      <Card title={`Billed · ${tolls.billedRows.length}`}>
-        {tolls.billedRows.length ? (
-          <ul className="divide-y divide-border">
-            {tolls.billedRows.map((row, index) => (
-              <li key={index} className="flex items-start justify-between gap-3 py-2">
-                <div className="min-w-0">
-                  <div className="truncate text-[13px] font-semibold">{row.guest ?? "Guest"} <span className="font-normal text-muted-foreground">· {row.vehicle}</span></div>
-                  <div className="text-[11.5px] text-muted-foreground">
-                    Reservation #{row.tripId} · Invoice {row.invoiceNumber ? `#${row.invoiceNumber}` : "not read yet"} · {row.billedAt}
+      <div className="grid gap-3 lg:grid-cols-2">
+        <Card title={"Billed · " + tolls.billedRows.length}>
+          {tolls.billedRows.length ? (
+            <ul className="max-h-[360px] divide-y divide-border overflow-y-auto overscroll-contain pr-1.5 [scrollbar-width:thin]">
+              {tolls.billedRows.map((row, index) => (
+                <li key={index} className="flex items-start justify-between gap-3 py-1.5">
+                  <div className="min-w-0">
+                    <div className="truncate text-[13px] font-semibold">{row.guest ?? "Guest"} <span className="font-normal text-muted-foreground">· {row.vehicle}</span></div>
+                    <div className="text-[11px] text-muted-foreground">
+                      Reservation #{row.tripId} · Invoice {row.invoiceNumber ? "#" + row.invoiceNumber : "not read yet"} · {row.billedAt}
+                    </div>
                   </div>
+                  <div className="shrink-0 text-[13px] font-semibold tabular-nums">{cents(row.cents)}</div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-[13px] text-muted-foreground">Nothing has been billed yet.</p>
+          )}
+        </Card>
+        <Card title={"Not Yet Billed · " + tolls.notBilledRows.length}>
+          {tolls.notBilledRows.length ? (
+            <div className="max-h-[360px] space-y-3 overflow-y-auto overscroll-contain pr-1.5 [scrollbar-width:thin]">
+              {waiting.length ? (
+                <div>
+                  <div className="mb-1 rounded-lg bg-warning/10 px-2.5 py-1.5 text-[11.5px] leading-snug text-warning">
+                    <b>Trip still ongoing · {waiting.length}.</b> These tolls cannot be billed yet. Billing starts once each trip has ended, because tolls keep posting after it ends.
+                  </div>
+                  <ul className="divide-y divide-border">
+                    {waiting.map((row, index) => (
+                      <li key={index} className="py-1.5">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0 truncate text-[13px] font-semibold">{row.guest ?? "Guest"} <span className="font-normal text-muted-foreground">· {row.vehicle} · #{row.tripId}</span></div>
+                          <div className="shrink-0 text-[13px] tabular-nums">{cents(row.cents)}</div>
+                        </div>
+                        <div className="text-[11.5px] font-medium text-warning">{untilEnd(row.endsAt, now, snap.zone)}</div>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <div className="shrink-0 text-[13px] font-semibold tabular-nums">{cents(row.cents)}</div>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-[13px] text-muted-foreground">Nothing has been billed yet.</p>
-        )}
-      </Card>
-      <Card title={`Not Yet Billed · ${tolls.notBilledRows.length}`}>
-        {tolls.notBilledRows.length ? (
-          <ul className="divide-y divide-border">
-            {tolls.notBilledRows.map((row, index) => (
-              <li key={index} className="py-2">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="truncate text-[13px] font-semibold">{row.guest ?? "Guest"} <span className="font-normal text-muted-foreground">· {row.vehicle} · #{row.tripId}</span></div>
-                  <div className="shrink-0 text-[13px] tabular-nums">{cents(row.cents)}</div>
-                </div>
-                <div className="text-[11.5px] text-muted-foreground">{row.why}</div>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-[13px] text-muted-foreground">Every trip with tolls has been billed.</p>
-        )}
-      </Card>
+              ) : null}
+              {rest.length ? (
+                <ul className="divide-y divide-border">
+                  {rest.map((row, index) => (
+                    <li key={index} className="py-1.5">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0 truncate text-[13px] font-semibold">{row.guest ?? "Guest"} <span className="font-normal text-muted-foreground">· {row.vehicle} · #{row.tripId}</span></div>
+                        <div className="shrink-0 text-[13px] tabular-nums">{cents(row.cents)}</div>
+                      </div>
+                      <div className="text-[11.5px] text-muted-foreground">{row.why}</div>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </div>
+          ) : (
+            <p className="text-[13px] text-muted-foreground">Every trip with tolls has been billed.</p>
+          )}
+        </Card>
+      </div>
     </div>
   );
 }
@@ -328,8 +401,9 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
 
   const snap = data.snapshot;
   const live = liveState(data, now);
-  const unread = snap ? snap.unread.length : 0;
-  const urgentCount = snap ? snap.attention.filter((row) => row.tone === "red").length + snap.unread.filter((row) => row.urgency === "high").length : 0;
+  const unreadRows = snap ? snap.unread.filter((row) => row.sentAt === null || now - row.sentAt <= EXPIRE_MS) : [];
+  const unread = unreadRows.length;
+  const urgentCount = snap ? snap.attention.filter((row) => row.tone === "red").length + unreadRows.filter((row) => row.urgency === "high").length : 0;
   const hours24 = 24 * 3600000;
 
   return (
@@ -359,7 +433,7 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
         {TABS.map((item) => (
           <button key={item.id} type="button" onClick={() => setTab(item.id)} className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2 text-[13px] font-medium transition ${tab === item.id ? "bg-accent text-accent-foreground shadow" : "text-muted-foreground hover:bg-muted"}`}>
             {item.label}
-            {item.id === "messages" ? <Badge n={unread} urgent={snap ? snap.unread.some((row) => row.urgency === "high") : false} /> : null}
+            {item.id === "messages" ? <Badge n={unread} urgent={unreadRows.some((row) => row.urgency === "high")} /> : null}
           </button>
         ))}
       </nav>
@@ -371,7 +445,7 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
           {tab === "overview" ? (
             <>
               <div className="flex items-baseline justify-between gap-3">
-                <h2 className="text-xl font-semibold tracking-tight">{snap.greeting}{snap.owner ? "" : ""}</h2>
+                <h2 className="text-xl font-semibold tracking-tight">{greetingFor(snap, now)}</h2>
                 <span className="text-[12px] text-muted-foreground">{snap.attention.length ? `${snap.attention.length} need${snap.attention.length === 1 ? "s" : ""} attention` : "Nothing needs attention"}</span>
               </div>
               <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-5">
@@ -438,8 +512,9 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
 
           {tab === "messages" ? (
             <>
-              <h2 className="text-xl font-semibold tracking-tight">Guests Waiting for a Reply · {snap.unread.length}</h2>
-              <Messages rows={snap.unread} />
+              <h2 className="text-xl font-semibold tracking-tight">Guests Waiting for a Reply · {unreadRows.length}</h2>
+              <p className="text-[12px] text-muted-foreground">Messages from the last 72 hours. Older ones clear by themselves.</p>
+              <Messages rows={unreadRows} />
             </>
           ) : null}
 
@@ -452,8 +527,9 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
 
           {tab === "tolls" ? (
             <>
-              <h2 className="text-xl font-semibold tracking-tight">Toll Reimbursements</h2>
-              <Tolls snap={snap} />
+              <h2 className="text-xl font-semibold tracking-tight">Tolls for This Week · {weekRange(snap.zone, now)}</h2>
+              <p className="text-[12px] text-muted-foreground">Monday to Friday, Mountain Time. The week&rsquo;s tolls Matthew sends for billing and reimbursement.</p>
+              <Tolls snap={snap} now={now} />
             </>
           ) : null}
         </main>
@@ -468,7 +544,7 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
             <button key={item.id} type="button" onClick={() => { setTab(item.id); window.scrollTo({ top: 0, behavior: "smooth" }); }} className={`relative flex flex-col items-center gap-0.5 py-2 text-[10.5px] font-medium ${tab === item.id ? "text-accent" : "text-muted-foreground"}`}>
               <span className="text-[18px] leading-none" aria-hidden>{item.icon}</span>
               {item.label}
-              {item.id === "messages" && unread ? <span className={`pulse-badge absolute right-[22%] top-1 ${snap && snap.unread.some((row) => row.urgency === "high") ? "urgent" : ""}`}>{unread}</span> : null}
+              {item.id === "messages" && unread ? <span className={`pulse-badge absolute right-[22%] top-1 ${unreadRows.some((row) => row.urgency === "high") ? "urgent" : ""}`}>{unread}</span> : null}
             </button>
           ))}
         </div>

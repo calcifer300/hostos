@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { PULSE_NAME, PULSE_TAGLINE } from "@/lib/pulse/brand";
+import { InstallGuide } from "@/components/pulse/install-guide";
 
 /** The 4-digit key screen: big keys for a thumb, dots that fill, a shake when it is wrong. Submits by itself on the fourth digit. */
 export function PinGate() {
@@ -48,7 +49,7 @@ export function PinGate() {
   }, [press]);
 
   return (
-    <main className="mx-auto flex min-h-dvh max-w-sm flex-col items-center justify-center px-6 pb-[max(env(safe-area-inset-bottom),24px)] pt-[max(env(safe-area-inset-top),24px)] text-center">
+    <main className="mx-auto flex min-h-dvh max-w-sm flex-col items-center justify-center py-6 px-6 pb-[max(env(safe-area-inset-bottom),24px)] pt-[max(env(safe-area-inset-top),24px)] text-center">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src="/brand/colorado-cruisers.webp" alt="Colorado Cruisers" className="mb-4 h-24 w-24 rounded-2xl bg-black object-contain p-1" />
       <h1 className="text-xl font-semibold tracking-tight">{PULSE_NAME}</h1>
@@ -67,6 +68,7 @@ export function PinGate() {
         <button type="button" onClick={() => press("0")} disabled={busy} className="h-16 rounded-2xl border border-border bg-card text-2xl font-medium shadow-[var(--shadow-card)] active:scale-95 disabled:opacity-60">0</button>
         <button type="button" onClick={() => setDigits((current) => current.slice(0, -1))} disabled={busy} className="h-16 rounded-2xl text-lg text-muted-foreground active:scale-95" aria-label="Delete">⌫</button>
       </div>
+      <InstallGuide />
       <p className="mt-6 text-[11px] text-muted-foreground">A read-only view. Enter the 4-digit key once; this browser remembers it.</p>
     </main>
   );

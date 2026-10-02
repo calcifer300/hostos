@@ -62,6 +62,8 @@ export interface NotBilledRow {
   cents: number;
   group: string;
   why: string;
+  /** When the trip ends (ms), so a trip that is still out can say how long until it can be billed. */
+  endsAt: number | null;
 }
 
 export interface TripLeg {
@@ -248,7 +250,7 @@ export function normalizeSnapshot(raw: unknown): CommandSnapshot | null {
   const notBilledRows = (rows: unknown): NotBilledRow[] =>
     list(rows, 150).filter(isObject).map((row) => ({
       tripId: str(row.tripId, 30) ?? "", guest: str(row.guest, 80), vehicle: str(row.vehicle, 100), cents: num(row.cents),
-      group: str(row.group, 20) ?? "other", why: str(row.why, 240) ?? "",
+      group: str(row.group, 20) ?? "other", why: str(row.why, 240) ?? "", endsAt: typeof row.endsAt === "number" ? row.endsAt : null,
     }));
   const tolls = isObject(raw.tolls)
     ? {

@@ -381,7 +381,7 @@ function Messages({ rows, note }: { rows: UnreadRow[]; note?: React.ReactNode })
               ) : null}
               <blockquote className={`mt-2 rounded-lg border-l-[3px] bg-muted/50 px-3 py-2 text-[13px] leading-snug ${urgent ? "border-danger" : fyi ? "border-muted-foreground/40 text-muted-foreground" : "border-accent"}`}>{row.text || "Guest message waiting."}</blockquote>
               <div className="mt-1.5 flex items-center justify-between gap-2 text-[11px] text-muted-foreground">
-                <span>{row.sent ? `Sent ${row.sent}` : ""}</span>
+                <span>{row.sent ? row.sent : ""}</span>
                 {row.tripUrl ? <a href={row.tripUrl} target="_blank" rel="noopener noreferrer" className="font-medium text-accent hover:underline">Open Trip in Turo</a> : null}
               </div>
             </li>

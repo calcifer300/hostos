@@ -47,6 +47,8 @@ export interface FleetCard {
   earnedTrips90: number;
   /** trips that started in the last 90 days */
   booked90: number;
+  /** days on the road in the last 90 days (each trip's overlap with the window) */
+  bookedDays90: number;
   inspection: boolean;
   listingUrl: string | null;
   now: { guest: string | null; until: string; tripUrl: string | null } | null;
@@ -118,6 +120,8 @@ export interface UnreadRow {
 /** What the scanner could and could not confirm, so each tile can say how far to trust it. */
 export interface SnapshotQuality {
   tripsAt: string | null;
+  /** the earliest trip HostOS has read, so the 3-month figures can say when they cover less */
+  historyFrom: number | null;
   fleetAt: string | null;
   fleetLive: boolean;
   listingsLive: boolean;
@@ -237,7 +241,7 @@ export function normalizeSnapshot(raw: unknown): CommandSnapshot | null {
       name: str(car.name, 100) ?? "Vehicle", plate, photo: url(pics[0]) ?? url(car.photo), status: str(car.status, 20) ?? "listed",
       state: (STATES as readonly string[]).includes(String(car.state)) ? (car.state as FleetCard["state"]) : "available",
       issues: list(car.issues, 6).map((issue) => str(issue, 120)).filter((issue): issue is string => Boolean(issue)), now, next,
-      earned90: num(car.earned90), earnedTrips90: num(car.earnedTrips90), booked90: num(car.booked90), inspection: bool(car.inspection), listingUrl: url(car.listingUrl),
+      earned90: num(car.earned90), earnedTrips90: num(car.earnedTrips90), booked90: num(car.booked90), bookedDays90: num(car.bookedDays90), inspection: bool(car.inspection), listingUrl: url(car.listingUrl),
     };
   });
   const leg = (value: unknown): TripLeg | null =>
@@ -265,7 +269,7 @@ export function normalizeSnapshot(raw: unknown): CommandSnapshot | null {
   }));
   const q = isObject(raw.quality) ? raw.quality : {};
   const quality: SnapshotQuality = {
-    tripsAt: str(q.tripsAt, 40), fleetAt: str(q.fleetAt, 40), fleetLive: bool(q.fleetLive), listingsLive: bool(q.listingsLive), listingsAt: str(q.listingsAt, 40),
+    tripsAt: str(q.tripsAt, 40), historyFrom: typeof q.historyFrom === "number" ? q.historyFrom : null, fleetAt: str(q.fleetAt, 40), fleetLive: bool(q.fleetLive), listingsLive: bool(q.listingsLive), listingsAt: str(q.listingsAt, 40),
     unpricedTrips: num(q.unpricedTrips), detailsPending: num(q.detailsPending), detailsFailed: num(q.detailsFailed), activeNoPlate: num(q.activeNoPlate),
     tollsAt: str(q.tollsAt, 40), invoicesMissing: num(q.invoicesMissing), invoicesTotal: num(q.invoicesTotal),
   };

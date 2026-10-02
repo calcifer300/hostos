@@ -268,19 +268,22 @@ function TopCarCard({ snap }: { snap: CommandSnapshot }) {
   return (
     <FeaturedCar badge="★ Top Car · Last 3 Months" tone="gold" name={top.name} plate={top.plate} photo={top.photo} href={listing}
       line={`${money(top.total)} estimated · ${top.trips} ${top.trips === 1 ? "trip" : "trips"} · avg ${money(top.perTrip)}`}
-      note="Most estimated earnings, from trip prices. Not a payout." />
+      note="Most estimated earnings in 90 days, among cars with 3+ priced trips. Not a payout." />
   );
 }
 
-/** The car with the most trips started in the last 3 months. Ties go to the one that earned more. */
+const DAYS_WINDOW = 90;
+const daysLabel = (days: number) => (Math.round(days) === 1 ? "1 day" : `${Math.round(days)} days`);
+
+/** The car that was out on trips for the most days in the last 3 months. Days, not trip counts, so a car that is rented in many short hops is not ranked above one that is out for weeks. */
 function MostBookedCard({ snap }: { snap: CommandSnapshot }) {
-  const ranked = snap.fleet.filter((car) => car.booked90 > 0).sort((a, b) => b.booked90 - a.booked90 || b.earned90 - a.earned90);
+  const ranked = snap.fleet.filter((car) => car.bookedDays90 > 0).sort((a, b) => b.bookedDays90 - a.bookedDays90 || b.booked90 - a.booked90);
   const best = ranked[0];
   if (!best) return null;
   return (
     <FeaturedCar badge="♥ Most Booked · Last 3 Months" tone="rose" name={best.name} plate={best.plate} photo={best.photo} href={best.listingUrl}
-      line={`${best.booked90} ${best.booked90 === 1 ? "trip" : "trips"} started${best.earnedTrips90 ? ` · ${money(best.earned90)} estimated` : ""}`}
-      note="Most trips started in the last 3 months." />
+      line={`${daysLabel(best.bookedDays90)} booked (${Math.min(100, Math.round((best.bookedDays90 / DAYS_WINDOW) * 100))}%) · ${best.booked90} ${best.booked90 === 1 ? "trip" : "trips"}`}
+      note="Most days on the road in the last 90 days." />
   );
 }
 
@@ -288,8 +291,8 @@ type FleetFilter = "all" | "earners" | "booked" | "attention" | "unlisted" | "av
 
 const FLEET_FILTERS: { id: FleetFilter; label: string; hint: string }[] = [
   { id: "all", label: "All", hint: "Every vehicle." },
-  { id: "earners", label: "Top Earners", hint: "Most estimated earnings in the last 3 months, highest first." },
-  { id: "booked", label: "Most Booked", hint: "Most trips started in the last 3 months." },
+  { id: "earners", label: "Top Earners", hint: "Most estimated earnings from trips that ended in the last 90 days, highest first." },
+  { id: "booked", label: "Most Booked", hint: "Most days on the road in the last 90 days, highest first." },
   { id: "attention", label: "Needs Attention", hint: "Inspection due or required, or restricted on Turo." },
   { id: "unlisted", label: "Unlisted", hint: "Not listed on Turo right now." },
   { id: "available", label: "Available", hint: "Listed, no trip now and none starting in the next 24 hours: parked and ready." },
@@ -298,7 +301,7 @@ const FLEET_FILTERS: { id: FleetFilter; label: string; hint: string }[] = [
 function filterFleet(cars: FleetCard[], filter: FleetFilter): FleetCard[] {
   switch (filter) {
     case "earners": return cars.filter((car) => car.earned90 > 0).sort((a, b) => b.earned90 - a.earned90);
-    case "booked": return cars.filter((car) => car.booked90 > 0).sort((a, b) => b.booked90 - a.booked90 || b.earned90 - a.earned90);
+    case "booked": return cars.filter((car) => car.bookedDays90 > 0).sort((a, b) => b.bookedDays90 - a.bookedDays90 || b.booked90 - a.booked90);
     case "attention": return cars.filter((car) => car.inspection || car.issues.length > 0);
     case "unlisted": return cars.filter((car) => car.status === "unlisted" || car.state === "unlisted");
     case "available": return cars.filter((car) => car.state === "available");
@@ -344,7 +347,7 @@ function FleetGrid({ cars, filter }: { cars: FleetCard[]; filter: FleetFilter })
             {car.next ? <div className="text-[11.5px] text-muted-foreground"><TuroLink href={car.next.tripUrl}>Next: {car.next.guest ?? "a guest"} · {car.next.from}</TuroLink></div> : null}
             {car.issues.map((issue) => <div key={issue} className="text-[11.5px] font-medium text-warning">{issue}</div>)}
             {filter === "earners" ? <div className="text-[11.5px] font-semibold text-success">≈{money(car.earned90)} · {car.earnedTrips90} {car.earnedTrips90 === 1 ? "trip" : "trips"}</div> : null}
-            {filter === "booked" ? <div className="text-[11.5px] font-semibold text-accent">{car.booked90} {car.booked90 === 1 ? "trip" : "trips"} started</div> : null}
+            {filter === "booked" ? <div className="text-[11.5px] font-semibold text-accent">{daysLabel(car.bookedDays90)} booked ({Math.min(100, Math.round((car.bookedDays90 / DAYS_WINDOW) * 100))}%) · {car.booked90} {car.booked90 === 1 ? "trip" : "trips"}</div> : null}
           </div>
         </article>
       ))}
@@ -704,7 +707,7 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
               </div>
               <p className="text-[11.5px] text-muted-foreground">{FLEET_FILTERS.find((item) => item.id === fleetFilter)?.hint} Tap a name to open it in Turo.</p>
               <FleetGrid cars={filterFleet(snap.fleet, fleetFilter)} filter={fleetFilter} />
-              <Note>{q && !q.fleetLive ? "Availability is not confirmed from Turo yet, so Available and Free Now may be wrong. Open Turo's calendar page on the scanning PC." : q && q.fleetAt ? `Availability last read ${when(q.fleetAt, zone)}.` : null}{q && !q.listingsLive ? " Names and photos are from HostOS's saved catalog until the Vehicles page is read." : ""}</Note>
+              <Note>{q && q.historyFrom !== null && now - q.historyFrom < 85 * 24 * 3600000 ? `HostOS has only read trips since ${when(q.historyFrom, zone)}, so Top Car, Top Earners and Most Booked cover less than 90 days.` : "Top Car and Top Earners use estimated trip prices from trips that ended in the last 90 days; Most Booked counts days on the road in the same window."} {q && !q.fleetLive ? "Availability is not confirmed from Turo yet, so Available and Free Now may be wrong. Open Turo's calendar page on the scanning PC." : q && q.fleetAt ? `Availability last read ${when(q.fleetAt, zone)}.` : null}{q && !q.listingsLive ? " Names and photos are from HostOS's saved catalog until the Vehicles page is read." : ""}</Note>
             </>
           ) : null}
 

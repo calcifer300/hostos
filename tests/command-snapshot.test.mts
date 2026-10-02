@@ -57,6 +57,10 @@ eq("an unknown tone becomes reply", labelled.unread[1].tone, "reply");
 eq("quality is carried field by field", [labelled.quality.fleetLive, labelled.quality.unpricedTrips, labelled.quality.invoicesMissing, labelled.quality.tripsAt], [true, 2, 1, "2026-09-30T18:00:00Z"]);
 eq("a snapshot without quality gets safe defaults", [snap.quality.fleetLive, snap.quality.tripsAt, snap.quality.unpricedTrips], [false, null, 0]);
 
+const fleetSnap = normalizeSnapshot({ ...raw, fleet: [{ name: "Car", plate: "AAA111", state: "available", earned90: 1200.4, earnedTrips90: 3, booked90: 5, inspection: true, listingUrl: "https://turo.com/us/en/your-car/1", now: { guest: "G", until: "x", tripUrl: "javascript:1" } }, { name: "Bad", listingUrl: "http://evil.example/x" }] })!;
+eq("fleet cars carry 90-day earnings, bookings and inspection", [fleetSnap.fleet[0].earned90, fleetSnap.fleet[0].earnedTrips90, fleetSnap.fleet[0].booked90, fleetSnap.fleet[0].inspection], [1200.4, 3, 5, true]);
+eq("only https Turo-style links are kept on a car", [fleetSnap.fleet[0].listingUrl, fleetSnap.fleet[1].listingUrl, fleetSnap.fleet[0].now?.tripUrl], ["https://turo.com/us/en/your-car/1", null, null]);
+
 console.log("=== how old the data is ===");
 const NOW = 10_000_000;
 eq("a minute-old snapshot is fresh", freshness(NOW - 60_000, NOW), { label: "1 min ago", stale: false });

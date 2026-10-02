@@ -182,7 +182,7 @@ function TripCards({ rows, empty }: { rows: TripRow[]; empty: string }) {
         <li key={`${row.tripId}-${index}`} className="rounded-xl border border-border p-3">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <div className="truncate text-[14px] font-semibold">{row.guest ?? "Guest"}</div>
+              <div className="truncate text-[14px] font-semibold"><TuroLink href={row.tripUrl}>{row.guest ?? "Guest"}</TuroLink></div>
               <div className="truncate text-[12px] text-muted-foreground">{[row.vehicle, row.plate].filter(Boolean).join(" · ")}</div>
               <div className="text-[11.5px] text-muted-foreground">{[row.tripId ? `Trip #${row.tripId}` : null, row.guestRating !== null ? `${row.guestRating.toFixed(1)}★` : null].filter(Boolean).join(" · ")}</div>
             </div>
@@ -218,7 +218,7 @@ function Schedule({ slots }: { slots: ScheduleSlot[] }) {
           <span className="w-[66px] shrink-0 text-[13px] font-semibold tabular-nums">{slot.time}</span>
           <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-[11px] font-semibold">{slot.done ? (slot.type === "Pickup" ? "Picked Up" : "Returned") : slot.type}</span>
           <span className="min-w-0 basis-full truncate pl-[22px] text-[13px] sm:basis-0 sm:flex-1 sm:pl-0">
-            <b className="font-semibold">{slot.vehicle ?? slot.plate ?? "Vehicle"}</b>
+            <b className="font-semibold"><TuroLink href={slot.tripUrl}>{slot.vehicle ?? slot.plate ?? "Vehicle"}</TuroLink></b>
             <span className="text-muted-foreground"> · {[slot.guest, slot.plate].filter(Boolean).join(" · ")}</span>
           </span>
         </li>
@@ -227,40 +227,96 @@ function Schedule({ slots }: { slots: ScheduleSlot[] }) {
   );
 }
 
-function TopCarCard({ snap }: { snap: CommandSnapshot }) {
-  const top = snap.topCar;
-  if (!top) return null;
+/**
+ * A link into Turo. These are plain turo.com addresses opened in a new tab: on a phone with the Turo app installed, the phone
+ * hands a turo.com link to the app by itself (iPhone universal links, Android app links); without the app it opens in the browser.
+ * A web page cannot force the app open, so this is the dependable way and the label says where it goes.
+ */
+function TuroLink({ href, children, className = "" }: { href: string | null | undefined; children: React.ReactNode; className?: string }) {
+  if (!href) return <span className={className}>{children}</span>;
+  return (
+    <a href={href} target="_blank" rel="noopener noreferrer" className={`${className} underline decoration-dotted underline-offset-2 hover:text-accent`}>
+      {children}<span aria-hidden className="ml-0.5 text-[10px] no-underline">↗</span>
+    </a>
+  );
+}
+
+/** A photo card with a badge: the Top Car and the Most Booked car. */
+function FeaturedCar({ badge, tone, name, plate, photo, line, note, href }: { badge: string; tone: "gold" | "rose"; name: string; plate: string | null; photo: string | null; line: string; note: string; href: string | null }) {
+  const gradient = tone === "gold" ? "from-yellow-300 to-amber-500 text-amber-950" : "from-rose-300 to-pink-500 text-rose-950";
   return (
     <section className="pulse-topcar relative min-h-[190px] overflow-hidden rounded-2xl border border-border bg-black shadow-[var(--shadow-card)]">
-      {top.photo ? (
+      {photo ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={top.photo} alt={top.name} referrerPolicy="no-referrer" className="absolute inset-0 h-full w-full object-cover" />
+        <img src={photo} alt={name} referrerPolicy="no-referrer" className="absolute inset-0 h-full w-full object-cover" />
       ) : null}
       <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/80" />
-      <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-gradient-to-br from-yellow-300 to-amber-500 px-2.5 py-1 text-[11px] font-bold text-amber-950 shadow-lg">
-        <span aria-hidden>★</span> Top Car · Last 3 Months
-      </span>
+      <span className={`absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-gradient-to-br px-2.5 py-1 text-[11px] font-bold shadow-lg ${gradient}`}>{badge}</span>
       <div className="absolute inset-x-3 bottom-2.5 text-white">
-        <div className="text-[10.5px] text-white/60">Estimated from trip prices, last 3 months.</div>
-        <div className="text-[17px] font-semibold leading-tight drop-shadow">{top.name}</div>
-        <div className="text-[12px] text-white/85">
-          {[top.plate, `${money(top.total)} estimated`, `${top.trips} ${top.trips === 1 ? "trip" : "trips"}`, `avg ${money(top.perTrip)}`].filter(Boolean).join(" · ")}
-        </div>
+        <div className="text-[10.5px] text-white/60">{note}</div>
+        <div className="text-[17px] font-semibold leading-tight drop-shadow">{href ? <a href={href} target="_blank" rel="noopener noreferrer" className="hover:underline">{name} ↗</a> : name}</div>
+        <div className="text-[12px] text-white/85">{[plate, line].filter(Boolean).join(" · ")}</div>
       </div>
     </section>
   );
 }
 
-function FleetGrid({ cars }: { cars: FleetCard[] }) {
+function TopCarCard({ snap }: { snap: CommandSnapshot }) {
+  const top = snap.topCar;
+  if (!top) return null;
+  const listing = snap.fleet.find((car) => car.plate && top.plate && car.plate === top.plate)?.listingUrl ?? null;
+  return (
+    <FeaturedCar badge="★ Top Car · Last 3 Months" tone="gold" name={top.name} plate={top.plate} photo={top.photo} href={listing}
+      line={`${money(top.total)} estimated · ${top.trips} ${top.trips === 1 ? "trip" : "trips"} · avg ${money(top.perTrip)}`}
+      note="Most estimated earnings, from trip prices. Not a payout." />
+  );
+}
+
+/** The car with the most trips started in the last 3 months. Ties go to the one that earned more. */
+function MostBookedCard({ snap }: { snap: CommandSnapshot }) {
+  const ranked = snap.fleet.filter((car) => car.booked90 > 0).sort((a, b) => b.booked90 - a.booked90 || b.earned90 - a.earned90);
+  const best = ranked[0];
+  if (!best) return null;
+  return (
+    <FeaturedCar badge="♥ Most Booked · Last 3 Months" tone="rose" name={best.name} plate={best.plate} photo={best.photo} href={best.listingUrl}
+      line={`${best.booked90} ${best.booked90 === 1 ? "trip" : "trips"} started${best.earnedTrips90 ? ` · ${money(best.earned90)} estimated` : ""}`}
+      note="Most trips started in the last 3 months." />
+  );
+}
+
+type FleetFilter = "all" | "earners" | "booked" | "attention" | "unlisted" | "available";
+
+const FLEET_FILTERS: { id: FleetFilter; label: string; hint: string }[] = [
+  { id: "all", label: "All", hint: "Every vehicle." },
+  { id: "earners", label: "Top Earners", hint: "Most estimated earnings in the last 3 months, highest first." },
+  { id: "booked", label: "Most Booked", hint: "Most trips started in the last 3 months." },
+  { id: "attention", label: "Needs Attention", hint: "Inspection due or required, or restricted on Turo." },
+  { id: "unlisted", label: "Unlisted", hint: "Not listed on Turo right now." },
+  { id: "available", label: "Available", hint: "Listed, no trip now and none starting in the next 24 hours: parked and ready." },
+];
+
+function filterFleet(cars: FleetCard[], filter: FleetFilter): FleetCard[] {
+  switch (filter) {
+    case "earners": return cars.filter((car) => car.earned90 > 0).sort((a, b) => b.earned90 - a.earned90);
+    case "booked": return cars.filter((car) => car.booked90 > 0).sort((a, b) => b.booked90 - a.booked90 || b.earned90 - a.earned90);
+    case "attention": return cars.filter((car) => car.inspection || car.issues.length > 0);
+    case "unlisted": return cars.filter((car) => car.status === "unlisted" || car.state === "unlisted");
+    case "available": return cars.filter((car) => car.state === "available");
+    default: return cars;
+  }
+}
+
+function FleetGrid({ cars, filter }: { cars: FleetCard[]; filter: FleetFilter }) {
   const LABEL: Record<FleetCard["state"], string> = { ontrip: "On a Trip", soon: "Pickup Soon", attention: "Needs Attention", available: "Available", unlisted: "Unlisted" };
   const TONE: Record<FleetCard["state"], string> = {
     ontrip: "bg-accent/10 text-accent", soon: "bg-violet-500/10 text-violet-600 dark:text-violet-400", attention: "bg-warning/10 text-warning",
     available: "bg-success/10 text-success", unlisted: "bg-muted text-muted-foreground",
   };
+  if (!cars.length) return <p className="rounded-2xl border border-border bg-card py-8 text-center text-[13px] text-muted-foreground">No vehicle matches this filter right now.</p>;
   return (
     <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 xl:grid-cols-3">
       {cars.map((car, index) => (
-        <article key={`${car.plate ?? car.name}-${index}`} className={`flex gap-3 rounded-xl border border-border p-2.5 ${car.state === "unlisted" ? "opacity-70" : ""}`}>
+        <article key={`${car.plate ?? car.name}-${index}`} className={`flex gap-3 rounded-xl border border-border bg-card p-2.5 ${car.state === "unlisted" ? "opacity-70" : ""}`}>
           {car.photo ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={car.photo} alt="" loading="lazy" referrerPolicy="no-referrer" className="h-[56px] w-[80px] shrink-0 rounded-lg bg-muted object-cover" />
@@ -269,21 +325,26 @@ function FleetGrid({ cars }: { cars: FleetCard[] }) {
           )}
           <div className="min-w-0 flex-1">
             <div className="flex items-center justify-between gap-2">
-              <b className="truncate text-[13px] font-semibold">{car.name}</b>
+              <b className="truncate text-[13px] font-semibold"><TuroLink href={car.listingUrl}>{car.name}</TuroLink></b>
               <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10.5px] font-semibold ${TONE[car.state]}`}>{LABEL[car.state]}</span>
             </div>
             <div className="font-mono text-[10.5px] tracking-wide text-muted-foreground">{car.plate ?? "No plate"}</div>
             <div className="mt-1 text-[12px] leading-snug">
               {car.now ? (
-                <>With <b>{car.now.guest ?? "a guest"}</b>{car.now.until ? <span className="text-muted-foreground"> · back {car.now.until}</span> : null}</>
-              ) : car.state === "unlisted" ? (
+                <>
+                  <TuroLink href={car.now.tripUrl}>With <b>{car.now.guest ?? "a guest"}</b></TuroLink>
+                  {car.now.until ? <span className="text-muted-foreground"> · back {car.now.until}</span> : null}
+                </>
+              ) : car.status === "unlisted" ? (
                 <span className="text-muted-foreground">Not listed</span>
               ) : (
                 "Free now"
               )}
             </div>
-            {car.next ? <div className="text-[11.5px] text-muted-foreground">Next: {car.next.guest ?? "a guest"} · {car.next.from}</div> : null}
+            {car.next ? <div className="text-[11.5px] text-muted-foreground"><TuroLink href={car.next.tripUrl}>Next: {car.next.guest ?? "a guest"} · {car.next.from}</TuroLink></div> : null}
             {car.issues.map((issue) => <div key={issue} className="text-[11.5px] font-medium text-warning">{issue}</div>)}
+            {filter === "earners" ? <div className="text-[11.5px] font-semibold text-success">≈{money(car.earned90)} · {car.earnedTrips90} {car.earnedTrips90 === 1 ? "trip" : "trips"}</div> : null}
+            {filter === "booked" ? <div className="text-[11.5px] font-semibold text-accent">{car.booked90} {car.booked90 === 1 ? "trip" : "trips"} started</div> : null}
           </div>
         </article>
       ))}
@@ -444,6 +505,7 @@ const TABS: { id: TabId; label: string; icon: string }[] = [
 export function PulseApp({ initial }: { initial: PulsePayload }) {
   const [data, setData] = React.useState<PulsePayload>(initial);
   const [tab, setTab] = React.useState<TabId>("overview");
+  const [fleetFilter, setFleetFilter] = React.useState<FleetFilter>("all");
   const [range, setRange] = React.useState<"active" | "pickups" | "returns">("active");
   const [now, setNow] = React.useState<number>(initial.serverNow);
   const etag = React.useRef<string | null>(null);
@@ -571,7 +633,7 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
                       {snap.attention.slice(0, 100).map((row, index) => (
                         <li key={index} className={`flex flex-col gap-0.5 py-2 sm:flex-row sm:justify-between ${row.tone === "red" ? "pulse-row-red" : ""}`}>
                           <div className="min-w-0">
-                            <div className={`text-[13px] font-semibold ${row.tone === "red" ? "text-danger" : row.tone === "amber" ? "text-warning" : "text-accent"}`}>{row.label}</div>
+                            <div className={`text-[13px] font-semibold ${row.tone === "red" ? "text-danger" : row.tone === "amber" ? "text-warning" : "text-accent"}`}><TuroLink href={row.tripUrl}>{row.label}</TuroLink></div>
                             <div className="text-[12px] text-muted-foreground sm:truncate">{[row.vehicle, row.tripId ? `Trip #${row.tripId}` : null].filter(Boolean).join(" · ")}</div>
                             {row.detail ? <div className="text-[11.5px] text-muted-foreground">{row.detail}</div> : null}
                           </div>
@@ -584,7 +646,6 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
                   )}
                 </Card>
                 <div className="space-y-3.5 lg:col-span-2">
-                  <TopCarCard snap={snap} />
                   <Card title="Today’s Schedule" aside={`${snap.schedule.length} events`}><Schedule slots={snap.schedule} /></Card>
                 </div>
               </div>
@@ -632,7 +693,17 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
           {tab === "fleet" ? (
             <>
               <h2 className="text-xl font-semibold tracking-tight">Fleet · {snap.fleet.length}</h2>
-              <FleetGrid cars={snap.fleet} />
+              <div className="grid gap-3 md:grid-cols-2"><TopCarCard snap={snap} /><MostBookedCard snap={snap} /></div>
+              <div className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1 [scrollbar-width:none]" role="tablist" aria-label="Filter vehicles">
+                {FLEET_FILTERS.map((item) => (
+                  <button key={item.id} type="button" role="tab" aria-selected={fleetFilter === item.id} title={item.hint} onClick={() => setFleetFilter(item.id)}
+                    className={`shrink-0 whitespace-nowrap rounded-full border px-3 py-1.5 text-[12.5px] font-medium ${fleetFilter === item.id ? "border-accent bg-accent text-accent-foreground" : "border-border bg-card text-muted-foreground"}`}>
+                    {item.label} <span className="opacity-70">{filterFleet(snap.fleet, item.id).length}</span>
+                  </button>
+                ))}
+              </div>
+              <p className="text-[11.5px] text-muted-foreground">{FLEET_FILTERS.find((item) => item.id === fleetFilter)?.hint} Tap a name to open it in Turo.</p>
+              <FleetGrid cars={filterFleet(snap.fleet, fleetFilter)} filter={fleetFilter} />
               <Note>{q && !q.fleetLive ? "Availability is not confirmed from Turo yet, so Available and Free Now may be wrong. Open Turo's calendar page on the scanning PC." : q && q.fleetAt ? `Availability last read ${when(q.fleetAt, zone)}.` : null}{q && !q.listingsLive ? " Names and photos are from HostOS's saved catalog until the Vehicles page is read." : ""}</Note>
             </>
           ) : null}

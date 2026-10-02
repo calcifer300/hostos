@@ -42,6 +42,13 @@ export interface FleetCard {
   status: string;
   state: "ontrip" | "soon" | "attention" | "available" | "unlisted";
   issues: string[];
+  /** estimated earnings, priced trips that ended in the last 90 days, and how many trips that is */
+  earned90: number;
+  earnedTrips90: number;
+  /** trips that started in the last 90 days */
+  booked90: number;
+  inspection: boolean;
+  listingUrl: string | null;
   now: { guest: string | null; until: string; tripUrl: string | null } | null;
   next: { guest: string | null; from: string; tripUrl: string | null } | null;
 }
@@ -230,6 +237,7 @@ export function normalizeSnapshot(raw: unknown): CommandSnapshot | null {
       name: str(car.name, 100) ?? "Vehicle", plate, photo: url(pics[0]) ?? url(car.photo), status: str(car.status, 20) ?? "listed",
       state: (STATES as readonly string[]).includes(String(car.state)) ? (car.state as FleetCard["state"]) : "available",
       issues: list(car.issues, 6).map((issue) => str(issue, 120)).filter((issue): issue is string => Boolean(issue)), now, next,
+      earned90: num(car.earned90), earnedTrips90: num(car.earnedTrips90), booked90: num(car.booked90), inspection: bool(car.inspection), listingUrl: url(car.listingUrl),
     };
   });
   const leg = (value: unknown): TripLeg | null =>

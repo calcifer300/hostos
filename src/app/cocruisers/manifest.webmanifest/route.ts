@@ -5,7 +5,7 @@ export function GET() {
   return Response.json(
     {
       name: PULSE_NAME,
-      short_name: "Cruisers Live",
+      short_name: "Cruisers Pulse",
       description: "A live, read-only view of the Colorado Cruisers fleet.",
       id: "/cocruisers",
       start_url: "/cocruisers",

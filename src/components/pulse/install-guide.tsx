@@ -91,7 +91,7 @@ export function InstallGuide() {
         <span aria-hidden className="text-lg">📱</span>
         <h2 className="text-[15px] font-semibold tracking-tight">Install on Mobile</h2>
       </div>
-      <p className="mb-3 text-[12.5px] text-muted-foreground">Welcome, Matt. Put Colorado Cruisers Live on your phone&rsquo;s home screen. It opens like an app, full screen, with one tap.</p>
+      <p className="mb-3 text-[12.5px] text-muted-foreground">Welcome, Matt. Put Colorado Cruisers Pulse on your phone&rsquo;s home screen. It opens like an app, full screen, with one tap.</p>
 
       <div className="mb-3 grid grid-cols-2 gap-1 rounded-xl bg-muted/60 p-1" role="tablist">
         {(["ios", "android"] as const).map((id) => (

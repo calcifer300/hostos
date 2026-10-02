@@ -9,17 +9,13 @@ export const dynamic = "force-dynamic";
 
 /**
  * Matthew's live page, at hostoscollective.com/cocruisers. Read-only. Behind a 4-digit key instead of a Google sign-in:
- * with the key's cookie it draws the fleet, without it only the key screen is rendered and nothing is queried.
+ * with the key's cookie it draws the fleet (after the logo reveal), without it only the key screen is rendered and nothing is queried.
  */
 export default async function CocruisersPage() {
   const jar = await cookies();
   if (!verifyToken(jar.get(ACCESS_COOKIE)?.value)) {
-    return (
-      <>
-        <LogoIntro />
-        <PinGate />
-      </>
-    );
+    // The key screen comes first and plain; the logo reveal plays only once the key has been accepted.
+    return <PinGate />;
   }
   const data = await getCocruisersData();
   return (

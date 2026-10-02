@@ -11,11 +11,11 @@ const STATE_LABEL: Record<FleetCard["state"], string> = {
   ontrip: "On a Trip", soon: "Pickup Soon", attention: "Needs Attention", available: "Available", unlisted: "Unlisted",
 };
 const STATE_TONE: Record<FleetCard["state"], string> = {
-  ontrip: "bg-primary/10 text-primary", soon: "bg-violet-500/10 text-violet-600 dark:text-violet-400",
+  ontrip: "bg-accent/10 text-accent", soon: "bg-violet-500/10 text-violet-600 dark:text-violet-400",
   attention: "bg-warning/10 text-warning", available: "bg-success/10 text-success", unlisted: "bg-muted text-muted-foreground",
 };
 const NOT_BILLED_LABEL: Record<string, string> = { ready: "Ready to bill", running: "Waiting for the trip to end", look: "Needs a look", hold: "On hold" };
-const TONE_TEXT: Record<string, string> = { red: "text-destructive", amber: "text-warning", cyan: "text-primary", green: "text-success" };
+const TONE_TEXT: Record<string, string> = { red: "text-danger", amber: "text-warning", cyan: "text-accent", green: "text-success" };
 
 function Panel({ title, aside, children, className = "" }: { title: string; aside?: React.ReactNode; children: React.ReactNode; className?: string }) {
   return (
@@ -64,7 +64,7 @@ function TripList({ id, title, subtitle, rows }: { id: string; title: string; su
               <div className="mt-2 grid grid-cols-2 gap-2 text-[12px]">
                 {([["Pickup", row.pickup], ["Return", row.ret]] as const).map(([label, leg]) => (
                   <div key={label} className={`rounded-lg border px-2.5 py-1.5 ${leg?.soon ? "border-warning/50 bg-warning/10" : "border-border"} ${leg?.past ? "opacity-70" : ""}`}>
-                    <div className="text-[9.5px] font-bold uppercase tracking-wider text-primary">{label}</div>
+                    <div className="text-[9.5px] font-bold uppercase tracking-wider text-accent">{label}</div>
                     <div className="text-[15px] font-bold tabular-nums">{leg?.time ?? "not read"}</div>
                     <div className="text-muted-foreground">{leg ? `${leg.day} · ${leg.rel}` : ""}</div>
                   </div>
@@ -73,10 +73,10 @@ function TripList({ id, title, subtitle, rows }: { id: string; title: string; su
               <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
                 <div className="flex flex-wrap gap-1">
                   {row.flags.map((flag) => (
-                    <span key={flag.text} className={`rounded-full px-2 py-0.5 text-[10.5px] font-semibold ${flag.tone === "red" ? "bg-destructive/10 text-destructive" : "bg-warning/10 text-warning"}`}>{flag.text}</span>
+                    <span key={flag.text} className={`rounded-full px-2 py-0.5 text-[10.5px] font-semibold ${flag.tone === "red" ? "bg-danger/10 text-danger" : "bg-warning/10 text-warning"}`}>{flag.text}</span>
                   ))}
                 </div>
-                {row.tripUrl ? <a href={row.tripUrl} target="_blank" rel="noopener noreferrer" className="text-[12px] font-medium text-primary hover:underline">Open Trip</a> : null}
+                {row.tripUrl ? <a href={row.tripUrl} target="_blank" rel="noopener noreferrer" className="text-[12px] font-medium text-accent hover:underline">Open Trip</a> : null}
               </div>
             </li>
           ))}
@@ -95,7 +95,7 @@ function SetupPrompt() {
       <h1 className="text-lg font-semibold tracking-tight">The Command Center Is Waiting for Your PC</h1>
       <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">
         The HostOS extension reads Turo in your browser and sends a copy here. Copy this workspace&rsquo;s pairing key from{" "}
-        <Link href={routes.connectors} className="font-medium text-primary underline-offset-2 hover:underline">Connectors</Link>, then in the extension open
+        <Link href={routes.connectors} className="font-medium text-accent underline-offset-2 hover:underline">Connectors</Link>, then in the extension open
         Settings, paste it under <b>hostoscollective.com</b> and press <b>Save and Send Now</b>.
       </p>
     </div>
@@ -110,7 +110,7 @@ function Schedule({ slots }: { slots: ScheduleSlot[] }) {
       {slots.map((slot, index) => {
         const label = slot.done ? (slot.type === "Pickup" ? "Picked Up" : "Returned") : slot.type;
         return (
-          <li key={index} className={`flex flex-wrap items-center gap-x-3 gap-y-0.5 rounded-lg px-2 py-1.5 ${slot === next ? "bg-primary/10" : ""} ${slot.done ? "opacity-60" : ""}`}>
+          <li key={index} className={`flex flex-wrap items-center gap-x-3 gap-y-0.5 rounded-lg px-2 py-1.5 ${slot === next ? "bg-accent/10" : ""} ${slot.done ? "opacity-60" : ""}`}>
             <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${slot.done ? "bg-muted-foreground" : slot.type === "Return" ? "bg-success" : "bg-violet-500"}`} />
             <span className="w-[68px] shrink-0 text-[13px] font-semibold tabular-nums">{slot.time}</span>
             <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-[11px] font-semibold">{label}</span>
@@ -168,7 +168,7 @@ function Earnings({ weeks }: { weeks: CommandSnapshot["weeks"] }) {
       {weeks.map((week) => (
         <div key={week.from} className="flex min-w-0 flex-1 flex-col items-center justify-end gap-1">
           <span className="hidden text-[10.5px] tabular-nums text-muted-foreground sm:block">{week.cents ? money(week.cents / 100) : ""}</span>
-          <div className={`w-full rounded-md ${week.future ? "bg-primary" : "bg-muted-foreground/40"}`} style={{ height: `${Math.max(3, (week.cents / max) * 96)}px`, opacity: week.trips ? 1 : 0.3 }} />
+          <div className={`w-full rounded-md ${week.future ? "bg-accent" : "bg-muted-foreground/40"}`} style={{ height: `${Math.max(3, (week.cents / max) * 96)}px`, opacity: week.trips ? 1 : 0.3 }} />
           <span className="truncate text-[9.5px] text-muted-foreground sm:text-[10.5px]">{new Date(week.from).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" })}</span>
         </div>
       ))}
@@ -186,7 +186,7 @@ export function CommandView({ stored, now }: { stored: StoredSnapshot | null; no
       <header className="flex flex-col items-start gap-2 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between sm:gap-3">
         <div>
           <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
-            {parts[1] ? <>{parts[0]}, <span className="text-primary">{parts[1]}</span></> : snap.greeting}
+            {parts[1] ? <>{parts[0]}, <span className="text-accent">{parts[1]}</span></> : snap.greeting}
           </h1>
           <p className="text-[13px] text-muted-foreground">
             {snap.attention.length ? `${snap.attention.length} ${snap.attention.length === 1 ? "item needs" : "items need"} your attention.` : "Nothing needs you right now."}
@@ -221,7 +221,7 @@ export function CommandView({ stored, now }: { stored: StoredSnapshot | null; no
                   </div>
                   <div className="flex shrink-0 items-center gap-3 text-[12px] sm:block sm:text-right">
                     <div className="font-medium">{row.guest ?? "Guest"}</div>
-                    {row.tripUrl ? <a href={row.tripUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Open Trip</a> : null}
+                    {row.tripUrl ? <a href={row.tripUrl} target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">Open Trip</a> : null}
                   </div>
                 </li>
               ))}

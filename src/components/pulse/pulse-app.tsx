@@ -63,7 +63,7 @@ function Tile({ label, value, note, tone }: { label: string; value: string; note
 function Leg({ label, leg }: { label: string; leg: TripRow["pickup"] }) {
   return (
     <div className={`rounded-lg border px-2.5 py-1.5 ${leg?.soon ? "border-warning/50 bg-warning/10" : "border-border"} ${leg?.past ? "opacity-70" : ""}`}>
-      <div className="text-[9.5px] font-bold uppercase tracking-wider text-primary">{label}</div>
+      <div className="text-[9.5px] font-bold uppercase tracking-wider text-accent">{label}</div>
       <div className="text-[15px] font-bold tabular-nums">{leg ? leg.time : "not read"}</div>
       <div className="text-[11.5px] text-muted-foreground">{leg ? `${leg.day} · ${leg.rel}` : ""}</div>
     </div>
@@ -93,7 +93,7 @@ function TripCards({ rows, empty }: { rows: TripRow[]; empty: string }) {
           {row.flags.length ? (
             <div className="mt-2 flex flex-wrap gap-1">
               {row.flags.map((flag) => (
-                <span key={flag.text} className={`rounded-full px-2 py-0.5 text-[10.5px] font-semibold ${flag.tone === "red" ? "pulse-urgent-chip bg-destructive/10 text-destructive" : "bg-warning/10 text-warning"}`}>{flag.text}</span>
+                <span key={flag.text} className={`rounded-full px-2 py-0.5 text-[10.5px] font-semibold ${flag.tone === "red" ? "pulse-urgent-chip bg-danger/10 text-danger" : "bg-warning/10 text-warning"}`}>{flag.text}</span>
               ))}
             </div>
           ) : null}
@@ -109,7 +109,7 @@ function Schedule({ slots }: { slots: ScheduleSlot[] }) {
   return (
     <ul className="space-y-1">
       {slots.map((slot, index) => (
-        <li key={index} className={`flex flex-wrap items-center gap-x-3 gap-y-0.5 rounded-lg px-2 py-1.5 ${slot === next ? "pulse-next bg-primary/10" : ""} ${slot.done ? "opacity-60" : ""}`}>
+        <li key={index} className={`flex flex-wrap items-center gap-x-3 gap-y-0.5 rounded-lg px-2 py-1.5 ${slot === next ? "pulse-next bg-accent/10" : ""} ${slot.done ? "opacity-60" : ""}`}>
           <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${slot.done ? "bg-muted-foreground" : slot.type === "Return" ? "bg-success" : "bg-violet-500"}`} />
           <span className="w-[66px] shrink-0 text-[13px] font-semibold tabular-nums">{slot.time}</span>
           <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-[11px] font-semibold">{slot.done ? (slot.type === "Pickup" ? "Picked Up" : "Returned") : slot.type}</span>
@@ -149,7 +149,7 @@ function TopCarCard({ snap }: { snap: CommandSnapshot }) {
 function FleetGrid({ cars }: { cars: FleetCard[] }) {
   const LABEL: Record<FleetCard["state"], string> = { ontrip: "On a Trip", soon: "Pickup Soon", attention: "Needs Attention", available: "Available", unlisted: "Unlisted" };
   const TONE: Record<FleetCard["state"], string> = {
-    ontrip: "bg-primary/10 text-primary", soon: "bg-violet-500/10 text-violet-600 dark:text-violet-400", attention: "bg-warning/10 text-warning",
+    ontrip: "bg-accent/10 text-accent", soon: "bg-violet-500/10 text-violet-600 dark:text-violet-400", attention: "bg-warning/10 text-warning",
     available: "bg-success/10 text-success", unlisted: "bg-muted text-muted-foreground",
   };
   return (
@@ -191,17 +191,17 @@ function Messages({ rows }: { rows: UnreadRow[] }) {
   return (
     <ul className="grid gap-2.5 md:grid-cols-2">
       {rows.map((row, index) => (
-        <li key={`${row.tripId}-${index}`} className={`rounded-2xl border bg-card p-3.5 shadow-[var(--shadow-card)] ${row.urgency === "high" ? "pulse-urgent border-destructive/50" : row.urgency === "medium" ? "border-warning/50" : "border-border"}`}>
+        <li key={`${row.tripId}-${index}`} className={`rounded-2xl border bg-card p-3.5 shadow-[var(--shadow-card)] ${row.urgency === "high" ? "pulse-urgent border-danger/50" : row.urgency === "medium" ? "border-warning/50" : "border-border"}`}>
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               <div className="truncate text-[14px] font-semibold">{row.guest ?? "Guest"}</div>
               <div className="truncate text-[12px] text-muted-foreground">{[row.vehicle, row.tripId ? `Trip #${row.tripId}` : null].filter(Boolean).join(" · ")}</div>
             </div>
-            <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10.5px] font-bold ${row.urgency === "high" ? "bg-destructive/10 text-destructive" : row.urgency === "medium" ? "bg-warning/10 text-warning" : "bg-primary/10 text-primary"}`}>
+            <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10.5px] font-bold ${row.urgency === "high" ? "bg-danger/10 text-danger" : row.urgency === "medium" ? "bg-warning/10 text-warning" : "bg-accent/10 text-accent"}`}>
               {row.wait || (row.urgency === "new" ? "New" : "Waiting")}
             </span>
           </div>
-          <blockquote className="mt-2 rounded-lg border-l-[3px] border-primary bg-muted/50 px-3 py-2 text-[13px] leading-snug">{row.text || "Guest message waiting."}</blockquote>
+          <blockquote className="mt-2 rounded-lg border-l-[3px] border-accent bg-muted/50 px-3 py-2 text-[13px] leading-snug">{row.text || "Guest message waiting."}</blockquote>
           {row.sent ? <div className="mt-1.5 text-[11px] text-muted-foreground">Sent {row.sent}</div> : null}
         </li>
       ))}
@@ -215,7 +215,7 @@ function EarningsBars({ weeks }: { weeks: CommandSnapshot["weeks"] }) {
     <div className="flex h-32 items-end gap-1 sm:gap-2">
       {weeks.map((week) => (
         <div key={week.from} className="flex min-w-0 flex-1 flex-col items-center justify-end gap-1">
-          <div className={`pulse-bar w-full rounded-md ${week.future ? "bg-primary" : "bg-muted-foreground/40"}`} style={{ height: `${Math.max(3, (week.cents / max) * 88)}px`, opacity: week.trips ? 1 : 0.3 }} />
+          <div className={`pulse-bar w-full rounded-md ${week.future ? "bg-accent" : "bg-muted-foreground/40"}`} style={{ height: `${Math.max(3, (week.cents / max) * 88)}px`, opacity: week.trips ? 1 : 0.3 }} />
           <span className="truncate text-[9.5px] text-muted-foreground">{new Date(week.from).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" })}</span>
         </div>
       ))}
@@ -357,7 +357,7 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
       {/* the desktop tab bar; on a phone the same tabs sit at the bottom */}
       <nav className="mb-4 hidden gap-1 rounded-xl border border-border bg-card p-1 md:flex" aria-label="Sections">
         {TABS.map((item) => (
-          <button key={item.id} type="button" onClick={() => setTab(item.id)} className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2 text-[13px] font-medium transition ${tab === item.id ? "bg-primary text-primary-foreground shadow" : "text-muted-foreground hover:bg-muted"}`}>
+          <button key={item.id} type="button" onClick={() => setTab(item.id)} className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2 text-[13px] font-medium transition ${tab === item.id ? "bg-accent text-accent-foreground shadow" : "text-muted-foreground hover:bg-muted"}`}>
             {item.label}
             {item.id === "messages" ? <Badge n={unread} urgent={snap ? snap.unread.some((row) => row.urgency === "high") : false} /> : null}
           </button>
@@ -382,13 +382,13 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
                 <div className="col-span-2 lg:col-span-1"><Tile tone="green" label="Est. Earnings" value={money(snap.kpis.earningsNext30)} note="trips ending in 30 days" /></div>
               </div>
               <div className="grid gap-3.5 lg:grid-cols-5">
-                <Card title={`Needs Attention · ${snap.attention.length}`} aside={urgentCount ? <span className="pulse-urgent-chip rounded-full bg-destructive/10 px-2 py-0.5 text-[11px] font-bold text-destructive">{urgentCount} urgent</span> : undefined} className="lg:col-span-3">
+                <Card title={`Needs Attention · ${snap.attention.length}`} aside={urgentCount ? <span className="pulse-urgent-chip rounded-full bg-danger/10 px-2 py-0.5 text-[11px] font-bold text-danger">{urgentCount} urgent</span> : undefined} className="lg:col-span-3">
                   {snap.attention.length ? (
                     <ul className="max-h-[420px] divide-y divide-border overflow-y-auto overscroll-contain pr-1.5 [scrollbar-width:thin] sm:max-h-[470px]">
                       {snap.attention.slice(0, 100).map((row, index) => (
                         <li key={index} className={`flex flex-col gap-0.5 py-2 sm:flex-row sm:justify-between ${row.tone === "red" ? "pulse-row-red" : ""}`}>
                           <div className="min-w-0">
-                            <div className={`text-[13px] font-semibold ${row.tone === "red" ? "text-destructive" : row.tone === "amber" ? "text-warning" : "text-primary"}`}>{row.label}</div>
+                            <div className={`text-[13px] font-semibold ${row.tone === "red" ? "text-danger" : row.tone === "amber" ? "text-warning" : "text-accent"}`}>{row.label}</div>
                             <div className="text-[12px] text-muted-foreground sm:truncate">{[row.vehicle, row.tripId ? `Trip #${row.tripId}` : null].filter(Boolean).join(" · ")}</div>
                             {row.detail ? <div className="text-[11.5px] text-muted-foreground">{row.detail}</div> : null}
                           </div>
@@ -425,7 +425,7 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
             <>
               <div className="flex gap-1 rounded-xl border border-border bg-card p-1">
                 {([["active", "Active", snap.tripLists.active.length], ["pickups", "Pickups", snap.tripLists.pickups.filter((row) => row.pickupAt !== null && row.pickupAt <= now + hours24).length], ["returns", "Returns", snap.tripLists.returns.filter((row) => row.returnAt !== null && row.returnAt <= now + hours24).length]] as const).map(([id, label, count]) => (
-                  <button key={id} type="button" onClick={() => setRange(id)} className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-medium ${range === id ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}>{label}<span className="text-[11px] opacity-80">{count}</span></button>
+                  <button key={id} type="button" onClick={() => setRange(id)} className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-[13px] font-medium ${range === id ? "bg-accent text-accent-foreground" : "text-muted-foreground"}`}>{label}<span className="text-[11px] opacity-80">{count}</span></button>
                 ))}
               </div>
               <p className="text-[12px] text-muted-foreground">{range === "active" ? "On the road right now, soonest return first." : range === "pickups" ? "Starting in the next 24 hours." : "Ending in the next 24 hours."}</p>
@@ -465,7 +465,7 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
       <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-card/95 backdrop-blur md:hidden" style={{ paddingBottom: "max(env(safe-area-inset-bottom), 6px)" }} aria-label="Sections">
         <div className="mx-auto grid max-w-md grid-cols-5">
           {TABS.map((item) => (
-            <button key={item.id} type="button" onClick={() => { setTab(item.id); window.scrollTo({ top: 0, behavior: "smooth" }); }} className={`relative flex flex-col items-center gap-0.5 py-2 text-[10.5px] font-medium ${tab === item.id ? "text-primary" : "text-muted-foreground"}`}>
+            <button key={item.id} type="button" onClick={() => { setTab(item.id); window.scrollTo({ top: 0, behavior: "smooth" }); }} className={`relative flex flex-col items-center gap-0.5 py-2 text-[10.5px] font-medium ${tab === item.id ? "text-accent" : "text-muted-foreground"}`}>
               <span className="text-[18px] leading-none" aria-hidden>{item.icon}</span>
               {item.label}
               {item.id === "messages" && unread ? <span className={`pulse-badge absolute right-[22%] top-1 ${snap && snap.unread.some((row) => row.urgency === "high") ? "urgent" : ""}`}>{unread}</span> : null}

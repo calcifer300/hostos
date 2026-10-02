@@ -55,10 +55,10 @@ export function PinGate() {
       <p className="mb-6 text-[13px] text-muted-foreground">{PULSE_TAGLINE}</p>
       <div className={`mb-3 flex gap-3 ${shake ? "pin-shake" : ""}`} aria-label="Key" role="status">
         {[0, 1, 2, 3].map((i) => (
-          <span key={i} className={`h-3.5 w-3.5 rounded-full border-2 ${i < digits.length ? "border-primary bg-primary" : "border-muted-foreground/50"}`} />
+          <span key={i} className={`h-3.5 w-3.5 rounded-full border-2 ${i < digits.length ? "border-accent bg-accent" : "border-muted-foreground/50"}`} />
         ))}
       </div>
-      <p className="mb-5 min-h-5 text-[13px] text-destructive" aria-live="polite">{message ?? ""}</p>
+      <p className="mb-5 min-h-5 text-[13px] text-danger" aria-live="polite">{message ?? ""}</p>
       <div className="grid w-full grid-cols-3 gap-3">
         {["1", "2", "3", "4", "5", "6", "7", "8", "9"].map((digit) => (
           <button key={digit} type="button" onClick={() => press(digit)} disabled={busy} className="h-16 rounded-2xl border border-border bg-card text-2xl font-medium shadow-[var(--shadow-card)] active:scale-95 disabled:opacity-60">{digit}</button>

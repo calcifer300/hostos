@@ -73,7 +73,7 @@ function Note({ children }: { children?: React.ReactNode }) {
   return <p className="mt-1.5 text-[10.5px] leading-snug text-muted-foreground/80">{children}</p>;
 }
 
-interface Weather { day: boolean; temp: number; feels: number; code: number; wind: number; high: number; low: number }
+interface Weather { hour: number; day: boolean; temp: number; feels: number; code: number; wind: number; high: number; low: number }
 const WEATHER_TEXT: [number[], string, string][] = [
   [[0], "Clear", "☀️"], [[1, 2], "Partly Cloudy", "⛅"], [[3], "Overcast", "☁️"], [[45, 48], "Fog", "🌫️"],
   [[51, 53, 55, 56, 57], "Drizzle", "🌦️"], [[61, 63, 65, 66, 67, 80, 81, 82], "Rain", "🌧️"],
@@ -94,7 +94,7 @@ function useWeather(): Weather | null {
         const json = await response.json();
         const cur = json.current;
         if (stopped || !cur || typeof cur.temperature_2m !== "number") return;
-        setWeather({ day: cur.is_day !== 0, temp: cur.temperature_2m, feels: cur.apparent_temperature, code: cur.weather_code, wind: cur.wind_speed_10m, high: json.daily?.temperature_2m_max?.[0], low: json.daily?.temperature_2m_min?.[0] });
+        setWeather({ hour: Number(new Intl.DateTimeFormat("en-US", { timeZone: "America/Denver", hour: "numeric", hour12: false }).format(new Date())) % 24, day: cur.is_day !== 0, temp: cur.temperature_2m, feels: cur.apparent_temperature, code: cur.weather_code, wind: cur.wind_speed_10m, high: json.daily?.temperature_2m_max?.[0], low: json.daily?.temperature_2m_min?.[0] });
       } catch { /* the chip just stays hidden */ }
     }
     void load();
@@ -109,7 +109,11 @@ function WeatherChip({ weather, className = "" }: { weather: Weather | null; cla
   if (!weather) return null;
   const [text, dayIcon] = weatherLabel(weather.code);
   // after dark the sun and the partly-sunny icon would contradict the evening greeting: clear nights get a moon, a mixed sky a cloud
-  const icon = weather.day ? dayIcon : weather.code === 0 || weather.code === 1 ? "🌙" : weather.code === 2 ? "☁️" : dayIcon;
+  const fair = weather.code <= 2;
+  // the page says "Good evening" from 6 PM, while the sun is often still up: a sunset, not a noon sun. Same in the dark hour before morning.
+  const icon = weather.day
+    ? (weather.hour >= 18 && fair ? "🌇" : dayIcon)
+    : weather.hour >= 5 && weather.hour < 9 && fair ? "🌅" : weather.code === 0 || weather.code === 1 ? "🌙" : weather.code === 2 ? "☁️" : dayIcon;
   return (
     <div className={`flex items-center gap-2.5 ${className}`} aria-label="Denver weather">
       <span className="text-[24px] leading-none" aria-hidden>{icon}</span>

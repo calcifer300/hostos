@@ -20,7 +20,7 @@ export function DashboardCard({
   return (
     <div
       className={cn(
-        "rounded-2xl border border-border bg-card shadow-[var(--shadow-card)]",
+        "spot rounded-2xl border border-border bg-card shadow-[var(--shadow-card)] transition-[border-color,box-shadow] duration-300 hover:border-accent/25 hover:shadow-[var(--shadow-card-hover)]",
         className
       )}
     >

@@ -9,9 +9,23 @@ const eslintConfig = defineConfig([
   globalIgnores([
     // Default ignores of eslint-config-next:
     ".next/**",
+    "site/**",
     "out/**",
     "build/**",
     "next-env.d.ts",
+
+    // The Companion extension is MV3 browser source, not part of the Next
+    // app. Its files share one global scope through importScripts() and
+    // <script> tags, so every cross-file function reads as unused here —
+    // 49 warnings, none of them real. It has no TypeScript, no JSX and no
+    // React, so the Next config has nothing useful to say about it either.
+    "extension/**",
+
+    // Vendored originals (Karl's tools, the retired CC extension, the legacy
+    // clone) are reference material with their own conventions, never part of
+    // the build. Linting them produced 19,000 findings about code that will
+    // never ship from here.
+    "vendor/**",
   ]),
 ]);
 

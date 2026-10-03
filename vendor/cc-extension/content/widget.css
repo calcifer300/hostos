@@ -1,0 +1,140 @@
+#hostos-widget, #hostos-widget * { box-sizing: border-box; }
+#hostos-widget { position: fixed; right: 24px; bottom: 24px; z-index: 2147483647; font: 12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #f5f5f7; text-align: left; }
+#hostos-widget .hostos-widget-pill { display: block; border: 1px solid #2b3e5a; border-radius: 16px; background: #181c24; color: #f5f5f7; padding: 13px 15px; box-shadow: 0 12px 32px rgba(0,0,0,.5); cursor: pointer; font: inherit; }
+#hostos-widget .hostos-widget-pill b { display: block; font-size: 14px; }
+#hostos-widget .hostos-widget-pill span { color: #8e8e93; }
+#hostos-widget.hostos-widget-expanded .hostos-widget-pill { display: none; }
+
+#hostos-widget .hostos-widget-panel { width: 320px; max-height: 88vh; overflow: auto; padding: 18px; border: 1px solid #2b3e5a; border-radius: 16px; background: #0e1116; box-shadow: 0 14px 36px rgba(0,0,0,.6); }
+/* Mirrors popup.css — see the note there. */
+#hostos-widget .hostos-widget-header { position: sticky; top: -18px; z-index: 6; display: flex; align-items: flex-start; justify-content: space-between; margin: -18px -18px 16px; padding: 18px 18px 12px; gap: 8px; background: #0e1116; }
+#hostos-widget .hostos-widget-eyebrow { margin: 0 0 4px; color: #8e8e93; font-size: 9px; font-weight: 700; letter-spacing: .09em; }
+/* Mirrors popup.css — see the note there. */
+#hostos-widget .hostos-widget-brand { display: flex; align-items: flex-start; gap: 9px; min-width: 0; }
+#hostos-widget .hostos-widget-mark { flex: none; margin-top: 1px; }
+#hostos-widget .hostos-widget-header h2 { margin: 0; font-size: 20px; letter-spacing: -.04em; }
+#hostos-widget .hostos-widget-status { display: flex; align-items: center; gap: 5px; padding: 4px 8px; border: 1px solid transparent; border-radius: 999px; background: transparent; color: #c7c7cc; font: inherit; font-size: 10px; white-space: nowrap; cursor: pointer; transition: background .16s ease, border-color .16s ease; }
+#hostos-widget .hostos-widget-status:hover { border-color: #2b3e5a; background: #181c24; }
+#hostos-widget .hostos-widget-status i { width: 6px; height: 6px; border-radius: 50%; background: #30d158; box-shadow: 0 0 8px #30d158; }
+#hostos-widget .hostos-widget-status.paused { color: #ff9f0a; border-color: rgba(255,159,10,.35); background: rgba(255,159,10,.08); }
+#hostos-widget .hostos-widget-status.paused i { background: #ff9f0a; box-shadow: none; }
+#hostos-widget .hostos-widget-collapse { border: 0; border-radius: 7px; background: #252b36; color: #f5f5f7; width: 22px; height: 22px; font: 15px inherit; line-height: 1; cursor: pointer; }
+
+#hostos-widget .hostos-widget-hero { padding: 14px; border: 1px solid rgba(90,169,255,.23); border-radius: 14px; background: linear-gradient(135deg, #182435, #181c24); }
+#hostos-widget .hostos-widget-hero strong { display: block; color: #5aa9ff; font-size: 28px; line-height: 1; letter-spacing: -.06em; }
+#hostos-widget .hostos-widget-hero span { color: #c7c7cc; font-size: 11px; }
+
+#hostos-widget .hostos-widget-cards { display: grid; gap: 7px; margin-top: 10px; }
+#hostos-widget .hostos-widget-card { display: flex; align-items: center; width: 100%; gap: 10px; padding: 10px; border: 1px solid transparent; border-radius: 12px; background: #181c24; color: inherit; text-align: left; cursor: pointer; font: inherit; }
+#hostos-widget .hostos-widget-card:hover { background: #202630; }
+#hostos-widget .hostos-widget-icon { display: grid; width: 24px; height: 24px; place-items: center; border-radius: 8px; background: #252b36; color: #5aa9ff; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+#hostos-widget .hostos-widget-danger .hostos-widget-icon { color: #ff453a; background: rgba(255,69,58,.1); }
+#hostos-widget .hostos-widget-earnings .hostos-widget-icon { color: #bf5af2; background: rgba(191,90,242,.1); }
+#hostos-widget .hostos-widget-card b, #hostos-widget .hostos-widget-card small { display: block; }
+#hostos-widget .hostos-widget-card b { font-size: 12px; }
+#hostos-widget .hostos-widget-card small { margin-top: 1px; color: #8e8e93; font-size: 10px; }
+
+#hostos-widget .hostos-widget-footer { margin: 12px 2px 0; color: #8e8e93; font-size: 10px; text-align: center; }
+
+#hostos-widget .hostos-widget-scan-now { width: 100%; margin-top: 10px; padding: 10px; border: 0; border-radius: 10px; background: #5aa9ff; color: #07111e; font: 600 12px inherit; cursor: pointer; }
+#hostos-widget .hostos-widget-scan-now:hover { background: #7bb9ff; }
+#hostos-widget .hostos-widget-scan-now:disabled { background: #252b36; color: #8e8e93; cursor: default; }
+#hostos-widget .hostos-widget-scan-status { margin: 6px 2px 0; min-height: 12px; color: #8e8e93; font-size: 10px; text-align: center; }
+#hostos-widget .hostos-widget-scan-status.hostos-widget-scan-error { color: #ff9f0a; }
+#hostos-widget .hostos-widget-scan-status.hostos-widget-scan-ok { color: #30d158; }
+#hostos-widget .hostos-widget-scan-status a { color: #5aa9ff; }
+
+#hostos-widget .hostos-results { display: none; position: relative; margin-top: 10px; padding: 10px; border: 1px solid #2b3e5a; border-radius: 14px; background: #10141b; }
+#hostos-widget .hostos-results.visible { display: grid; gap: 8px; align-content: start; }
+/* Sticks to the top of the scrolling widget panel, so the × stays reachable
+   however far down the queue is scrolled. */
+#hostos-widget .hostos-queue-header { position: sticky; top: -18px; z-index: 3; display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: -10px -10px 0; padding: 10px; border-radius: 14px 14px 0 0; background: #10141b; }
+#hostos-widget .hostos-result-title { margin: 0; color: #8e8e93; font-size: 9px; font-weight: 700; letter-spacing: .08em; }
+#hostos-widget .hostos-close-queue { flex-shrink: 0; border: 0; border-radius: 7px; background: #252b36; color: #f5f5f7; width: 20px; height: 20px; font: 14px inherit; line-height: 1; cursor: pointer; }
+#hostos-widget .hostos-result { padding: 11px; border: 1px solid rgba(255,159,10,.28); border-radius: 12px; background: #181c24; cursor: pointer; }
+#hostos-widget .hostos-result:hover { background: #202630; }
+#hostos-widget .hostos-result-head b { display: block; font-size: 12px; }
+#hostos-widget .hostos-result p { margin: 4px 0 8px; color: #c7c7cc; font-size: 10px; line-height: 1.4; }
+#hostos-widget .hostos-result-actions { display: flex; gap: 6px; }
+#hostos-widget .hostos-result-actions button { border: 0; border-radius: 8px; background: #5aa9ff; color: #07111e; padding: 6px 8px; font: 600 10px inherit; cursor: pointer; }
+#hostos-widget .hostos-result-actions .hostos-secondary { background: #252b36; color: #f5f5f7; }
+#hostos-widget .hostos-empty-result { padding: 11px; border-radius: 12px; background: #181c24; color: #8e8e93; font-size: 10px; }
+#hostos-widget .hostos-held-note { margin-top: 6px; padding: 11px; border-radius: 12px; background: #181c24; border: 1px solid rgba(255,159,10,.28); color: #d8c08a; font-size: 10px; line-height: 1.4; }
+#hostos-widget .hostos-widget-today .hostos-widget-icon { color: #30d158; background: rgba(48,209,88,.1); }
+#hostos-widget .hostos-widget-reviews .hostos-widget-icon { color: #ffd60a; background: rgba(255,214,10,.1); }
+#hostos-widget .hostos-vehicle-earnings { display: grid; gap: 8px; margin-top: 2px; padding-top: 10px; border-top: 1px solid #2b3e5a; }
+#hostos-widget .hostos-vehicle-result { border-color: #2b3e5a; cursor: default; }
+/* Inherits font-size deliberately — weight and colour carry the emphasis. */
+/* display:inline is load-bearing — see popup.css. */
+#hostos-widget .hostos-result b.hostos-money,
+#hostos-widget .hostos-money { display: inline; font-size: inherit; font-weight: 700; }
+#hostos-widget .hostos-money-green { color: #30d158; }
+#hostos-widget .hostos-money-red { color: #ff453a; }
+
+/* Card layout — mirrors popup.css; see the note there. */
+#hostos-widget .hostos-result-head { display: flex; align-items: baseline; justify-content: space-between; gap: 7px; }
+#hostos-widget .hostos-result-head b { font-size: 12px; }
+#hostos-widget .hostos-badge { flex: none; padding: 2px 6px; border-radius: 6px; background: #252b36; color: #8e8e93; font-size: 8px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; white-space: nowrap; }
+#hostos-widget .hostos-badge-red { background: rgba(255,69,58,.14); color: #ff453a; }
+#hostos-widget .hostos-badge-amber { background: rgba(255,159,10,.14); color: #ff9f0a; }
+#hostos-widget .hostos-badge-muted { background: #252b36; color: #8e8e93; }
+#hostos-widget .hostos-when { margin: 4px 0 0; color: #8e8e93; font-size: 10px; }
+#hostos-widget .hostos-ident { margin: 3px 0 0; color: #8e8e93; font-size: 10px; }
+#hostos-widget .hostos-note { margin: 7px 0 0; padding: 6px 8px; border-radius: 8px; background: rgba(255,69,58,.09); color: #ff9f0a; font-size: 10px; line-height: 1.4; }
+#hostos-widget .hostos-details { display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; margin: 8px 0 9px; align-items: baseline; }
+#hostos-widget .hostos-key { color: #8e8e93; font-size: 8px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+#hostos-widget .hostos-val { color: #c7c7cc; font-size: 10px; line-height: 1.45; }
+#hostos-widget .hostos-daily-total { display: grid; gap: 2px; margin: 2px 0; padding: 11px; border: 1px solid rgba(48,209,88,.35); border-radius: 12px; background: linear-gradient(135deg,#12251a,#181c24); }
+#hostos-widget .hostos-daily-total b { font-size: 10px; color: #c7c7cc; }
+#hostos-widget .hostos-daily-total strong { color: #30d158; font-size: 22px; line-height: 1.1; letter-spacing: -.04em; }
+#hostos-widget .hostos-daily-total small { color: #8e8e93; font-size: 9px; }
+
+/* Pending Reviews: signals as chips, problems as exception toggles, a rating
+   row. Same palette as the rest of the panel. */
+#hostos-widget .hostos-review { border-color: rgba(255,214,10,.28); cursor: default; }
+#hostos-widget .hostos-review:hover { background: #181c24; }
+#hostos-widget .hostos-chips { display: flex; flex-wrap: wrap; gap: 4px; margin: 6px 0 2px; }
+#hostos-widget .hostos-chip { padding: 3px 7px; border-radius: 7px; background: #252b36; color: #c7c7cc; font-size: 9px; font-weight: 600; }
+#hostos-widget .hostos-chip-warn { background: rgba(255,159,10,.14); color: #ff9f0a; }
+#hostos-widget .hostos-chip-ok { background: rgba(48,209,88,.12); color: #30d158; }
+#hostos-widget .hostos-chip-muted { color: #8e8e93; }
+#hostos-widget .hostos-result .hostos-quote { margin: 3px 0 0; color: #d8c08a; font-size: 10px; line-height: 1.4; }
+#hostos-widget .hostos-note-ok { background: rgba(48,209,88,.09); color: #30d158; }
+#hostos-widget .hostos-toggles { display: flex; flex-wrap: wrap; gap: 4px; margin: 8px 0 0; }
+#hostos-widget .hostos-toggle { border: 1px solid #2b3e5a; border-radius: 7px; background: transparent; color: #8e8e93; padding: 3px 7px; font: 600 9px inherit; cursor: pointer; }
+#hostos-widget .hostos-toggle:hover { color: #f5f5f7; }
+#hostos-widget .hostos-toggle.on { background: rgba(255,69,58,.14); border-color: rgba(255,69,58,.4); color: #ff453a; }
+#hostos-widget .hostos-notes { display: block; width: 100%; box-sizing: border-box; margin: 8px 0 0; padding: 6px 8px; border: 1px solid #2b3e5a; border-radius: 8px; background: #0e1116; color: #f5f5f7; font-family: inherit; font-size: 10px; line-height: 1.4; resize: vertical; }
+#hostos-widget .hostos-notes::placeholder { color: #5c5c61; }
+#hostos-widget .hostos-history { margin: 6px 0 0; color: #8e8e93; font-size: 10px; }
+#hostos-widget .hostos-stars { display: flex; align-items: center; gap: 2px; margin: 8px 0 0; }
+#hostos-widget .hostos-stars .hostos-key { margin-right: 6px; }
+#hostos-widget .hostos-star { border: 0; background: transparent; color: #3a3f4b; font-size: 18px; line-height: 1; padding: 0 1px; cursor: pointer; }
+#hostos-widget .hostos-star:hover, #hostos-widget .hostos-star.on { color: #ffd60a; }
+#hostos-widget .hostos-review .hostos-result-actions { margin-top: 8px; }
+#hostos-widget .hostos-badge-ok { background: rgba(48,209,88,.14); color: #30d158; }
+#hostos-widget .hostos-result .hostos-quote-ok { color: #30d158; }
+#hostos-widget .hostos-widget-premier .hostos-widget-icon { color: #ff453a; background: rgba(255,69,58,.14); }
+#hostos-widget .hostos-widget-premier.hostos-widget-alert { border-color: rgba(255,69,58,.55); background: rgba(255,69,58,.06); }
+#hostos-widget .hostos-widget-premier.hostos-widget-alert small { color: #ff453a; font-weight: 600; }
+#hostos-widget .hostos-outlook { border-color: rgba(48,209,88,.28); cursor: default; }
+#hostos-widget .hostos-outlook:hover { background: #181c24; }
+
+/* Hero sub-line, stat cells, and the review card's disclosure. */
+#hostos-widget .hostos-widget-hero-sub { margin: 8px 0 0; color: #8e8e93; font-size: 10px; line-height: 1.4; }
+#hostos-widget .hostos-widget-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 12px; }
+#hostos-widget .hostos-widget-stats[hidden] { display: none; }
+#hostos-widget .hostos-stat { padding: 7px 8px; border-radius: 10px; background: #181c24; text-align: center; }
+#hostos-widget .hostos-stat b { display: block; color: #f5f5f7; font-size: 12px; }
+#hostos-widget .hostos-stat small { display: block; margin-top: 1px; color: #8e8e93; font-size: 9px; }
+#hostos-widget .hostos-widget-footer[hidden] { display: none; }
+#hostos-widget .hostos-disclosure { margin-top: 8px; }
+#hostos-widget .hostos-disclosure summary { cursor: pointer; color: #8e8e93; font-size: 10px; font-weight: 600; list-style: none; }
+#hostos-widget .hostos-disclosure summary::-webkit-details-marker { display: none; }
+#hostos-widget .hostos-disclosure summary::before { content: "\25B8  "; display: inline-block; width: 12px; transition: transform .15s ease; }
+#hostos-widget .hostos-disclosure[open] summary::before { transform: rotate(90deg); }
+#hostos-widget .hostos-disclosure summary:hover { color: #f5f5f7; }
+
+/* The hostOS wordmark in the header. */
+#hostos-widget .hostos-widget-wordmark { display: block; height: 24px; width: auto; margin-top: 1px; }
+#hostos-widget .hostos-visually-hidden { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); border: 0; }

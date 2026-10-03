@@ -1,0 +1,25 @@
+<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Colorado Cruisers">
+  <!--
+    Pared-back mark of the Colorado Cruisers badge: mountain range behind an
+    SUV. The full artwork is a detailed black-on-white badge, which collapses
+    into an unreadable smudge at the ~20px this renders at and sits as a bright
+    blob on a dark panel.
+
+    Colours are HARD-CODED, not currentColor. An SVG loaded through <img src>
+    is an isolated document and cannot see the host page's CSS, so
+    currentColor there resolves to black — invisible against this UI. If this
+    is ever inlined into the DOM instead, currentColor becomes an option again.
+
+    To use the real artwork: replace this file (keep the name), or swap in a
+    .png and update the two <img> sources in popup/popup.html and
+    content/widget.js.
+  -->
+  <path d="M1.6 12.6 6.9 4.2l3.4 5.6 2.8-4.3 9.3 7.1z" fill="#8e9bb0"/>
+  <path d="M6.9 4.2 8.8 7.2 7.1 9.9 5.4 7.2z" fill="#d6dde8"/>
+  <path d="M3.3 19.4a1.25 1.25 0 0 1-1.25-1.25v-1.32c0-.6.4-1.12.98-1.29l2.4-.7 1.93-1.73c.3-.27.7-.42 1.1-.42h7.08c.41 0 .8.15 1.11.42l1.93 1.73 2.4.7c.58.17.98.69.98 1.29v1.32a1.25 1.25 0 0 1-1.25 1.25z" fill="#f5f5f7"/>
+  <path d="M8.6 14.1h6.8l1.5 1.35H7.1z" fill="#2b3e5a"/>
+  <circle cx="7.5" cy="19.3" r="2.05" fill="#f5f5f7"/>
+  <circle cx="16.5" cy="19.3" r="2.05" fill="#f5f5f7"/>
+  <circle cx="7.5" cy="19.3" r=".8" fill="#2b3e5a"/>
+  <circle cx="16.5" cy="19.3" r=".8" fill="#2b3e5a"/>
+</svg>

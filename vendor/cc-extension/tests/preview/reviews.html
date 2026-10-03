@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>HostOS preview - Pending Reviews</title>
+    <link rel="stylesheet" href="../../popup/popup.css">
+    <style>body { margin: 0; } .popup { min-height: 0; }</style>
+  </head>
+  <body>
+    <main class="popup">
+      <section class="cards" aria-label="Trip summary">
+        <button class="card danger" data-filter="license"><span class="icon">!</span><span><b>Unverified Licenses</b><small>2 trips</small></span><em>›</em></button>
+        <button class="card earnings" data-filter="earnings"><span class="icon">$</span><span><b>Profit Risk</b><small>1 trip</small></span><em>›</em></button>
+        <button class="card reviews" data-filter="reviews"><span class="icon">★</span><span><b>Pending Reviews</b><small id="reviewsCount">2 guests waiting</small></span><em>›</em></button>
+      </section>
+      <section class="hostos-results visible" id="results"></section>
+    </main>
+    <script src="../../utils/constants.js"></script>
+    <script src="../../utils/dates.js"></script>
+    <script src="../../utils/parser.js"></script>
+    <script src="../../utils/reviews.js"></script>
+    <script src="../../modules/queueView.js"></script>
+    <script>
+      // Sample data shaped like the live payloads read on 2026-09-10. Static:
+      // there is no chrome.storage here, so taps do nothing.
+      const daysAgo = (n) => new Date(Date.now() - n * 864e5).toISOString();
+      const base = { completed: true, postTripCheckedAt: daysAgo(0), plate: "DJIF67" };
+      const trips = [
+        { ...base, reservationId: "60571517", guestName: "Randeep", vehicle: "Tesla Model Y 2023", plate: "DXZQO1",
+          pickupDate: daysAgo(12), returnDate: daysAgo(2), completedAt: daysAgo(2), driverId: "55735131",
+          milesDriven: 2294, milesExcess: 794, milesLimit: 1500, guestRating: null, guestRatingCount: 0,
+          reimbursementOpen: true, reimbursementNote: "Please resolve the incidental invoice by September 11 at 5:15 PM.",
+          guestSaysRated: { at: daysAgo(0.1), quote: "Left you a 5 star review, thanks for everything!" },
+          guestReviewFlags: [{ label: "Damage", quote: "Returned it with a cracked windshield and argued about it.", date: "2026-03-02", rating: 2 }],
+          tripUrl: "https://turo.com/us/en/reservation/60571517" },
+        { ...base, reservationId: "60556099", guestName: "Doug", vehicle: "Volkswagen Tiguan 2024",
+          pickupDate: daysAgo(11), returnDate: daysAgo(0.4), completedAt: daysAgo(0.4), driverId: "29421452",
+          milesDriven: 781, milesExcess: 0, milesLimit: 1650, guestRating: 5, guestRatingCount: 4,
+          tripUrl: "https://turo.com/us/en/reservation/60556099" },
+        { ...base, reservationId: "60999294", guestName: "Kaushal", vehicle: "Tesla Model 3 2021", plate: "DGUI92",
+          pickupDate: daysAgo(5), returnDate: daysAgo(1), completedAt: daysAgo(1), driverId: "24374530",
+          milesDriven: 721, milesExcess: 0, hostReviewedAt: daysAgo(0.5), hostReviewRating: 5,
+          tripUrl: "https://turo.com/us/en/reservation/60999294" }
+      ];
+      const records = { "60571517": { problems: ["damage", "communication"], notes: "Windshield crack dispute - see thread. Not again." } };
+      HostOS.queueView.renderQueue(document.getElementById("results"), trips, "reviews", null, { reviewRecords: records });
+    </script>
+  </body>
+</html>

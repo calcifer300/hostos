@@ -144,16 +144,16 @@ function Badge({ n, urgent }: { n: number; urgent?: boolean }) {
   return <span className={`pulse-badge ${urgent ? "urgent" : ""}`}>{n}</span>;
 }
 
-function Card({ title, aside, children, className = "" }: { title?: string; aside?: React.ReactNode; children: React.ReactNode; className?: string }) {
+function Card({ title, aside, children, className = "", fill = false }: { title?: string; aside?: React.ReactNode; children: React.ReactNode; className?: string; fill?: boolean }) {
   return (
-    <section className={`min-w-0 rounded-[20px] border border-border bg-card p-4 shadow-[var(--shadow-card)] ${className}`}>
+    <section className={`min-w-0 rounded-[20px] border border-border bg-card p-3.5 shadow-[var(--shadow-card)] ${fill ? "flex min-h-0 flex-col" : ""} ${className}`}>
       {title ? (
-        <div className="mb-2.5 flex flex-wrap items-baseline justify-between gap-x-3">
+        <div className="mb-2 flex shrink-0 flex-wrap items-baseline justify-between gap-x-3">
           <h2 className="text-[15px] font-semibold tracking-tight">{title}</h2>
           {aside ? <span className="text-[12px] text-muted-foreground">{aside}</span> : null}
         </div>
       ) : null}
-      {children}
+      {fill ? <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pr-1.5 [scrollbar-width:thin]">{children}</div> : children}
     </section>
   );
 }
@@ -162,12 +162,12 @@ function Tile({ label, value, note, tone, hint, onOpen }: { label: string; value
   const body = (
     <>
       <div className="flex items-center justify-between text-[11.5px] text-muted-foreground"><span>{label}</span>{onOpen ? <span aria-hidden className="text-[13px]">›</span> : null}</div>
-      <div key={value} className="pulse-num mt-0.5 truncate text-[24px] font-semibold leading-tight tracking-tight tabular-nums">{value}</div>
+      <div key={value} className="pulse-num truncate text-[21px] font-semibold leading-tight tracking-tight tabular-nums">{value}</div>
       <div className="truncate text-[11px] text-muted-foreground">{note}</div>
-      {hint ? <div className="mt-auto line-clamp-2 text-[10px] leading-snug text-muted-foreground/80">{hint}</div> : null}
+      {hint ? <div className="mt-auto line-clamp-1 text-[9.5px] leading-snug text-muted-foreground/80">{hint}</div> : null}
     </>
   );
-  const cls = `pulse-tile ${tone} min-w-0 flex h-[132px] flex-col rounded-[18px] border border-border bg-card px-4 py-3.5 text-left shadow-[var(--shadow-card)]`;
+  const cls = `pulse-tile ${tone} min-w-0 flex h-[96px] flex-col rounded-[16px] border border-border bg-card px-3.5 py-2.5 text-left shadow-[var(--shadow-card)]`;
   return onOpen ? (
     <button type="button" onClick={onOpen} aria-label={`${label}: ${value}. Open the details`} className={`${cls} w-full cursor-pointer transition hover:border-accent/60 active:scale-[.98]`}>{body}</button>
   ) : (
@@ -188,7 +188,7 @@ function Leg({ label, leg }: { label: string; leg: TripRow["pickup"] }) {
 function TripCards({ rows, empty }: { rows: TripRow[]; empty: string }) {
   if (!rows.length) return <p className="py-6 text-center text-[13px] text-muted-foreground">{empty}</p>;
   return (
-    <ul className="grid max-h-[min(68dvh,660px)] gap-2.5 overflow-y-auto overscroll-contain pr-1.5 [scrollbar-width:thin] md:grid-cols-2 xl:grid-cols-3">
+    <ul className="grid max-h-[max(300px,calc(100dvh-290px))] gap-2.5 overflow-y-auto overscroll-contain pr-1.5 [scrollbar-width:thin] md:grid-cols-2 xl:grid-cols-3">
       {rows.map((row, index) => (
         <li key={`${row.tripId}-${index}`} className="rounded-xl border border-border p-3">
           <div className="flex items-start justify-between gap-3">
@@ -328,7 +328,7 @@ function FleetGrid({ cars, filter }: { cars: FleetCard[]; filter: FleetFilter })
   };
   if (!cars.length) return <p className="rounded-2xl border border-border bg-card py-8 text-center text-[13px] text-muted-foreground">No vehicle matches this filter right now.</p>;
   return (
-    <div className="grid max-h-[min(62dvh,620px)] grid-cols-1 gap-2.5 overflow-y-auto overscroll-contain pr-1.5 [scrollbar-width:thin] sm:grid-cols-2 xl:grid-cols-3">
+    <div className="grid max-h-[max(300px,calc(100dvh-420px))] grid-cols-1 gap-2.5 overflow-y-auto overscroll-contain pr-1.5 [scrollbar-width:thin] sm:grid-cols-2 xl:grid-cols-3">
       {cars.map((car, index) => (
         <article key={`${car.plate ?? car.name}-${index}`} className={`flex gap-3 rounded-xl border border-border bg-card p-2.5 ${car.state === "unlisted" ? "opacity-70" : ""}`}>
           {car.photo ? (
@@ -370,7 +370,7 @@ function Messages({ rows, note }: { rows: UnreadRow[]; note?: React.ReactNode })
   if (!rows.length) return <Card><p className="flex items-center gap-2 py-4 text-[13px] text-muted-foreground"><span className="text-success">✔</span> No guest is waiting for a reply.</p><Note>{note}</Note></Card>;
   return (
     <>
-      <ul className="grid max-h-[min(68dvh,660px)] gap-2.5 overflow-y-auto overscroll-contain pr-1.5 [scrollbar-width:thin] md:grid-cols-2">
+      <ul className="grid max-h-[max(300px,calc(100dvh-290px))] gap-2.5 overflow-y-auto overscroll-contain pr-1.5 [scrollbar-width:thin] md:grid-cols-2">
         {rows.map((row, index) => {
           const urgent = row.tone === "urgent";
           const fyi = row.tone === "fyi";
@@ -410,7 +410,7 @@ function Messages({ rows, note }: { rows: UnreadRow[]; note?: React.ReactNode })
 function EarningsBars({ weeks }: { weeks: CommandSnapshot["weeks"] }) {
   const max = Math.max(1, ...weeks.map((week) => week.cents));
   return (
-    <div className="flex h-32 items-end gap-1 sm:gap-2">
+    <div className="flex h-[96px] items-end gap-1 sm:gap-2">
       {weeks.map((week) => (
         <div key={week.from} className="flex min-w-0 flex-1 flex-col items-center justify-end gap-1">
           <div className={`pulse-bar w-full rounded-md ${week.future ? "bg-accent" : "bg-muted-foreground/40"}`} style={{ height: `${Math.max(3, (week.cents / max) * 88)}px`, opacity: week.trips ? 1 : 0.3 }} />
@@ -590,7 +590,7 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
 
   return (
     <div className="pulse-shell">
-    <div className="pulse-root mx-auto min-h-dvh max-w-[1200px] px-4 pb-28 pt-[max(env(safe-area-inset-top),14px)] md:pb-12">
+    <div className="pulse-root mx-auto min-h-dvh max-w-[1200px] px-4 pb-28 pt-[max(env(safe-area-inset-top),14px)] md:pb-3">
       <header className="mb-3 flex items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2.5">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -630,38 +630,32 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
           {tab === "overview" ? (
             <>
               <div className="flex items-baseline justify-between gap-3">
-                <h2 className="text-xl font-semibold tracking-tight">{greetingFor(snap, now)}</h2>
+                <h2 className="text-[19px] font-semibold tracking-tight">{greetingFor(snap, now)}</h2>
                 <span className="text-[12px] text-muted-foreground">{snap.attention.length ? `${snap.attention.length} need${snap.attention.length === 1 ? "s" : ""} attention` : "Nothing needs attention"}</span>
               </div>
-              <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-5">
+              <div className="grid grid-cols-2 gap-2 lg:grid-cols-5">
                 <Tile tone="blue" label="Total Vehicles" value={String(fleetCount)} note={fleetBy("unlisted") ? `${fleetBy("unlisted")} unlisted` : "all listed"} onOpen={() => open("fleet")}
-                  hint={q && !q.fleetLive ? "Fleet list is HostOS's saved catalog, not confirmed from Turo. Open Turo's Vehicles page on the scanning PC." : undefined} />
+                  hint={q && !q.fleetLive ? "Fleet list not confirmed from Turo yet." : undefined} />
                 <Tile tone="violet" label="Active Trips" value={String(snap.kpis.activeTrips)} note="on the road now" onOpen={() => open("trips", "active")}
-                  hint={q && q.activeNoPlate ? `${q.activeNoPlate} active trip has no plate read yet, so its car is unconfirmed.` : tripsNote} />
+                  hint={q && q.activeNoPlate ? `${q.activeNoPlate} active trip has no plate read yet.` : tripsNote} />
                 <Tile tone="green" label="Upcoming Pickups" value={String(snap.kpis.pickups)} note="next 24 hours" onOpen={() => open("trips", "pickups")} hint={tripsNote} />
                 <Tile tone="amber" label="Upcoming Returns" value={String(snap.kpis.returns)} note="next 24 hours" onOpen={() => open("trips", "returns")} hint={tripsNote} />
                 <div className="col-span-2 lg:col-span-1"><Tile tone="green" label="Est. Earnings" value={money(snap.kpis.earningsNext30)} note="trips ending in 30 days"
-                  hint={q && q.unpricedTrips ? `${q.unpricedTrips} unpriced trip${q.unpricedTrips === 1 ? "" : "s"} not included. Estimates, not payouts.` : "All trips priced. Estimates, not payouts."} /></div>
+                  hint={q && q.unpricedTrips ? `${q.unpricedTrips} unpriced trip${q.unpricedTrips === 1 ? "" : "s"} not included.` : "Estimates, not payouts."} /></div>
               </div>
-              {q && q.unpricedTrips ? (
-                <p className="-mt-1 text-[11px] leading-snug text-muted-foreground/80">
-                  Est. Earnings leaves out {q.unpricedTrips} trip{q.unpricedTrips === 1 ? "" : "s"} ending in the next 30 days that {q.unpricedTrips === 1 ? "has" : "have"} no price yet
-                  {q.guessNext30 ? ` (about ${money(q.guessNext30)} more if priced like the same car's other trips, a guide only)` : ""}.
-                  {" "}{q.unpricedNoPlate ? `${q.unpricedNoPlate} still need the car's plate read from Turo (Trips page, with the scanning PC on). ` : ""}{q.unpricedNoCalendar ? `${q.unpricedNoCalendar} need that car's daily prices read from Turo's Calendar page. ` : ""}
-                </p>
-              ) : null}
-              <div className="grid gap-3.5 lg:grid-cols-5">
-                <Card title={`Needs Attention · ${snap.attention.length}`} aside={urgentCount ? <span className="pulse-urgent-chip rounded-full bg-danger/10 px-2 py-0.5 text-[11px] font-bold text-danger">{urgentCount} urgent</span> : undefined} className="lg:col-span-3">
+              {/* one screen: the three panels share the height that is left, and each scrolls on its own */}
+              <div className="grid gap-3 lg:h-[clamp(330px,calc(100dvh-352px),560px)] lg:grid-cols-12">
+                <Card fill title={`Needs Attention · ${snap.attention.length}`} aside={urgentCount ? <span className="pulse-urgent-chip rounded-full bg-danger/10 px-2 py-0.5 text-[11px] font-bold text-danger">{urgentCount} urgent</span> : undefined} className="h-[320px] lg:col-span-5 lg:h-full">
                   {snap.attention.length ? (
-                    <ul className="max-h-[320px] divide-y divide-border overflow-y-auto overscroll-contain pr-1.5 [scrollbar-width:thin]">
+                    <ul className="divide-y divide-border">
                       {snap.attention.slice(0, 100).map((row, index) => (
-                        <li key={index} className={`flex flex-col gap-0.5 py-2 sm:flex-row sm:justify-between ${row.tone === "red" ? "pulse-row-red" : ""}`}>
+                        <li key={index} className={`flex flex-col gap-0.5 py-1.5 sm:flex-row sm:justify-between ${row.tone === "red" ? "pulse-row-red" : ""}`}>
                           <div className="min-w-0">
-                            <div className={`text-[13px] font-semibold ${row.tone === "red" ? "text-danger" : row.tone === "amber" ? "text-warning" : "text-accent"}`}><TuroLink href={row.tripUrl}>{row.label}</TuroLink></div>
-                            <div className="text-[12px] text-muted-foreground sm:truncate">{[row.vehicle, row.tripId ? `Trip #${row.tripId}` : null].filter(Boolean).join(" · ")}</div>
-                            {row.detail ? <div className="text-[11.5px] text-muted-foreground">{row.detail}</div> : null}
+                            <div className={`text-[12.5px] font-semibold ${row.tone === "red" ? "text-danger" : row.tone === "amber" ? "text-warning" : "text-accent"}`}><TuroLink href={row.tripUrl}>{row.label}</TuroLink></div>
+                            <div className="text-[11.5px] text-muted-foreground sm:truncate">{[row.vehicle, row.tripId ? `Trip #${row.tripId}` : null].filter(Boolean).join(" · ")}</div>
+                            {row.detail ? <div className="text-[11px] text-muted-foreground">{row.detail}</div> : null}
                           </div>
-                          <div className="shrink-0 text-[12px] font-medium sm:text-right">{row.guest ?? "Guest"}</div>
+                          <div className="shrink-0 text-[11.5px] font-medium sm:text-right">{row.guest ?? "Guest"}</div>
                         </li>
                       ))}
                     </ul>
@@ -669,24 +663,21 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
                     <p className="py-4 text-[13px] text-muted-foreground"><span className="text-success">✔</span> All clear.</p>
                   )}
                 </Card>
-                <div className="space-y-3.5 lg:col-span-2">
-                  <Card title="Today’s Schedule" aside={`${snap.schedule.length} events`} className="h-full"><div className="max-h-[320px] overflow-y-auto overscroll-contain pr-1.5 [scrollbar-width:thin]"><Schedule slots={snap.schedule} /></div></Card>
+                <Card fill title="Today’s Schedule" aside={`${snap.schedule.length} events`} className="h-[300px] lg:col-span-3 lg:h-full"><Schedule slots={snap.schedule} /></Card>
+                <div className="grid min-h-0 gap-3 lg:col-span-4 lg:h-full lg:grid-rows-[auto_minmax(0,1fr)]">
+                  <Card title="Fleet Right Now" aside={`${fleetCount} vehicles`}>
+                    <div className="grid grid-cols-5 gap-1.5 text-center">
+                      {([["On Trip", fleetBy("ontrip")], ["Pickup Soon", fleetBy("soon")], ["Available", fleetBy("available")], ["Attention", fleetBy("attention")], ["Unlisted", fleetBy("unlisted")]] as const).map(([label, value]) => (
+                        <div key={label} className="rounded-xl bg-muted/60 px-1 py-1.5"><div className="text-[16px] font-semibold leading-tight tabular-nums">{value}</div><div className="truncate text-[9.5px] text-muted-foreground">{label}</div></div>
+                      ))}
+                    </div>
+                    <Note>{q && !q.fleetLive ? "Availability not confirmed from Turo yet." : q && q.fleetAt ? `Availability read ${when(q.fleetAt, zone)}.` : ""}</Note>
+                  </Card>
+                  <Card fill title="Earnings Overview" aside={`next 30 days · ${snap.kpis.tripsNext30} trips`} className="h-[260px] lg:h-full">
+                    <EarningsBars weeks={snap.weeks} />
+                    <Note>Estimates, not payouts.{q && q.unpricedTrips ? ` Leaves out ${q.unpricedTrips} unpriced trip${q.unpricedTrips === 1 ? "" : "s"} ending in 30 days${q.guessNext30 ? ` (about ${money(q.guessNext30)} more if priced like similar trips)` : ""}.${q.unpricedNoPlate ? ` ${q.unpricedNoPlate} need the car's plate read from Turo's Trips page.` : ""}${q.unpricedNoCalendar ? ` ${q.unpricedNoCalendar} need that car's prices read from Turo's Calendar page.` : ""}` : ""}</Note>
+                  </Card>
                 </div>
-              </div>
-              <div className="grid gap-3.5 lg:grid-cols-2">
-                <Card title="Fleet Right Now" aside={`${fleetCount} vehicles`}>
-                  <div className="grid grid-cols-2 gap-2 text-[13px] sm:grid-cols-5">
-                    {([["On a Trip", fleetBy("ontrip")], ["Pickup Soon", fleetBy("soon")], ["Available", fleetBy("available")], ["Needs Attention", fleetBy("attention")], ["Unlisted", fleetBy("unlisted")]] as const).map(([label, value]) => (
-                      <div key={label} className="rounded-xl bg-muted/60 px-3 py-2"><div className="text-[18px] font-semibold tabular-nums">{value}</div><div className="text-[11px] text-muted-foreground">{label}</div></div>
-                    ))}
-                  </div>
-                  <Note>Counted from the Fleet tab, one state per car.{q && !q.fleetLive ? " Availability is not confirmed from Turo yet. Open Turo's calendar page on the scanning PC." : q && q.fleetAt ? ` Availability last read ${when(q.fleetAt, zone)}.` : ""}</Note>
-                </Card>
-                <Card title="Earnings Overview" aside="estimates · not payouts">
-                  <div className="mb-2 text-[24px] font-semibold tabular-nums">{money(snap.kpis.earningsNext30)}<span className="ml-2 text-[12px] font-medium text-success">next 30 days · {snap.kpis.tripsNext30} trips</span></div>
-                  <EarningsBars weeks={snap.weeks} />
-                  <Note>Estimates from each trip&rsquo;s listed price, grouped by week.{q && q.unpricedTrips ? ` ${q.unpricedTrips} upcoming trip${q.unpricedTrips === 1 ? "" : "s"} without a price ${q.unpricedTrips === 1 ? "is" : "are"} left out, so the real figure is higher.` : ""}</Note>
-                </Card>
               </div>
             </>
           ) : null}
@@ -743,7 +734,7 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
         </main>
       )}
 
-      <p className="mt-6 text-center text-[11px] text-muted-foreground">A read-only view. Nothing here can be changed or uploaded. Estimates are not payouts.</p>
+      <p className="mt-3 text-center text-[11px] text-muted-foreground">A read-only view. Nothing here can be changed or uploaded. Estimates are not payouts.</p>
 
       {/* the phone's tab bar, with room for the home indicator */}
       <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-card/95 backdrop-blur md:hidden" style={{ paddingBottom: "max(env(safe-area-inset-bottom), 6px)" }} aria-label="Sections">

@@ -16,6 +16,14 @@
   ],
   "rewrites": [
     {
+      "source": "/outreach",
+      "destination": "https://hostos-outreach.vercel.app/outreach"
+    },
+    {
+      "source": "/outreach/:path*",
+      "destination": "https://hostos-outreach.vercel.app/outreach/:path*"
+    },
+    {
       "source": "/app",
       "destination": "https://hostos-ten.vercel.app/app"
     },

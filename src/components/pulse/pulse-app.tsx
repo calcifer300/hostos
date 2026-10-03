@@ -73,14 +73,14 @@ function Note({ children }: { children?: React.ReactNode }) {
   return <p className="mt-1.5 text-[10.5px] leading-snug text-muted-foreground/80">{children}</p>;
 }
 
-interface Weather { temp: number; feels: number; code: number; wind: number; high: number; low: number }
+interface Weather { day: boolean; temp: number; feels: number; code: number; wind: number; high: number; low: number }
 const WEATHER_TEXT: [number[], string, string][] = [
   [[0], "Clear", "☀️"], [[1, 2], "Partly Cloudy", "⛅"], [[3], "Overcast", "☁️"], [[45, 48], "Fog", "🌫️"],
   [[51, 53, 55, 56, 57], "Drizzle", "🌦️"], [[61, 63, 65, 66, 67, 80, 81, 82], "Rain", "🌧️"],
   [[71, 73, 75, 77, 85, 86], "Snow", "❄️"], [[95, 96, 99], "Thunderstorm", "⛈️"],
 ];
 const weatherLabel = (code: number): [string, string] => { const hit = WEATHER_TEXT.find(([codes]) => codes.includes(code)); return hit ? [hit[1], hit[2]] : ["Weather", "🌡️"]; };
-const WEATHER_URL = "https://api.open-meteo.com/v1/forecast?latitude=39.7392&longitude=-104.9903&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America%2FDenver&forecast_days=1";
+const WEATHER_URL = "https://api.open-meteo.com/v1/forecast?latitude=39.7392&longitude=-104.9903&current=is_day,temperature_2m,apparent_temperature,weather_code,wind_speed_10m&daily=temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America%2FDenver&forecast_days=1";
 
 /** Live Denver weather (Open-Meteo, no key), refreshed every 10 minutes. Null until it loads or if it cannot be reached. */
 function useWeather(): Weather | null {
@@ -94,7 +94,7 @@ function useWeather(): Weather | null {
         const json = await response.json();
         const cur = json.current;
         if (stopped || !cur || typeof cur.temperature_2m !== "number") return;
-        setWeather({ temp: cur.temperature_2m, feels: cur.apparent_temperature, code: cur.weather_code, wind: cur.wind_speed_10m, high: json.daily?.temperature_2m_max?.[0], low: json.daily?.temperature_2m_min?.[0] });
+        setWeather({ day: cur.is_day !== 0, temp: cur.temperature_2m, feels: cur.apparent_temperature, code: cur.weather_code, wind: cur.wind_speed_10m, high: json.daily?.temperature_2m_max?.[0], low: json.daily?.temperature_2m_min?.[0] });
       } catch { /* the chip just stays hidden */ }
     }
     void load();
@@ -107,7 +107,9 @@ function useWeather(): Weather | null {
 /** No box: the weather sits on the page itself. */
 function WeatherChip({ weather, className = "" }: { weather: Weather | null; className?: string }) {
   if (!weather) return null;
-  const [text, icon] = weatherLabel(weather.code);
+  const [text, dayIcon] = weatherLabel(weather.code);
+  // after dark the sun and the partly-sunny icon would contradict the evening greeting: clear nights get a moon, a mixed sky a cloud
+  const icon = weather.day ? dayIcon : weather.code === 0 || weather.code === 1 ? "🌙" : weather.code === 2 ? "☁️" : dayIcon;
   return (
     <div className={`flex items-center gap-2.5 ${className}`} aria-label="Denver weather">
       <span className="text-[24px] leading-none" aria-hidden>{icon}</span>

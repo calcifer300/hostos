@@ -126,7 +126,14 @@ export interface SnapshotQuality {
   fleetLive: boolean;
   listingsLive: boolean;
   listingsAt: string | null;
+  /** trips ending in the next 30 days with no price: they are missing from the Est. Earnings tile */
   unpricedTrips: number;
+  /** trips that ended in the last 90 days with no price */
+  unpriced90: number;
+  /** what those might add if priced like the same car's other trips (a guide only, never added to a total) */
+  guessNext30: number;
+  unpricedNoPlate: number;
+  unpricedNoCalendar: number;
   detailsPending: number;
   detailsFailed: number;
   activeNoPlate: number;
@@ -270,7 +277,7 @@ export function normalizeSnapshot(raw: unknown): CommandSnapshot | null {
   const q = isObject(raw.quality) ? raw.quality : {};
   const quality: SnapshotQuality = {
     tripsAt: str(q.tripsAt, 40), historyFrom: typeof q.historyFrom === "number" ? q.historyFrom : null, fleetAt: str(q.fleetAt, 40), fleetLive: bool(q.fleetLive), listingsLive: bool(q.listingsLive), listingsAt: str(q.listingsAt, 40),
-    unpricedTrips: num(q.unpricedTrips), detailsPending: num(q.detailsPending), detailsFailed: num(q.detailsFailed), activeNoPlate: num(q.activeNoPlate),
+    unpricedTrips: num(q.unpricedTrips), unpriced90: num(q.unpriced90), guessNext30: num(q.guessNext30), unpricedNoPlate: num(q.unpricedNoPlate), unpricedNoCalendar: num(q.unpricedNoCalendar), detailsPending: num(q.detailsPending), detailsFailed: num(q.detailsFailed), activeNoPlate: num(q.activeNoPlate),
     tollsAt: str(q.tollsAt, 40), invoicesMissing: num(q.invoicesMissing), invoicesTotal: num(q.invoicesTotal),
   };
   const tc = isObject(raw.topCar) ? raw.topCar : null;

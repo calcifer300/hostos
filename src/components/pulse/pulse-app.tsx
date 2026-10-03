@@ -635,8 +635,15 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
                 <Tile tone="green" label="Upcoming Pickups" value={String(snap.kpis.pickups)} note="next 24 hours" onOpen={() => open("trips", "pickups")} hint={tripsNote} />
                 <Tile tone="amber" label="Upcoming Returns" value={String(snap.kpis.returns)} note="next 24 hours" onOpen={() => open("trips", "returns")} hint={tripsNote} />
                 <div className="col-span-2 lg:col-span-1"><Tile tone="green" label="Est. Earnings" value={money(snap.kpis.earningsNext30)} note="trips ending in 30 days"
-                  hint={q && q.unpricedTrips ? `Minimum: ${q.unpricedTrips} trip${q.unpricedTrips === 1 ? " has" : "s have"} no price yet and ${q.unpricedTrips === 1 ? "is" : "are"} not counted. Estimates, not payouts.` : "Estimates from trip prices, not payouts."} /></div>
+                  hint={q && q.unpricedTrips ? `${q.unpricedTrips} unpriced trip${q.unpricedTrips === 1 ? "" : "s"} not included. Estimates, not payouts.` : "All trips priced. Estimates, not payouts."} /></div>
               </div>
+              {q && q.unpricedTrips ? (
+                <p className="-mt-1 text-[11px] leading-snug text-muted-foreground/80">
+                  Est. Earnings leaves out {q.unpricedTrips} trip{q.unpricedTrips === 1 ? "" : "s"} ending in the next 30 days that {q.unpricedTrips === 1 ? "has" : "have"} no price yet
+                  {q.guessNext30 ? ` (about ${money(q.guessNext30)} more if priced like the same car's other trips, a guide only)` : ""}.
+                  {" "}{q.unpricedNoPlate ? `${q.unpricedNoPlate} still need the car's plate read from Turo (Trips page, with the scanning PC on). ` : ""}{q.unpricedNoCalendar ? `${q.unpricedNoCalendar} need that car's daily prices read from Turo's Calendar page. ` : ""}
+                </p>
+              ) : null}
               <div className="grid gap-3.5 lg:grid-cols-5">
                 <Card title={`Needs Attention · ${snap.attention.length}`} aside={urgentCount ? <span className="pulse-urgent-chip rounded-full bg-danger/10 px-2 py-0.5 text-[11px] font-bold text-danger">{urgentCount} urgent</span> : undefined} className="lg:col-span-3">
                   {snap.attention.length ? (
@@ -672,7 +679,7 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
                 <Card title="Earnings Overview" aside="estimates · not payouts">
                   <div className="mb-2 text-[24px] font-semibold tabular-nums">{money(snap.kpis.earningsNext30)}<span className="ml-2 text-[12px] font-medium text-success">next 30 days · {snap.kpis.tripsNext30} trips</span></div>
                   <EarningsBars weeks={snap.weeks} />
-                  <Note>Estimates from each trip&rsquo;s listed price, grouped by week.{q && q.unpricedTrips ? ` ${q.unpricedTrips} trip${q.unpricedTrips === 1 ? "" : "s"} without a price are left out, so the real figure is higher.` : ""}</Note>
+                  <Note>Estimates from each trip&rsquo;s listed price, grouped by week.{q && q.unpricedTrips ? ` ${q.unpricedTrips} upcoming trip${q.unpricedTrips === 1 ? "" : "s"} without a price ${q.unpricedTrips === 1 ? "is" : "are"} left out, so the real figure is higher.` : ""}</Note>
                 </Card>
               </div>
             </>
@@ -704,7 +711,7 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
           {tab === "fleet" ? (
             <>
               <h2 className="text-xl font-semibold tracking-tight">Fleet · {snap.fleet.length}</h2>
-              <div className="grid gap-3 md:grid-cols-2"><TopCarCard snap={snap} /><MostBookedCard snap={snap} /></div>
+              <div className="mx-auto grid w-full max-w-[1200px] gap-3 md:grid-cols-2 [&>*:only-child]:md:col-span-2 [&>*:only-child]:md:mx-auto [&>*:only-child]:md:w-full [&>*:only-child]:md:max-w-[640px]"><TopCarCard snap={snap} /><MostBookedCard snap={snap} /></div>
               <div className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1 [scrollbar-width:none]" role="tablist" aria-label="Filter vehicles">
                 {FLEET_FILTERS.map((item) => (
                   <button key={item.id} type="button" role="tab" aria-selected={fleetFilter === item.id} title={item.hint} onClick={() => setFleetFilter(item.id)}
@@ -715,7 +722,7 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
               </div>
               <p className="text-[11.5px] text-muted-foreground">{FLEET_FILTERS.find((item) => item.id === fleetFilter)?.hint} Tap a name to open it in Turo.</p>
               <FleetGrid cars={filterFleet(snap.fleet, fleetFilter)} filter={fleetFilter} />
-              <Note>{q && q.historyFrom !== null && now - q.historyFrom < 85 * 24 * 3600000 ? `HostOS has only read trips since ${when(q.historyFrom, zone)}, so Top Car, Top Earners and Most Booked cover less than 90 days.` : "Top Car and Top Earners use estimated trip prices from trips that ended in the last 90 days; Most Booked counts days on the road in the same window."} {q && !q.fleetLive ? "Availability is not confirmed from Turo yet, so Available and Free Now may be wrong. Open Turo's calendar page on the scanning PC." : q && q.fleetAt ? `Availability last read ${when(q.fleetAt, zone)}.` : null}{q && !q.listingsLive ? " Names and photos are from HostOS's saved catalog until the Vehicles page is read." : ""}</Note>
+              <Note>{q && q.historyFrom !== null && now - q.historyFrom < 85 * 24 * 3600000 ? `HostOS has only read trips since ${when(q.historyFrom, zone)}, so Top Car, Top Earners and Most Booked cover less than 90 days.` + (q.unpriced90 ? ` ${q.unpriced90} trips from this period have no price and are not counted in Top Car or Top Earners.` : "") : "Top Car and Top Earners use estimated trip prices from trips that ended in the last 90 days; Most Booked counts days on the road in the same window."} {q && !q.fleetLive ? "Availability is not confirmed from Turo yet, so Available and Free Now may be wrong. Open Turo's calendar page on the scanning PC." : q && q.fleetAt ? `Availability last read ${when(q.fleetAt, zone)}.` : null}{q && !q.listingsLive ? " Names and photos are from HostOS's saved catalog until the Vehicles page is read." : ""}</Note>
             </>
           ) : null}
 

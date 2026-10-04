@@ -120,6 +120,8 @@ export interface UnreadRow {
 /** What the scanner could and could not confirm, so each tile can say how far to trust it. */
 export interface SnapshotQuality {
   tripsAt: string | null;
+  /** when the guests' reviews of the host were last read */
+  guestReviewsAt: string | null;
   /** the earliest trip HostOS has read, so the 3-month figures can say when they cover less */
   historyFrom: number | null;
   fleetAt: string | null;
@@ -140,6 +142,40 @@ export interface SnapshotQuality {
   tollsAt: string | null;
   invoicesMissing: number;
   invoicesTotal: number;
+}
+
+/** One trip that ended in the last 14 days, with what is known about the guest's review of the host. */
+export interface ReviewRow {
+  tripId: string;
+  tripUrl: string | null;
+  threadUrl: string | null;
+  guest: string | null;
+  first: string;
+  vehicle: string | null;
+  plate: string | null;
+  endedAt: number;
+  ended: string;
+  daysAgo: number;
+  windowLeft: number;
+  windowClosed: boolean;
+  /** none: no review from this guest · unchecked: the guest is not identified yet · reviewed: a rating is on the host · blank: Turo posted an empty one */
+  status: "none" | "unchecked" | "reviewed" | "blank";
+  rating: number | null;
+  reviewed: string | null;
+  asked: { at: number | null; label: string } | null;
+  saysRated: { at: number | null; quote: string } | null;
+  /** the message Matthew can send, written only for the ones still to ask */
+  draft: string;
+}
+
+export interface ReviewsSection {
+  lookbackDays: number;
+  windowDays: number;
+  reviewsAt: string | null;
+  reviewsLoaded: number;
+  summary: { trips: number; toAsk: number; reviewed: number; blank: number; unchecked: number; askedAlready: number; ratePct: number | null; average: number | null };
+  toAsk: ReviewRow[];
+  reviewed: ReviewRow[];
 }
 
 export interface TopCar {
@@ -179,6 +215,7 @@ export interface CommandSnapshot {
   tripLists: { active: TripRow[]; pickups: TripRow[]; returns: TripRow[] };
   unread: UnreadRow[];
   quality: SnapshotQuality;
+  reviews: ReviewsSection | null;
   topCar: TopCar | null;
   weeks: { from: number; cents: number; trips: number; future: boolean }[];
   tolls: {
@@ -276,10 +313,35 @@ export function normalizeSnapshot(raw: unknown): CommandSnapshot | null {
   }));
   const q = isObject(raw.quality) ? raw.quality : {};
   const quality: SnapshotQuality = {
-    tripsAt: str(q.tripsAt, 40), historyFrom: typeof q.historyFrom === "number" ? q.historyFrom : null, fleetAt: str(q.fleetAt, 40), fleetLive: bool(q.fleetLive), listingsLive: bool(q.listingsLive), listingsAt: str(q.listingsAt, 40),
+    tripsAt: str(q.tripsAt, 40), guestReviewsAt: str(q.guestReviewsAt, 40), historyFrom: typeof q.historyFrom === "number" ? q.historyFrom : null, fleetAt: str(q.fleetAt, 40), fleetLive: bool(q.fleetLive), listingsLive: bool(q.listingsLive), listingsAt: str(q.listingsAt, 40),
     unpricedTrips: num(q.unpricedTrips), unpriced90: num(q.unpriced90), guessNext30: num(q.guessNext30), unpricedNoPlate: num(q.unpricedNoPlate), unpricedNoCalendar: num(q.unpricedNoCalendar), detailsPending: num(q.detailsPending), detailsFailed: num(q.detailsFailed), activeNoPlate: num(q.activeNoPlate),
     tollsAt: str(q.tollsAt, 40), invoicesMissing: num(q.invoicesMissing), invoicesTotal: num(q.invoicesTotal),
   };
+  const STATUSES = ["none", "unchecked", "reviewed", "blank"] as const;
+  const reviewRows = (rows: unknown): ReviewRow[] =>
+    list(rows, 100).filter(isObject).map((row) => ({
+      tripId: str(row.tripId, 30) ?? "", tripUrl: url(row.tripUrl), threadUrl: url(row.threadUrl),
+      guest: str(row.guest, 80), first: str(row.first, 40) ?? "", vehicle: str(row.vehicle, 100), plate: str(row.plate, 20),
+      endedAt: num(row.endedAt), ended: str(row.ended, 30) ?? "", daysAgo: num(row.daysAgo), windowLeft: num(row.windowLeft), windowClosed: bool(row.windowClosed),
+      status: (STATUSES as readonly string[]).includes(String(row.status)) ? (row.status as ReviewRow["status"]) : "none",
+      rating: typeof row.rating === "number" && row.rating >= 1 && row.rating <= 5 ? Math.round(row.rating) : null,
+      reviewed: str(row.reviewed, 30),
+      asked: isObject(row.asked) ? { at: typeof row.asked.at === "number" ? row.asked.at : null, label: str(row.asked.label, 30) ?? "" } : null,
+      saysRated: isObject(row.saysRated) ? { at: typeof row.saysRated.at === "number" ? row.saysRated.at : null, quote: str(row.saysRated.quote, 160) ?? "" } : null,
+      draft: str(row.draft, 600) ?? "",
+    })).filter((row) => row.tripId);
+  const rv = isObject(raw.reviews) ? raw.reviews : null;
+  const rs = rv && isObject(rv.summary) ? rv.summary : {};
+  const reviews: ReviewsSection | null = rv
+    ? {
+        lookbackDays: num(rv.lookbackDays, 14), windowDays: num(rv.windowDays, 10), reviewsAt: str(rv.reviewsAt, 40), reviewsLoaded: num(rv.reviewsLoaded),
+        summary: {
+          trips: num(rs.trips), toAsk: num(rs.toAsk), reviewed: num(rs.reviewed), blank: num(rs.blank), unchecked: num(rs.unchecked), askedAlready: num(rs.askedAlready),
+          ratePct: typeof rs.ratePct === "number" ? rs.ratePct : null, average: typeof rs.average === "number" ? rs.average : null,
+        },
+        toAsk: reviewRows(rv.toAsk), reviewed: reviewRows(rv.reviewed),
+      }
+    : null;
   const tc = isObject(raw.topCar) ? raw.topCar : null;
   const topCar: TopCar | null = tc
     ? {
@@ -332,7 +394,7 @@ export function normalizeSnapshot(raw: unknown): CommandSnapshot | null {
       total: num(fleetSummary.total), onTrip: num(fleetSummary.onTrip), scheduled: num(fleetSummary.scheduled), available: num(fleetSummary.available),
       unlisted: num(fleetSummary.unlisted), needsAttention: num(fleetSummary.needsAttention),
     },
-    unread, quality, topCar,
+    unread, quality, reviews, topCar,
     fleet, tripLists: { active: tripRows(lists.active), pickups: tripRows(lists.pickups), returns: tripRows(lists.returns) }, weeks, tolls, unpriced,
     calendar: cal ? { fleet: num(cal.fleet), fresh: num(cal.fresh), needed: num(cal.needed), neededDone: num(cal.neededDone), complete: bool(cal.complete) } : null,
   };

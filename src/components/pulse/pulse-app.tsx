@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { ReviewsTab } from "./reviews-tab";
 import type { CommandSnapshot, FleetCard, ScheduleSlot, TripRow, UnreadRow } from "@/lib/command/snapshot";
 import { PULSE_NAME, PULSE_TAGLINE } from "@/lib/pulse/brand";
 
@@ -125,7 +126,7 @@ function WeatherChip({ weather, className = "" }: { weather: Weather | null; cla
   );
 }
 
-type TabId ="overview" | "trips" | "messages" | "fleet" | "tolls";
+type TabId = "overview" | "trips" | "messages" | "reviews" | "fleet" | "tolls";
 
 /** How alive the scanner is, from the freshest sign: its own heartbeat, a snapshot, or the last time Turo was read. */
 function liveState(data: PulsePayload, now: number): { state: "live" | "late" | "off"; label: string; detail: string } {
@@ -512,6 +513,7 @@ const TABS: { id: TabId; label: string; icon: string }[] = [
   { id: "overview", label: "Overview", icon: "◧" },
   { id: "trips", label: "Trips", icon: "⇄" },
   { id: "messages", label: "Messages", icon: "✉" },
+  { id: "reviews", label: "Reviews", icon: "★" },
   { id: "fleet", label: "Fleet", icon: "◫" },
   { id: "tolls", label: "Tolls", icon: "$" },
 ];
@@ -573,6 +575,7 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
   const q = snap ? snap.quality : null;
+  const reviewsOpen = snap && snap.reviews ? snap.reviews.toAsk.filter((row) => !row.windowClosed).length : 0;
   const zone = snap ? snap.zone : "America/Denver";
   const fleetCount = snap ? (snap.fleet.length || snap.kpis.vehicles) : 0;
   const fleetBy = (state: FleetCard["state"]) => (snap ? snap.fleet.filter((car) => car.state === state).length : 0);
@@ -619,6 +622,7 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
           <button key={item.id} type="button" onClick={() => setTab(item.id)} className={`flex flex-1 items-center justify-center gap-2 rounded-full px-3 py-2 text-[13px] font-medium transition ${tab === item.id ? "bg-accent text-accent-foreground shadow" : "text-muted-foreground hover:bg-muted"}`}>
             {item.label}
             {item.id === "messages" ? <Badge n={unread} urgent={urgentMessages > 0} /> : null}
+            {item.id === "reviews" ? <Badge n={reviewsOpen} /> : null}
           </button>
         ))}
       </nav>
@@ -705,6 +709,10 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
             </>
           ) : null}
 
+          {tab === "reviews" ? (
+            <ReviewsTab reviews={snap.reviews} zone={zone} now={now} fresh={{ at: snap.quality.guestReviewsAt }} />
+          ) : null}
+
           {tab === "fleet" ? (
             <>
               <h2 className="text-xl font-semibold tracking-tight">Fleet · {snap.fleet.length}</h2>
@@ -738,11 +746,12 @@ export function PulseApp({ initial }: { initial: PulsePayload }) {
 
       {/* the phone's tab bar, with room for the home indicator */}
       <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-card/95 backdrop-blur md:hidden" style={{ paddingBottom: "max(env(safe-area-inset-bottom), 6px)" }} aria-label="Sections">
-        <div className="mx-auto grid max-w-md grid-cols-5">
+        <div className="mx-auto grid max-w-md grid-cols-6">
           {TABS.map((item) => (
             <button key={item.id} type="button" onClick={() => { setTab(item.id); window.scrollTo({ top: 0, behavior: "smooth" }); }} className={`relative flex flex-col items-center gap-0.5 py-2 text-[10.5px] font-medium ${tab === item.id ? "text-accent" : "text-muted-foreground"}`}>
               <span className="text-[18px] leading-none" aria-hidden>{item.icon}</span>
               {item.label}
+              {item.id === "reviews" && reviewsOpen ? <span className="pulse-badge absolute right-[18%] top-1">{reviewsOpen}</span> : null}
               {item.id === "messages" && unread ? <span className={`pulse-badge absolute right-[22%] top-1 ${urgentMessages > 0 ? "urgent" : ""}`}>{unread}</span> : null}
             </button>
           ))}

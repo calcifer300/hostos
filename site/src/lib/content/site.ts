@@ -425,7 +425,7 @@ export const FINAL = {
 
 export const FOOTER = {
 	columns: [
-		{ title: 'Services', links: [['Operations', '/#solutions'], ['Software & websites', '/#solutions'], ['Automation', '/#solutions'], ['Pricing', '/#pricing'], ['Results', '/#proof']] },
+		{ title: 'Services', links: [['Business operations', '/services/operations'], ['Web development', '/services/web'], ['App development', '/services/apps'], ['AI automation', '/services/ai'], ['All services & pricing', '/services'], ['Results', '/#proof']] },
 		{ title: 'Company', links: [['The Collective', `${SITE.url}/team`], ['About', `${SITE.url}/about`], ['Contact', '/#contact']] },
 		{ title: 'Platform', links: [['Open HostOS', SITE.app], ['Sign in', SITE.login], ['Install the app', `${SITE.url}/install`]] }
 	]

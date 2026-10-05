@@ -17,10 +17,11 @@ Founder: ${CONTACT.founder} (${CONTACT.facebook.url})
 - [Home](${SITE.url}/): what we do, how it works, pricing and answers to common questions
 - [Team](${SITE.url}/team): the operators and specialists behind HostOS Collective
 - [About](${SITE.url}/about): the company and how it is run
+- [Services & pricing](${SITE.url}/services): every service with its USD prices, what is included and how long it takes
 - [Full text for AI assistants](${SITE.url}/llms-full.txt): services, pricing model, industries, FAQ in one file
 
 ## Services
-${SERVICES.map((s) => `- ${s.name}: ${s.blurb.split('. ')[0].replace(/\.$/, '')}`).join('\n')}
+${SERVICES.map((s) => `- [${s.name}](${SITE.url}/services/${s.id}): ${s.blurb.split('. ')[0].replace(/\.$/, '')}`).join('\n')}
 
 ## Facts
 - Based in the Philippines; serves clients in the US, Canada, Australia, the UK and worldwide
@@ -35,7 +36,7 @@ export function llmsFull(): string {
 		.map((f) => `### ${f.name}\n${f.line}\n${f.items.map((s) => `- **${s.name}** — ${s.outcome}`).join('\n')}`)
 		.join('\n\n');
 	const services = SERVICES.map(
-		(s) => `### ${s.name}\n${s.blurb}\n- Best for: ${s.ideal}\n- Timeline: ${s.timeline}\n- Included: ${s.included.join('; ')}`
+		(s) => `### ${s.name} (${SITE.url}/services/${s.id})\n${s.blurb}\n- Best for: ${s.ideal}\n- Timeline: ${s.timeline}\n- Included: ${s.included.join('; ')}`
 	).join('\n\n');
 	const industries = (INDUSTRIES as unknown as { items?: { name: string }[] }).items?.map((i) => i.name).join(', ');
 	return `# ${SITE.company} — full reference

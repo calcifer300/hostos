@@ -61,6 +61,7 @@
 					</div>
 				{/if}
 
+				<a href={`/services/${s.id}`} class="mt-3 self-start text-[13px] font-semibold text-ink-2 underline-offset-4 hover:text-accent hover:underline">Full details and FAQ →</a>
 				<div class="mt-auto pt-6">
 					<Button href={CTA.href} variant={s.id === 'operations' ? 'primary' : 'secondary'} class="w-full justify-center">{s.model === 'custom' ? 'Get an estimate' : 'Book a Free Strategy Call'} <ArrowRight class="h-4 w-4" /></Button>
 				</div>

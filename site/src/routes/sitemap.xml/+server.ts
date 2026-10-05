@@ -1,6 +1,7 @@
 import { SITE } from '$lib/content/site';
+import { SERVICES } from '$lib/content/pricing';
 export const prerender = true;
-const pages: [path: string, priority: string][] = [['/', '1.0'], ['/team', '0.7'], ['/team/pricing', '0.7'], ['/about', '0.6']];
+const pages: [path: string, priority: string][] = [['/', '1.0'], ['/team', '0.7'], ['/team/pricing', '0.7'], ['/about', '0.6'], ['/services', '0.9'], ...SERVICES.map((s): [string, string] => [`/services/${s.id}`, '0.8'])];
 // the build date: the home page is regenerated from the Founder's saved copy, so "modified" is honest at build time
 const lastmod = new Date().toISOString().slice(0, 10);
 export const GET = () =>

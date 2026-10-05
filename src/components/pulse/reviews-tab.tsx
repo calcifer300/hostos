@@ -89,14 +89,14 @@ export function ReviewsTab({ reviews, zone, now, fresh }: { reviews: ReviewsSect
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
         <h2 className="text-xl font-semibold tracking-tight">Reviews to Ask For · {open.length}</h2>
         <span className="text-[12px] text-muted-foreground">
-          Last {reviews.lookbackDays} days · {s.reviewed} of {s.trips} guests reviewed{s.average !== null ? ` · average ${s.average.toFixed(2)}★` : ""}
+          Last {reviews.lookbackDays} days · {s.reviewed} of {s.trips} guests wrote a review{s.average !== null ? ` · written reviews average ${s.average.toFixed(2)}★` : ""}
         </span>
       </div>
 
       <div className="grid gap-3 lg:grid-cols-12 lg:h-[clamp(320px,calc(100dvh-330px),600px)]">
         <section className="flex min-h-0 flex-col rounded-[20px] border border-border bg-card p-3.5 shadow-[var(--shadow-card)] h-[420px] lg:col-span-8 lg:h-full">
           <div className="mb-2 flex shrink-0 items-baseline justify-between gap-3">
-            <h3 className="text-[15px] font-semibold tracking-tight">No Review Yet</h3>
+            <h3 className="text-[15px] font-semibold tracking-tight">No Written Review Yet</h3>
             <span className="text-[12px] text-muted-foreground">oldest first · window closes soonest</span>
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pr-1.5 [scrollbar-width:thin]">
@@ -136,7 +136,7 @@ export function ReviewsTab({ reviews, zone, now, fresh }: { reviews: ReviewsSect
                 })}
               </ul>
             ) : (
-              <p className="py-6 text-center text-[13px] text-muted-foreground"><span className="text-success">✔</span> Every guest from the last {reviews.lookbackDays} days has reviewed.</p>
+              <p className="py-6 text-center text-[13px] text-muted-foreground"><span className="text-success">✔</span> Every guest from the last {reviews.lookbackDays} days has written a review.</p>
             )}
           </div>
         </section>
@@ -149,7 +149,7 @@ export function ReviewsTab({ reviews, zone, now, fresh }: { reviews: ReviewsSect
           </section>
           <section className="flex min-h-0 flex-col rounded-[20px] border border-border bg-card p-3.5 shadow-[var(--shadow-card)] h-[260px] lg:h-full">
             <div className="mb-2 flex shrink-0 items-baseline justify-between gap-3">
-              <h3 className="text-[15px] font-semibold tracking-tight">Already Reviewed</h3>
+              <h3 className="text-[15px] font-semibold tracking-tight">Wrote a Review</h3>
               <span className="text-[12px] text-muted-foreground">{reviews.reviewed.length}</span>
             </div>
             <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pr-1.5 [scrollbar-width:thin]">
@@ -175,7 +175,7 @@ export function ReviewsTab({ reviews, zone, now, fresh }: { reviews: ReviewsSect
 
       <p className="text-[10.5px] leading-snug text-muted-foreground/80">
         {fresh.at ? `Guest reviews last read ${when(fresh.at, zone)}${readAge !== null && readAge > 2 * HOUR ? ". That is a while ago: keep Turo open on the scanning PC to refresh them" : ""}.` : "Guest reviews have not been read yet: keep Turo open on the scanning PC."}
-        {" "}A guest is matched to their trip by their Turo account, not by name.
+        {" "}<b className="font-semibold">Only written reviews can be seen here.</b> Turo does not show co-hosts a guest who just tapped stars without writing anything, so some guests on this list may already have rated: check Business → Reviews in Turo before asking. A guest is matched to their trip by their Turo account, not by name.
         {s.autoAsked ? ` Your automatic post-trip message already asked ${s.autoAsked === list.length ? "every one of these guests" : `${s.autoAsked} of these guests`} for a review when their trip ended, so this list is for a personal follow-up.` : ""}
         {s.unchecked ? ` ${s.unchecked} trip${s.unchecked === 1 ? " is" : "s are"} not checked yet because the guest's account has not been read for it.` : ""}
         {closed.length ? ` Trips past Turo's ${reviews.windowDays}-day window are listed last: a guest can no longer review them.` : ""}

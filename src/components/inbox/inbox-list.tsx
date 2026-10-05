@@ -43,7 +43,7 @@ export function InboxList({ messages }: { messages: SyncedEmail[] }) {
                   {m.subject || "(no subject)"}
                 </p>
                 {!isOpen && m.snippet && (
-                  <p className="mt-0.5 truncate text-[12px] text-muted-foreground/70">
+                  <p className="mt-0.5 truncate text-[12px] text-muted-foreground/85">
                     {m.snippet}
                   </p>
                 )}

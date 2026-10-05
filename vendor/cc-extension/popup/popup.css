@@ -1,0 +1,91 @@
+:root { color-scheme: dark; }
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 330px; background: #0e1116; color: #f5f5f7; font: 13px -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif; }
+/* A flex column so the results queue can claim all leftover height instead
+   of being a fixed 300px box floating in the middle of an empty sidebar. */
+.popup { display: flex; flex-direction: column; min-height: 100vh; padding: 20px; }
+/* Sticky so the fleet name, and the monitoring/pause control, stay reachable
+   however far down the queue is scrolled. The negative margins let the
+   background bleed to the panel edges, otherwise content shows through the
+   gap either side while scrolling under it. */
+.header { position: sticky; top: 0; z-index: 6; display: flex; align-items: flex-start; justify-content: space-between; margin: -20px -20px 20px; padding: 20px 20px 12px; background: #0e1116; }
+.eyebrow { margin: 0 0 5px; color: #8e8e93; font-size: 10px; font-weight: 700; letter-spacing: .09em; }
+/* Fleet identity sits on the same row as the monitoring light, so it's clear
+   at a glance whose fleet this panel is watching. The mark inherits the
+   eyebrow's colour via currentColor rather than carrying its own palette. */
+.brand { display: flex; align-items: flex-start; gap: 10px; min-width: 0; }
+.brand-mark { flex: none; margin-top: 1px; }
+h1 { margin: 0; font-size: 25px; letter-spacing: -.04em; }
+.status { display: flex; align-items: center; gap: 6px; padding: 5px 9px; border: 1px solid transparent; border-radius: 999px; background: transparent; color: #c7c7cc; font: inherit; font-size: 11px; cursor: pointer; transition: background .16s ease, border-color .16s ease; }
+.status:hover { border-color: #2b3e5a; background: #181c24; }
+.status:focus-visible { outline: 2px solid #5aa9ff; outline-offset: 2px; }
+.status i { width: 7px; height: 7px; border-radius: 50%; background: #30d158; box-shadow: 0 0 9px #30d158; }
+.status.paused { color: #ff9f0a; border-color: rgba(255,159,10,.35); background: rgba(255,159,10,.08); }
+.status.paused i { background: #ff9f0a; box-shadow: none; }
+.hero { padding: 18px; border: 1px solid rgba(90,169,255,.23); border-radius: 16px; background: linear-gradient(135deg, #182435, #181c24); }
+.hero strong { display: block; color: #5aa9ff; font-size: 37px; line-height: 1; letter-spacing: -.06em; }
+.hero span { color: #c7c7cc; font-size: 12px; }
+.cards { display: grid; gap: 8px; margin-top: 12px; }
+.card { display: flex; align-items: center; width: 100%; gap: 11px; padding: 12px; border: 1px solid transparent; border-radius: 14px; background: #181c24; color: inherit; text-align: left; transition: transform .16s ease, background .16s ease; cursor: pointer; }
+.card:hover { background: #202630; transform: translateY(-1px); }.card:focus-visible { outline: 2px solid #5aa9ff; outline-offset: 2px; }
+.icon { display: grid; width: 28px; height: 28px; place-items: center; border-radius: 9px; background: #252b36; color: #5aa9ff; font-size: 16px; font-weight: 700; }.danger .icon { color: #ff453a; background: rgba(255,69,58,.1); }.earnings .icon { color: #bf5af2; background: rgba(191,90,242,.1); }.today .icon { color: #30d158; background: rgba(48,209,88,.1); }.reviews .icon { color: #ffd60a; background: rgba(255,214,10,.1); }
+.card b, .card small { display: block; }.card b { font-size: 13px; }.card small { margin-top: 2px; color: #8e8e93; font-size: 11px; }.card em { margin-left: auto; color: #8e8e93; font-size: 21px; font-style: normal; }.footer { flex: none; margin: 10px 2px 0; color: #8e8e93; font-size: 11px; text-align: center; }
+#lastAttempt.attempt-success { color: #30d158; }#lastAttempt.attempt-error { color: #ff9f0a; }
+.scan-now { width: 100%; margin-top: 14px; padding: 11px; border: 0; border-radius: 12px; background: #5aa9ff; color: #07111e; font: 600 13px inherit; cursor: pointer; }.scan-now:hover { background: #7bb9ff; }.scan-now:disabled { background: #252b36; color: #8e8e93; cursor: default; }
+.scan-status { margin: 8px 2px 0; min-height: 14px; color: #8e8e93; font-size: 11px; text-align: center; }.scan-status.scan-error { color: #ff9f0a; }.scan-status.scan-ok { color: #30d158; }
+.scan-status a { color: #5aa9ff; }
+/* In normal flow and flex:1, so it stretches to the bottom of the sidebar.
+   Was position:fixed with max-height:300px, which capped it at a few tiles no
+   matter how tall the window was. min-height:0 is required for a flex child
+   to actually scroll rather than overflow its parent. */
+.hostos-results { display:none; gap:8px; flex:1 1 auto; min-height:0; margin-top:12px; overflow:auto; padding:12px; border:1px solid #2b3e5a; border-radius:16px; background:#0e1116; box-shadow:0 14px 36px #0009; }.hostos-results.visible { display:grid; align-content:start; }.hostos-queue-header { position:sticky; top:0; z-index:3; display:flex; align-items:center; justify-content:space-between; gap:8px; margin:-12px -12px 0; padding:12px 12px 10px; border-radius:16px 16px 0 0; background:#0e1116; }
+.hostos-result-title { margin:0; color:#8e8e93; font-size:10px; font-weight:700; letter-spacing:.08em; }.hostos-close-queue { flex-shrink:0; width:22px; height:22px; border:0; border-radius:7px; background:#252b36; color:#f5f5f7; font:16px inherit; line-height:1; cursor:pointer; }.hostos-result { padding:12px; border:1px solid rgba(255,159,10,.28); border-radius:14px; background:#181c24; cursor:pointer; }.hostos-result:hover { background:#202630; }.hostos-result-head b { display:block; font-size:13px; }.hostos-result p { margin:4px 0 9px; color:#c7c7cc; font-size:11px; line-height:1.4; }.hostos-result-actions { display:flex; gap:6px; }.hostos-result-actions button { border:0; border-radius:8px; background:#5aa9ff; color:#07111e; padding:6px 9px; font:600 11px inherit; cursor:pointer; }.hostos-result-actions .hostos-secondary { background:#252b36; color:#f5f5f7; }.hostos-empty-result { padding:12px; border-radius:14px; background:#181c24; color:#8e8e93; font-size:11px; }.hostos-held-note { margin-top:6px; padding:12px; border-radius:14px; background:#181c24; border:1px solid rgba(255,159,10,.28); color:#d8c08a; font-size:11px; line-height:1.4; }.hostos-vehicle-earnings { display:grid; gap:8px; margin-top:2px; padding-top:10px; border-top:1px solid #2b3e5a; }
+.hostos-vehicle-result { border-color:#2b3e5a; cursor:default; }
+/* Inherits font-size deliberately — weight and colour carry the emphasis, so
+   the surrounding sentence keeps its rhythm. */
+/* display:inline is load-bearing — .hostos-result b used to set display:block
+   for the card title, which turned every money span into its own line
+   ("≈$105" / "$35" / "/day" stacked vertically). */
+.hostos-result b.hostos-money, .hostos-money { display:inline; font-size:inherit; font-weight:700; }
+.hostos-money-green { color:#30d158; }
+.hostos-money-red { color:#ff453a; }
+
+/* Card layout: a title/badge head, the trip window, then an aligned
+   label/value grid. Replaces stacked prose lines that had to be read in full
+   to find a single figure. */
+.hostos-result-head { display:flex; align-items:baseline; justify-content:space-between; gap:8px; }
+.hostos-result-head b { font-size:13px; letter-spacing:-.01em; }
+.hostos-badge { flex:none; padding:2px 7px; border-radius:6px; background:#252b36; color:#8e8e93; font-size:9px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; white-space:nowrap; }
+.hostos-badge-red { background:rgba(255,69,58,.14); color:#ff453a; }
+.hostos-badge-amber { background:rgba(255,159,10,.14); color:#ff9f0a; }
+.hostos-badge-muted { background:#252b36; color:#8e8e93; }
+.hostos-when { margin:5px 0 0; color:#8e8e93; font-size:11px; }.hostos-ident { margin:4px 0 0; color:#8e8e93; font-size:11px; }
+.hostos-note { margin:8px 0 0; padding:7px 9px; border-radius:9px; background:rgba(255,69,58,.09); color:#ff9f0a; font-size:11px; line-height:1.4; }
+.hostos-details { display:grid; grid-template-columns:auto 1fr; gap:4px 12px; margin:9px 0 10px; align-items:baseline; }
+.hostos-key { color:#8e8e93; font-size:9px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; }
+.hostos-val { color:#c7c7cc; font-size:11px; line-height:1.45; }
+.hostos-daily-total { display:grid; gap:2px; margin:2px 0; padding:12px; border:1px solid rgba(48,209,88,.35); border-radius:14px; background:linear-gradient(135deg,#12251a,#181c24); }
+.hostos-daily-total b { font-size:11px; color:#c7c7cc; }
+.hostos-daily-total strong { color:#30d158; font-size:26px; line-height:1.1; letter-spacing:-.04em; }
+.hostos-daily-total small { color:#8e8e93; font-size:10px; }
+
+.hostos-review { border-color: rgba(255,214,10,.28); cursor: default; }.hostos-review:hover { background: #181c24; }
+.hostos-chips { display:flex; flex-wrap:wrap; gap:4px; margin:6px 0 2px; }.hostos-chip { padding:3px 7px; border-radius:7px; background:#252b36; color:#c7c7cc; font-size:10px; font-weight:600; }.hostos-chip-warn { background:rgba(255,159,10,.14); color:#ff9f0a; }.hostos-chip-ok { background:rgba(48,209,88,.12); color:#30d158; }.hostos-chip-muted { color:#8e8e93; }
+.hostos-toggles { display:flex; flex-wrap:wrap; gap:4px; margin:8px 0 0; }.hostos-toggle { border:1px solid #2b3e5a; border-radius:7px; background:transparent; color:#8e8e93; padding:3px 7px; font:600 10px inherit; cursor:pointer; }.hostos-toggle:hover { color:#f5f5f7; }.hostos-toggle.on { background:rgba(255,69,58,.14); border-color:rgba(255,69,58,.4); color:#ff453a; }
+.hostos-notes { display:block; width:100%; box-sizing:border-box; margin:8px 0 0; padding:6px 8px; border:1px solid #2b3e5a; border-radius:8px; background:#0e1116; color:#f5f5f7; font-family:inherit; font-size:11px; line-height:1.4; resize:vertical; }.hostos-notes::placeholder { color:#5c5c61; }
+.hostos-history { margin:6px 0 0; color:#8e8e93; font-size:11px; }
+.hostos-stars { display:flex; align-items:center; gap:2px; margin:8px 0 0; }.hostos-stars .hostos-key { margin-right:6px; }.hostos-star { border:0; background:transparent; color:#3a3f4b; font-size:20px; line-height:1; padding:0 1px; cursor:pointer; }.hostos-star:hover, .hostos-star.on { color:#ffd60a; }
+.hostos-result .hostos-quote { margin:3px 0 0; color:#d8c08a; font-size:11px; line-height:1.4; }.hostos-note-ok { background:rgba(48,209,88,.09); color:#30d158; }
+.hostos-badge-ok { background:rgba(48,209,88,.14); color:#30d158; }.hostos-result .hostos-quote-ok { color:#30d158; }
+.premier .icon { color:#ff453a; background:rgba(255,69,58,.14); }.card.premier.alert { border-color:rgba(255,69,58,.55); background:rgba(255,69,58,.06); }.card.premier.alert small { color:#ff453a; font-weight:600; }
+.hostos-outlook { border-color:rgba(48,209,88,.28); cursor:default; }.hostos-outlook:hover { background:#181c24; }
+
+.hero-sub { margin:8px 0 0; color:#8e8e93; font-size:11px; line-height:1.4; }
+.stats { display:grid; grid-template-columns:repeat(3, 1fr); gap:6px; margin-top:12px; }.stats[hidden] { display:none; }
+.hostos-stat { padding:8px; border-radius:10px; background:#181c24; text-align:center; }.hostos-stat b { display:block; color:#f5f5f7; font-size:13px; }.hostos-stat small { display:block; margin-top:1px; color:#8e8e93; font-size:10px; }
+.footer[hidden] { display:none; }
+.hostos-disclosure { margin-top:8px; }.hostos-disclosure summary { cursor:pointer; color:#8e8e93; font-size:11px; font-weight:600; list-style:none; }.hostos-disclosure summary::-webkit-details-marker { display:none; }
+.hostos-disclosure summary::before { content:"\25B8  "; display:inline-block; width:12px; transition:transform .15s ease; }.hostos-disclosure[open] summary::before { transform:rotate(90deg); }.hostos-disclosure summary:hover { color:#f5f5f7; }
+
+.brand-wordmark { display:block; height:28px; width:auto; }
+.visually-hidden { position:absolute; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip:rect(0 0 0 0); border:0; }

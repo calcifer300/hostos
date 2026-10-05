@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>HostOS preview - tiles, Premier queue, outlook</title>
+    <link rel="stylesheet" href="../../popup/popup.css">
+    <style>body { margin: 0; } .popup { min-height: 0; }</style>
+  </head>
+  <body>
+    <main class="popup">
+      <section class="cards" aria-label="Trip summary">
+        <button class="card premier alert" data-filter="premier"><span class="icon">⚠</span><span><b>Premier Plan Bookings</b><small>1 trip · cancel before pickup</small></span><em>›</em></button>
+        <button class="card danger" data-filter="license"><span class="icon">!</span><span><b>Unverified Licenses</b><small>3 trips</small></span><em>›</em></button>
+        <button class="card earnings" data-filter="earnings"><span class="icon">$</span><span><b>Profit Risk</b><small>2 trips</small></span><em>›</em></button>
+        <button class="card reviews" data-filter="reviews"><span class="icon">★</span><span><b>Pending Reviews</b><small>25 guests waiting</small></span><em>›</em></button>
+        <button class="card today" data-filter="today"><span class="icon">↩</span><span><b>Earnings Estimator</b><small>≈$1,373 · 3 trips</small></span><em>›</em></button>
+      </section>
+      <section class="hostos-results visible" id="premier"></section>
+      <section class="hostos-results visible" id="today" style="margin-top:12px"></section>
+    </main>
+    <script src="../../utils/constants.js"></script>
+    <script src="../../utils/dates.js"></script>
+    <script src="../../utils/parser.js"></script>
+    <script src="../../utils/reviews.js"></script>
+    <script src="../../utils/outlook.js"></script>
+    <script src="../../modules/queueView.js"></script>
+    <script>
+      const day = (n, h) => { const d = new Date(); d.setHours(h || 12, 0, 0, 0); d.setDate(d.getDate() + n); return d.toISOString(); };
+      const kumar = { reservationId: "61165819", guestName: "Kumar", vehicle: "Mazda CX-50 2024", plate: "DJIL68",
+        pickupDate: day(11, 13), returnDate: day(17, 19), protectionLevel: "SUPREME", protectionPlanName: "Premier", guestMaxOutOfPocket: 0,
+        premierProtection: true, earningsRisk: true, earningsBelowFloor: false, estimatedEarnings: 239, earningsPerMile: 0.23, includedMiles: 1050,
+        hostTakeRate: 0.7, earningsInputsKnown: true, extras: [], earningsExtras: 0, earningsDelivery: 120, deliveryFeeSource: "turo",
+        guestRating: 4.3, guestRatingCount: 9, guestTripCount: 10, guestCheckedAt: day(0), guestMemberSince: { month: 2, year: 2018 },
+        riskReasons: ["Guest bought the Premier plan — $0 out-of-pocket, so damage cannot be billed to them"], tripUrl: "https://turo.com/us/en/reservation/61165819" };
+      const trips = [kumar,
+        { reservationId: "1", returnDate: day(0, 17), pickupDate: day(-3), estimatedEarnings: 310, plate: "AAA111", vehicle: "Tesla Model 3 2022" },
+        { reservationId: "2", returnDate: day(2), pickupDate: day(-1), estimatedEarnings: 180 },
+        { reservationId: "3", returnDate: day(9), pickupDate: day(4), estimatedEarnings: null },
+        { reservationId: "4", returnDate: day(20), pickupDate: day(14), estimatedEarnings: 640 }];
+      HostOS.queueView.renderQueue(document.getElementById("premier"), trips, "premier", null, {});
+      HostOS.queueView.renderQueue(document.getElementById("today"), trips, "today", null, {});
+    </script>
+  </body>
+</html>

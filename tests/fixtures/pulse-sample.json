@@ -1,0 +1,2349 @@
+{
+  "snapshot": {
+    "version": 1,
+    "builtAt": 1790977584988,
+    "zone": "America/Denver",
+    "brand": "Colorado Cruisers",
+    "operator": "Matt",
+    "owner": "Matt",
+    "scannedAt": "2026-10-02T21:46:04.988Z",
+    "counts": {
+      "trips": 11,
+      "vehicles": 54
+    },
+    "model": {
+      "now": 1790977584988,
+      "zone": "America/Denver",
+      "greeting": "Good afternoon, Matt",
+      "dateLine": "Fri, Oct 2 · 3:46 PM",
+      "kpis": {
+        "vehicles": 54,
+        "activeTrips": 4,
+        "pickups": 4,
+        "returns": 3,
+        "earningsNext30": 2410,
+        "earningsLast30": 1290,
+        "tripsNext30": 9,
+        "tripsLast30": 2
+      },
+      "series": {
+        "vehicles": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          0,
+          0,
+          0,
+          1,
+          2,
+          4
+        ],
+        "active": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          0,
+          0,
+          0,
+          1,
+          2,
+          4
+        ],
+        "pickups": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          2
+        ],
+        "returns": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "earnings": [
+          910,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          380,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "topCar": {
+        "name": "Mazda CX-50 2024",
+        "plate": "DJIL68",
+        "total": 910,
+        "trips": 1,
+        "perTrip": 910,
+        "photo": "https://images.turo.com/media/vehicle/images/rl9v10xJQgSk4HlPBqXepQ.620x372.jpg",
+        "photos": [
+          "https://images.turo.com/media/vehicle/images/rl9v10xJQgSk4HlPBqXepQ.620x372.jpg",
+          "https://images.turo.com/media/vehicle/images/ZxEAd7nvRhuuzKubwn-xNw.620x372.jpg",
+          "https://images.turo.com/media/vehicle/images/fTFyHg6KQPa_vMotSYiyMw.620x372.jpg"
+        ],
+        "from": 1783201584988,
+        "to": 1790977584988,
+        "runnersUp": [
+          {
+            "name": "Nissan Kicks 2025",
+            "plate": "ESPL85",
+            "total": 380
+          }
+        ]
+      },
+      "unread": [
+        {
+          "tripId": "71009",
+          "tripUrl": "https://turo.com/us/en/reservation/71009",
+          "guest": "Dee",
+          "vehicle": "Volkswagen Taos 2024",
+          "plate": "ENHF01",
+          "text": "Hi! Is there a charger in the garage and where do I park when I arrive?",
+          "sentAt": 1790883984988,
+          "waitMs": 93600000,
+          "sent": "Sent Oct 1, 1:46 PM",
+          "wait": "Waiting 1 day",
+          "urgency": "high"
+        },
+        {
+          "tripId": "71010",
+          "tripUrl": "https://turo.com/us/en/reservation/71010",
+          "guest": "Rae",
+          "vehicle": "Nissan Rogue 2024",
+          "plate": "ENFP72",
+          "text": "Can I extend by one day?",
+          "sentAt": 1790972184988,
+          "waitMs": 5400000,
+          "sent": "Sent Oct 2, 2:16 PM",
+          "wait": "Waiting 1 hour",
+          "urgency": "medium"
+        },
+        {
+          "tripId": "71011",
+          "tripUrl": "https://turo.com/us/en/reservation/71011",
+          "guest": "Eli",
+          "vehicle": "Tesla Model 3 2022",
+          "plate": "EBKP99",
+          "text": "On my way, about 10 minutes out",
+          "sentAt": 1790977224988,
+          "waitMs": 360000,
+          "sent": "Sent Oct 2, 3:40 PM",
+          "wait": "Waiting 6 min",
+          "urgency": "new"
+        }
+      ],
+      "attention": [
+        {
+          "kind": "premier",
+          "tone": "red",
+          "weight": 0,
+          "label": "Premier plan booked",
+          "guest": "Priya",
+          "vehicle": "Volkswagen Tiguan 2024",
+          "plate": "EPMA97",
+          "tripId": "71003",
+          "tripUrl": "https://turo.com/us/en/reservation/71003",
+          "when": 1790995584988,
+          "detail": "Guest has $0 out-of-pocket. Cancel before pickup if you want recourse."
+        },
+        {
+          "kind": "license",
+          "tone": "amber",
+          "weight": 1,
+          "label": "License not verified",
+          "guest": "Chris",
+          "vehicle": "Nissan Pathfinder 2024",
+          "plate": "EJQN51",
+          "tripId": "71004",
+          "tripUrl": "https://turo.com/us/en/reservation/71004",
+          "when": 1791009984988,
+          "detail": "Pickup is inside the 24-hour verification window."
+        }
+      ],
+      "attentionCounts": {
+        "premier": 1,
+        "license": 1,
+        "earnings": 0,
+        "reviews": 0,
+        "messages": 3,
+        "total": 2
+      },
+      "schedule": [
+        {
+          "type": "Pickup",
+          "at": 1790963184988,
+          "done": true,
+          "time": "11:46 AM",
+          "vehicle": "Subaru Ascent 2023",
+          "plate": "DWIS75",
+          "guest": "Luis",
+          "tripUrl": "https://turo.com/us/en/reservation/71006"
+        },
+        {
+          "type": "Pickup",
+          "at": 1790966784988,
+          "done": true,
+          "time": "12:46 PM",
+          "vehicle": "Volkswagen Taos 2024",
+          "plate": "ENHF01",
+          "guest": "Dee",
+          "tripUrl": "https://turo.com/us/en/reservation/71009"
+        },
+        {
+          "type": "Pickup",
+          "at": 1790984784988,
+          "done": false,
+          "time": "5:46 PM",
+          "vehicle": "Tesla Model 3 2022",
+          "plate": "EBKP99",
+          "guest": "Eli",
+          "tripUrl": "https://turo.com/us/en/reservation/71011"
+        },
+        {
+          "type": "Return",
+          "at": 1790988384988,
+          "done": false,
+          "time": "6:46 PM",
+          "vehicle": "Tesla Model 3 2025",
+          "plate": "DGUI92",
+          "guest": "Jordan",
+          "tripUrl": "https://turo.com/us/en/reservation/71002"
+        },
+        {
+          "type": "Pickup",
+          "at": 1790995584988,
+          "done": false,
+          "time": "8:46 PM",
+          "vehicle": "Volkswagen Tiguan 2024",
+          "plate": "EPMA97",
+          "guest": "Priya",
+          "tripUrl": "https://turo.com/us/en/reservation/71003"
+        }
+      ],
+      "fleet": {
+        "total": 54,
+        "onTrip": 4,
+        "scheduled": 4,
+        "available": 0,
+        "unlisted": 13,
+        "needsAttention": 16
+      },
+      "earnings": [
+        {
+          "from": 1788558384988,
+          "to": 1789163184988,
+          "cents": 0,
+          "trips": 0,
+          "future": false
+        },
+        {
+          "from": 1789163184988,
+          "to": 1789767984988,
+          "cents": 0,
+          "trips": 0,
+          "future": false
+        },
+        {
+          "from": 1789767984988,
+          "to": 1790372784988,
+          "cents": 91000,
+          "trips": 1,
+          "future": false
+        },
+        {
+          "from": 1790372784988,
+          "to": 1790977584988,
+          "cents": 38000,
+          "trips": 1,
+          "future": false
+        },
+        {
+          "from": 1790977584988,
+          "to": 1791582384988,
+          "cents": 241000,
+          "trips": 9,
+          "future": true
+        },
+        {
+          "from": 1791582384988,
+          "to": 1792187184988,
+          "cents": 0,
+          "trips": 0,
+          "future": true
+        },
+        {
+          "from": 1792187184988,
+          "to": 1792791984988,
+          "cents": 0,
+          "trips": 0,
+          "future": true
+        },
+        {
+          "from": 1792791984988,
+          "to": 1793396784988,
+          "cents": 0,
+          "trips": 0,
+          "future": true
+        }
+      ],
+      "tolls": {
+        "toBill": 3,
+        "cents": 4100,
+        "looks": 1,
+        "running": 2,
+        "billedWeek": 2,
+        "billedWeekCents": 2699,
+        "fileBilled": 0,
+        "fileTotal": 0
+      },
+      "lastScan": "2026-10-02T21:46:04.988Z"
+    },
+    "earnings": {
+      "outlook": [
+        {
+          "label": "This week",
+          "total": 1380,
+          "priced": 5,
+          "unpriced": 0,
+          "trips": 5
+        },
+        {
+          "label": "This month",
+          "total": 2410,
+          "priced": 9,
+          "unpriced": 0,
+          "trips": 9
+        },
+        {
+          "label": "Booked ahead",
+          "total": 2410,
+          "priced": 9,
+          "unpriced": 0,
+          "trips": 9
+        }
+      ],
+      "today": {
+        "total": 0,
+        "priced": 0,
+        "count": 1,
+        "rows": [
+          {
+            "time": "6:46 PM",
+            "returned": false,
+            "vehicle": "Tesla Model 3 2025",
+            "plate": "DGUI92",
+            "guest": "Jordan",
+            "total": null,
+            "perDay": null,
+            "days": null,
+            "tripUrl": "https://turo.com/us/en/reservation/71002"
+          }
+        ]
+      },
+      "calendar": {
+        "fleet": 54,
+        "fresh": 0,
+        "needed": 0,
+        "neededDone": 0,
+        "pending": [],
+        "lastAt": null,
+        "live": false,
+        "complete": true
+      },
+      "unpriced": [],
+      "guessTotal": 0,
+      "cars": [],
+      "idle": [],
+      "onTripUnpriced": [],
+      "best": 0,
+      "fleetPriced": false
+    },
+    "fleet": [
+      {
+        "name": "Mazda CX-50 2024",
+        "plate": "DJIL68",
+        "photo": "https://images.turo.com/media/vehicle/images/rl9v10xJQgSk4HlPBqXepQ.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/2951360",
+        "status": "listed",
+        "issues": [],
+        "state": "ontrip",
+        "now": {
+          "guest": "Maya",
+          "until": "Sat, Oct 3, 11:46 AM",
+          "tripUrl": "https://turo.com/us/en/reservation/71001"
+        },
+        "next": null,
+        "tripsAhead": 1,
+        "calendar": null
+      },
+      {
+        "name": "Subaru Ascent 2023",
+        "plate": "DWIS75",
+        "photo": "https://images.turo.com/media/vehicle/images/acMvZlTYT-6begMuSORfaA.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/2072226",
+        "status": "listed",
+        "issues": [
+          "Inspection due Sep 30, 2026"
+        ],
+        "state": "ontrip",
+        "now": {
+          "guest": "Luis",
+          "until": "Sat, Oct 3, 9:46 PM",
+          "tripUrl": "https://turo.com/us/en/reservation/71006"
+        },
+        "next": null,
+        "tripsAhead": 1,
+        "calendar": null
+      },
+      {
+        "name": "Tesla Model 3 2021",
+        "plate": "DGUI92",
+        "photo": "https://images.turo.com/media/vehicle/images/PzKQNLFdQzSGsZfgLh-ddg.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/1679002",
+        "status": "listed",
+        "issues": [],
+        "state": "ontrip",
+        "now": {
+          "guest": "Jordan",
+          "until": "Fri, Oct 2, 6:46 PM",
+          "tripUrl": "https://turo.com/us/en/reservation/71002"
+        },
+        "next": null,
+        "tripsAhead": 1,
+        "calendar": null
+      },
+      {
+        "name": "Volkswagen Taos 2024",
+        "plate": "ENHF01",
+        "photo": "https://images.turo.com/media/vehicle/images/nln-q6GaQXe6tNvU6K1_Uw.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/2768678",
+        "status": "listed",
+        "issues": [],
+        "state": "ontrip",
+        "now": {
+          "guest": "Dee",
+          "until": "Sat, Oct 3, 1:46 AM",
+          "tripUrl": "https://turo.com/us/en/reservation/71009"
+        },
+        "next": null,
+        "tripsAhead": 1,
+        "calendar": null
+      },
+      {
+        "name": "Mazda CX-90 PHEV 2024",
+        "plate": "EDAL70",
+        "photo": "https://images.turo.com/media/vehicle/images/fxPUZssnQD6uTCrFOPpykA.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/2494092",
+        "status": "unlisted",
+        "issues": [],
+        "state": "soon",
+        "now": null,
+        "next": {
+          "guest": "Ana",
+          "from": "Sat, Oct 3, 11:46 AM",
+          "tripUrl": "https://turo.com/us/en/reservation/71005"
+        },
+        "tripsAhead": 1,
+        "calendar": null
+      },
+      {
+        "name": "Nissan Pathfinder 2024",
+        "plate": "EJQN51",
+        "photo": "https://images.turo.com/media/vehicle/images/ZQSwL5O6RTOWA6N_BKPt8Q.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/2753733",
+        "status": "listed",
+        "issues": [],
+        "state": "soon",
+        "now": null,
+        "next": {
+          "guest": "Chris",
+          "from": "Sat, Oct 3, 12:46 AM",
+          "tripUrl": "https://turo.com/us/en/reservation/71004"
+        },
+        "tripsAhead": 1,
+        "calendar": null
+      },
+      {
+        "name": "Tesla Model 3 2022",
+        "plate": "EBKP99",
+        "photo": "https://images.turo.com/media/vehicle/images/FJdRrvVrSAyFz8FUpgkHnw.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/1753978",
+        "status": "listed",
+        "issues": [],
+        "state": "soon",
+        "now": null,
+        "next": {
+          "guest": "Eli",
+          "from": "Fri, Oct 2, 5:46 PM",
+          "tripUrl": "https://turo.com/us/en/reservation/71011"
+        },
+        "tripsAhead": 1,
+        "calendar": null
+      },
+      {
+        "name": "Volkswagen Tiguan 2024",
+        "plate": "EPMA97",
+        "photo": "https://images.turo.com/media/vehicle/images/9Mjv4bgZSbOE_E8WgBLNnA.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/2931386",
+        "status": "listed",
+        "issues": [],
+        "state": "soon",
+        "now": null,
+        "next": {
+          "guest": "Priya",
+          "from": "Fri, Oct 2, 8:46 PM",
+          "tripUrl": "https://turo.com/us/en/reservation/71003"
+        },
+        "tripsAhead": 1,
+        "calendar": null
+      },
+      {
+        "name": "Mazda CX-50 2025",
+        "plate": "ESPL81",
+        "photo": "https://images.turo.com/media/vehicle/images/GEBh_GhUQX6GQc9rRDACmw.620x372.heic",
+        "href": "https://turo.com/us/en/your-car/3372248",
+        "status": "listed",
+        "issues": [
+          "Inspection due Sep 30, 2026"
+        ],
+        "state": "attention",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Mazda CX-90 PHEV 2024",
+        "plate": "DNFP19",
+        "photo": "https://images.turo.com/media/vehicle/images/vdBe4bAdRvO9olsDznuN7w.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/2221312",
+        "status": "unlisted",
+        "issues": [
+          "Inspection required"
+        ],
+        "state": "attention",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Mazda CX-90 PHEV 2024",
+        "plate": "EGAK45",
+        "photo": "https://images.turo.com/media/vehicle/images/BZu9x3dwRMm3sJK3G9Id1A.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/2577329",
+        "status": "unlisted",
+        "issues": [
+          "Inspection required"
+        ],
+        "state": "attention",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Nissan Kicks 2025",
+        "plate": "ESPL85",
+        "photo": "https://images.turo.com/media/vehicle/images/Ywxox87ERZOASa44ViyHZA.620x372.heic",
+        "href": "https://turo.com/us/en/your-car/3381610",
+        "status": "listed",
+        "issues": [
+          "Inspection due Sep 30, 2026"
+        ],
+        "state": "attention",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Nissan Pathfinder 2024",
+        "plate": "EONW36",
+        "photo": "https://images.turo.com/media/vehicle/images/q1QTW9KeQOCnVjykr755SA.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/2883357",
+        "status": "unlisted",
+        "issues": [
+          "Inspection required"
+        ],
+        "state": "attention",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Subaru Forester 2018",
+        "plate": "413RPQ",
+        "photo": "https://images.turo.com/media/vehicle/images/L9EeyeJWQ5aTyBr4IjOPbw.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/1815955",
+        "status": "unlisted",
+        "issues": [
+          "Inspection required"
+        ],
+        "state": "attention",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Tesla Model 3 2024",
+        "plate": "E00R35",
+        "photo": "https://images.turo.com/media/vehicle/images/aFxKnsqERmmkbsj8yjF7eQ.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/2860403",
+        "status": "unlisted",
+        "issues": [
+          "Inspection due Sep 30, 2026"
+        ],
+        "state": "attention",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Volkswagen Tiguan 2020",
+        "plate": "DNFP18",
+        "photo": "https://images.turo.com/media/vehicle/images/Kh5m3qCiS6yNrzb2pu88pg.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/2056439",
+        "status": "unlisted",
+        "issues": [
+          "Inspection required"
+        ],
+        "state": "attention",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Volkswagen Tiguan 2021",
+        "plate": "BXQE51",
+        "photo": "https://images.turo.com/media/vehicle/images/9UORclYvTyeCBiMT3OOUUQ.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/1897853",
+        "status": "unlisted",
+        "issues": [
+          "Inspection required"
+        ],
+        "state": "attention",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Audi Q5 2021",
+        "plate": "CVDX25",
+        "photo": "https://images.turo.com/media/vehicle/images/XNpLUNhiTAOE6pbInJ7Z7A.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/2588294",
+        "status": "listed",
+        "issues": [],
+        "state": "available",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Mazda CX-50 2024",
+        "plate": "EOUI51",
+        "photo": "https://images.turo.com/media/vehicle/images/ZxEAd7nvRhuuzKubwn-xNw.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/2887152",
+        "status": "listed",
+        "issues": [],
+        "state": "available",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Mazda CX-50 2024",
+        "plate": "E0D073",
+        "photo": "https://images.turo.com/media/vehicle/images/fTFyHg6KQPa_vMotSYiyMw.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/2963756",
+        "status": "listed",
+        "issues": [],
+        "state": "available",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Mazda CX-50 2024",
+        "plate": "E0CX30",
+        "photo": "https://images.turo.com/media/vehicle/images/JPTJhhgsQUavyS7-aEjazA.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/2966312",
+        "status": "listed",
+        "issues": [],
+        "state": "available",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Mazda CX-50 2024",
+        "plate": "EOCX52",
+        "photo": "https://images.turo.com/media/vehicle/images/kWivJng_Tjid_nyuA8AzCw.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/2970519",
+        "status": "listed",
+        "issues": [],
+        "state": "available",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Mazda CX-90 PHEV 2024",
+        "plate": "EIQT20",
+        "photo": "https://images.turo.com/media/vehicle/images/zjY5jy5kSMyFoYzjOcCGUg.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/2635411",
+        "status": "listed",
+        "issues": [],
+        "state": "available",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Nissan Kicks 2025",
+        "plate": "ELYP78",
+        "photo": "https://images.turo.com/media/vehicle/images/UBDMpPQqTTmQMI2g468RFQ.620x372.heic",
+        "href": "https://turo.com/us/en/your-car/3444224",
+        "status": "listed",
+        "issues": [],
+        "state": "available",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Nissan Kicks 2025",
+        "plate": "ESPL86",
+        "photo": "https://images.turo.com/media/vehicle/images/qDLG559mSEOf65bUykMGXg.620x372.heic",
+        "href": "https://turo.com/us/en/your-car/3585314",
+        "status": "listed",
+        "issues": [],
+        "state": "available",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Nissan Kicks 2026",
+        "plate": "FOLZ86",
+        "photo": "https://images.turo.com/media/vehicle/images/gI6tC8P0RZ21O3Sq3W8u4w.620x372.heic",
+        "href": "https://turo.com/us/en/your-car/3616297",
+        "status": "listed",
+        "issues": [],
+        "state": "available",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Nissan Murano 2022",
+        "plate": "DNIBOO",
+        "photo": "https://images.turo.com/media/vehicle/images/ymkdzLXITCqh6tc52dYvhg.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/2507243",
+        "status": "listed",
+        "issues": [],
+        "state": "available",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Nissan Pathfinder 2023",
+        "plate": "EPFU22",
+        "photo": "https://images.turo.com/media/vehicle/images/5Q9oIc8ySeW9EDMH4JTBww.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/2925162",
+        "status": "listed",
+        "issues": [],
+        "state": "available",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Nissan Pathfinder 2023",
+        "plate": "DJIF68",
+        "photo": "https://images.turo.com/media/vehicle/images/GaZU9gLpT1y30pxbAntB2Q.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/2988656",
+        "status": "listed",
+        "issues": [],
+        "state": "available",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Nissan Pathfinder 2023",
+        "plate": "DJIL69",
+        "photo": "https://images.turo.com/media/vehicle/images/vbELT7n3SeGw4fMpj1a27Q.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/3007215",
+        "status": "listed",
+        "issues": [],
+        "state": "available",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Nissan Pathfinder 2024",
+        "plate": "EFXL60",
+        "photo": "https://images.turo.com/media/vehicle/images/cG26-7kvSLydgSelnmF9TA.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/2590932",
+        "status": "listed",
+        "issues": [],
+        "state": "available",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Nissan Pathfinder 2024",
+        "plate": "EFZE79",
+        "photo": "https://images.turo.com/media/vehicle/images/6RFvWPPcQlaHNzo4aQG_yA.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/2597975",
+        "status": "listed",
+        "issues": [],
+        "state": "available",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Nissan Pathfinder 2024",
+        "plate": "EOIGO6",
+        "photo": "https://images.turo.com/media/vehicle/images/gq1aN24hQcu42UTTRUS_pQ.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/2820008",
+        "status": "listed",
+        "issues": [],
+        "state": "available",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Nissan Rogue 2024",
+        "plate": "ENFP72",
+        "photo": "https://images.turo.com/media/vehicle/images/ZnTOSz0dTSeJLxdcrPHMjQ.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/2736626",
+        "status": "listed",
+        "issues": [],
+        "state": "available",
+        "now": null,
+        "next": {
+          "guest": "Rae",
+          "from": "Sat, Oct 3, 9:46 PM",
+          "tripUrl": "https://turo.com/us/en/reservation/71010"
+        },
+        "tripsAhead": 1,
+        "calendar": null
+      },
+      {
+        "name": "Nissan Sentra 2024",
+        "plate": "EJQN55",
+        "photo": "https://images.turo.com/media/vehicle/images/7OEwHdZ6RcOYkvsSLZ5Zcg.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/2744038",
+        "status": "listed",
+        "issues": [],
+        "state": "available",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Subaru Forester 2019",
+        "plate": "CVCF42",
+        "photo": "https://images.turo.com/media/vehicle/images/_ZvZP32DSyqoPkbzEMgbOA.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/2529833",
+        "status": "listed",
+        "issues": [],
+        "state": "available",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Tesla Model 3 2023",
+        "plate": "ELVH92",
+        "photo": "https://images.turo.com/media/vehicle/images/5t5myyywTSukccMwiPMnbg.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/1806103",
+        "status": "listed",
+        "issues": [],
+        "state": "available",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Tesla Model 3 2025",
+        "plate": "EWLW91",
+        "photo": "https://images.turo.com/media/vehicle/images/kcZhNIXfT8OlIeMezCJSfQ.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/3092036",
+        "status": "listed",
+        "issues": [],
+        "state": "available",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Tesla Model 3 2025",
+        "plate": "DGUI90",
+        "photo": "https://images.turo.com/media/vehicle/images/3jJfDzTqS5ehzK59SKKkUw.620x372.heic",
+        "href": "https://turo.com/us/en/your-car/3504571",
+        "status": "listed",
+        "issues": [],
+        "state": "available",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Tesla Model Y 2023",
+        "plate": "DXZQO1",
+        "photo": "https://images.turo.com/media/vehicle/images/HY0vidTaSYGQ2AojS8egQA.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/2104610",
+        "status": "listed",
+        "issues": [],
+        "state": "available",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Volkswagen Atlas 2023",
+        "plate": "DJIF71",
+        "photo": "https://images.turo.com/media/vehicle/images/0tFC0rtRQkqQTkR3ees9Ww.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/3047391",
+        "status": "listed",
+        "issues": [],
+        "state": "available",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Volkswagen Atlas 2023",
+        "plate": "EWPI04",
+        "photo": "https://images.turo.com/media/vehicle/images/lhTz8B8bTY2nohiweD1i_Q.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/3059223",
+        "status": "listed",
+        "issues": [],
+        "state": "available",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Volkswagen ID.4 2023",
+        "plate": "DJIF69",
+        "photo": "https://images.turo.com/media/vehicle/images/JxJqJtkRTrGCs7QYgyRpPw.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/2996604",
+        "status": "listed",
+        "issues": [],
+        "state": "available",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Volkswagen Taos 2022",
+        "plate": "EIVT36",
+        "photo": "https://images.turo.com/media/vehicle/images/oJF970N_S8O2BwIcBTMt0g.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/2683779",
+        "status": "listed",
+        "issues": [],
+        "state": "available",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Volkswagen Taos 2024",
+        "plate": "ENHF08",
+        "photo": "https://images.turo.com/media/vehicle/images/3dUf8bweTnOoirzLPoXbGQ.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/2764146",
+        "status": "listed",
+        "issues": [],
+        "state": "available",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Volkswagen Tiguan 2022",
+        "plate": "AVVX92",
+        "photo": "https://images.turo.com/media/vehicle/images/c6RqFNkpQCCX_-lj3dbbZw.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/1852568",
+        "status": "listed",
+        "issues": [],
+        "state": "available",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Volkswagen Tiguan 2023",
+        "plate": "DWUL81",
+        "photo": "https://images.turo.com/media/vehicle/images/Gbl2UT4aRgm2CB3mPZcEWQ.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/2460465",
+        "status": "listed",
+        "issues": [],
+        "state": "available",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Volkswagen Tiguan 2024",
+        "plate": "EOD056",
+        "photo": "https://images.turo.com/media/vehicle/images/DOZ27_h1TRKEk1K8ev6kLA.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/2796313",
+        "status": "listed",
+        "issues": [],
+        "state": "available",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Volkswagen Tiguan 2024",
+        "plate": "DJIF67",
+        "photo": "https://images.turo.com/media/vehicle/images/0q1WIFGuTQC5iy1UwGpsoA.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/3015946",
+        "status": "listed",
+        "issues": [],
+        "state": "available",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Dodge Hornet 2024",
+        "plate": "EGAK30",
+        "photo": "https://images.turo.com/media/vehicle/images/MpumQjIPSuKqpggJ-1hJpA.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/2659901",
+        "status": "unlisted",
+        "issues": [],
+        "state": "unlisted",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Volkswagen ID.4 2023",
+        "plate": "EELA3O",
+        "photo": "https://images.turo.com/media/vehicle/images/WPjV0dn2SNGKHLIPb0NP1A.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/2545227",
+        "status": "unlisted",
+        "issues": [],
+        "state": "unlisted",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Volkswagen ID.4 2023",
+        "plate": "EGBC73",
+        "photo": "https://images.turo.com/media/vehicle/images/qE4KHwQhQM-5j3EsFMkqPg.620x372.jpg",
+        "href": "https://turo.com/us/en/your-car/2750262",
+        "status": "unlisted",
+        "issues": [],
+        "state": "unlisted",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Volkswagen Taos 2022",
+        "plate": "FIXZ76",
+        "photo": "https://images.turo.com/media/vehicle/images/8m5-54n0RjqHKWqFKA0d0g.620x372.heic",
+        "href": "https://turo.com/us/en/your-car/3367564",
+        "status": "unlisted",
+        "issues": [],
+        "state": "unlisted",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      },
+      {
+        "name": "Volkswagen Tiguan 2025",
+        "plate": "FOPZ13",
+        "photo": "https://images.turo.com/media/vehicle/images/TzQ2Kl18S9moU793GoQZmQ.620x372.heic",
+        "href": "https://turo.com/us/en/your-car/3459398",
+        "status": "unlisted",
+        "issues": [],
+        "state": "unlisted",
+        "now": null,
+        "next": null,
+        "tripsAhead": 0,
+        "calendar": null
+      }
+    ],
+    "photos": {
+      "DJIL68": [
+        "https://images.turo.com/media/vehicle/images/rl9v10xJQgSk4HlPBqXepQ.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/ZxEAd7nvRhuuzKubwn-xNw.620x372.jpg"
+      ],
+      "DWIS75": [
+        "https://images.turo.com/media/vehicle/images/acMvZlTYT-6begMuSORfaA.620x372.jpg"
+      ],
+      "DGUI92": [
+        "https://images.turo.com/media/vehicle/images/PzKQNLFdQzSGsZfgLh-ddg.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/FJdRrvVrSAyFz8FUpgkHnw.620x372.jpg"
+      ],
+      "ENHF01": [
+        "https://images.turo.com/media/vehicle/images/nln-q6GaQXe6tNvU6K1_Uw.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/3dUf8bweTnOoirzLPoXbGQ.620x372.jpg"
+      ],
+      "EDAL70": [
+        "https://images.turo.com/media/vehicle/images/fxPUZssnQD6uTCrFOPpykA.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/vdBe4bAdRvO9olsDznuN7w.620x372.jpg"
+      ],
+      "EJQN51": [
+        "https://images.turo.com/media/vehicle/images/ZQSwL5O6RTOWA6N_BKPt8Q.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/cG26-7kvSLydgSelnmF9TA.620x372.jpg"
+      ],
+      "EBKP99": [
+        "https://images.turo.com/media/vehicle/images/FJdRrvVrSAyFz8FUpgkHnw.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/PzKQNLFdQzSGsZfgLh-ddg.620x372.jpg"
+      ],
+      "EPMA97": [
+        "https://images.turo.com/media/vehicle/images/9Mjv4bgZSbOE_E8WgBLNnA.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/DOZ27_h1TRKEk1K8ev6kLA.620x372.jpg"
+      ],
+      "ESPL81": [
+        "https://images.turo.com/media/vehicle/images/GEBh_GhUQX6GQc9rRDACmw.620x372.heic",
+        "https://images.turo.com/media/vehicle/images/ZxEAd7nvRhuuzKubwn-xNw.620x372.jpg"
+      ],
+      "DNFP19": [
+        "https://images.turo.com/media/vehicle/images/vdBe4bAdRvO9olsDznuN7w.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/fxPUZssnQD6uTCrFOPpykA.620x372.jpg"
+      ],
+      "EGAK45": [
+        "https://images.turo.com/media/vehicle/images/BZu9x3dwRMm3sJK3G9Id1A.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/vdBe4bAdRvO9olsDznuN7w.620x372.jpg"
+      ],
+      "ESPL85": [
+        "https://images.turo.com/media/vehicle/images/Ywxox87ERZOASa44ViyHZA.620x372.heic",
+        "https://images.turo.com/media/vehicle/images/UBDMpPQqTTmQMI2g468RFQ.620x372.heic"
+      ],
+      "EONW36": [
+        "https://images.turo.com/media/vehicle/images/q1QTW9KeQOCnVjykr755SA.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/cG26-7kvSLydgSelnmF9TA.620x372.jpg"
+      ],
+      "413RPQ": [
+        "https://images.turo.com/media/vehicle/images/L9EeyeJWQ5aTyBr4IjOPbw.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/_ZvZP32DSyqoPkbzEMgbOA.620x372.jpg"
+      ],
+      "E00R35": [
+        "https://images.turo.com/media/vehicle/images/aFxKnsqERmmkbsj8yjF7eQ.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/PzKQNLFdQzSGsZfgLh-ddg.620x372.jpg"
+      ],
+      "DNFP18": [
+        "https://images.turo.com/media/vehicle/images/Kh5m3qCiS6yNrzb2pu88pg.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/9UORclYvTyeCBiMT3OOUUQ.620x372.jpg"
+      ],
+      "BXQE51": [
+        "https://images.turo.com/media/vehicle/images/9UORclYvTyeCBiMT3OOUUQ.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/Kh5m3qCiS6yNrzb2pu88pg.620x372.jpg"
+      ],
+      "CVDX25": [
+        "https://images.turo.com/media/vehicle/images/XNpLUNhiTAOE6pbInJ7Z7A.620x372.jpg"
+      ],
+      "EOUI51": [
+        "https://images.turo.com/media/vehicle/images/ZxEAd7nvRhuuzKubwn-xNw.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/rl9v10xJQgSk4HlPBqXepQ.620x372.jpg"
+      ],
+      "E0D073": [
+        "https://images.turo.com/media/vehicle/images/fTFyHg6KQPa_vMotSYiyMw.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/ZxEAd7nvRhuuzKubwn-xNw.620x372.jpg"
+      ],
+      "E0CX30": [
+        "https://images.turo.com/media/vehicle/images/JPTJhhgsQUavyS7-aEjazA.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/ZxEAd7nvRhuuzKubwn-xNw.620x372.jpg"
+      ],
+      "EOCX52": [
+        "https://images.turo.com/media/vehicle/images/kWivJng_Tjid_nyuA8AzCw.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/ZxEAd7nvRhuuzKubwn-xNw.620x372.jpg"
+      ],
+      "EIQT20": [
+        "https://images.turo.com/media/vehicle/images/zjY5jy5kSMyFoYzjOcCGUg.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/vdBe4bAdRvO9olsDznuN7w.620x372.jpg"
+      ],
+      "ELYP78": [
+        "https://images.turo.com/media/vehicle/images/UBDMpPQqTTmQMI2g468RFQ.620x372.heic",
+        "https://images.turo.com/media/vehicle/images/Ywxox87ERZOASa44ViyHZA.620x372.heic"
+      ],
+      "ESPL86": [
+        "https://images.turo.com/media/vehicle/images/qDLG559mSEOf65bUykMGXg.620x372.heic",
+        "https://images.turo.com/media/vehicle/images/Ywxox87ERZOASa44ViyHZA.620x372.heic"
+      ],
+      "FOLZ86": [
+        "https://images.turo.com/media/vehicle/images/gI6tC8P0RZ21O3Sq3W8u4w.620x372.heic",
+        "https://images.turo.com/media/vehicle/images/Ywxox87ERZOASa44ViyHZA.620x372.heic"
+      ],
+      "DNIBOO": [
+        "https://images.turo.com/media/vehicle/images/ymkdzLXITCqh6tc52dYvhg.620x372.jpg"
+      ],
+      "EPFU22": [
+        "https://images.turo.com/media/vehicle/images/5Q9oIc8ySeW9EDMH4JTBww.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/GaZU9gLpT1y30pxbAntB2Q.620x372.jpg"
+      ],
+      "DJIF68": [
+        "https://images.turo.com/media/vehicle/images/GaZU9gLpT1y30pxbAntB2Q.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/5Q9oIc8ySeW9EDMH4JTBww.620x372.jpg"
+      ],
+      "DJIL69": [
+        "https://images.turo.com/media/vehicle/images/vbELT7n3SeGw4fMpj1a27Q.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/5Q9oIc8ySeW9EDMH4JTBww.620x372.jpg"
+      ],
+      "EFXL60": [
+        "https://images.turo.com/media/vehicle/images/cG26-7kvSLydgSelnmF9TA.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/6RFvWPPcQlaHNzo4aQG_yA.620x372.jpg"
+      ],
+      "EFZE79": [
+        "https://images.turo.com/media/vehicle/images/6RFvWPPcQlaHNzo4aQG_yA.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/cG26-7kvSLydgSelnmF9TA.620x372.jpg"
+      ],
+      "EOIGO6": [
+        "https://images.turo.com/media/vehicle/images/gq1aN24hQcu42UTTRUS_pQ.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/cG26-7kvSLydgSelnmF9TA.620x372.jpg"
+      ],
+      "ENFP72": [
+        "https://images.turo.com/media/vehicle/images/ZnTOSz0dTSeJLxdcrPHMjQ.620x372.jpg"
+      ],
+      "EJQN55": [
+        "https://images.turo.com/media/vehicle/images/7OEwHdZ6RcOYkvsSLZ5Zcg.620x372.jpg"
+      ],
+      "CVCF42": [
+        "https://images.turo.com/media/vehicle/images/_ZvZP32DSyqoPkbzEMgbOA.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/L9EeyeJWQ5aTyBr4IjOPbw.620x372.jpg"
+      ],
+      "ELVH92": [
+        "https://images.turo.com/media/vehicle/images/5t5myyywTSukccMwiPMnbg.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/PzKQNLFdQzSGsZfgLh-ddg.620x372.jpg"
+      ],
+      "EWLW91": [
+        "https://images.turo.com/media/vehicle/images/kcZhNIXfT8OlIeMezCJSfQ.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/3jJfDzTqS5ehzK59SKKkUw.620x372.heic"
+      ],
+      "DGUI90": [
+        "https://images.turo.com/media/vehicle/images/3jJfDzTqS5ehzK59SKKkUw.620x372.heic",
+        "https://images.turo.com/media/vehicle/images/kcZhNIXfT8OlIeMezCJSfQ.620x372.jpg"
+      ],
+      "DXZQO1": [
+        "https://images.turo.com/media/vehicle/images/HY0vidTaSYGQ2AojS8egQA.620x372.jpg"
+      ],
+      "DJIF71": [
+        "https://images.turo.com/media/vehicle/images/0tFC0rtRQkqQTkR3ees9Ww.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/lhTz8B8bTY2nohiweD1i_Q.620x372.jpg"
+      ],
+      "EWPI04": [
+        "https://images.turo.com/media/vehicle/images/lhTz8B8bTY2nohiweD1i_Q.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/0tFC0rtRQkqQTkR3ees9Ww.620x372.jpg"
+      ],
+      "DJIF69": [
+        "https://images.turo.com/media/vehicle/images/JxJqJtkRTrGCs7QYgyRpPw.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/WPjV0dn2SNGKHLIPb0NP1A.620x372.jpg"
+      ],
+      "EIVT36": [
+        "https://images.turo.com/media/vehicle/images/oJF970N_S8O2BwIcBTMt0g.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/8m5-54n0RjqHKWqFKA0d0g.620x372.heic"
+      ],
+      "ENHF08": [
+        "https://images.turo.com/media/vehicle/images/3dUf8bweTnOoirzLPoXbGQ.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/nln-q6GaQXe6tNvU6K1_Uw.620x372.jpg"
+      ],
+      "AVVX92": [
+        "https://images.turo.com/media/vehicle/images/c6RqFNkpQCCX_-lj3dbbZw.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/Kh5m3qCiS6yNrzb2pu88pg.620x372.jpg"
+      ],
+      "DWUL81": [
+        "https://images.turo.com/media/vehicle/images/Gbl2UT4aRgm2CB3mPZcEWQ.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/Kh5m3qCiS6yNrzb2pu88pg.620x372.jpg"
+      ],
+      "EOD056": [
+        "https://images.turo.com/media/vehicle/images/DOZ27_h1TRKEk1K8ev6kLA.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/9Mjv4bgZSbOE_E8WgBLNnA.620x372.jpg"
+      ],
+      "DJIF67": [
+        "https://images.turo.com/media/vehicle/images/0q1WIFGuTQC5iy1UwGpsoA.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/DOZ27_h1TRKEk1K8ev6kLA.620x372.jpg"
+      ],
+      "EGAK30": [
+        "https://images.turo.com/media/vehicle/images/MpumQjIPSuKqpggJ-1hJpA.620x372.jpg"
+      ],
+      "EELA3O": [
+        "https://images.turo.com/media/vehicle/images/WPjV0dn2SNGKHLIPb0NP1A.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/qE4KHwQhQM-5j3EsFMkqPg.620x372.jpg"
+      ],
+      "EGBC73": [
+        "https://images.turo.com/media/vehicle/images/qE4KHwQhQM-5j3EsFMkqPg.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/WPjV0dn2SNGKHLIPb0NP1A.620x372.jpg"
+      ],
+      "FIXZ76": [
+        "https://images.turo.com/media/vehicle/images/8m5-54n0RjqHKWqFKA0d0g.620x372.heic",
+        "https://images.turo.com/media/vehicle/images/oJF970N_S8O2BwIcBTMt0g.620x372.jpg"
+      ],
+      "FOPZ13": [
+        "https://images.turo.com/media/vehicle/images/TzQ2Kl18S9moU793GoQZmQ.620x372.heic",
+        "https://images.turo.com/media/vehicle/images/Kh5m3qCiS6yNrzb2pu88pg.620x372.jpg"
+      ]
+    },
+    "tripLists": {
+      "active": [
+        {
+          "tripId": "71002",
+          "tripUrl": "https://turo.com/us/en/reservation/71002",
+          "guest": "Jordan",
+          "vehicle": "Tesla Model 3 2025",
+          "plate": "DGUI92",
+          "pickupAt": 1790797584988,
+          "returnAt": 1790988384988,
+          "pickup": {
+            "day": "Wed, Sep 30",
+            "time": "1:46 PM",
+            "rel": "2 days ago",
+            "soon": false,
+            "past": true
+          },
+          "ret": {
+            "day": "Fri, Oct 2",
+            "time": "6:46 PM",
+            "rel": "In 3 h",
+            "soon": true,
+            "past": false
+          },
+          "days": 3,
+          "earnings": 240,
+          "perMile": null,
+          "flags": [],
+          "guestRating": 4.9,
+          "guestTrips": 8
+        },
+        {
+          "tripId": "71009",
+          "tripUrl": "https://turo.com/us/en/reservation/71009",
+          "guest": "Dee",
+          "vehicle": "Volkswagen Taos 2024",
+          "plate": "ENHF01",
+          "pickupAt": 1790966784988,
+          "returnAt": 1791013584988,
+          "pickup": {
+            "day": "Fri, Oct 2",
+            "time": "12:46 PM",
+            "rel": "Earlier today",
+            "soon": false,
+            "past": true
+          },
+          "ret": {
+            "day": "Sat, Oct 3",
+            "time": "1:46 AM",
+            "rel": "Tomorrow",
+            "soon": false,
+            "past": false
+          },
+          "days": 1,
+          "earnings": 240,
+          "perMile": null,
+          "flags": [],
+          "guestRating": 4.9,
+          "guestTrips": 8
+        },
+        {
+          "tripId": "71001",
+          "tripUrl": "https://turo.com/us/en/reservation/71001",
+          "guest": "Maya",
+          "vehicle": "Mazda CX-50 2024",
+          "plate": "DJIL68",
+          "pickupAt": 1790869584988,
+          "returnAt": 1791049584988,
+          "pickup": {
+            "day": "Thu, Oct 1",
+            "time": "9:46 AM",
+            "rel": "Yesterday",
+            "soon": false,
+            "past": true
+          },
+          "ret": {
+            "day": "Sat, Oct 3",
+            "time": "11:46 AM",
+            "rel": "Tomorrow",
+            "soon": false,
+            "past": false
+          },
+          "days": 3,
+          "earnings": 240,
+          "perMile": null,
+          "flags": [],
+          "guestRating": 4.9,
+          "guestTrips": 8
+        },
+        {
+          "tripId": "71006",
+          "tripUrl": "https://turo.com/us/en/reservation/71006",
+          "guest": "Luis",
+          "vehicle": "Subaru Ascent 2023",
+          "plate": "DWIS75",
+          "pickupAt": 1790963184988,
+          "returnAt": 1791085584988,
+          "pickup": {
+            "day": "Fri, Oct 2",
+            "time": "11:46 AM",
+            "rel": "Earlier today",
+            "soon": false,
+            "past": true
+          },
+          "ret": {
+            "day": "Sat, Oct 3",
+            "time": "9:46 PM",
+            "rel": "Tomorrow",
+            "soon": false,
+            "past": false
+          },
+          "days": 2,
+          "earnings": 420,
+          "perMile": null,
+          "flags": [],
+          "guestRating": 4.9,
+          "guestTrips": 8
+        }
+      ],
+      "pickups": [
+        {
+          "tripId": "71011",
+          "tripUrl": "https://turo.com/us/en/reservation/71011",
+          "guest": "Eli",
+          "vehicle": "Tesla Model 3 2022",
+          "plate": "EBKP99",
+          "pickupAt": 1790984784988,
+          "returnAt": 1791121584988,
+          "pickup": {
+            "day": "Fri, Oct 2",
+            "time": "5:46 PM",
+            "rel": "In 2 h",
+            "soon": true,
+            "past": false
+          },
+          "ret": {
+            "day": "Sun, Oct 4",
+            "time": "7:46 AM",
+            "rel": "In 2 days",
+            "soon": false,
+            "past": false
+          },
+          "days": 2,
+          "earnings": 240,
+          "perMile": null,
+          "flags": [],
+          "guestRating": 4.9,
+          "guestTrips": 8
+        },
+        {
+          "tripId": "71003",
+          "tripUrl": "https://turo.com/us/en/reservation/71003",
+          "guest": "Priya",
+          "vehicle": "Volkswagen Tiguan 2024",
+          "plate": "EPMA97",
+          "pickupAt": 1790995584988,
+          "returnAt": 1791265584988,
+          "pickup": {
+            "day": "Fri, Oct 2",
+            "time": "8:46 PM",
+            "rel": "In 5 h",
+            "soon": true,
+            "past": false
+          },
+          "ret": {
+            "day": "Mon, Oct 5",
+            "time": "11:46 PM",
+            "rel": "In 3 days",
+            "soon": false,
+            "past": false
+          },
+          "days": 4,
+          "earnings": 310,
+          "perMile": null,
+          "flags": [
+            {
+              "tone": "red",
+              "text": "Premier Plan: $0 Excess"
+            }
+          ],
+          "guestRating": 4.9,
+          "guestTrips": 8
+        },
+        {
+          "tripId": "71004",
+          "tripUrl": "https://turo.com/us/en/reservation/71004",
+          "guest": "Chris",
+          "vehicle": "Nissan Pathfinder 2024",
+          "plate": "EJQN51",
+          "pickupAt": 1791009984988,
+          "returnAt": 1791193584988,
+          "pickup": {
+            "day": "Sat, Oct 3",
+            "time": "12:46 AM",
+            "rel": "Tomorrow",
+            "soon": false,
+            "past": false
+          },
+          "ret": {
+            "day": "Mon, Oct 5",
+            "time": "3:46 AM",
+            "rel": "In 3 days",
+            "soon": false,
+            "past": false
+          },
+          "days": 3,
+          "earnings": 240,
+          "perMile": null,
+          "flags": [
+            {
+              "tone": "amber",
+              "text": "License Not Verified"
+            }
+          ],
+          "guestRating": 4.9,
+          "guestTrips": 8
+        },
+        {
+          "tripId": "71005",
+          "tripUrl": "https://turo.com/us/en/reservation/71005",
+          "guest": "Ana",
+          "vehicle": "Mazda CX-90 PHEV 2024",
+          "plate": "EDAL70",
+          "pickupAt": 1791049584988,
+          "returnAt": 1791229584988,
+          "pickup": {
+            "day": "Sat, Oct 3",
+            "time": "11:46 AM",
+            "rel": "Tomorrow",
+            "soon": false,
+            "past": false
+          },
+          "ret": {
+            "day": "Mon, Oct 5",
+            "time": "1:46 PM",
+            "rel": "In 3 days",
+            "soon": false,
+            "past": false
+          },
+          "days": 3,
+          "earnings": 240,
+          "perMile": null,
+          "flags": [],
+          "guestRating": 4.9,
+          "guestTrips": 8
+        },
+        {
+          "tripId": "71010",
+          "tripUrl": "https://turo.com/us/en/reservation/71010",
+          "guest": "Rae",
+          "vehicle": "Nissan Rogue 2024",
+          "plate": "ENFP72",
+          "pickupAt": 1791085584988,
+          "returnAt": 1791301584988,
+          "pickup": {
+            "day": "Sat, Oct 3",
+            "time": "9:46 PM",
+            "rel": "Tomorrow",
+            "soon": false,
+            "past": false
+          },
+          "ret": {
+            "day": "Tue, Oct 6",
+            "time": "9:46 AM",
+            "rel": "In 4 days",
+            "soon": false,
+            "past": false
+          },
+          "days": 3,
+          "earnings": 240,
+          "perMile": null,
+          "flags": [],
+          "guestRating": 4.9,
+          "guestTrips": 8
+        }
+      ],
+      "returns": [
+        {
+          "tripId": "71002",
+          "tripUrl": "https://turo.com/us/en/reservation/71002",
+          "guest": "Jordan",
+          "vehicle": "Tesla Model 3 2025",
+          "plate": "DGUI92",
+          "pickupAt": 1790797584988,
+          "returnAt": 1790988384988,
+          "pickup": {
+            "day": "Wed, Sep 30",
+            "time": "1:46 PM",
+            "rel": "2 days ago",
+            "soon": false,
+            "past": true
+          },
+          "ret": {
+            "day": "Fri, Oct 2",
+            "time": "6:46 PM",
+            "rel": "In 3 h",
+            "soon": true,
+            "past": false
+          },
+          "days": 3,
+          "earnings": 240,
+          "perMile": null,
+          "flags": [],
+          "guestRating": 4.9,
+          "guestTrips": 8
+        },
+        {
+          "tripId": "71009",
+          "tripUrl": "https://turo.com/us/en/reservation/71009",
+          "guest": "Dee",
+          "vehicle": "Volkswagen Taos 2024",
+          "plate": "ENHF01",
+          "pickupAt": 1790966784988,
+          "returnAt": 1791013584988,
+          "pickup": {
+            "day": "Fri, Oct 2",
+            "time": "12:46 PM",
+            "rel": "Earlier today",
+            "soon": false,
+            "past": true
+          },
+          "ret": {
+            "day": "Sat, Oct 3",
+            "time": "1:46 AM",
+            "rel": "Tomorrow",
+            "soon": false,
+            "past": false
+          },
+          "days": 1,
+          "earnings": 240,
+          "perMile": null,
+          "flags": [],
+          "guestRating": 4.9,
+          "guestTrips": 8
+        },
+        {
+          "tripId": "71001",
+          "tripUrl": "https://turo.com/us/en/reservation/71001",
+          "guest": "Maya",
+          "vehicle": "Mazda CX-50 2024",
+          "plate": "DJIL68",
+          "pickupAt": 1790869584988,
+          "returnAt": 1791049584988,
+          "pickup": {
+            "day": "Thu, Oct 1",
+            "time": "9:46 AM",
+            "rel": "Yesterday",
+            "soon": false,
+            "past": true
+          },
+          "ret": {
+            "day": "Sat, Oct 3",
+            "time": "11:46 AM",
+            "rel": "Tomorrow",
+            "soon": false,
+            "past": false
+          },
+          "days": 3,
+          "earnings": 240,
+          "perMile": null,
+          "flags": [],
+          "guestRating": 4.9,
+          "guestTrips": 8
+        },
+        {
+          "tripId": "71006",
+          "tripUrl": "https://turo.com/us/en/reservation/71006",
+          "guest": "Luis",
+          "vehicle": "Subaru Ascent 2023",
+          "plate": "DWIS75",
+          "pickupAt": 1790963184988,
+          "returnAt": 1791085584988,
+          "pickup": {
+            "day": "Fri, Oct 2",
+            "time": "11:46 AM",
+            "rel": "Earlier today",
+            "soon": false,
+            "past": true
+          },
+          "ret": {
+            "day": "Sat, Oct 3",
+            "time": "9:46 PM",
+            "rel": "Tomorrow",
+            "soon": false,
+            "past": false
+          },
+          "days": 2,
+          "earnings": 420,
+          "perMile": null,
+          "flags": [],
+          "guestRating": 4.9,
+          "guestTrips": 8
+        },
+        {
+          "tripId": "71011",
+          "tripUrl": "https://turo.com/us/en/reservation/71011",
+          "guest": "Eli",
+          "vehicle": "Tesla Model 3 2022",
+          "plate": "EBKP99",
+          "pickupAt": 1790984784988,
+          "returnAt": 1791121584988,
+          "pickup": {
+            "day": "Fri, Oct 2",
+            "time": "5:46 PM",
+            "rel": "In 2 h",
+            "soon": true,
+            "past": false
+          },
+          "ret": {
+            "day": "Sun, Oct 4",
+            "time": "7:46 AM",
+            "rel": "In 2 days",
+            "soon": false,
+            "past": false
+          },
+          "days": 2,
+          "earnings": 240,
+          "perMile": null,
+          "flags": [],
+          "guestRating": 4.9,
+          "guestTrips": 8
+        },
+        {
+          "tripId": "71004",
+          "tripUrl": "https://turo.com/us/en/reservation/71004",
+          "guest": "Chris",
+          "vehicle": "Nissan Pathfinder 2024",
+          "plate": "EJQN51",
+          "pickupAt": 1791009984988,
+          "returnAt": 1791193584988,
+          "pickup": {
+            "day": "Sat, Oct 3",
+            "time": "12:46 AM",
+            "rel": "Tomorrow",
+            "soon": false,
+            "past": false
+          },
+          "ret": {
+            "day": "Mon, Oct 5",
+            "time": "3:46 AM",
+            "rel": "In 3 days",
+            "soon": false,
+            "past": false
+          },
+          "days": 3,
+          "earnings": 240,
+          "perMile": null,
+          "flags": [
+            {
+              "tone": "amber",
+              "text": "License Not Verified"
+            }
+          ],
+          "guestRating": 4.9,
+          "guestTrips": 8
+        },
+        {
+          "tripId": "71005",
+          "tripUrl": "https://turo.com/us/en/reservation/71005",
+          "guest": "Ana",
+          "vehicle": "Mazda CX-90 PHEV 2024",
+          "plate": "EDAL70",
+          "pickupAt": 1791049584988,
+          "returnAt": 1791229584988,
+          "pickup": {
+            "day": "Sat, Oct 3",
+            "time": "11:46 AM",
+            "rel": "Tomorrow",
+            "soon": false,
+            "past": false
+          },
+          "ret": {
+            "day": "Mon, Oct 5",
+            "time": "1:46 PM",
+            "rel": "In 3 days",
+            "soon": false,
+            "past": false
+          },
+          "days": 3,
+          "earnings": 240,
+          "perMile": null,
+          "flags": [],
+          "guestRating": 4.9,
+          "guestTrips": 8
+        },
+        {
+          "tripId": "71003",
+          "tripUrl": "https://turo.com/us/en/reservation/71003",
+          "guest": "Priya",
+          "vehicle": "Volkswagen Tiguan 2024",
+          "plate": "EPMA97",
+          "pickupAt": 1790995584988,
+          "returnAt": 1791265584988,
+          "pickup": {
+            "day": "Fri, Oct 2",
+            "time": "8:46 PM",
+            "rel": "In 5 h",
+            "soon": true,
+            "past": false
+          },
+          "ret": {
+            "day": "Mon, Oct 5",
+            "time": "11:46 PM",
+            "rel": "In 3 days",
+            "soon": false,
+            "past": false
+          },
+          "days": 4,
+          "earnings": 310,
+          "perMile": null,
+          "flags": [
+            {
+              "tone": "red",
+              "text": "Premier Plan: $0 Excess"
+            }
+          ],
+          "guestRating": 4.9,
+          "guestTrips": 8
+        },
+        {
+          "tripId": "71010",
+          "tripUrl": "https://turo.com/us/en/reservation/71010",
+          "guest": "Rae",
+          "vehicle": "Nissan Rogue 2024",
+          "plate": "ENFP72",
+          "pickupAt": 1791085584988,
+          "returnAt": 1791301584988,
+          "pickup": {
+            "day": "Sat, Oct 3",
+            "time": "9:46 PM",
+            "rel": "Tomorrow",
+            "soon": false,
+            "past": false
+          },
+          "ret": {
+            "day": "Tue, Oct 6",
+            "time": "9:46 AM",
+            "rel": "In 4 days",
+            "soon": false,
+            "past": false
+          },
+          "days": 3,
+          "earnings": 240,
+          "perMile": null,
+          "flags": [],
+          "guestRating": 4.9,
+          "guestTrips": 8
+        }
+      ]
+    },
+    "unread": [
+      {
+        "tripId": "71009",
+        "tripUrl": "https://turo.com/us/en/reservation/71009",
+        "guest": "Dee",
+        "vehicle": "Volkswagen Taos 2024",
+        "plate": "ENHF01",
+        "text": "Hi! Is there a charger in the garage and where do I park when I arrive?",
+        "sentAt": 1790883984988,
+        "waitMs": 93600000,
+        "sent": "Sent Oct 1, 1:46 PM",
+        "wait": "Waiting 1 day",
+        "urgency": "high"
+      },
+      {
+        "tripId": "71010",
+        "tripUrl": "https://turo.com/us/en/reservation/71010",
+        "guest": "Rae",
+        "vehicle": "Nissan Rogue 2024",
+        "plate": "ENFP72",
+        "text": "Can I extend by one day?",
+        "sentAt": 1790972184988,
+        "waitMs": 5400000,
+        "sent": "Sent Oct 2, 2:16 PM",
+        "wait": "Waiting 1 hour",
+        "urgency": "medium"
+      },
+      {
+        "tripId": "71011",
+        "tripUrl": "https://turo.com/us/en/reservation/71011",
+        "guest": "Eli",
+        "vehicle": "Tesla Model 3 2022",
+        "plate": "EBKP99",
+        "text": "On my way, about 10 minutes out",
+        "sentAt": 1790977224988,
+        "waitMs": 360000,
+        "sent": "Sent Oct 2, 3:40 PM",
+        "wait": "Waiting 6 min",
+        "urgency": "new"
+      }
+    ],
+    "topCar": {
+      "name": "Mazda CX-50 2024",
+      "plate": "DJIL68",
+      "total": 910,
+      "trips": 1,
+      "perTrip": 910,
+      "photo": "https://images.turo.com/media/vehicle/images/rl9v10xJQgSk4HlPBqXepQ.620x372.jpg",
+      "photos": [
+        "https://images.turo.com/media/vehicle/images/rl9v10xJQgSk4HlPBqXepQ.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/ZxEAd7nvRhuuzKubwn-xNw.620x372.jpg",
+        "https://images.turo.com/media/vehicle/images/fTFyHg6KQPa_vMotSYiyMw.620x372.jpg"
+      ],
+      "from": 1783201584988,
+      "to": 1790977584988,
+      "runnersUp": [
+        {
+          "name": "Nissan Kicks 2025",
+          "plate": "ESPL85",
+          "total": 380
+        }
+      ]
+    },
+    "tolls": {
+      "at": "2026-10-02T21:36:24.988Z",
+      "weekStart": "2026-09-28",
+      "trips": 3,
+      "cents": 4100,
+      "looks": 1,
+      "running": 2,
+      "runningCents": 3110,
+      "billedWeekTrips": 2,
+      "billedWeekCents": 2699,
+      "fileBilled": 0,
+      "fileTotal": 0,
+      "billedRows": [
+        {
+          "tripId": "71001",
+          "guest": "Maya",
+          "vehicle": "Mazda CX-50 2024",
+          "cents": 2050,
+          "billedAt": "2026-09-29 18:10",
+          "invoiceNumber": "115000111"
+        },
+        {
+          "tripId": "71002",
+          "guest": "Jordan",
+          "vehicle": "Tesla Model 3 2025",
+          "cents": 649,
+          "billedAt": "2026-09-29 09:00",
+          "invoiceNumber": null
+        }
+      ],
+      "notBilledRows": [
+        {
+          "tripId": "71006",
+          "guest": "Luis",
+          "vehicle": "Subaru Ascent 2023",
+          "cents": 1750,
+          "group": "running",
+          "why": "The trip is still on the road. More tolls can post after it ends."
+        }
+      ]
+    },
+    "reviews": {
+      "asOf": 1791155023504,
+      "lookbackDays": 14,
+      "windowDays": 10,
+      "reviewsAt": "2026-10-04T22:57:43.504Z",
+      "reviewsLoaded": 6,
+      "summary": {
+        "trips": 14,
+        "toAsk": 8,
+        "reviewed": 5,
+        "blank": 1,
+        "unchecked": 1,
+        "askedAlready": 1,
+        "ratePct": 38,
+        "average": 4.8
+      },
+      "toAsk": [
+        {
+          "tripId": "60999005",
+          "tripUrl": "https://turo.com/us/en/reservation/60999005",
+          "threadUrl": "https://turo.com/us/en/inbox/messages/thread/60999005",
+          "guest": "Old Olga",
+          "first": "Old",
+          "vehicle": "Dodge Hornet 2024",
+          "plate": "TST005",
+          "endedAt": 1790118223504,
+          "ended": "Tue, Sep 22",
+          "daysAgo": 12,
+          "windowLeft": 0,
+          "windowClosed": true,
+          "status": "none",
+          "rating": null,
+          "reviewedAt": null,
+          "reviewed": null,
+          "asked": null,
+          "saysRated": null,
+          "draft": "Hi Old, thank you for choosing Colorado Cruisers! If you enjoyed your trip with the Dodge Hornet 2024, an honest review on Turo helps our small business a lot, and it only takes a minute. Thanks again, and safe travels! – Matt"
+        },
+        {
+          "tripId": "60999001",
+          "tripUrl": "https://turo.com/us/en/reservation/60999001",
+          "threadUrl": "https://turo.com/us/en/inbox/messages/thread/60999001",
+          "guest": "STACIE",
+          "first": "Stacie",
+          "vehicle": "Mazda CX-50 2024",
+          "plate": "TST001",
+          "endedAt": 1790463823504,
+          "ended": "Sat, Sep 26",
+          "daysAgo": 8,
+          "windowLeft": 2,
+          "windowClosed": false,
+          "status": "none",
+          "rating": null,
+          "reviewedAt": null,
+          "reviewed": null,
+          "asked": null,
+          "saysRated": null,
+          "draft": "Hi Stacie, thank you for choosing Colorado Cruisers! If you enjoyed your trip with the Mazda CX-50 2024, an honest review on Turo helps our small business a lot, and it only takes a minute. Thanks again, and safe travels! – Matt"
+        },
+        {
+          "tripId": "60999002",
+          "tripUrl": "https://turo.com/us/en/reservation/60999002",
+          "threadUrl": "https://turo.com/us/en/inbox/messages/thread/60999002",
+          "guest": "Unknown Una",
+          "first": "Unknown",
+          "vehicle": "Audi Q5 2021",
+          "plate": "TST002",
+          "endedAt": 1790636623504,
+          "ended": "Mon, Sep 28",
+          "daysAgo": 6,
+          "windowLeft": 4,
+          "windowClosed": false,
+          "status": "unchecked",
+          "rating": null,
+          "reviewedAt": null,
+          "reviewed": null,
+          "asked": null,
+          "saysRated": null,
+          "draft": "Hi Unknown, thank you for choosing Colorado Cruisers! If you enjoyed your trip with the Audi Q5 2021, an honest review on Turo helps our small business a lot, and it only takes a minute. Thanks again, and safe travels! – Matt"
+        },
+        {
+          "tripId": "61090528",
+          "tripUrl": "https://turo.com/us/en/reservation/61090528",
+          "threadUrl": "https://turo.com/us/en/inbox/messages/thread/61090528",
+          "guest": "christopher",
+          "first": "Christopher",
+          "vehicle": "Nissan Pathfinder 2023",
+          "plate": "TST528",
+          "endedAt": 1790723023504,
+          "ended": "Tue, Sep 29",
+          "daysAgo": 5,
+          "windowLeft": 5,
+          "windowClosed": false,
+          "status": "none",
+          "rating": null,
+          "reviewedAt": null,
+          "reviewed": null,
+          "asked": null,
+          "saysRated": null,
+          "draft": "Hi Christopher, thank you for choosing Colorado Cruisers! If you enjoyed your trip with the Nissan Pathfinder 2023, an honest review on Turo helps our small business a lot, and it only takes a minute. Thanks again, and safe travels! – Matt"
+        },
+        {
+          "tripId": "61097558",
+          "tripUrl": "https://turo.com/us/en/reservation/61097558",
+          "threadUrl": "https://turo.com/us/en/inbox/messages/thread/61097558",
+          "guest": "Alexandria",
+          "first": "Alexandria",
+          "vehicle": "Volkswagen ID.4 2023",
+          "plate": "TST558",
+          "endedAt": 1790809423504,
+          "ended": "Wed, Sep 30",
+          "daysAgo": 4,
+          "windowLeft": 6,
+          "windowClosed": false,
+          "status": "none",
+          "rating": null,
+          "reviewedAt": null,
+          "reviewed": null,
+          "asked": null,
+          "saysRated": {
+            "at": 1790895823504,
+            "quote": "Just left you a 5 star review, thanks!"
+          },
+          "draft": "Hi Alexandria, thank you for choosing Colorado Cruisers! If you enjoyed your trip with the Volkswagen ID.4 2023, an honest review on Turo helps our small business a lot, and it only takes a minute. Thanks again, and safe travels! – Matt"
+        },
+        {
+          "tripId": "61416494",
+          "tripUrl": "https://turo.com/us/en/reservation/61416494",
+          "threadUrl": "https://turo.com/us/en/inbox/messages/thread/61416494",
+          "guest": "Amanda",
+          "first": "Amanda",
+          "vehicle": "Volkswagen Taos 2024",
+          "plate": "TST494",
+          "endedAt": 1790982223504,
+          "ended": "Fri, Oct 2",
+          "daysAgo": 2,
+          "windowLeft": 8,
+          "windowClosed": false,
+          "status": "none",
+          "rating": null,
+          "reviewedAt": null,
+          "reviewed": null,
+          "asked": {
+            "at": 1791068623504,
+            "label": "Sat, Oct 3"
+          },
+          "saysRated": null,
+          "draft": "Hi Amanda, thank you for choosing Colorado Cruisers! If you enjoyed your trip with the Volkswagen Taos 2024, an honest review on Turo helps our small business a lot, and it only takes a minute. Thanks again, and safe travels! – Matt"
+        },
+        {
+          "tripId": "61322577",
+          "tripUrl": "https://turo.com/us/en/reservation/61322577",
+          "threadUrl": "https://turo.com/us/en/inbox/messages/thread/61322577",
+          "guest": "Richard",
+          "first": "Richard",
+          "vehicle": "Volkswagen Tiguan 2024",
+          "plate": "TST577",
+          "endedAt": 1791068623504,
+          "ended": "Sat, Oct 3",
+          "daysAgo": 1,
+          "windowLeft": 9,
+          "windowClosed": false,
+          "status": "none",
+          "rating": null,
+          "reviewedAt": null,
+          "reviewed": null,
+          "asked": null,
+          "saysRated": null,
+          "draft": "Hi Richard, thank you for choosing Colorado Cruisers! If you enjoyed your trip with the Volkswagen Tiguan 2024, an honest review on Turo helps our small business a lot, and it only takes a minute. Thanks again, and safe travels! – Matt"
+        },
+        {
+          "tripId": "61471287",
+          "tripUrl": "https://turo.com/us/en/reservation/61471287",
+          "threadUrl": "https://turo.com/us/en/inbox/messages/thread/61471287",
+          "guest": "Sara",
+          "first": "Sara",
+          "vehicle": "Nissan Pathfinder 2023",
+          "plate": "TST287",
+          "endedAt": 1791155023504,
+          "ended": "Sun, Oct 4",
+          "daysAgo": 0,
+          "windowLeft": 10,
+          "windowClosed": false,
+          "status": "none",
+          "rating": null,
+          "reviewedAt": null,
+          "reviewed": null,
+          "asked": null,
+          "saysRated": null,
+          "draft": "Hi Sara, thank you for choosing Colorado Cruisers! If you enjoyed your trip with the Nissan Pathfinder 2023, an honest review on Turo helps our small business a lot, and it only takes a minute. Thanks again, and safe travels! – Matt"
+        }
+      ],
+      "reviewed": [
+        {
+          "tripId": "61631013",
+          "tripUrl": "https://turo.com/us/en/reservation/61631013",
+          "threadUrl": "https://turo.com/us/en/inbox/messages/thread/61631013",
+          "guest": "Patrick",
+          "first": "Patrick",
+          "vehicle": "Tesla Model 3 2023",
+          "plate": "TST013",
+          "endedAt": 1790982223504,
+          "ended": "Fri, Oct 2",
+          "daysAgo": 2,
+          "windowLeft": 8,
+          "windowClosed": false,
+          "status": "reviewed",
+          "rating": 5,
+          "reviewedAt": 1790982223504,
+          "reviewed": "Fri, Oct 2",
+          "asked": null,
+          "saysRated": null
+        },
+        {
+          "tripId": "61786066",
+          "tripUrl": "https://turo.com/us/en/reservation/61786066",
+          "threadUrl": "https://turo.com/us/en/inbox/messages/thread/61786066",
+          "guest": "Alex",
+          "first": "Alex",
+          "vehicle": "Subaru Ascent 2023",
+          "plate": "TST066",
+          "endedAt": 1790982223504,
+          "ended": "Fri, Oct 2",
+          "daysAgo": 2,
+          "windowLeft": 8,
+          "windowClosed": false,
+          "status": "reviewed",
+          "rating": 5,
+          "reviewedAt": 1790982223504,
+          "reviewed": "Fri, Oct 2",
+          "asked": null,
+          "saysRated": null
+        },
+        {
+          "tripId": "60484619",
+          "tripUrl": "https://turo.com/us/en/reservation/60484619",
+          "threadUrl": "https://turo.com/us/en/inbox/messages/thread/60484619",
+          "guest": "Laura",
+          "first": "Laura",
+          "vehicle": "Nissan Kicks 2026",
+          "plate": "TST619",
+          "endedAt": 1790895823504,
+          "ended": "Thu, Oct 1",
+          "daysAgo": 3,
+          "windowLeft": 7,
+          "windowClosed": false,
+          "status": "reviewed",
+          "rating": 5,
+          "reviewedAt": 1790895823504,
+          "reviewed": "Thu, Oct 1",
+          "asked": null,
+          "saysRated": null
+        },
+        {
+          "tripId": "61073657",
+          "tripUrl": "https://turo.com/us/en/reservation/61073657",
+          "threadUrl": "https://turo.com/us/en/inbox/messages/thread/61073657",
+          "guest": "John",
+          "first": "John",
+          "vehicle": "Subaru Forester 2019",
+          "plate": "TST657",
+          "endedAt": 1790895823504,
+          "ended": "Thu, Oct 1",
+          "daysAgo": 3,
+          "windowLeft": 7,
+          "windowClosed": false,
+          "status": "reviewed",
+          "rating": 4,
+          "reviewedAt": 1790895823504,
+          "reviewed": "Thu, Oct 1",
+          "asked": null,
+          "saysRated": null
+        },
+        {
+          "tripId": "60999004",
+          "tripUrl": "https://turo.com/us/en/reservation/60999004",
+          "threadUrl": "https://turo.com/us/en/inbox/messages/thread/60999004",
+          "guest": "Blank Bea",
+          "first": "Blank",
+          "vehicle": "Tesla Model 3 2025",
+          "plate": "TST004",
+          "endedAt": 1790550223504,
+          "ended": "Sun, Sep 27",
+          "daysAgo": 7,
+          "windowLeft": 3,
+          "windowClosed": false,
+          "status": "blank",
+          "rating": null,
+          "reviewedAt": 1790723023504,
+          "reviewed": "Tue, Sep 29",
+          "asked": null,
+          "saysRated": null
+        },
+        {
+          "tripId": "60999003",
+          "tripUrl": "https://turo.com/us/en/reservation/60999003",
+          "threadUrl": "https://turo.com/us/en/inbox/messages/thread/60999003",
+          "guest": "Pat",
+          "first": "Pat",
+          "vehicle": "Tesla Model 3 2025",
+          "plate": "TST003",
+          "endedAt": 1790377423504,
+          "ended": "Fri, Sep 25",
+          "daysAgo": 9,
+          "windowLeft": 1,
+          "windowClosed": false,
+          "status": "reviewed",
+          "rating": 5,
+          "reviewedAt": 1790636623504,
+          "reviewed": "Mon, Sep 28",
+          "asked": null,
+          "saysRated": null
+        }
+      ]
+    },
+    "quality": {
+      "guestReviewsAt": "2026-10-04T22:57:43.504Z"
+    }
+  },
+  "receivedAt": 1790977569988,
+  "seenAt": 1790977576988,
+  "lastScanAt": 1790977564988,
+  "serverNow": 1790977584988,
+  "signedIn": true
+}

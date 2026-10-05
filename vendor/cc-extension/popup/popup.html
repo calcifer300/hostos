@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>HostOS</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <main class="popup">
+      <header class="header">
+        <div class="brand">
+          <div><p class="eyebrow">COLORADO CRUISERS</p><img class="brand-wordmark" src="../assets/hostos-wordmark.svg" alt="hostOS" height="28"><h1 class="visually-hidden">HostOS</h1></div>
+        </div>
+        <button class="status" id="pauseToggle" type="button" aria-pressed="false"><i></i><span>Monitoring</span></button>
+      </header>
+      <section class="hero">
+        <p class="eyebrow">ACTION REQUIRED</p>
+        <strong id="actionCount">0</strong><span id="heroLabel">items need attention</span>
+        <p class="hero-sub" id="heroSub"></p>
+      </section>
+      <section class="cards" aria-label="Trip summary">
+        <button class="card premier" data-filter="premier"><span class="icon">⚠</span><span><b>Premier Plan Bookings</b><small id="premierCount">None — all clear</small></span><em>›</em></button>
+        <button class="card danger" data-filter="license"><span class="icon">!</span><span><b>Unverified Licenses</b><small id="licenseCount">0 trips</small></span><em>›</em></button>
+        <button class="card earnings" data-filter="earnings"><span class="icon">$</span><span><b>Profit Risk</b><small id="earningsCount">0 trips</small></span><em>›</em></button>
+        <button class="card reviews" data-filter="reviews"><span class="icon">★</span><span><b>Pending Reviews</b><small id="reviewsCount">All caught up</small></span><em>›</em></button>
+        <button class="card today" data-filter="today"><span class="icon">↩</span><span><b>Earnings Estimator</b><small id="todayCount">No trips due back</small></span><em>›</em></button>
+      </section>
+      <button class="scan-now" id="scanNow" type="button">Scan now</button>
+      <p class="scan-status" id="scanStatus" aria-live="polite"></p>
+      <section class="hostos-results" id="results" aria-live="polite"></section>
+      <div class="stats" id="stats" hidden></div>
+      <p class="footer" id="lastUpdated">Open Turo to begin monitoring.</p>
+      <p class="footer" id="lastAttempt"></p>
+      <p class="footer" id="scanHealth"></p>
+    </main>
+    <script src="../utils/constants.js"></script>
+    <script src="../utils/dates.js"></script>
+    <script src="../utils/parser.js"></script>
+    <script src="../utils/reviews.js"></script>
+    <script src="../utils/outlook.js"></script>
+    <script src="../modules/queueView.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>

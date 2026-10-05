@@ -14,6 +14,8 @@ export default defineConfig({
 			// The Vercel adapter symlinks ISR functions, which Windows forbids without developer mode; the local
 			// Lighthouse harness (lh.sh) builds with NO_ADAPTER=1 and previews the plain output instead.
 			adapter: process.env.NO_ADAPTER ? { name: 'none', adapt: async () => {} } : adapter({ runtime: 'nodejs22.x' }),
+			// ~17 KB of CSS rides in the HTML itself: no render-blocking stylesheet round trip before first paint on a phone
+			inlineStyleThreshold: 24000,
 			// The marketing site is prerendered where it can be; dynamic bits are islands.
 			prerender: { handleHttpError: 'warn', entries: ['*', '/robots.txt', '/sitemap.xml'] }
 		})

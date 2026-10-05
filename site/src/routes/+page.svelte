@@ -33,8 +33,9 @@
 	const shareTitle = `${SITE.company} — ${SITE.tagline}`;
 	const description = 'HostOS Collective is a Philippines-based virtual assistant agency and business solutions team, founded by John Jenrique Briones: trained operators, written systems and the HostOS platform running car rental fleets, restaurants, field services and shops for owners in the US and worldwide.';
 	const keywords = 'HostOS Collective, HostOS, John Briones, John Jenrique Briones, VA agency Philippines, virtual assistant agency Philippines, business solutions Philippines, business operations outsourcing, Turo fleet management, DoorDash restaurant operations, field service dispatch, custom web applications Philippines';
-	const ld = $derived(jsonLd(data.members));
 	const faq = $derived(listOr(data.lists?.faq, FAQ.items, (r) => ({ q: r.a, a: r.b })));
+	// the structured data quotes the same FAQ the page shows, including whatever the Founder saved
+	const ld = $derived(jsonLd(data.members, faq));
 </script>
 
 <svelte:head>

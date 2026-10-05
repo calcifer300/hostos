@@ -139,6 +139,13 @@ export function words(el: HTMLElement, step = 45) {
 	return { destroy: stop };
 }
 
+/** Runs once the window has loaded and the main thread has a spare moment. */
+function afterLoad(run: () => void) {
+	const idle = () => ('requestIdleCallback' in window ? window.requestIdleCallback(run, { timeout: 1500 }) : setTimeout(run, 200));
+	if (document.readyState === 'complete') idle();
+	else window.addEventListener('load', idle, { once: true });
+}
+
 /**
  * A video that costs nothing until it is needed: the src is attached only
  * when the element nears the viewport, and it never loads at all under
@@ -152,20 +159,22 @@ export function words(el: HTMLElement, step = 45) {
  * (`always` is kept for callers; every screen size gets the footage.)
  */
 export function lazyVideo(video: HTMLVideoElement, opts: { src: string; always?: boolean; still?: boolean; hover?: boolean }) {
-	const nav = navigator as Navigator & { connection?: { saveData?: boolean } };
-	// phones get the footage too (the clips are SD and load only as they near the screen); data saver never does; reduced motion only ever sees a still
-	if (nav.connection?.saveData) return {};
+	const nav = navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } };
+	// phones get the footage too (the clips are SD and load only as they near the screen); data saver and a 2G/3G link never do; reduced motion only ever sees a still
+	if (nav.connection?.saveData || /^(slow-2g|2g|3g)$/.test(nav.connection?.effectiveType ?? '')) return {};
 	const still = opts.still || opts.hover || reduced();
 	const hover = opts.hover && !reduced();
 	let loaded = false;
 	let onScreen = false;
+	let destroyed = false;
 	// the frame a still shows: a little way in, past any fade-from-black
 	const settle = () => { if (video.currentTime < 0.4) video.currentTime = 0.6; };
 	const onLoaded = () => { settle(); if (!still) video.play().catch(() => {}); else video.classList.add('is-playing'); };
 	const io = new IntersectionObserver(([e]) => {
 		onScreen = e.isIntersecting;
 		if (onScreen) {
-			if (!loaded) { video.src = opts.src; video.preload = 'metadata'; video.load(); loaded = true; }
+			// the first attach waits for the page to finish loading, so a multi-megabyte clip never competes with the headline, the fonts and the scripts
+			if (!loaded) { loaded = true; afterLoad(() => { if (!destroyed) { video.src = opts.src; video.preload = 'metadata'; video.load(); } }); }
 			else if (!still) video.play().catch(() => {});
 		} else video.pause();
 	}, { rootMargin: '200px 0px' });
@@ -180,6 +189,7 @@ export function lazyVideo(video: HTMLVideoElement, opts: { src: string; always?:
 	if (hover) { host.addEventListener('pointerenter', enter); host.addEventListener('pointerleave', leave); }
 	return {
 		destroy() {
+			destroyed = true;
 			io.disconnect();
 			video.removeEventListener('loadeddata', onLoaded);
 			video.removeEventListener('playing', onPlay);

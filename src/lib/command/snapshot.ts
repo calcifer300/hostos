@@ -162,7 +162,10 @@ export interface ReviewRow {
   status: "none" | "unchecked" | "reviewed" | "blank";
   rating: number | null;
   reviewed: string | null;
+  /** a personal follow-up sent after the trip */
   asked: { at: number | null; label: string } | null;
+  /** the scheduled post-trip message that already asks every guest for a review */
+  autoAsked: boolean;
   saysRated: { at: number | null; quote: string } | null;
   /** the message Matthew can send, written only for the ones still to ask */
   draft: string;
@@ -173,7 +176,7 @@ export interface ReviewsSection {
   windowDays: number;
   reviewsAt: string | null;
   reviewsLoaded: number;
-  summary: { trips: number; toAsk: number; reviewed: number; blank: number; unchecked: number; askedAlready: number; ratePct: number | null; average: number | null };
+  summary: { trips: number; toAsk: number; reviewed: number; blank: number; unchecked: number; askedAlready: number; autoAsked: number; ratePct: number | null; average: number | null };
   toAsk: ReviewRow[];
   reviewed: ReviewRow[];
 }
@@ -327,6 +330,7 @@ export function normalizeSnapshot(raw: unknown): CommandSnapshot | null {
       rating: typeof row.rating === "number" && row.rating >= 1 && row.rating <= 5 ? Math.round(row.rating) : null,
       reviewed: str(row.reviewed, 30),
       asked: isObject(row.asked) ? { at: typeof row.asked.at === "number" ? row.asked.at : null, label: str(row.asked.label, 30) ?? "" } : null,
+      autoAsked: bool(row.autoAsked),
       saysRated: isObject(row.saysRated) ? { at: typeof row.saysRated.at === "number" ? row.saysRated.at : null, quote: str(row.saysRated.quote, 160) ?? "" } : null,
       draft: str(row.draft, 600) ?? "",
     })).filter((row) => row.tripId);
@@ -336,7 +340,7 @@ export function normalizeSnapshot(raw: unknown): CommandSnapshot | null {
     ? {
         lookbackDays: num(rv.lookbackDays, 14), windowDays: num(rv.windowDays, 10), reviewsAt: str(rv.reviewsAt, 40), reviewsLoaded: num(rv.reviewsLoaded),
         summary: {
-          trips: num(rs.trips), toAsk: num(rs.toAsk), reviewed: num(rs.reviewed), blank: num(rs.blank), unchecked: num(rs.unchecked), askedAlready: num(rs.askedAlready),
+          trips: num(rs.trips), toAsk: num(rs.toAsk), reviewed: num(rs.reviewed), blank: num(rs.blank), unchecked: num(rs.unchecked), askedAlready: num(rs.askedAlready), autoAsked: num(rs.autoAsked),
           ratePct: typeof rs.ratePct === "number" ? rs.ratePct : null, average: typeof rs.average === "number" ? rs.average : null,
         },
         toAsk: reviewRows(rv.toAsk), reviewed: reviewRows(rv.reviewed),

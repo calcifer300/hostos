@@ -115,7 +115,7 @@ export function ReviewsTab({ reviews, zone, now, fresh }: { reviews: ReviewsSect
                         <div className="flex flex-wrap justify-end gap-1">
                           {row.status === "unchecked" ? <Chip tone="grey">Not Checked Yet</Chip> : null}
                           {row.windowClosed ? <Chip tone="grey">Past Turo&rsquo;s {reviews.windowDays}-Day Window</Chip> : <Chip tone={row.windowLeft <= 2 ? "red" : "amber"}>{row.windowLeft} {row.windowLeft === 1 ? "Day" : "Days"} Left</Chip>}
-                          {row.asked ? <Chip tone="blue">Asked {row.asked.label}</Chip> : null}
+                          {row.asked ? <Chip tone="blue">Followed Up {row.asked.label}</Chip> : null}
                           {row.saysRated ? <Chip tone="amber">Guest Says They Rated</Chip> : null}
                         </div>
                       </div>
@@ -176,6 +176,7 @@ export function ReviewsTab({ reviews, zone, now, fresh }: { reviews: ReviewsSect
       <p className="text-[10.5px] leading-snug text-muted-foreground/80">
         {fresh.at ? `Guest reviews last read ${when(fresh.at, zone)}${readAge !== null && readAge > 2 * HOUR ? ". That is a while ago: keep Turo open on the scanning PC to refresh them" : ""}.` : "Guest reviews have not been read yet: keep Turo open on the scanning PC."}
         {" "}A guest is matched to their trip by their Turo account, not by name.
+        {s.autoAsked ? ` Your automatic post-trip message already asked ${s.autoAsked === list.length ? "every one of these guests" : `${s.autoAsked} of these guests`} for a review when their trip ended, so this list is for a personal follow-up.` : ""}
         {s.unchecked ? ` ${s.unchecked} trip${s.unchecked === 1 ? " is" : "s are"} not checked yet because the guest's account has not been read for it.` : ""}
         {closed.length ? ` Trips past Turo's ${reviews.windowDays}-day window are listed last: a guest can no longer review them.` : ""}
         {s.blank ? ` ${s.blank} guest${s.blank === 1 ? "" : "s"} never rated (Turo posted a blank review).` : ""}
